@@ -163,4 +163,24 @@ RSpec.describe Stage do
       end
     end
   end
+
+  describe 'table numbers' do
+    let(:p1) { create(:player, tournament:, skip_registration: true) }
+    let(:p2) { create(:player, tournament:, skip_registration: true) }
+    let(:p3) { create(:player, tournament:, skip_registration: true) }
+    let(:p4) { create(:player, tournament:, skip_registration: true) }
+    let(:p5) { create(:player, tournament:, skip_registration: true) }
+    let(:p6) { create(:player, tournament:, skip_registration: true) }
+    let(:p7) { create(:player, tournament:, skip_registration: true) }
+    let(:p8) { create(:player, tournament:, skip_registration: true) }
+
+    before do
+      stage.players = [p1, p2, p3, p4, p5, p6, p7, p8]
+    end
+
+    it 'uses standard table numbering by default' do
+      round = stage.pair_new_round!
+      expect(round.pairings.map(&:table_number)).to contain_exactly(1, 2, 3, 4)
+    end
+  end
 end

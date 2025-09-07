@@ -7,6 +7,7 @@ class Stage < ApplicationRecord
   has_many :players, through: :registrations
   has_many :users, through: :players
   has_many :standing_rows, dependent: :destroy
+  has_many :table_ranges, dependent: :destroy
 
   delegate :top, to: :standings
 
@@ -88,5 +89,9 @@ class Stage < ApplicationRecord
     else
       decks_public?
     end
+  end
+
+  def custom_table_numbers?
+    table_ranges.any?
   end
 end
