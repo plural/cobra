@@ -1,10 +1,12 @@
 .accordion.mb-3 role="tablist"
   .row.mb-1
-    .col-sm-11
+    .col-sm-10
       h4= stage.format.titleize
-    .col-sm-1
+    .col-sm-2
       - if policy(stage.tournament).update?
-        = link_to tournament_stage_path(stage.tournament, stage), method: :delete, class: 'btn btn-danger', data: { confirm: 'Are you sure? This cannot be reversed and all rounds will be deleted!' } do
+        = link_to tournament_stage_path(stage.tournament, stage), class: 'btn btn-warning mx-1' do
+          => fa_icon 'pencil'
+        = link_to tournament_stage_path(stage.tournament, stage), method: :delete, class: 'btn btn-danger mx-1', data: { confirm: 'Are you sure? This cannot be reversed and all rounds will be deleted!' } do
           => fa_icon 'trash'
   - if stage.rounds.any?
     - if stage.players.count > 60 && !policy(stage.tournament).update?

@@ -1,0 +1,9 @@
+.col-12
+  h2 = @stage.format.titleize
+
+  h3 Custom Table Ranges
+  - @stage.table_ranges.each do |table_range|
+    li.list-group-item
+      = render 'table_range', table_range: table_range
+  li.list-group-item
+    = render 'table_range', table_range: nil

@@ -1,0 +1,17 @@
+= simple_form_for table_range ? table_range : :table_range, \
+                  url: table_range ? tournament_stage_table_range_path(@stage.tournament, @stage, table_range) : tournament_stage_table_ranges_path(@stage.tournament, @stage), \
+                  html: { class: 'form-inline mt-2 d-block' } do |f|
+  .row.mb-1
+    .col.sm-2
+      label.d-block for="first_table" First table
+      = f.input_field :first_table, placeholder: 'First table number', class: 'form-control'
+    .col.sm-2
+      label.d-block for="last_table" Last table
+      = f.input_field :last_table, placeholder: "Last table number", class: 'form-control'
+    .col.sm-2
+      = button_tag type: :submit, class: 'btn btn-success mr-2'
+        = fa_icon table_range ? 'floppy-o' : 'plus'
+      - if table_range
+        = link_to tournament_stage_table_range_path(@stage.tournament, @stage, table_range), method: :delete, class: 'btn btn-danger' do
+          = fa_icon 'trash'
+    .col.sm-6

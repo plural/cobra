@@ -2,7 +2,11 @@
 
 class StagesController < ApplicationController
   before_action :set_tournament
-  before_action :set_stage, only: %i[update destroy]
+  before_action :set_stage, only: %i[show update destroy]
+
+  def show
+    authorize @tournament, :update?
+  end
 
   def create
     authorize @tournament, :update?
