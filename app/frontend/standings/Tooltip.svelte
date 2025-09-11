@@ -6,7 +6,7 @@
   let isHovered = false;
 </script>
 
-<div
+<div>
   class="position-relative"
   on:mouseenter={() => (isHovered = true)}
   on:mouseleave={() => (isHovered = false)}

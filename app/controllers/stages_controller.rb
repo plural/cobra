@@ -2,10 +2,12 @@
 
 class StagesController < ApplicationController
   before_action :set_tournament
-  before_action :set_stage, only: %i[show update destroy]
+  before_action :set_stage, only: %i[show update destroy settings]
 
   def show
     authorize @tournament, :update?
+
+    # render json: stage_json(@stage), status: :ok
   end
 
   def create
@@ -40,7 +42,40 @@ class StagesController < ApplicationController
     redirect_to tournament_rounds_path(@tournament)
   end
 
+  def settings
+    authorize @tournament, :update?
+
+    render json: stage_json(@stage), status: :ok
+  end
+
   def set_stage
     @stage = Stage.find(params[:id])
+  end
+
+  private
+
+  def stage_json(stage)
+    {
+      stage: {
+        id: stage.id,
+        format: stage.format.titleize,
+        table_ranges: table_range_json(stage)
+      },
+      csrfToken: form_authenticity_token
+    }
+  end
+
+  def table_range_json(stage)
+    table_ranges = []
+
+    stage.table_ranges.each do |tr|
+      table_ranges << {
+        id: tr.id,
+        first_table: tr.first_table,
+        last_table: tr.last_table
+      }
+    end
+
+    table_ranges
   end
 end
