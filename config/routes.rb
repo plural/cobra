@@ -42,7 +42,6 @@ Rails.application.routes.draw do
     get :bracket, on: :member
     resources :stages, only: %i[show create update destroy] do
       get :settings, on: :member
-      resources :table_ranges, only: %i[create update destroy]
     end
     get :info, on: :member
     post :upload_to_abr, on: :member

@@ -6,8 +6,6 @@ class StagesController < ApplicationController
 
   def show
     authorize @tournament, :update?
-
-    # render json: stage_json(@stage), status: :ok
   end
 
   def create
@@ -22,16 +20,21 @@ class StagesController < ApplicationController
   def update
     authorize @tournament, :update?
 
-    redirect_to tournament_rounds_path(@tournament)
+    params = stage_params
 
     # Save table ranges
-    begin
-      range_data = params.key?(:table_ranges) ? JSON.parse(params[:table_ranges]) : []
-    rescue StandardError
-      return
-    end
     @stage.table_ranges.destroy_all
-    @stage.table_ranges.create(range_data)
+    @stage.table_ranges.create(params[:table_ranges])
+
+    respond_to do |format|
+      format.html do
+        redirect_back_or_to tournament_stage_path(@tournament, @stage)
+        return
+      end
+      format.json do
+        head :no_content
+      end
+    end
   end
 
   def destroy
@@ -54,14 +57,21 @@ class StagesController < ApplicationController
 
   private
 
+  def stage_params
+    params.require(:stage).permit(:id, :tournament_id, :number, :format,
+                                  table_ranges: %i[id stage_id first_table last_table])
+  end
+
   def stage_json(stage)
     {
       stage: {
         id: stage.id,
+        tournament_id: stage.tournament_id,
+        number: stage.number,
         format: stage.format.titleize,
         table_ranges: table_range_json(stage)
       },
-      csrfToken: form_authenticity_token
+      csrf_token: form_authenticity_token
     }
   end
 
@@ -71,6 +81,7 @@ class StagesController < ApplicationController
     stage.table_ranges.each do |tr|
       table_ranges << {
         id: tr.id,
+        stage_id: tr.stage_id,
         first_table: tr.first_table,
         last_table: tr.last_table
       }
