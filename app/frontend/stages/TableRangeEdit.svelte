@@ -37,8 +37,8 @@
 </script>
 
 <li class="list-group-item">
-  <div class="row mb-1">
-    <div class="col sm-1">
+  <div class="row">
+    <div class="col-md-3">
       <label for="first_table">First Table</label>
       {#if tableRange}
         <input
@@ -57,7 +57,7 @@
           bind:value={newFirstTable} />
       {/if}
     </div>
-    <div class="col sm-1">
+    <div class="col-md-3">
       <label for="last_table">Last Table</label>
       {#if tableRange}
         <input
@@ -76,7 +76,7 @@
           bind:value={newLastTable} />
       {/if}
     </div>
-    <div class="col sm-1">
+    <div class="col-md-1 align-self-end">
       {#if tableRange !== undefined}
         <button onclick={(e) => deleteRange(e, tableRange)} class="btn btn-danger" aria-label="Delete range">
           <span class="fa-trash"></span>
@@ -87,6 +87,6 @@
         </button>
       {/if}
     </div>
-    <div class="col sm-9"></div>
+    <div class="col-md-5"></div>
   </div>
 </li>
