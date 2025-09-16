@@ -91,7 +91,13 @@ class Stage < ApplicationRecord
     end
   end
 
-  def custom_table_numbers?
-    table_ranges.any?
+  def custom_table_numbers_count
+    table_ranges.inject(0) { |sum, e| sum + (e.last_table - e.first_table) + 1 }
+  end
+
+  def validate_table_count
+    return unless table_ranges.any? && custom_table_numbers_count < (players.count / 2.0).ceil
+
+    "There are not enough tables to cover all players (players: #{players.count}, tables: #{custom_table_numbers_count})."
   end
 end

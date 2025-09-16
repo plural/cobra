@@ -22,17 +22,29 @@ class StagesController < ApplicationController
 
     params = stage_params
 
+    error = validate_table_ranges(params[:table_ranges])
+
     # Save table ranges
-    @stage.table_ranges.destroy_all
-    @stage.table_ranges.create(params[:table_ranges])
+    if error.nil?
+      ActiveRecord::Base.transaction do
+        begin
+          @stage.table_ranges.destroy_all
+          @stage.table_ranges.create!(params[:table_ranges])
+        rescue => e
+          error = "Unable to save stage: #{e}"
+          raise ActiveRecord::Rollback
+        end
+      end
+    end
 
     respond_to do |format|
-      format.html do
-        redirect_back_or_to tournament_stage_path(@tournament, @stage)
-        return
-      end
       format.json do
-        head :no_content
+        if error
+          flash.now[:alert] = error
+          render json: { error: error }, status: :unprocessable_entity
+        else
+          render json: { url: tournament_stage_path(@tournament, @stage) }, stats: :ok
+        end
       end
     end
   end
@@ -71,6 +83,7 @@ class StagesController < ApplicationController
         format: stage.format.titleize,
         table_ranges: table_range_json(stage)
       },
+      warning: stage.validate_table_count,
       csrf_token: form_authenticity_token
     }
   end
@@ -88,5 +101,22 @@ class StagesController < ApplicationController
     end
 
     table_ranges
+  end
+
+  def validate_table_ranges(new_ranges_params)
+    ranges = new_ranges_params.map { |params| TableRange.new(params) }
+
+    ranges.each do |range_a|
+      return 'The first table must be less than the last table.' if range_a.first_table > range_a.last_table
+
+      ranges.each do |range_b|
+        if range_a != range_b && \
+           (range_b.in_range?(range_a.first_table) || range_b.in_range?(range_a.last_table))
+          return 'Table ranges cannot overlap.'
+        end
+      end
+    end
+
+    nil
   end
 end

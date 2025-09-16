@@ -3,6 +3,7 @@
     type Stage,
     type TableRange
   } from "./StageSettings";
+  import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
   interface Props {
     stage: Stage;
@@ -79,11 +80,11 @@
     <div class="col-md-1 align-self-end">
       {#if tableRange !== undefined}
         <button onclick={(e) => deleteRange(e, tableRange)} class="btn btn-danger" aria-label="Delete range">
-          <span class="fa-trash"></span>
+          <FontAwesomeIcon icon="trash" />
         </button>
       {:else}
         <button onclick={(e) => addRange(e)} class="btn btn-success" aria-label="Add range" disabled={!isNewRangeValid}>
-          <span class="fa-plus"></span>
+          <FontAwesomeIcon icon="plus" />
         </button>
       {/if}
     </div>

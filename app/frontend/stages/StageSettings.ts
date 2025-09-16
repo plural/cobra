@@ -3,8 +3,6 @@ declare const Routes: {
   tournament_stage_path: (tournamentId: number, stageId: number) => string;
 };
 
-export type Errors = Record<string, string[]>;
-
 export interface Stage {
   id: number;
   tournament_id: number;
@@ -22,22 +20,17 @@ export interface TableRange {
 
 export interface StageData {
   stage: Stage;
+  warning?: string;
   csrf_token: string;
 }
 
 export interface SaveStageResponse {
-  id: number;
-  name: string;
   url: string;
-}
-
-// TODO: Can this be merged with SaveStageResponse?
-export interface SaveStageErrorResponse {
-  errors: Errors;
+  error?: string;
 }
 
 export class ValidationError extends Error {
-  constructor(public errors: Errors) {
+  constructor(public errors: string) {
     super("Validation failed");
     this.name = "ValidationError";
   }
@@ -68,15 +61,15 @@ export async function saveStage(csrfToken: string, tournamentId: number, stage: 
     body: JSON.stringify({ stage }),
   });
 
+  const saveStageResponse = (await response.json()) as SaveStageResponse;
+
   if (!response.ok) {
     if (response.status === 422) {
-      const errorData = (await response.json()) as SaveStageErrorResponse;
-      throw new ValidationError(errorData.errors);
+      throw new ValidationError(saveStageResponse.error ?? "Stage could not be updated.");
     }
-    throw new Error(
-      `HTTP ${response.status.toString()}: ${response.statusText}`,
-    );
+
+    throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
   }
 
-  return (await response.json()) as SaveStageResponse;
+  return saveStageResponse;
 }

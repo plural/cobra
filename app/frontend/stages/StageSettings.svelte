@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import {
-    type Errors,
     type Stage,
     type StageData,
     type TableRange,
@@ -9,6 +8,7 @@
     loadStage,
     saveStage
   } from "./StageSettings";
+  import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import TableRangeEdit from "./TableRangeEdit.svelte";
 
   interface Props {
@@ -19,29 +19,24 @@
   let { tournamentId, stageId }: Props = $props();
 
   let data = $state() as StageData;
-  let isSubmitting = false; // TODO: Use this
-  let errors: Errors = {};
+  let isSubmitting = $state(false);
+  let error = $state("");
 
   onMount(async() => {
     data = await loadStage(tournamentId, stageId);
   });
 
-  function cancelChanges(e: MouseEvent) {
+  async function submitStage(e: SubmitEvent) {
     e.preventDefault();
-    window.location.reload();
-  }
-
-  async function submitStage() {
     isSubmitting = true;
-    errors = {};
 
     try {
       const response = await saveStage(data.csrf_token, tournamentId, data.stage);
       window.location.href = response.url;
-    } catch (error) {
-      errors = error instanceof ValidationError
-        ? error.errors
-        : { base: ["An unexpected error occurred. Please try again."] };
+    } catch (err) {
+      error = err instanceof ValidationError
+        ? err.errors
+        : "An unexpected error occurred. Please try again.";
     } finally {
       isSubmitting = false;
     }
@@ -49,24 +44,39 @@
 </script>
 
 {#if data}
+  {#if data.warning}
+    <div class="alert alert-warning">{data.warning}</div>
+  {/if}
+
   <div class="row">
     <div class="col-12">
       <h2>{data.stage.format}</h2>
 
-      <h3>Custom Table Ranges</h3>
       <form onsubmit={submitStage}>
-        {#each data.stage.table_ranges as tableRange}
-          <TableRangeEdit stage={data.stage} tableRange={tableRange} />
-        {/each}
-        <TableRangeEdit stage={data.stage} />
+        <fieldset disabled={isSubmitting}>
+          <h3>Custom Table Ranges</h3>
+          {#if error}
+            <div class="alert alert-danger">{error}</div>
+          {/if}
+          {#each data.stage.table_ranges as tableRange}
+            <TableRangeEdit stage={data.stage} tableRange={tableRange} />
+          {/each}
+          <TableRangeEdit stage={data.stage} />
+        </fieldset>
 
         <div class="col sm-1 mt-2">
-          <button type="submit" class="btn btn-success mr-2" aria-label="Save ranges">
-            <span class="fa-floppy-o"></span> Save
+          <button type="submit" class="btn btn-success mr-2" aria-label="Save stage">
+            {#if isSubmitting}
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Saving...
+            {:else}
+              <FontAwesomeIcon icon="floppy-o" />
+              Save
+            {/if}
           </button>
-          <button onclick={(e) => cancelChanges(e)} type="submit" class="btn btn-info" aria-label="Cancel">
-            <span class="fa-undo"></span> Cancel
-          </button>
+          <a href="/tournaments/{tournamentId}/rounds" class="btn btn-info">
+            <FontAwesomeIcon icon="undo" /> Cancel
+          </a>
         </div>
       </form>
     </div>
