@@ -26,7 +26,7 @@
 
   function deleteRange(e: MouseEvent, tableRange: TableRange) {
     e.preventDefault();
-    stage.table_ranges.splice(stage.table_ranges.indexOf(tableRange));
+    stage.table_ranges.splice(stage.table_ranges.indexOf(tableRange), 1);
   }
 
   function newTableChanged() {
