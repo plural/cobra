@@ -7,10 +7,9 @@
 </script>
 
 <div>
-  class="position-relative"
-  on:mouseenter={() => (isHovered = true)}
+  class="position-relative" on:mouseenter={() => (isHovered = true)}
   on:mouseleave={() => (isHovered = false)}
->
+  >
   <slot />
   {#if isHovered}
     <div

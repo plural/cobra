@@ -1,12 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import {
-    type Stage,
     type StageData,
-    type TableRange,
     ValidationError,
     loadStage,
-    saveStage
+    saveStage,
   } from "./StageSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import TableRangeEdit from "./TableRangeEdit.svelte";
@@ -22,7 +20,7 @@
   let isSubmitting = $state(false);
   let error = $state("");
 
-  onMount(async() => {
+  onMount(async () => {
     data = await loadStage(tournamentId, stageId);
   });
 
@@ -31,12 +29,17 @@
     isSubmitting = true;
 
     try {
-      const response = await saveStage(data.csrf_token, tournamentId, data.stage);
+      const response = await saveStage(
+        data.csrf_token,
+        tournamentId,
+        data.stage,
+      );
       window.location.href = response.url;
     } catch (err) {
-      error = err instanceof ValidationError
-        ? err.errors
-        : "An unexpected error occurred. Please try again.";
+      error =
+        err instanceof ValidationError
+          ? err.errors
+          : "An unexpected error occurred. Please try again.";
     } finally {
       isSubmitting = false;
     }
@@ -58,16 +61,24 @@
           {#if error}
             <div class="alert alert-danger">{error}</div>
           {/if}
-          {#each data.stage.table_ranges as tableRange}
-            <TableRangeEdit stage={data.stage} tableRange={tableRange} />
+          {#each data.stage.table_ranges as tableRange (tableRange.id)}
+            <TableRangeEdit stage={data.stage} {tableRange} />
           {/each}
           <TableRangeEdit stage={data.stage} />
         </fieldset>
 
         <div class="col sm-1 mt-2">
-          <button type="submit" class="btn btn-success mr-2" aria-label="Save stage">
+          <button
+            type="submit"
+            class="btn btn-success mr-2"
+            aria-label="Save stage"
+          >
             {#if isSubmitting}
-              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
               Saving...
             {:else}
               <FontAwesomeIcon icon="floppy-o" />

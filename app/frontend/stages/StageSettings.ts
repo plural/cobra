@@ -1,5 +1,8 @@
 declare const Routes: {
-  settings_tournament_stage_path: (tournamentId: number, stageId: number) => string;
+  settings_tournament_stage_path: (
+    tournamentId: number,
+    stageId: number,
+  ) => string;
   tournament_stage_path: (tournamentId: number, stageId: number) => string;
 };
 
@@ -36,11 +39,17 @@ export class ValidationError extends Error {
   }
 }
 
-export async function loadStage(tournamentId: number, stageId: number): Promise<StageData> {
-  const response = await fetch(Routes.settings_tournament_stage_path(tournamentId, stageId), {
-    headers: { Accept: "application/json" },
-    method: "GET",
-  });
+export async function loadStage(
+  tournamentId: number,
+  stageId: number,
+): Promise<StageData> {
+  const response = await fetch(
+    Routes.settings_tournament_stage_path(tournamentId, stageId),
+    {
+      headers: { Accept: "application/json" },
+      method: "GET",
+    },
+  );
   if (!response.ok) {
     throw new Error(
       `HTTP ${response.status.toString()}: ${response.statusText}`,
@@ -50,25 +59,36 @@ export async function loadStage(tournamentId: number, stageId: number): Promise<
   return (await response.json()) as StageData;
 }
 
-export async function saveStage(csrfToken: string, tournamentId: number, stage: Stage): Promise<SaveStageResponse> {
-  const response = await fetch(Routes.tournament_stage_path(tournamentId, stage.id), {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "X-CSRF-Token": csrfToken,
+export async function saveStage(
+  csrfToken: string,
+  tournamentId: number,
+  stage: Stage,
+): Promise<SaveStageResponse> {
+  const response = await fetch(
+    Routes.tournament_stage_path(tournamentId, stage.id),
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken,
+      },
+      body: JSON.stringify({ stage }),
     },
-    body: JSON.stringify({ stage }),
-  });
+  );
 
   const saveStageResponse = (await response.json()) as SaveStageResponse;
 
   if (!response.ok) {
     if (response.status === 422) {
-      throw new ValidationError(saveStageResponse.error ?? "Stage could not be updated.");
+      throw new ValidationError(
+        saveStageResponse.error ?? "Stage could not be updated.",
+      );
     }
 
-    throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
+    throw new Error(
+      `HTTP ${response.status.toString()}: ${response.statusText}`,
+    );
   }
 
   return saveStageResponse;

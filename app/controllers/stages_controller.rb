@@ -27,13 +27,10 @@ class StagesController < ApplicationController
     # Save table ranges
     if error.nil?
       ActiveRecord::Base.transaction do
-        begin
-          @stage.table_ranges.destroy_all
-          @stage.table_ranges.create!(params[:table_ranges])
-        rescue => e
-          error = "Unable to save stage: #{e}"
-          raise ActiveRecord::Rollback
-        end
+        @stage.table_ranges.destroy_all
+        @stage.table_ranges.create!(params[:table_ranges])
+      rescue ActiveRecord::ActiveRecordError => e
+        error = "Unable to save stage: #{e}"
       end
     end
 

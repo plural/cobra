@@ -7,7 +7,8 @@ document.addEventListener("turbolinks:load", function () {
     mount(StageSettings, {
       target: anchor,
       props: {
-        tournamentId: Number(anchor.getAttribute("data-tournament") ?? "") || -1,
+        tournamentId:
+          Number(anchor.getAttribute("data-tournament") ?? "") || -1,
         stageId: Number(anchor.getAttribute("data-stage") ?? "") || -1,
       },
     });
