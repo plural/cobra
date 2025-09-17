@@ -7,7 +7,7 @@ class RoundsController < ApplicationController
   def index
     authorize @tournament, :update?
     @stages = @tournament.stages.includes(
-      :tournament, rounds: [:tournament, :stage, { pairings: %i[tournament stage round self_reports] }]
+      :tournament, rounds: [:tournament, :stage, { pairings: %i[tournament stage round self_reports player1 player2] }]
     )
     @players = @tournament.players
                           .includes(:corp_identity_ref, :runner_identity_ref)
@@ -118,6 +118,8 @@ class RoundsController < ApplicationController
       {
         name: stage.format.titleize,
         format: stage.format,
+        is_single_sided: stage.single_sided?,
+        is_elimination: stage.elimination?,
         rounds: pairings_data_rounds(stage, players)
       }
     end
@@ -183,7 +185,7 @@ class RoundsController < ApplicationController
       self_report = SelfReport.where(pairing_id: id, report_player_id: current_user.id).first if current_user
       if self_report
         self_report_result = { report_player_id: self_report.report_player_id }
-        if (stage.single_sided_swiss? || stage.single_elim? || stage.double_elim?) && side == 'player1_is_corp'
+        if stage.single_sided? && side == 'player1_is_corp'
           self_report_result[:label] = score_label(@tournament.swiss_format, player1_side(side),
                                                    self_report.score1, self_report.score1_corp,
                                                    self_report.score1_runner,
@@ -213,7 +215,7 @@ class RoundsController < ApplicationController
                                                          self_report,
                                                          players[player1_id]&.dig('user_id'),
                                                          players[player2_id]&.dig('user_id')) &&
-                       score1.nil? && score2.nil?
+                       score1.nil? && score2.nil? && @tournament.allow_self_reporting
         },
         # TODO: in future pass current user to svelte frontend
         ui_metadata: {
@@ -248,6 +250,7 @@ class RoundsController < ApplicationController
 
   def pairings_data_player(player, side)
     {
+      id: (player['id'] if player),
       name_with_pronouns: name_with_pronouns(player),
       side:,
       user_id: (player['user_id'] if player),
