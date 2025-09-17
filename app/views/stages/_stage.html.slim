@@ -4,8 +4,9 @@
       h4= stage.format.titleize
     .col-sm-2
       - if policy(stage.tournament).update?
-        = link_to tournament_stage_path(stage.tournament, stage), class: 'btn btn-warning mx-1' do
-          => fa_icon 'pencil'
+        - if !stage.elimination?
+          = link_to tournament_stage_path(stage.tournament, stage), class: 'btn btn-warning mx-1' do
+            => fa_icon 'pencil'
         = link_to tournament_stage_path(stage.tournament, stage), method: :delete, class: 'btn btn-danger mx-1', data: { confirm: 'Are you sure? This cannot be reversed and all rounds will be deleted!' } do
           => fa_icon 'trash'
   - if stage.rounds.any?
