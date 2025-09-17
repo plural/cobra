@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SwissTables
-  def self.assign_table_numbers!(pairings, table_ranges)
+  def self.assign_table_numbers!(pairings, table_ranges = [])
     PairingOrder.new(pairings, table_ranges).apply_numbers!
   end
 

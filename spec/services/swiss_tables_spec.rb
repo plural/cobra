@@ -103,5 +103,42 @@ RSpec.describe SwissTables do
 
       expect(pairings.map(&:table_number)).to eq [3, 2, 1]
     end
+
+    it 'uses custom numbering' do
+      pairings = [alice_bye, bob_charlie, dave_eddie].freeze
+      table_range = TableRange.new
+      table_range.first_table = 100
+      table_range.last_table = 110
+
+      described_class.assign_table_numbers! pairings, [ table_range ]
+      expect(pairings.map(&:table_number)).to eq [102, 100, 101]
+   end
+
+   it 'uses custom numbering from multiple ranges' do
+      pairings = [alice_bye, bob_charlie, dave_eddie].freeze
+      
+      table_range_1 = TableRange.new
+      table_range_1.first_table = 100
+      table_range_1.last_table = 100
+      table_range_2 = TableRange.new
+      table_range_2.first_table = 200
+      table_range_2.last_table = 201
+
+      described_class.assign_table_numbers! pairings, [ table_range_1, table_range_2 ]
+      expect(pairings.map(&:table_number)).to eq [201, 100, 200]
+   end
+
+   it 'continues custom numbering from last table range when there are insufficient custom tables' do
+      pairings = [alice_bye, bob_charlie, dave_eddie].freeze
+      table_range_1 = TableRange.new
+      table_range_1.first_table = 100
+      table_range_1.last_table = 100
+      table_range_2 = TableRange.new
+      table_range_2.first_table = 200
+      table_range_2.last_table = 200
+
+      described_class.assign_table_numbers! pairings, [ table_range_1, table_range_2 ]
+      expect(pairings.map(&:table_number)).to eq [201, 100, 200]
+   end
   end
 end
