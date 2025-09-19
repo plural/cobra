@@ -21,10 +21,21 @@ export interface TableRange {
   last_table: number;
 }
 
-export interface StageData {
+export class StageData {
   stage: Stage;
   warning?: string;
   csrf_token: string;
+
+  constructor() {
+    this.stage = {
+      id: -1,
+      tournament_id: -1,
+      number: -1,
+      format: null,
+      table_ranges: [],
+    };
+    this.csrf_token = "";
+  }
 }
 
 export interface SaveStageResponse {

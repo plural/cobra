@@ -86,7 +86,9 @@
     <div class="col-md-1 align-self-end">
       {#if tableRange !== undefined}
         <button
-          onclick={(e) => { deleteRange(e, tableRange); }}
+          onclick={(e) => {
+            deleteRange(e, tableRange);
+          }}
           class="btn btn-danger"
           aria-label="Delete range"
         >
@@ -94,7 +96,9 @@
         </button>
       {:else}
         <button
-          onclick={(e) => { addRange(e); }}
+          onclick={(e) => {
+            addRange(e);
+          }}
           class="btn btn-success"
           aria-label="Add range"
           disabled={!isNewRangeValid}

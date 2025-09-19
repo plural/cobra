@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import {
-    type StageData,
+    StageData,
     ValidationError,
     loadStage,
     saveStage,
@@ -16,7 +16,7 @@
 
   let { tournamentId, stageId }: Props = $props();
 
-  let data = $state() as StageData;
+  let data: StageData = $state(new StageData());
   let isSubmitting = $state(false);
   let error = $state("");
 
