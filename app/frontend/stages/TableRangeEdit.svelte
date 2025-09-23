@@ -42,10 +42,30 @@
     stage.table_ranges.splice(stage.table_ranges.indexOf(tableRange), 1);
   }
 
+  function handleFirstTableInput(event: { currentTarget: HTMLInputElement }) {
+    const value = Number(event.currentTarget.value);
+    if (tableRange) {
+      tableRange.first_table = value;
+    } else {
+      newFirstTable = value;
+    }
+    newTableChanged();
+  }
+
+  function handleLastTableInput(event: { currentTarget: HTMLInputElement }) {
+    const value = Number(event.currentTarget.value);
+    if (tableRange) {
+      tableRange.last_table = value;
+    } else {
+      newLastTable = value;
+    }
+    newTableChanged();
+  }
+
   function newTableChanged() {
     isNewRangeValid =
       newFirstTable !== undefined &&
-      newLastTable != undefined &&
+      newLastTable !== undefined &&
       newFirstTable >= 0 &&
       newLastTable >= 0 &&
       newFirstTable <= newLastTable;
@@ -56,45 +76,25 @@
   <div class="row">
     <div class="col-md-3">
       <label for="first_table">First Table</label>
-      {#if tableRange}
-        <input
-          id="first_table"
-          type="number"
-          class="form-control"
-          placeholder="Enter table number"
-          bind:value={tableRange.first_table}
-        />
-      {:else}
-        <input
-          id="first_table"
-          type="number"
-          oninput={newTableChanged}
-          class="form-control"
-          placeholder="Enter table number"
-          bind:value={newFirstTable}
-        />
-      {/if}
+      <input
+        id="first_table"
+        type="number"
+        class="form-control"
+        placeholder="Enter table number"
+        value={tableRange ? tableRange.first_table : newFirstTable}
+        oninput={handleFirstTableInput}
+      />
     </div>
     <div class="col-md-3">
       <label for="last_table">Last Table</label>
-      {#if tableRange}
-        <input
-          id="last_table"
-          type="number"
-          class="form-control"
-          placeholder="Enter table number"
-          bind:value={tableRange.last_table}
-        />
-      {:else}
-        <input
-          id="first_table"
-          type="number"
-          oninput={newTableChanged}
-          class="form-control"
-          placeholder="Enter table number"
-          bind:value={newLastTable}
-        />
-      {/if}
+      <input
+        id="last_table"
+        type="number"
+        class="form-control"
+        placeholder="Enter table number"
+        value={tableRange ? tableRange.last_table : newLastTable}
+        oninput={handleLastTableInput}
+      />
     </div>
     <div class="col-md-1 align-self-end">
       {#if tableRange !== undefined}
