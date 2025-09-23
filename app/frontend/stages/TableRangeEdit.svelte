@@ -13,13 +13,26 @@
   let newLastTable: number | undefined = $state();
   let isNewRangeValid = $state(false);
 
-  function addRange(e: MouseEvent) {
-    e.preventDefault();
-    stage.table_ranges.push({
-      stage_id: stage.id,
-      first_table: newFirstTable ?? 0,
-      last_table: newLastTable ?? 0,
-    });
+  export function addRange(e?: MouseEvent) {
+    if (e)
+    {
+      e.preventDefault();
+    }
+
+    if (newFirstTable && newLastTable)
+    {
+      stage.table_ranges.push({
+        stage_id: stage.id,
+        first_table: newFirstTable ?? 0,
+        last_table: newLastTable ?? 0,
+      });
+    }
+    
+    newFirstTable = undefined;
+    newLastTable = undefined;
+  }
+
+  export function reset() {
     newFirstTable = undefined;
     newLastTable = undefined;
   }

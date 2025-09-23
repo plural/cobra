@@ -17,16 +17,25 @@
   let { tournamentId, stageId }: Props = $props();
 
   let data: StageData = $state(new StageData());
+  let dataBackup: StageData;
   let isSubmitting = $state(false);
   let error = $state("");
+  let newTableRangeEdit: TableRangeEdit | null = $state(null);
 
   onMount(async () => {
     data = await loadStage(tournamentId, stageId);
+    dataBackup = structuredClone($state.snapshot(data));
   });
 
   async function submitStage(e: SubmitEvent) {
     e.preventDefault();
     isSubmitting = true;
+
+    // Automatically add the new table range in case they forgot to click the add button
+    if (newTableRangeEdit)
+    {
+      newTableRangeEdit.addRange();
+    }
 
     try {
       const response = await saveStage(
@@ -44,7 +53,18 @@
       isSubmitting = false;
     }
   }
+
+  function undoChanges() {
+    data = dataBackup;
+    newTableRangeEdit?.reset();
+  }
 </script>
+
+<p>
+  <a href="/tournaments/{tournamentId}/rounds" class="btn btn-primary">
+    <FontAwesomeIcon icon="arrow-left" /> Back to Pairings
+  </a>
+</p>
 
 {#if data}
   {#if data.warning}
@@ -64,7 +84,7 @@
           {#each data.stage.table_ranges as tableRange (tableRange.id)}
             <TableRangeEdit stage={data.stage} {tableRange} />
           {/each}
-          <TableRangeEdit stage={data.stage} />
+          <TableRangeEdit bind:this={newTableRangeEdit} stage={data.stage} />
         </fieldset>
 
         <div class="col sm-1 mt-2">
@@ -85,9 +105,9 @@
               Save
             {/if}
           </button>
-          <a href="/tournaments/{tournamentId}/rounds" class="btn btn-info">
-            <FontAwesomeIcon icon="undo" /> Cancel
-          </a>
+          <button type="button" onclick={undoChanges} class="btn btn-info">
+            <FontAwesomeIcon icon="undo" /> Undo
+          </button>
         </div>
       </form>
     </div>
