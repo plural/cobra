@@ -14,13 +14,18 @@
     stageId: number;
   }
 
+  interface TableRangeEditInterface {
+    addRange(e?: MouseEvent): void;
+    reset(): void;
+  }
+
   let { tournamentId, stageId }: Props = $props();
 
-  let data: StageData = $state(new StageData());
+  let data = $state(new StageData());
   let dataBackup: StageData;
   let isSubmitting = $state(false);
   let error = $state("");
-  let newTableRangeEdit: TableRangeEdit | null = $state(null);
+  let newTableRangeEdit = $state<TableRangeEditInterface>();
 
   onMount(async () => {
     data = await loadStage(tournamentId, stageId);
@@ -32,10 +37,7 @@
     isSubmitting = true;
 
     // Automatically add the new table range in case they forgot to click the add button
-    if (newTableRangeEdit)
-    {
-      newTableRangeEdit.addRange();
-    }
+    newTableRangeEdit?.addRange();
 
     try {
       const response = await saveStage(

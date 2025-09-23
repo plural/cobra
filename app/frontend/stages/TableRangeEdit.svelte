@@ -14,22 +14,21 @@
   let isNewRangeValid = $state(false);
 
   export function addRange(e?: MouseEvent) {
-    if (e)
-    {
+    if (e) {
       e.preventDefault();
     }
 
-    if (newFirstTable && newLastTable)
-    {
-      stage.table_ranges.push({
-        stage_id: stage.id,
-        first_table: newFirstTable ?? 0,
-        last_table: newLastTable ?? 0,
-      });
+    if (!newFirstTable || !newLastTable) {
+      return;
     }
-    
-    newFirstTable = undefined;
-    newLastTable = undefined;
+
+    stage.table_ranges.push({
+      stage_id: stage.id,
+      first_table: newFirstTable,
+      last_table: newLastTable,
+    });
+
+    reset();
   }
 
   export function reset() {
