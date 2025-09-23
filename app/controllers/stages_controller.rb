@@ -22,28 +22,26 @@ class StagesController < ApplicationController
 
     params = stage_params
 
+    # Validate parameters
     error = validate_table_ranges(params[:table_ranges])
+    if error
+      flash.now[:alert] = error
+      return render json: { error: error }, status: :unprocessable_entity
+    end
 
     # Save table ranges
-    if error.nil?
-      ActiveRecord::Base.transaction do
-        @stage.table_ranges.destroy_all
-        @stage.table_ranges.create!(params[:table_ranges])
-      rescue ActiveRecord::ActiveRecordError => e
-        error = "Unable to save stage: #{e}"
-      end
+    ActiveRecord::Base.transaction do
+      @stage.table_ranges.destroy_all
+      @stage.table_ranges.create!(params[:table_ranges])
+    rescue ActiveRecord::ActiveRecordError => e
+      error = "Unable to save stage: #{e}"
+    end
+    if error
+      flash.now[:alert] = error
+      return render json: { error: error }, status: :unprocessable_entity
     end
 
-    respond_to do |format|
-      format.json do
-        if error
-          flash.now[:alert] = error
-          render json: { error: error }, status: :unprocessable_entity
-        else
-          render json: { url: tournament_stage_path(@tournament, @stage) }, stats: :ok
-        end
-      end
-    end
+    render json: { url: tournament_stage_path(@tournament, @stage) }, stats: :ok
   end
 
   def destroy
