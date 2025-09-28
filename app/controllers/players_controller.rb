@@ -193,7 +193,7 @@ class PlayersController < ApplicationController
         player = {
           player: nil,
           policy: {
-            view_decks: false
+            view_decks: view_player_decks
           },
           position: elimination_position,
           seed: (r['seed'] if r['position'])
