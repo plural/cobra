@@ -8,6 +8,7 @@
   } from "./StageSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import TableRangeEdit from "./TableRangeEdit.svelte";
+  import ModalDialog from "../widgets/ModalDialog.svelte";
 
   interface Props {
     tournamentId: number;
@@ -79,7 +80,40 @@
 
       <form onsubmit={submitStage}>
         <fieldset disabled={isSubmitting}>
-          <h3>Custom Table Ranges</h3>
+          <h3>
+            Custom Table Ranges
+            <button
+              type="button"
+              class="btn btn-info"
+              data-toggle="modal"
+              data-target="#customTableHelp"
+            >
+              <FontAwesomeIcon icon="question" />
+            </button>
+          </h3>
+          <ModalDialog id="customTableHelp" headerText="Custom Table Ranges">
+            <p>
+              Custom table ranges are entered as non-overlapping pairs of first
+              and last table numbers. When a round is paired and any custom
+              table ranges have been specified, pairings will be assigned table
+              numbers starting from the range with the lowest table numbers,
+              skipping table numbers that are not in one of the ranges. If there
+              are more pairings than table numbers in the ranges, numbering will
+              automatically continue from the end of the last range.
+            </p>
+            <p>
+              Fixed seating is assigned as normal and fixed seats do not need to
+              fall within one of the custom table ranges.
+            </p>
+            <p>
+              If no custom table ranges are specified, then the default table
+              numbering will be used.
+            </p>
+            <p>
+              Custom table ranges are applied during round pairing so changes to
+              them won't affect existing rounds.
+            </p>
+          </ModalDialog>
           {#if error}
             <div class="alert alert-danger">{error}</div>
           {/if}
