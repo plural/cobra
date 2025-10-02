@@ -51,6 +51,22 @@ RSpec.describe 'listing rounds' do
           expect(page).to have_content("Sorry, you can't do that")
         end
       end
+
+      it 'displays table count warning when not enough custom tables exist' do
+        tournament.current_stage.table_ranges.create(first_table: 100, last_table: 120)
+
+        visit tournament_rounds_path(tournament)
+
+        expect(page).to have_content('There are not enough tables to cover all players')
+      end
+
+      it 'does not display table count warning when enough custom tables exist' do
+        tournament.current_stage.table_ranges.create(first_table: 100, last_table: 159)
+
+        visit tournament_rounds_path(tournament)
+
+        expect(page).not_to have_content('There are not enough tables to cover all players')
+      end
     end
   end
 end
