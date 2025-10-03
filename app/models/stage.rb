@@ -96,9 +96,17 @@ class Stage < ApplicationRecord
   end
 
   def validate_table_count
-    return unless table_ranges.any? && custom_table_numbers_count < (players.count / 2.0).ceil
+    num_pairable_players = players.count
+    if rounds.count < 2 && (rounds.empty? || !rounds.first.completed?)
+      num_pairable_players -= players.select(&:first_round_bye).count
+    end
+    num_pairable_players -= 1 if num_pairable_players.odd?
+
+    if num_pairable_players.negative? || table_ranges.empty? || custom_table_numbers_count >= num_pairable_players / 2
+      return
+    end
 
     'There are not enough tables to cover all players' \
-    " (players: #{players.count}, tables: #{custom_table_numbers_count})."
+    " (players without byes: #{num_pairable_players}, tables: #{custom_table_numbers_count})."
   end
 end
