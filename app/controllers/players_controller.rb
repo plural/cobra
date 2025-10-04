@@ -223,8 +223,8 @@ class PlayersController < ApplicationController
             active: r['player_active'],
             name_with_pronouns:
               "#{r['player_name']}#{r['player_pronouns'].present? ? " (#{r['player_pronouns']})" : ''}",
-            corp_id: nil,
-            runner_id: nil
+            corp_id: { name: nil, faction: nil },
+            runner_id: { name: nil, faction: nil }
           },
           policy: {
             view_decks: view_player_decks
@@ -239,14 +239,17 @@ class PlayersController < ApplicationController
           manual_seed: r['player_manual_seed'],
           side_bias: r['side_bias']
         }
-        player[:player][:corp_id] = {
-          name: r['corp_id_name'],
-          faction: r['corp_id_faction']
-        }
-        player[:player][:runner_id] = {
-          name: r['runner_id_name'],
-          faction: r['runner_id_faction']
-        }
+        # Don't show ids before any rounds have been paired.
+        if r['num_rounds'].positive?
+          player[:player][:corp_id] = {
+            name: r['corp_id_name'],
+            faction: r['corp_id_faction']
+          }
+          player[:player][:runner_id] = {
+            name: r['runner_id_name'],
+            faction: r['runner_id_faction']
+          }
+        end
       end
       stage[:standings] << player
     end
