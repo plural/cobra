@@ -1,12 +1,13 @@
 <!-- TODO: Replace with library or move when used more often. Currently no need for a lib-->
 
-<script>
+<script lang="ts">
   export let text = "";
 
   let isHovered = false;
 </script>
 
 <div
+  role="tooltip"
   class="position-relative"
   on:mouseenter={() => (isHovered = true)}
   on:mouseleave={() => (isHovered = false)}

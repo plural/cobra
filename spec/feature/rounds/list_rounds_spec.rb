@@ -14,6 +14,24 @@ RSpec.describe 'listing rounds' do
     expect(page).to have_http_status :ok
   end
 
+  context 'with one round' do
+    let!(:round1) { create(:round, tournament:, stage: tournament.current_stage, number: 1) }
+
+    before do
+      round1.stage.players = create_list(:player, 17)
+      round1.stage.players[0].update(first_round_bye: true)
+      round1.stage.players[1].update(first_round_bye: true)
+    end
+
+    it 'does not count byes for the table count warning' do
+      tournament.current_stage.table_ranges.create(first_table: 101, last_table: 107)
+
+      visit tournament_rounds_path(tournament)
+
+      expect(page).not_to have_content('There are not enough tables to cover all players')
+    end
+  end
+
   context 'with multiple rounds' do
     let!(:round1) { create(:round, tournament:, stage: tournament.current_stage, number: 1) }
     let!(:round2) { create(:round, tournament:, stage: tournament.current_stage, number: 2) }
@@ -29,7 +47,9 @@ RSpec.describe 'listing rounds' do
 
     context 'with a lot of players' do
       before do
-        round1.stage.players == create_list(:player, 120)
+        round1.stage.players = create_list(:player, 121)
+        round1.stage.players[0].update(first_round_bye: true)
+        round1.stage.players[1].update(first_round_bye: true)
       end
 
       it 'lists all rounds when logged in as TO' do
@@ -50,6 +70,22 @@ RSpec.describe 'listing rounds' do
           expect(page).to have_current_path(root_path, ignore_query: true)
           expect(page).to have_content("Sorry, you can't do that")
         end
+      end
+
+      it 'displays table count warning when not enough custom tables exist' do
+        tournament.current_stage.table_ranges.create(first_table: 101, last_table: 159)
+
+        visit tournament_rounds_path(tournament)
+
+        expect(page).to have_content('There are not enough tables to cover all players')
+      end
+
+      it 'does not display table count warning when enough custom tables exist' do
+        tournament.current_stage.table_ranges.create(first_table: 101, last_table: 160)
+
+        visit tournament_rounds_path(tournament)
+
+        expect(page).not_to have_content('There are not enough tables to cover all players')
       end
     end
   end

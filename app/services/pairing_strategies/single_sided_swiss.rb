@@ -23,7 +23,7 @@ module PairingStrategies
         @plain_pairings << PlainPairing.new(pp[:player1], pp[:score1], pp[:player2], pp[:score2])
       end
 
-      SwissTables.assign_table_numbers!(@plain_pairings)
+      SwissTables.assign_table_numbers!(@plain_pairings, round.stage.table_ranges)
 
       # Set player sides for the pairings.
       apply_sides!

@@ -260,6 +260,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_13_143425) do
     t.index ["stage_id"], name: "index_standing_rows_on_stage_id"
   end
 
+  create_table "table_ranges", force: :cascade do |t|
+    t.integer "stage_id"
+    t.integer "first_table", null: false
+    t.integer "last_table", null: false
+    t.index ["stage_id"], name: "index_table_ranges_on_stages"
+  end
+
   create_table "tournament_types", force: :cascade do |t|
     t.string "name", null: false
     t.boolean "nsg_format", default: false, null: false
@@ -347,6 +354,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_13_143425) do
   add_foreign_key "stages", "tournaments"
   add_foreign_key "standing_rows", "players"
   add_foreign_key "standing_rows", "stages"
+  add_foreign_key "table_ranges", "stages"
   add_foreign_key "tournaments", "card_sets"
   add_foreign_key "tournaments", "deckbuilding_restrictions"
   add_foreign_key "tournaments", "formats"

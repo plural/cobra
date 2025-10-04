@@ -7,6 +7,7 @@ class Stage < ApplicationRecord
   has_many :players, through: :registrations
   has_many :users, through: :players
   has_many :standing_rows, dependent: :destroy
+  has_many :table_ranges, dependent: :destroy
 
   delegate :top, to: :standings
 
@@ -88,5 +89,24 @@ class Stage < ApplicationRecord
     else
       decks_public?
     end
+  end
+
+  def custom_table_numbers_count
+    table_ranges.inject(0) { |sum, e| sum + (e.last_table - e.first_table) + 1 }
+  end
+
+  def validate_table_count
+    num_pairable_players = players.count
+    if rounds.count < 2 && (rounds.empty? || !rounds.first.completed?)
+      num_pairable_players -= players.select(&:first_round_bye).count
+    end
+    num_pairable_players -= 1 if num_pairable_players.odd?
+
+    if num_pairable_players.negative? || table_ranges.empty? || custom_table_numbers_count >= num_pairable_players / 2
+      return
+    end
+
+    'There are not enough tables to cover all players' \
+    " (players without byes: #{num_pairable_players}, tables: #{custom_table_numbers_count})."
   end
 end

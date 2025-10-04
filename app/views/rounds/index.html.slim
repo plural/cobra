@@ -34,7 +34,8 @@
               => render 'self_reporting_faq'
       p
       .reported_hidden_message.alert.alert-info Reported scores are currently hidden on this page. This will not affect other users viewing this page.
-      p
+    - if @warning
+      p.alert.alert-warning = @warning
 
     - if policy(@tournament).update?
       p

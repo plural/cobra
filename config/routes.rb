@@ -40,7 +40,9 @@ Rails.application.routes.draw do
       get :pairings_data, on: :collection
     end
     get :bracket, on: :member
-    resources :stages, only: %i[create destroy]
+    resources :stages, only: %i[show create update destroy] do
+      get :settings, on: :member
+    end
     get :info, on: :member
     post :upload_to_abr, on: :member
     get :save_json, on: :member

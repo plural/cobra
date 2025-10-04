@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module SwissTables
-  def self.assign_table_numbers!(pairings)
-    PairingOrder.new(pairings).apply_numbers!
+  def self.assign_table_numbers!(pairings, table_ranges = [])
+    PairingOrder.new(pairings, table_ranges).apply_numbers!
   end
 
   class PairingOrder
-    def initialize(pairings)
+    def initialize(pairings, table_ranges)
       @non_byes = []
       @byes = []
       @fixed_tables = []
@@ -19,10 +19,12 @@ module SwissTables
           @non_byes << pairing
         end
       end
+
+      @table_ranges = table_ranges
     end
 
     def apply_numbers!
-      numbers = Numbers.new
+      numbers = Numbers.new(@table_ranges)
       @fixed_tables.each do |pairing|
         number = pairing.fixed_table_number
         numbers.exclude_fixed number
@@ -38,9 +40,11 @@ module SwissTables
   end
 
   class Numbers
-    def initialize
+    def initialize(table_ranges)
       @fixed_numbers = Set[]
-      @next_number = 1
+      @table_ranges = table_ranges
+      @current_table_range = @table_ranges[0]
+      @next_number = @current_table_range ? @current_table_range.first_table : 1
     end
 
     def exclude_fixed(number)
@@ -48,10 +52,21 @@ module SwissTables
     end
 
     def next
-      @next_number += 1 while @fixed_numbers.include? @next_number
+      increment_next_number while @fixed_numbers.include? @next_number
       number = @next_number
-      @next_number += 1
+      increment_next_number
       number
+    end
+
+    private
+
+    def increment_next_number
+      @next_number += 1
+      return if @current_table_range.nil? || @next_number <= @current_table_range.last_table
+
+      # Move to next table range
+      @current_table_range = @table_ranges[@table_ranges.find_index(@current_table_range) + 1]
+      @next_number = @current_table_range.first_table if @current_table_range
     end
   end
 end
