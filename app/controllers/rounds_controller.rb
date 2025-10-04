@@ -12,7 +12,7 @@ class RoundsController < ApplicationController
     @players = @tournament.players
                           .includes(:corp_identity_ref, :runner_identity_ref)
                           .index_by(&:id).merge({ nil => NilPlayer.new })
-    @warning = @tournament.current_stage.validate_table_count unless @tournament.stages.empty?
+    @warning = @tournament.current_stage&.validate_table_count
   end
 
   def view_pairings
