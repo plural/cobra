@@ -74,7 +74,7 @@
   function keyFor(cIdx: number, rIdx: number, m: BracketMatch): string {
     return String(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      m.id ?? m.table_number ?? m.successor_game ?? `${cIdx}-${rIdx}`,
+      m.id ?? m.table_number ?? m.winner_game ?? `${cIdx}-${rIdx}`,
     );
   }
 
@@ -120,7 +120,7 @@
   );
   const svgHeightTotal = $derived(svgHeightUpper + bracketGap + svgHeightLower);
 
-  // For connectors: map successor_game within same bracket
+  // For connectors: map winner_game within same bracket
   const connectorPath = $derived(
     (
       fromCol: number,
@@ -148,7 +148,7 @@
       col.forEach((m, rIdx) => {
         index.set(
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          String(m.table_number ?? m.successor_game ?? `${cIdx}-${rIdx}`),
+          String(m.table_number ?? m.winner_game ?? `${cIdx}-${rIdx}`),
           { col: cIdx, row: rIdx },
         );
       });
@@ -164,11 +164,11 @@
       index: SvelteMap<string, { col: number; row: number }>,
       fromCol: number,
       fromRow: number,
-      successorGame: number,
+      winnerGame: number,
       yPos: number[][],
       colOffset = 0,
     ): string | null => {
-      const target = index.get(String(successorGame));
+      const target = index.get(String(winnerGame));
       if (!target) return null;
       return connectorPath(
         fromCol,
@@ -198,13 +198,13 @@
       for (let r = 0; r < cols[c].length; r++) {
         const match = cols[c][r];
         const predecessorYs: number[] = [];
-        // Find predecessors in any earlier column whose successor points to this match
+        // Find predecessors in any earlier column whose winner game points to this match
         if (match.table_number != null) {
           for (let pc = 0; pc < c; pc++) {
             for (let pr = 0; pr < cols[pc].length; pr++) {
               const prevMatch = cols[pc][pr];
-              if (prevMatch.successor_game != null) {
-                if (prevMatch.successor_game === match.table_number) {
+              if (prevMatch.winner_game != null) {
+                if (prevMatch.winner_game === match.table_number) {
                   predecessorYs.push(positions[pc][pr] + matchHeight / 2);
                 }
               }
@@ -239,14 +239,14 @@
           <!-- Connectors -->
           {#each upperCols as col, cIdx (cIdx)}
             {#each col as m, rIdx (keyFor(cIdx, rIdx, m))}
-              {#if m.successor_game != null}
-                {#if upperIndex.has(String(m.successor_game))}
+              {#if m.winner_game != null}
+                {#if upperIndex.has(String(m.winner_game))}
                   <path
                     d={connectorPathTo(
                       upperIndex,
                       cIdx,
                       rIdx,
-                      m.successor_game,
+                      m.winner_game,
                       upperY,
                     )}
                     stroke="#999"
@@ -280,14 +280,14 @@
         <g>
           {#each lowerCols as col, cIdx (cIdx)}
             {#each col as match, rIdx (keyFor(cIdx, rIdx, match))}
-              {#if match.successor_game != null}
-                {#if lowerIndex.has(String(match.successor_game))}
+              {#if match.winner_game != null}
+                {#if lowerIndex.has(String(match.winner_game))}
                   <path
                     d={connectorPathTo(
                       lowerIndex,
                       cIdx,
                       rIdx,
-                      match.successor_game,
+                      match.winner_game,
                       lowerY,
                       lowerColOffset,
                     )}
