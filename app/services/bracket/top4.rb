@@ -2,15 +2,15 @@
 
 module Bracket
   class Top4 < Base
-    game 1, seed(1), seed(4), round: 1, successor: 3, bracket_type: :upper
-    game 2, seed(2), seed(3), round: 1, successor: 3, bracket_type: :upper
+    game 1, seed(1), seed(4), round: 1, winner_game: 3, loser_game: 4, bracket_type: :upper
+    game 2, seed(2), seed(3), round: 1, winner_game: 3, loser_game: 4, bracket_type: :upper
 
-    game 3, winner(1), winner(2), round: 2, successor: 6, bracket_type: :upper
-    game 4, loser(1), loser(2), round: 2, successor: 5, bracket_type: :lower
+    game 3, winner(1), winner(2), round: 2, winner_game: 6, loser_game: 5, bracket_type: :upper
+    game 4, loser(1), loser(2), round: 2, winner_game: 5, bracket_type: :lower
 
-    game 5, loser(3), winner(4), round: 3, successor: 6, bracket_type: :lower
+    game 5, loser(3), winner(4), round: 3, winner_game: 6, bracket_type: :lower
 
-    game 6, winner(3), winner(5), round: 4, successor: 7, bracket_type: :upper
+    game 6, winner(3), winner(5), round: 4, winner_game: 7, loser_game: 7, bracket_type: :upper
 
     game 7, winner(6), loser(6), round: 5, bracket_type: :upper
 

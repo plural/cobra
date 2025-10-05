@@ -12,6 +12,7 @@ export interface BracketMatch {
   table_number?: number;
   table_label?: string;
   winner_game?: number | null;
+  loser_game?: number | null;
   score_label?: string | null;
   player1?: BracketPlayer | null;
   player2?: BracketPlayer | null;

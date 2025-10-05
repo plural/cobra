@@ -16,6 +16,7 @@ module Bracket
             player2: p2,
             round: options[:round],
             winner_game: options[:winner_game],
+            loser_game: options[:loser_game],
             bracket_type: options[:bracket_type]
           }
         end
