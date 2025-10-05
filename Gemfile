@@ -69,4 +69,3 @@ group :development do
   gem 'spring'
   gem 'stackprof'
 end
-
