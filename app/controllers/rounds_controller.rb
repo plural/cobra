@@ -155,7 +155,6 @@ class RoundsController < ApplicationController
     players = pairings_data_players
     @tournament.stages.includes(:rounds).map do |stage|
       {
-        number: stage.number,
         name: stage.format.titleize,
         format: stage.format,
         is_single_sided: stage.single_sided?,

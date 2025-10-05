@@ -23,9 +23,7 @@ export async function loadPairings(
   return (await response.json()) as PairingsData;
 }
 
-export async function loadBrackets(
-  tournamentId: number,
-): Promise<BracketData> {
+export async function loadBrackets(tournamentId: number): Promise<BracketData> {
   const response = await fetch(
     Routes.brackets_tournament_rounds_path(tournamentId),
     {
