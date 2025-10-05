@@ -134,11 +134,11 @@ GEM
     erb (5.0.2)
     erubi (1.13.1)
     execjs (2.10.0)
-    factory_bot (6.5.5)
-      activesupport (>= 6.1.0)
-    factory_bot_rails (6.5.1)
-      factory_bot (~> 6.5)
-      railties (>= 6.1.0)
+    factory_bot (6.4.6)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.4.3)
+      factory_bot (~> 6.4)
+      railties (>= 5.0.0)
     faker (3.5.2)
       i18n (>= 1.8.11, < 2)
     faraday (1.10.4)
@@ -384,6 +384,10 @@ GEM
       rbs (>= 3, < 5)
     ruby-lsp-rails (0.4.8)
       ruby-lsp (>= 0.26.0, < 0.27.0)
+    ruby-lsp-rails-factory-bot (0.6.0)
+      factory_bot (~> 6.4.6)
+      ruby-lsp (~> 0.23)
+      ruby-lsp-rails (~> 0.4)
     ruby-lsp-rspec (0.1.27)
       ruby-lsp (~> 0.26.0)
     ruby-progressbar (1.13.0)
@@ -514,6 +518,7 @@ DEPENDENCIES
   rubocop-rspec
   rubocop-rspec_rails
   ruby-lsp-rails
+  ruby-lsp-rails-factory-bot (~> 0.6.0)
   ruby-lsp-rspec
   sassc-rails
   scenic
