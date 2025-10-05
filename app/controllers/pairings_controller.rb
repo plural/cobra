@@ -2,6 +2,7 @@
 
 class PairingsController < ApplicationController
   before_action :set_tournament
+  before_action :round, only: %i[sharing markdown]
   attr_reader :tournament
 
   def index
@@ -28,6 +29,24 @@ class PairingsController < ApplicationController
     @pairings = @pairings.sort_by do |p|
       p[:player1_name].downcase
     end
+  end
+
+  def sharing
+    authorize @tournament, :show?
+  end
+
+  def markdown
+    authorize @tournament, :show?
+
+    markdown = "# #{@round.stage.format.titleize} Round #{@round.number} Pairings"
+
+    @round.pairings.includes(:player1, :player2, :stage).sort_by(&:table_number).each do |p|
+      markdown += "\n- **#{p.table_label}**"
+      markdown += "\n  #{p.player1.name_with_pronouns} #{p.side == 'player1_is_corp' ? '(Corp)' : '(Runner)'}"
+      markdown += "\n  #{p.player2.name_with_pronouns} #{p.side == 'player1_is_corp' ? '(Runner)' : '(Corp)'}"
+    end
+
+    render json: { markdown: }
   end
 
   def create

@@ -32,6 +32,8 @@ Rails.application.routes.draw do
         get :match_slips, on: :collection
         get :view_decks, on: :member
         get :pairing_presets, on: :member
+        get :sharing, on: :collection
+        get :markdown, on: :collection
       end
       patch :repair, on: :member
       patch :complete, on: :member

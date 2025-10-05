@@ -3,6 +3,7 @@ import type { Identity } from "../identities/Identity";
 declare const Routes: {
   pairings_data_tournament_rounds_path: (tournamentId: number) => string;
   brackets_tournament_rounds_path: (tournamentId: number) => string;
+  markdown_tournament_round_pairings_path: (tournamentId: number, roundId: number) => string;
   pairing_presets_tournament_round_pairing_path: (
     tournamentId: number,
     roundId: number,
@@ -34,6 +35,17 @@ export async function loadBrackets(tournamentId: number): Promise<BracketData> {
   return (await response.json()) as BracketData;
 }
 
+export async function loadSharingData(tournamentId: number, roundId: number): Promise<SharingData> {
+  const response = await fetch(
+    Routes.markdown_tournament_round_pairings_path(tournamentId, roundId),
+    {
+      method: "GET",
+    },
+  );
+
+  return (await response.json()) as SharingData;
+}
+
 export interface PairingsData {
   policy: TournamentPolicies;
   is_player_meeting: boolean;
@@ -42,6 +54,14 @@ export interface PairingsData {
 
 export interface BracketData {
   stages: Stage[];
+}
+
+export class SharingData {
+  markdown: string;
+
+  constructor() {
+    this.markdown = "";
+  }
 }
 
 export interface TournamentPolicies {
