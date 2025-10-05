@@ -38,8 +38,10 @@ group :development, :test do
   gem 'brakeman'
   gem 'bullet'
   gem 'debug'
+  gem 'factory_bot_rails'
   gem 'pry'
   gem 'ruby-lsp-rails', require: false
+  gem 'ruby-lsp-rails-factory-bot', '~> 0.6.0'
   gem 'ruby-lsp-rspec', require: false
   gem 'simplecov'
   gem 'simplecov-cobertura'
@@ -50,7 +52,6 @@ group :test do
   gem 'bundler-audit'
   gem 'capybara'
   gem 'database_cleaner'
-  gem 'factory_bot_rails'
   gem 'faker'
   gem 'launchy'
   gem 'rspec-rails'
@@ -68,3 +69,4 @@ group :development do
   gem 'spring'
   gem 'stackprof'
 end
+
