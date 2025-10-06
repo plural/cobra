@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       patch :update_timer, on: :member
       get :view_pairings, on: :collection
       get :pairings_data, on: :collection
+      get :brackets, on: :collection
     end
     get :bracket, on: :member
     resources :stages, only: %i[show create update destroy] do

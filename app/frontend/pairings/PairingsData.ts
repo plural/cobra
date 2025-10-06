@@ -2,6 +2,7 @@ import type { Identity } from "../identities/Identity";
 
 declare const Routes: {
   pairings_data_tournament_rounds_path: (tournamentId: number) => string;
+  brackets_tournament_rounds_path: (tournamentId: number) => string;
   pairing_presets_tournament_round_pairing_path: (
     tournamentId: number,
     roundId: number,
@@ -22,9 +23,24 @@ export async function loadPairings(
   return (await response.json()) as PairingsData;
 }
 
+export async function loadBrackets(tournamentId: number): Promise<BracketData> {
+  const response = await fetch(
+    Routes.brackets_tournament_rounds_path(tournamentId),
+    {
+      method: "GET",
+    },
+  );
+
+  return (await response.json()) as BracketData;
+}
+
 export interface PairingsData {
   policy: TournamentPolicies;
   is_player_meeting: boolean;
+  stages: Stage[];
+}
+
+export interface BracketData {
   stages: Stage[];
 }
 
