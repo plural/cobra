@@ -32,7 +32,6 @@ RSpec.describe 'registering a deck from NetrunnerDB' do
 
   it 'displays a deck in the list' do
     register_as_player
-    create(:identity, nrdb_code: '26010', name: 'Az McCaffrey: Mechanical Prodigy')
     VCR.use_cassette 'nrdb_decks/az_palantir_full_deck' do
       visit registration_tournament_path(tournament)
     end
@@ -53,8 +52,6 @@ RSpec.describe 'registering a deck from NetrunnerDB' do
   context 'submitting decks' do
     before do
       register_as_player
-      create(:identity, nrdb_code: '01054', name: 'Haas-Bioroid: Engineering the Future')
-      create(:identity, nrdb_code: '26010', name: 'Az McCaffrey: Mechanical Prodigy')
       VCR.use_cassette 'nrdb_decks/az_palantir_and_jammy_hb' do
         visit registration_tournament_path(tournament)
         select_corp_deck Deck.new identity_title: 'Haas-Bioroid: Engineering the Future',
