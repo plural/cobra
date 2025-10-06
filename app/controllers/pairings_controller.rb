@@ -38,15 +38,26 @@ class PairingsController < ApplicationController
   def markdown
     authorize @tournament, :show?
 
-    markdown = "# #{@round.stage.format.titleize} Round #{@round.number} Pairings"
+    page_header = "# #{@round.stage.format.titleize} - Round #{@round.number} Pairings"
 
+    pages = []
+    current_page = page_header
     @round.pairings.includes(:player1, :player2, :stage).sort_by(&:table_number).each do |p|
-      markdown += "\n- **#{p.table_label}**"
-      markdown += "\n  #{p.player1.name_with_pronouns} #{p.side == 'player1_is_corp' ? '(Corp)' : '(Runner)'}"
-      markdown += "\n  #{p.player2.name_with_pronouns} #{p.side == 'player1_is_corp' ? '(Runner)' : '(Corp)'}"
+      table_md = "\n### #{p.table_label}"
+      table_md += "\n- #{pairing_player_markdown(p.player1, p.player1_side == :corp)}"
+      table_md += "\n- #{pairing_player_markdown(p.player2, p.player2_side == :corp)}"
+
+      if current_page.length + table_md.length >= 2000
+        pages.append(current_page)
+        current_page = page_header
+      end
+
+      current_page += table_md
     end
 
-    render json: { markdown: }
+    pages.append(current_page)
+
+    render json: { pages: }
   end
 
   def create
@@ -176,5 +187,11 @@ class PairingsController < ApplicationController
     params.require(:pairing)
           .permit(:score1_runner, :score1_corp, :score2_runner, :score2_corp,
                   :score1, :score2, :side, :intentional_draw, :two_for_one)
+  end
+
+  def pairing_player_markdown(player, is_corp)
+    markdown = "**#{player.name}**"
+    markdown += " *(#{player.pronouns})*" unless player.pronouns.nil? || player.pronouns.empty?
+    markdown += " - #{is_corp ? 'Corp' : 'Runner'}" if @round.stage.single_sided?
   end
 end

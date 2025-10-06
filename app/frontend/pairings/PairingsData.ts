@@ -57,10 +57,10 @@ export interface BracketData {
 }
 
 export class SharingData {
-  markdown: string;
+  pages: string[];
 
   constructor() {
-    this.markdown = "";
+    this.pages = [];
   }
 }
 

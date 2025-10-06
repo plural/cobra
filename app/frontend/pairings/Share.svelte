@@ -19,7 +19,7 @@
 
   function copyMarkdown(e: MouseEvent, markdown: string) {
     e.preventDefault();
-    
+
     try {
       navigator.clipboard.writeText(markdown);
     } catch (err) {
@@ -35,10 +35,17 @@
 </p>
 
 {#if data}
-  <div>
-    <textarea readonly={true}>{data.markdown}</textarea>
-    <button onclick={(e) => { copyMarkdown(e, data.markdown) }} class="btn btn-info align-top"><FontAwesomeIcon icon="copy" /> Copy</button>
-  </div>
+  <h2>Share Pairings to Discord</h2>
+
+  {#each data.pages as page, i}
+    <div class="mb-3">
+      {#if data.pages.length > 1}
+        <h3>Page {i + 1}</h3>
+      {/if}
+      <textarea readonly={true}>{page}</textarea>
+      <button onclick={(e) => { copyMarkdown(e, page) }} class="btn btn-info align-top"><FontAwesomeIcon icon="copy" /> Copy</button>
+    </div>
+  {/each}
 {:else}
   <div class="d-flex align-items-center m-2">
     <div class="spinner-border m-auto"></div>
