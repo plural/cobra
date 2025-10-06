@@ -89,7 +89,7 @@
     if (!source) return null;
 
     const role = source.method === "winner" ? "Winner" : "Loser";
-    return `${role} of ${source.game}`;
+    return `${role} of ${String(source.game)}`;
   }
 
   $: sources = predecessorMap[match.table_number] ?? [];
