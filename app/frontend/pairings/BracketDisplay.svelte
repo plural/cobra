@@ -29,23 +29,29 @@
     return true;
   }
 
-  const allPairings = $derived(stage.rounds.flatMap(r => r.pairings));
-  
+  const allPairings = $derived(stage.rounds.flatMap((r) => r.pairings));
+
   const predecessorMap: PredecessorMap = $derived.by(() => {
     const map: PredecessorMap = {};
-    
+
     for (const pairing of allPairings) {
       if (pairing.winner_game) {
-        map[pairing.winner_game] = [...(map[pairing.winner_game] ?? []), { method: 'winner', game: pairing.table_number }];
+        map[pairing.winner_game] = [
+          ...(map[pairing.winner_game] ?? []),
+          { method: "winner", game: pairing.table_number },
+        ];
       }
       if (pairing.loser_game) {
-        map[pairing.loser_game] = [...(map[pairing.loser_game] ?? []), { method: 'loser', game: pairing.table_number }];
+        map[pairing.loser_game] = [
+          ...(map[pairing.loser_game] ?? []),
+          { method: "loser", game: pairing.table_number },
+        ];
       }
     }
-    
+
     return map;
   });
-  
+
   const upperRounds = $derived(
     stage.rounds.map((r) => ({
       number: r.number,

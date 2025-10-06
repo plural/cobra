@@ -1,5 +1,10 @@
 <script lang="ts">
-  import type { Pairing, Player, PlayerSource, PredecessorMap } from "./PairingsData";
+  import type {
+    Pairing,
+    Player,
+    PlayerSource,
+    PredecessorMap,
+  } from "./PairingsData";
   import type { Identity } from "../identities/Identity";
   import IdentityComponent from "../identities/Identity.svelte";
   import { showIdentities } from "./ShowIdentities";
@@ -22,9 +27,7 @@
   }
 
   function hasWinner(match: Pairing): boolean {
-    return (
-      match.score_label.includes("R") || match.score_label.includes("C")
-    );
+    return match.score_label.includes("R") || match.score_label.includes("C");
   }
 
   function isWinner(player: Player | undefined | null): boolean {
@@ -51,13 +54,14 @@
   }
 
   $: topPlayer = match.player1.side === "corp" ? match.player1 : match.player2;
-  $: bottomPlayer = match.player1.side === "corp" ? match.player2 : match.player1;
+  $: bottomPlayer =
+    match.player1.side === "corp" ? match.player2 : match.player1;
 
   function getPlayerBySide(match: Pairing, isWinner: boolean): Player | null {
     if (!hasWinner(match)) return null;
     const winnerSide = parseWinnerSide(match.score_label);
     const player1IsWinner = match.player1.side === winnerSide;
-    return (player1IsWinner === isWinner) ? match.player1 : match.player2;
+    return player1IsWinner === isWinner ? match.player1 : match.player2;
   }
 
   function getWinner(match: Pairing): Player | null {
@@ -70,21 +74,23 @@
 
   function getPlayerFromSource(source: PlayerSource | null): string | null {
     if (!source) return null;
-    
-    const sourceMatch = allMatches.find(m => m.table_number === source.game);
+
+    const sourceMatch = allMatches.find((m) => m.table_number === source.game);
     if (!sourceMatch) return null;
-    
-    const player = source.method === 'winner' ? getWinner(sourceMatch) : getLoser(sourceMatch);
+
+    const player =
+      source.method === "winner"
+        ? getWinner(sourceMatch)
+        : getLoser(sourceMatch);
     return player ? player.name_with_pronouns : null;
   }
 
   function getFallbackText(source: PlayerSource | null): string | null {
     if (!source) return null;
-    
-    const role = source.method === 'winner' ? 'Winner' : 'Loser';
+
+    const role = source.method === "winner" ? "Winner" : "Loser";
     return `${role} of ${String(source.game)}`;
   }
-
 
   $: sources = predecessorMap[match.table_number] ?? [];
   $: topPlayerName = getPlayerFromSource(sources[0] ?? null);
@@ -137,7 +143,10 @@
               {/if}
             {/if}
           {:else if topPlayerName ?? topFallback}
-            <span class="truncate" class:placeholder-text={topPlayerName == null}>
+            <span
+              class="truncate"
+              class:placeholder-text={topPlayerName == null}
+            >
               {topPlayerName ?? topFallback}
             </span>
           {:else}
@@ -181,7 +190,10 @@
               {/if}
             {/if}
           {:else if bottomPlayerName ?? bottomFallback}
-            <span class="truncate" class:placeholder-text={bottomPlayerName == null}>
+            <span
+              class="truncate"
+              class:placeholder-text={bottomPlayerName == null}
+            >
               {bottomPlayerName ?? bottomFallback}
             </span>
           {:else}
