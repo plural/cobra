@@ -58,7 +58,8 @@ export interface Pairing {
   intentional_draw: boolean;
   two_for_one: boolean;
   self_report: SelfReport | null;
-  successor_game: number | null;
+  winner_game: number | null;
+  loser_game: number | null;
   bracket_type: string | null;
   ui_metadata: UiMetadata;
 }

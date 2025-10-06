@@ -235,7 +235,8 @@ class RoundsController < ApplicationController
         two_for_one:,
         self_report: self_report_result,
         round: bracket_game ? bracket_game[:round] : nil,
-        successor_game: bracket_game ? bracket_game[:successor_game] : nil,
+        winner_game: bracket_game ? bracket_game[:winner_game] : nil,
+        loser_game: bracket_game ? bracket_game[:loser_game] : nil,
         bracket_type: bracket_game ? bracket_game[:bracket_type] : nil
       }
     end
@@ -353,7 +354,8 @@ class RoundsController < ApplicationController
         id: nil,
         table_number: game[:number],
         round: game[:round],
-        successor_game: game[:successor],
+        winner_game: game[:winner_game],
+        loser_game: game[:loser_game],
         bracket_type: game[:bracket_type].to_s
       }
     end
