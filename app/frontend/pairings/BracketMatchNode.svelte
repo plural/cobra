@@ -1,10 +1,12 @@
 <script lang="ts">
-  import type { BracketMatch, BracketPlayer } from "./bracketTypes";
+  import type { Pairing, Player, PlayerSource, PredecessorMap } from "./PairingsData";
   import type { Identity } from "../identities/Identity";
   import IdentityComponent from "../identities/Identity.svelte";
   import { showIdentities } from "./ShowIdentities";
 
-  export let match: BracketMatch;
+  export let match: Pairing;
+  export let allMatches: Pairing[];
+  export let predecessorMap: PredecessorMap;
   export let x: number;
   export let y: number;
   export let width: number;
@@ -19,33 +21,33 @@
     return res[1] === "C" ? "corp" : "runner";
   }
 
-  function hasWinner(match: BracketMatch): boolean {
+  function hasWinner(match: Pairing): boolean {
     return (
       !!match.score_label?.includes("R") || !!match.score_label?.includes("C")
     );
   }
 
-  function isWinner(player: BracketPlayer | undefined | null): boolean {
+  function isWinner(player: Player | undefined | null): boolean {
     if (!player) return false;
     if (!hasWinner(match)) return false;
     const winnerSide = parseWinnerSide(match.score_label);
     return winnerSide === player.side;
   }
 
-  function isLoser(player: BracketPlayer | undefined | null): boolean {
+  function isLoser(player: Player | undefined | null): boolean {
     if (!player) return false;
     if (!hasWinner(match)) return false;
     const winnerSide = parseWinnerSide(match.score_label);
     return winnerSide !== player.side;
   }
 
-  function labelFor(match: BracketMatch): string {
+  function labelFor(match: Pairing): string {
     return match.table_number != null
       ? String(match.table_number)
       : (match.table_label ?? "");
   }
 
-  function getIdentity(player: BracketPlayer): Identity | undefined | null {
+  function getIdentity(player: Player): Identity | undefined | null {
     if (player.side === "corp") {
       return player.corp_id;
     } else if (player.side === "runner") {
@@ -57,6 +59,42 @@
   $: topPlayer = match.player1?.side === "corp" ? match.player1 : match.player2;
   $: bottomPlayer =
     match.player1?.side === "corp" ? match.player2 : match.player1;
+
+  function getWinner(match: Pairing): Player | null {
+    if (!hasWinner(match)) return null;
+    const winnerSide = parseWinnerSide(match.score_label);
+    return [match.player1, match.player2].find(p => p?.side === winnerSide) ?? null;
+  }
+
+  function getLoser(match: Pairing): Player | null {
+    if (!hasWinner(match)) return null;
+    const winnerSide = parseWinnerSide(match.score_label);
+    return [match.player1, match.player2].find(p => p && p.side !== winnerSide) ?? null;
+  }
+
+  function getPlayerFromSource(source: PlayerSource | null): string | null {
+    if (!source) return null;
+    
+    const sourceMatch = allMatches.find(m => m.table_number === source.game);
+    if (!sourceMatch) return null;
+    
+    const player = source.method === 'winner' ? getWinner(sourceMatch) : getLoser(sourceMatch);
+    return player?.name_with_pronouns ?? null;
+  }
+
+  function getFallbackText(source: PlayerSource | null): string | null {
+    if (!source) return null;
+    
+    const role = source.method === 'winner' ? 'Winner' : 'Loser';
+    return `${role} of ${source.game}`;
+  }
+
+
+  const sources = predecessorMap[match.table_number];
+  $: topPlayerName = getPlayerFromSource(sources?.[0]);
+  $: topFallback = getFallbackText(sources?.[0]);
+  $: bottomPlayerName = getPlayerFromSource(sources?.[1]);
+  $: bottomFallback = getFallbackText(sources?.[1]);
 </script>
 
 <!-- eslint-disable-next-line @typescript-eslint/restrict-template-expressions -->
@@ -102,6 +140,10 @@
                 </div>
               {/if}
             {/if}
+          {:else if topPlayerName ?? topFallback}
+            <span class="truncate" class:placeholder-text={topPlayerName == null}>
+              {topPlayerName ?? topFallback}
+            </span>
           {:else}
             <em class="text-muted">TBD</em>
           {/if}
@@ -142,6 +184,10 @@
                 </div>
               {/if}
             {/if}
+          {:else if bottomPlayerName ?? bottomFallback}
+            <span class="truncate" class:placeholder-text={bottomPlayerName == null}>
+              {bottomPlayerName ?? bottomFallback}
+            </span>
           {:else}
             <em class="text-muted">TBD</em>
           {/if}
@@ -197,5 +243,9 @@
     overflow-y: visible;
     line-height: 1.2;
     margin-top: 2px;
+  }
+  .placeholder-text {
+    color: #868e96;
+    font-style: italic;
   }
 </style>

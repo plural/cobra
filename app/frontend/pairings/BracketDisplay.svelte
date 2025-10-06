@@ -1,7 +1,6 @@
 <script lang="ts">
-  import type { Stage, Pairing } from "./PairingsData.ts";
+  import type { Stage, Pairing, PredecessorMap } from "./PairingsData.ts";
   import BracketMatchNode from "./BracketMatchNode.svelte";
-  import type { BracketMatch } from "./bracketTypes";
   import { SvelteMap } from "svelte/reactivity";
   import { showIdentities } from "./ShowIdentities";
 
@@ -30,6 +29,23 @@
     return true;
   }
 
+  const allPairings = $derived(stage.rounds.flatMap(r => r.pairings));
+  
+  const predecessorMap: PredecessorMap = $derived.by(() => {
+    const map: PredecessorMap = {};
+    
+    for (const pairing of allPairings) {
+      if (pairing.winner_game) {
+        map[pairing.winner_game] = [...(map[pairing.winner_game] ?? []), { method: 'winner', game: pairing.table_number }];
+      }
+      if (pairing.loser_game) {
+        map[pairing.loser_game] = [...(map[pairing.loser_game] ?? []), { method: 'loser', game: pairing.table_number }];
+      }
+    }
+    
+    return map;
+  });
+  
   const upperRounds = $derived(
     stage.rounds.map((r) => ({
       number: r.number,
@@ -67,11 +83,11 @@
   );
 
   // Extract a flattened list of matches per column to compute connectors
-  function roundsToColumns(rounds: typeof upperRounds): BracketMatch[][] {
+  function roundsToColumns(rounds: typeof upperRounds): Pairing[][] {
     return rounds.sort((a, b) => a.number - b.number).map((r) => r.pairings);
   }
 
-  function keyFor(cIdx: number, rIdx: number, m: BracketMatch): string {
+  function keyFor(cIdx: number, rIdx: number, m: Pairing): string {
     return String(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       m.id ?? m.table_number ?? m.winner_game ?? `${cIdx}-${rIdx}`,
@@ -142,7 +158,7 @@
     },
   );
 
-  function getIndex(cols: BracketMatch[][]) {
+  function getIndex(cols: Pairing[][]) {
     const index = new SvelteMap<string, { col: number; row: number }>();
     cols.forEach((col, cIdx) => {
       col.forEach((m, rIdx) => {
@@ -182,7 +198,7 @@
   );
 
   // Compute Y positions per column so that each game is centered between its predecessors
-  const computeYPositions = $derived((cols: BracketMatch[][]): number[][] => {
+  const computeYPositions = $derived((cols: Pairing[][]): number[][] => {
     const positions: number[][] = cols.map((col) =>
       new Array<number>(col.length).fill(0),
     );
@@ -263,6 +279,8 @@
           {#each col as match, rIdx (keyFor(cIdx, rIdx, match))}
             <BracketMatchNode
               {match}
+              allMatches={allPairings}
+              {predecessorMap}
               x={columnX(cIdx)}
               y={upperY[cIdx]?.[rIdx] ?? baseMatchY(rIdx)}
               width={columnWidth}
@@ -304,6 +322,8 @@
           {#each col as match, rIdx (keyFor(cIdx, rIdx, match))}
             <BracketMatchNode
               {match}
+              allMatches={allPairings}
+              {predecessorMap}
               x={columnX(cIdx + lowerColOffset)}
               y={lowerY[cIdx]?.[rIdx] ?? baseMatchY(rIdx)}
               width={columnWidth}
