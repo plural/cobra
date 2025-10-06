@@ -23,7 +23,7 @@
 
   function hasWinner(match: Pairing): boolean {
     return (
-      !!match.score_label?.includes("R") || !!match.score_label?.includes("C")
+      match.score_label.includes("R") || match.score_label.includes("C")
     );
   }
 
@@ -41,12 +41,6 @@
     return winnerSide !== player.side;
   }
 
-  function labelFor(match: Pairing): string {
-    return match.table_number != null
-      ? String(match.table_number)
-      : (match.table_label ?? "");
-  }
-
   function getIdentity(player: Player): Identity | undefined | null {
     if (player.side === "corp") {
       return player.corp_id;
@@ -56,20 +50,22 @@
     return null;
   }
 
-  $: topPlayer = match.player1?.side === "corp" ? match.player1 : match.player2;
-  $: bottomPlayer =
-    match.player1?.side === "corp" ? match.player2 : match.player1;
+  $: topPlayer = match.player1.side === "corp" ? match.player1 : match.player2;
+  $: bottomPlayer = match.player1.side === "corp" ? match.player2 : match.player1;
 
-  function getWinner(match: Pairing): Player | null {
+  function getPlayerBySide(match: Pairing, isWinner: boolean): Player | null {
     if (!hasWinner(match)) return null;
     const winnerSide = parseWinnerSide(match.score_label);
-    return [match.player1, match.player2].find(p => p?.side === winnerSide) ?? null;
+    const player1IsWinner = match.player1.side === winnerSide;
+    return (player1IsWinner === isWinner) ? match.player1 : match.player2;
+  }
+
+  function getWinner(match: Pairing): Player | null {
+    return getPlayerBySide(match, true);
   }
 
   function getLoser(match: Pairing): Player | null {
-    if (!hasWinner(match)) return null;
-    const winnerSide = parseWinnerSide(match.score_label);
-    return [match.player1, match.player2].find(p => p && p.side !== winnerSide) ?? null;
+    return getPlayerBySide(match, false);
   }
 
   function getPlayerFromSource(source: PlayerSource | null): string | null {
@@ -79,29 +75,29 @@
     if (!sourceMatch) return null;
     
     const player = source.method === 'winner' ? getWinner(sourceMatch) : getLoser(sourceMatch);
-    return player?.name_with_pronouns ?? null;
+    return player ? player.name_with_pronouns : null;
   }
 
   function getFallbackText(source: PlayerSource | null): string | null {
     if (!source) return null;
     
     const role = source.method === 'winner' ? 'Winner' : 'Loser';
-    return `${role} of ${source.game}`;
+    return `${role} of ${String(source.game)}`;
   }
 
 
-  const sources = predecessorMap[match.table_number];
-  $: topPlayerName = getPlayerFromSource(sources?.[0]);
-  $: topFallback = getFallbackText(sources?.[0]);
-  $: bottomPlayerName = getPlayerFromSource(sources?.[1]);
-  $: bottomFallback = getFallbackText(sources?.[1]);
+  $: sources = predecessorMap[match.table_number] ?? [];
+  $: topPlayerName = getPlayerFromSource(sources[0] ?? null);
+  $: topFallback = getFallbackText(sources[0] ?? null);
+  $: bottomPlayerName = getPlayerFromSource(sources[1] ?? null);
+  $: bottomFallback = getFallbackText(sources[1] ?? null);
 </script>
 
 <!-- eslint-disable-next-line @typescript-eslint/restrict-template-expressions -->
 <g transform={`translate(${x}, ${y})`}>
   <rect {width} {height} rx="6" ry="6" fill="#fff" stroke="#ccc" />
   <text x="8" y={height / 2} class="game-label" dominant-baseline="middle"
-    >{labelFor(match)}</text
+    >{match.table_number}</text
   >
   <foreignObject x="28" y="2" width={width - 40} height={height - 4}>
     <div xmlns="http://www.w3.org/1999/xhtml" class="small content">
