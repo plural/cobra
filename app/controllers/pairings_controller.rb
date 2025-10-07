@@ -191,7 +191,8 @@ class PairingsController < ApplicationController
 
   def pairing_player_markdown(player, is_corp)
     markdown = "**#{player.name}**"
-    markdown += " *(#{player.pronouns})*" unless player.pronouns.nil? || player.pronouns.empty?
+    markdown += " *(#{player.pronouns})*" if player.pronouns.present?
     markdown += " - #{is_corp ? 'Corp' : 'Runner'}" if @round.stage.single_sided?
+    markdown
   end
 end
