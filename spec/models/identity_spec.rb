@@ -2,12 +2,12 @@
 
 RSpec.describe Identity do
   describe '.valid?' do
-    before do
-      create(:identity, name: 'My Rad Identity: 2 Cool 4 School')
-    end
+    # before do
+    let(:id) { create(:id_ob) }
+    # end
 
     it 'matches valid IDs' do
-      expect(described_class.valid?('My Rad Identity: 2 Cool 4 School')).to be(true)
+      expect(described_class.valid?(id.name)).to be(true)
     end
 
     it 'identifies invalid IDs' do
