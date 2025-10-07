@@ -1,16 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import BracketDisplay from "./BracketDisplay.svelte";
-  import type { PairingsData } from "./PairingsData";
-  import { loadPairings } from "./PairingsData";
+  import type { BracketData } from "./PairingsData";
+  import { loadBrackets } from "./PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { showIdentities } from "./ShowIdentities";
 
   export let tournamentId: number;
-  let data: PairingsData;
+  let data: BracketData;
 
   onMount(async () => {
-    data = await loadPairings(tournamentId);
+    data = await loadBrackets(tournamentId);
   });
 
   function toggleIdentities() {

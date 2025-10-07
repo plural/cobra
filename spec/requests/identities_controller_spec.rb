@@ -2,28 +2,22 @@
 
 RSpec.describe IdentitiesController do
   describe '#index' do
-    before do
-      create(:identity, name: 'Jack', side: :runner, autocomplete: 'Jack')
-      create(:identity, name: 'Jill', side: :runner, autocomplete: 'Jill')
-      create(:identity, name: 'Conglomo', side: :corp, autocomplete: 'Conglomo')
-      create(:identity,
-             name: 'Dystöpiæ',
-             side: :corp,
-             autocomplete: 'Dystopia')
-    end
-
     it 'lists corp identities' do
+      ampere = create(:id_ampere)
+      etf = create(:id_etf)
+      muslihat = create(:id_muslihat)
+      catalyst = create(:id_catalyst)
+
       get identities_path
 
-      expect(JSON.parse(response.body)).to eq(
-        'corp' => [
-          { 'label' => 'Conglomo', 'value' => 'Conglomo' },
-          { 'label' => 'Dystopia', 'value' => 'Dystöpiæ' }
-        ],
-        'runner' => [
-          { 'label' => 'Jack', 'value' => 'Jack' },
-          { 'label' => 'Jill', 'value' => 'Jill' }
-        ]
+      json = JSON.parse(response.body)
+      expect(json['corp']).to contain_exactly(
+        { 'label' => ampere.autocomplete, 'value' => ampere.name },
+        { 'label' => etf.autocomplete, 'value' => etf.name }
+      )
+      expect(json['runner']).to contain_exactly(
+        { 'label' => catalyst.autocomplete, 'value' => catalyst.name },
+        { 'label' => muslihat.autocomplete, 'value' => muslihat.name }
       )
     end
   end

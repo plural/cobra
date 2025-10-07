@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       patch :update_timer, on: :member
       get :view_pairings, on: :collection
       get :pairings_data, on: :collection
+      get :brackets, on: :collection
     end
     get :bracket, on: :member
     resources :stages, only: %i[show create update destroy] do
@@ -51,6 +52,7 @@ Rails.application.routes.draw do
     get :side_win_percentages, on: :member
     post :cut, on: :member
     get :qr, on: :member
+    get :my_tournament, on: :member
     get :registration, on: :member
     get :timer, on: :member
     patch :open_registration, on: :member

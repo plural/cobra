@@ -1,10 +1,17 @@
 <script lang="ts">
-  import type { BracketMatch, BracketPlayer } from "./bracketTypes";
+  import type {
+    Pairing,
+    Player,
+    PlayerSource,
+    PredecessorMap,
+  } from "./PairingsData";
   import type { Identity } from "../identities/Identity";
   import IdentityComponent from "../identities/Identity.svelte";
   import { showIdentities } from "./ShowIdentities";
 
-  export let match: BracketMatch;
+  export let match: Pairing;
+  export let allMatches: Pairing[];
+  export let predecessorMap: PredecessorMap;
   export let x: number;
   export let y: number;
   export let width: number;
@@ -19,33 +26,25 @@
     return res[1] === "C" ? "corp" : "runner";
   }
 
-  function hasWinner(match: BracketMatch): boolean {
-    return (
-      !!match.score_label?.includes("R") || !!match.score_label?.includes("C")
-    );
+  function hasWinner(match: Pairing): boolean {
+    return match.score_label.includes("R") || match.score_label.includes("C");
   }
 
-  function isWinner(player: BracketPlayer | undefined | null): boolean {
+  function isWinner(player: Player | undefined | null): boolean {
     if (!player) return false;
     if (!hasWinner(match)) return false;
     const winnerSide = parseWinnerSide(match.score_label);
     return winnerSide === player.side;
   }
 
-  function isLoser(player: BracketPlayer | undefined | null): boolean {
+  function isLoser(player: Player | undefined | null): boolean {
     if (!player) return false;
     if (!hasWinner(match)) return false;
     const winnerSide = parseWinnerSide(match.score_label);
     return winnerSide !== player.side;
   }
 
-  function labelFor(match: BracketMatch): string {
-    return match.table_number != null
-      ? String(match.table_number)
-      : (match.table_label ?? "");
-  }
-
-  function getIdentity(player: BracketPlayer): Identity | undefined | null {
+  function getIdentity(player: Player): Identity | undefined | null {
     if (player.side === "corp") {
       return player.corp_id;
     } else if (player.side === "runner") {
@@ -54,16 +53,57 @@
     return null;
   }
 
-  $: topPlayer = match.player1?.side === "corp" ? match.player1 : match.player2;
+  $: topPlayer = match.player1.side === "corp" ? match.player1 : match.player2;
   $: bottomPlayer =
-    match.player1?.side === "corp" ? match.player2 : match.player1;
+    match.player1.side === "corp" ? match.player2 : match.player1;
+
+  function getPlayerBySide(match: Pairing, isWinner: boolean): Player | null {
+    if (!hasWinner(match)) return null;
+    const winnerSide = parseWinnerSide(match.score_label);
+    const player1IsWinner = match.player1.side === winnerSide;
+    return player1IsWinner === isWinner ? match.player1 : match.player2;
+  }
+
+  function getWinner(match: Pairing): Player | null {
+    return getPlayerBySide(match, true);
+  }
+
+  function getLoser(match: Pairing): Player | null {
+    return getPlayerBySide(match, false);
+  }
+
+  function getPlayerFromSource(source: PlayerSource | null): string | null {
+    if (!source) return null;
+
+    const sourceMatch = allMatches.find((m) => m.table_number === source.game);
+    if (!sourceMatch) return null;
+
+    const player =
+      source.method === "winner"
+        ? getWinner(sourceMatch)
+        : getLoser(sourceMatch);
+    return player ? player.name_with_pronouns : null;
+  }
+
+  function getFallbackText(source: PlayerSource | null): string | null {
+    if (!source) return null;
+
+    const role = source.method === "winner" ? "Winner" : "Loser";
+    return `${role} of ${String(source.game)}`;
+  }
+
+  $: sources = predecessorMap[match.table_number] ?? [];
+  $: topPlayerName = getPlayerFromSource(sources[0] ?? null);
+  $: topFallback = getFallbackText(sources[0] ?? null);
+  $: bottomPlayerName = getPlayerFromSource(sources[1] ?? null);
+  $: bottomFallback = getFallbackText(sources[1] ?? null);
 </script>
 
 <!-- eslint-disable-next-line @typescript-eslint/restrict-template-expressions -->
 <g transform={`translate(${x}, ${y})`}>
   <rect {width} {height} rx="6" ry="6" fill="#fff" stroke="#ccc" />
   <text x="8" y={height / 2} class="game-label" dominant-baseline="middle"
-    >{labelFor(match)}</text
+    >{match.table_number}</text
   >
   <foreignObject x="28" y="2" width={width - 40} height={height - 4}>
     <div xmlns="http://www.w3.org/1999/xhtml" class="small content">
@@ -102,6 +142,13 @@
                 </div>
               {/if}
             {/if}
+          {:else if topPlayerName ?? topFallback}
+            <span
+              class="truncate"
+              class:placeholder-text={topPlayerName == null}
+            >
+              {topPlayerName ?? topFallback}
+            </span>
           {:else}
             <em class="text-muted">TBD</em>
           {/if}
@@ -142,6 +189,13 @@
                 </div>
               {/if}
             {/if}
+          {:else if bottomPlayerName ?? bottomFallback}
+            <span
+              class="truncate"
+              class:placeholder-text={bottomPlayerName == null}
+            >
+              {bottomPlayerName ?? bottomFallback}
+            </span>
           {:else}
             <em class="text-muted">TBD</em>
           {/if}
@@ -197,5 +251,9 @@
     overflow-y: visible;
     line-height: 1.2;
     margin-top: 2px;
+  }
+  .placeholder-text {
+    color: #868e96;
+    font-style: italic;
   }
 </style>

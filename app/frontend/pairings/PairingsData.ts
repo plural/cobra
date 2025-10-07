@@ -2,6 +2,7 @@ import type { Identity } from "../identities/Identity";
 
 declare const Routes: {
   pairings_data_tournament_rounds_path: (tournamentId: number) => string;
+  brackets_tournament_rounds_path: (tournamentId: number) => string;
   pairing_presets_tournament_round_pairing_path: (
     tournamentId: number,
     roundId: number,
@@ -22,9 +23,24 @@ export async function loadPairings(
   return (await response.json()) as PairingsData;
 }
 
+export async function loadBrackets(tournamentId: number): Promise<BracketData> {
+  const response = await fetch(
+    Routes.brackets_tournament_rounds_path(tournamentId),
+    {
+      method: "GET",
+    },
+  );
+
+  return (await response.json()) as BracketData;
+}
+
 export interface PairingsData {
   policy: TournamentPolicies;
   is_player_meeting: boolean;
+  stages: Stage[];
+}
+
+export interface BracketData {
   stages: Stage[];
 }
 
@@ -47,6 +63,13 @@ export interface Round {
   pairings_reported: number;
 }
 
+export interface PlayerSource {
+  method: "winner" | "loser";
+  game: number;
+}
+
+export type PredecessorMap = Record<number, PlayerSource[]>;
+
 export interface Pairing {
   id: number;
   table_number: number;
@@ -58,7 +81,8 @@ export interface Pairing {
   intentional_draw: boolean;
   two_for_one: boolean;
   self_report: SelfReport | null;
-  successor_game: number | null;
+  winner_game: number | null;
+  loser_game: number | null;
   bracket_type: string | null;
   ui_metadata: UiMetadata;
 }

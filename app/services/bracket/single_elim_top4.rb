@@ -2,8 +2,8 @@
 
 module Bracket
   class SingleElimTop4 < Base
-    game 1, seed(1), seed(4), round: 1, successor: 3, bracket_type: :upper
-    game 2, seed(2), seed(3), round: 1, successor: 3, bracket_type: :upper
+    game 1, seed(1), seed(4), round: 1, winner_game: 3, bracket_type: :upper
+    game 2, seed(2), seed(3), round: 1, winner_game: 3, bracket_type: :upper
 
     game 3, seed_of([winner(1), winner(2)], 1), seed_of([winner(1), winner(2)], 2), round: 2, bracket_type: :upper
 
