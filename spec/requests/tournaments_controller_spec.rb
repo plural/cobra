@@ -120,4 +120,37 @@ RSpec.describe TournamentsController do
         .to eq([{ 'foo' => 'bar' }, { 'baz' => 'qux' }])
     end
   end
+
+  # Test cases:
+  # - when not signed in, returns unauthorized
+  # - when signed in as a user not in the tournament, returns empty response
+  # - when signed in as a user in the tournament, returns their tournament info
+  describe '#my_tournament' do
+    let(:organizer) { create(:user) }
+    let(:player) { create(:user) }
+    let(:tournament) { create(:tournament, user: organizer) }
+    let(:other_tournament) { create(:tournament, user: other_user) }
+
+    before do
+      sign_in organizer
+      class_double(SummarizedPairings, for_user_in_tournament: { cool: 'pairings' }).as_stubbed_const
+    end
+
+    it 'returns unauthorized when not signed in' do
+      sign_out
+      get my_tournament_tournament_path(tournament)
+
+      expect(response).to have_http_status(:unauthorized)
+      expect(JSON.parse(response.body)).to eq('error' => 'Not authorized')
+    end
+
+    it 'returns an empty-ish response if the user is not a player' do
+      get my_tournament_tournament_path(tournament)
+
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)).to include(
+        'cool' => 'pairings'
+      )
+    end
+  end
 end
