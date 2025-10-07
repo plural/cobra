@@ -12,6 +12,7 @@
   let { tournamentId, roundId }: Props = $props();
 
   let data = $state(new SharingData());
+  let error = $state("");
 
   onMount(async () => {
     data = await loadSharingData(tournamentId, roundId);
@@ -23,7 +24,7 @@
     try {
       navigator.clipboard.writeText(markdown);
     } catch (err) {
-      // TODO: Notify user
+      error = "Unable to copy text.";
     }
   }
 </script>
@@ -36,6 +37,10 @@
 
 {#if data}
   <h2>Share Pairings to Discord</h2>
+
+  {#if error}
+    <div class="alert alert-danger">{error}</div>
+  {/if}
 
   {#each data.pages as page, i}
     <div class="mb-3">
