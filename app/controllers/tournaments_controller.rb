@@ -3,7 +3,7 @@
 class TournamentsController < ApplicationController
   before_action :set_tournament, only: %i[
     show info edit edit_form update destroy
-    upload_to_abr save_json cut qr registration timer
+    upload_to_abr save_json cut qr my_tournament registration timer
     close_registration open_registration lock_player_registrations unlock_player_registrations
     id_and_faction_data cut_conversion_rates side_win_percentages stats bracket
   ]
@@ -292,6 +292,17 @@ class TournamentsController < ApplicationController
 
   def qr
     authorize @tournament, :show?
+  end
+
+  def my_tournament
+    authorize @tournament, :show?
+
+    if current_user.nil?
+      render json: { error: 'Not authorized' }, status: :unauthorized
+      return
+    end
+
+    render json: SummarizedPairings.for_user_in_tournament(current_user.id, @tournament.id)
   end
 
   def close_registration
