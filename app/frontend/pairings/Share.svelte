@@ -18,12 +18,12 @@
     data = await loadSharingData(tournamentId, roundId);
   });
 
-  function copyMarkdown(e: MouseEvent, markdown: string) {
+  async function copyMarkdown(e: MouseEvent, markdown: string) {
     e.preventDefault();
 
     try {
-      navigator.clipboard.writeText(markdown);
-    } catch (err) {
+      await navigator.clipboard.writeText(markdown);
+    } catch {
       error = "Unable to copy text.";
     }
   }
@@ -42,13 +42,19 @@
     <div class="alert alert-danger">{error}</div>
   {/if}
 
-  {#each data.pages as page, i}
+  {#each data.pages as page, i (i)}
     <div class="mb-3">
       {#if data.pages.length > 1}
         <h3>Page {i + 1}</h3>
       {/if}
       <textarea readonly={true}>{page}</textarea>
-      <button onclick={(e) => { copyMarkdown(e, page) }} class="btn btn-info align-top"><FontAwesomeIcon icon="copy" /> Copy</button>
+      <button
+        onclick={(e) => {
+          void copyMarkdown(e, page);
+        }}
+        class="btn btn-info align-top"
+        ><FontAwesomeIcon icon="copy" /> Copy</button
+      >
     </div>
   {/each}
 {:else}

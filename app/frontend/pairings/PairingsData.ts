@@ -3,7 +3,10 @@ import type { Identity } from "../identities/Identity";
 declare const Routes: {
   pairings_data_tournament_rounds_path: (tournamentId: number) => string;
   brackets_tournament_rounds_path: (tournamentId: number) => string;
-  markdown_tournament_round_pairings_path: (tournamentId: number, roundId: number) => string;
+  markdown_tournament_round_pairings_path: (
+    tournamentId: number,
+    roundId: number,
+  ) => string;
   pairing_presets_tournament_round_pairing_path: (
     tournamentId: number,
     roundId: number,
@@ -35,7 +38,10 @@ export async function loadBrackets(tournamentId: number): Promise<BracketData> {
   return (await response.json()) as BracketData;
 }
 
-export async function loadSharingData(tournamentId: number, roundId: number): Promise<SharingData> {
+export async function loadSharingData(
+  tournamentId: number,
+  roundId: number,
+): Promise<SharingData> {
   const response = await fetch(
     Routes.markdown_tournament_round_pairings_path(tournamentId, roundId),
     {
