@@ -36,7 +36,7 @@
 </p>
 
 {#if data}
-  <h2>Share Pairings to Discord</h2>
+  <h2>Export Pairings as Markdown</h2>
 
   {#if error}
     <div class="alert alert-danger">{error}</div>

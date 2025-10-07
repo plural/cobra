@@ -40,13 +40,24 @@ class PairingsController < ApplicationController
 
     page_header = "# #{@round.stage.format.titleize} - Round #{@round.number} Pairings"
 
+    # Retrieve pairing data
+    sql = ActiveRecord::Base.sanitize_sql(
+      [
+        'SELECT * FROM summarized_pairings WHERE tournament_id = ? AND round_id = ? ORDER BY table_number',
+        @tournament.id, @round.id
+      ]
+    )
+    rows = ActiveRecord::Base.connection.exec_query(sql).to_a
+
+    # Construct markdown pages
     pages = []
     current_page = page_header
-    @round.pairings.includes(:player1, :player2, :stage).sort_by(&:table_number).each do |p|
-      table_md = "\n### #{p.table_label}"
-      table_md += "\n- #{pairing_player_markdown(p.player1, p.player1_side == :corp)}"
-      table_md += "\n- #{pairing_player_markdown(p.player2, p.player2_side == :corp)}"
+    rows.sort_by { |r| r['table_number'] }.each do |p|
+      table_md = "\n### #{p['table_number']}"
+      table_md += "\n- #{pairing_player_markdown(p['player1_name'], p['player1_pronouns'], p['side'] == Pairing::SIDE_PLAYER1_CORP)}"
+      table_md += "\n- #{pairing_player_markdown(p['player2_name'], p['player2_pronouns'], p['side'] == Pairing::SIDE_PLAYER2_CORP)}"
 
+      # Pages are capped at 2000 characters to fit within a single Discord message
       if current_page.length + table_md.length >= 2000
         pages.append(current_page)
         current_page = page_header
@@ -189,9 +200,9 @@ class PairingsController < ApplicationController
                   :score1, :score2, :side, :intentional_draw, :two_for_one)
   end
 
-  def pairing_player_markdown(player, is_corp)
-    markdown = "**#{player.name}**"
-    markdown += " *(#{player.pronouns})*" if player.pronouns.present?
+  def pairing_player_markdown(name, pronouns, is_corp)
+    markdown = "**#{name}**"
+    markdown += " *(#{pronouns})*" if pronouns.present?
     markdown += " - #{is_corp ? 'Corp' : 'Runner'}" if @round.stage.single_sided?
     markdown
   end
