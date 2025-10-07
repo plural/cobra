@@ -1,7 +1,6 @@
 <script lang="ts">
-  import type { Stage, Pairing } from "./PairingsData.ts";
+  import type { Stage, Pairing, PredecessorMap } from "./PairingsData.ts";
   import BracketMatchNode from "./BracketMatchNode.svelte";
-  import type { BracketMatch } from "./bracketTypes";
   import { SvelteMap } from "svelte/reactivity";
   import { showIdentities } from "./ShowIdentities";
 
@@ -29,6 +28,29 @@
     }
     return true;
   }
+
+  const allPairings = $derived(stage.rounds.flatMap((r) => r.pairings));
+
+  const predecessorMap: PredecessorMap = $derived.by(() => {
+    const map: PredecessorMap = {};
+
+    for (const pairing of allPairings) {
+      if (pairing.winner_game) {
+        map[pairing.winner_game] = [
+          ...(map[pairing.winner_game] ?? []),
+          { method: "winner", game: pairing.table_number },
+        ];
+      }
+      if (pairing.loser_game) {
+        map[pairing.loser_game] = [
+          ...(map[pairing.loser_game] ?? []),
+          { method: "loser", game: pairing.table_number },
+        ];
+      }
+    }
+
+    return map;
+  });
 
   const upperRounds = $derived(
     stage.rounds.map((r) => ({
@@ -67,15 +89,8 @@
   );
 
   // Extract a flattened list of matches per column to compute connectors
-  function roundsToColumns(rounds: typeof upperRounds): BracketMatch[][] {
+  function roundsToColumns(rounds: typeof upperRounds): Pairing[][] {
     return rounds.sort((a, b) => a.number - b.number).map((r) => r.pairings);
-  }
-
-  function keyFor(cIdx: number, rIdx: number, m: BracketMatch): string {
-    return String(
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      m.id ?? m.table_number ?? m.winner_game ?? `${cIdx}-${rIdx}`,
-    );
   }
 
   // Compute SVG size heuristically
@@ -142,15 +157,11 @@
     },
   );
 
-  function getIndex(cols: BracketMatch[][]) {
+  function getIndex(cols: Pairing[][]) {
     const index = new SvelteMap<string, { col: number; row: number }>();
     cols.forEach((col, cIdx) => {
       col.forEach((m, rIdx) => {
-        index.set(
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          String(m.table_number ?? m.winner_game ?? `${cIdx}-${rIdx}`),
-          { col: cIdx, row: rIdx },
-        );
+        index.set(String(m.table_number), { col: cIdx, row: rIdx });
       });
     });
     return index;
@@ -182,7 +193,7 @@
   );
 
   // Compute Y positions per column so that each game is centered between its predecessors
-  const computeYPositions = $derived((cols: BracketMatch[][]): number[][] => {
+  const computeYPositions = $derived((cols: Pairing[][]): number[][] => {
     const positions: number[][] = cols.map((col) =>
       new Array<number>(col.length).fill(0),
     );
@@ -199,14 +210,12 @@
         const match = cols[c][r];
         const predecessorYs: number[] = [];
         // Find predecessors in any earlier column whose winner game points to this match
-        if (match.table_number != null) {
-          for (let pc = 0; pc < c; pc++) {
-            for (let pr = 0; pr < cols[pc].length; pr++) {
-              const prevMatch = cols[pc][pr];
-              if (prevMatch.winner_game != null) {
-                if (prevMatch.winner_game === match.table_number) {
-                  predecessorYs.push(positions[pc][pr] + matchHeight / 2);
-                }
+        for (let pc = 0; pc < c; pc++) {
+          for (let pr = 0; pr < cols[pc].length; pr++) {
+            const prevMatch = cols[pc][pr];
+            if (prevMatch.winner_game != null) {
+              if (prevMatch.winner_game === match.table_number) {
+                predecessorYs.push(positions[pc][pr] + matchHeight / 2);
               }
             }
           }
@@ -238,7 +247,7 @@
         <g>
           <!-- Connectors -->
           {#each upperCols as col, cIdx (cIdx)}
-            {#each col as m, rIdx (keyFor(cIdx, rIdx, m))}
+            {#each col as m, rIdx (m.id)}
               {#if m.winner_game != null}
                 {#if upperIndex.has(String(m.winner_game))}
                   <path
@@ -260,9 +269,11 @@
 
         <!-- Matches -->
         {#each upperCols as col, cIdx (cIdx)}
-          {#each col as match, rIdx (keyFor(cIdx, rIdx, match))}
+          {#each col as match, rIdx (match.id)}
             <BracketMatchNode
               {match}
+              allMatches={allPairings}
+              {predecessorMap}
               x={columnX(cIdx)}
               y={upperY[cIdx]?.[rIdx] ?? baseMatchY(rIdx)}
               width={columnWidth}
@@ -279,7 +290,7 @@
         <!-- Connectors -->
         <g>
           {#each lowerCols as col, cIdx (cIdx)}
-            {#each col as match, rIdx (keyFor(cIdx, rIdx, match))}
+            {#each col as match, rIdx (match.id)}
               {#if match.winner_game != null}
                 {#if lowerIndex.has(String(match.winner_game))}
                   <path
@@ -301,9 +312,11 @@
         </g>
         <!-- Matches -->
         {#each lowerCols as col, cIdx (cIdx)}
-          {#each col as match, rIdx (keyFor(cIdx, rIdx, match))}
+          {#each col as match, rIdx (match.id)}
             <BracketMatchNode
               {match}
+              allMatches={allPairings}
+              {predecessorMap}
               x={columnX(cIdx + lowerColOffset)}
               y={lowerY[cIdx]?.[rIdx] ?? baseMatchY(rIdx)}
               width={columnWidth}

@@ -63,6 +63,13 @@ export interface Round {
   pairings_reported: number;
 }
 
+export interface PlayerSource {
+  method: "winner" | "loser";
+  game: number;
+}
+
+export type PredecessorMap = Record<number, PlayerSource[]>;
+
 export interface Pairing {
   id: number;
   table_number: number;

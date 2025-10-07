@@ -3,25 +3,6 @@
 RSpec.describe TournamentsController do
   let(:tournament) { create(:tournament, name: 'My Tournament') }
 
-  let(:btl) { create(:identity, name: 'Builder of Nations', faction: 'weyland-consortium') }
-  let(:hoshiko) { create(:identity, name: 'Hoshiko', faction: 'anarch') }
-  let(:sable) { create(:identity, name: 'Sable', faction: 'criminal') }
-  let(:az) { create(:identity, name: 'Az', faction: 'criminal') }
-
-  let(:player1) do
-    create(:player, tournament:, corp_identity: btl.name, corp_identity_ref_id: btl.id, runner_identity: hoshiko.name,
-                    runner_identity_ref_id: hoshiko.id)
-  end
-  let(:player2) do
-    create(:player, tournament:, runner_identity: sable.name,
-                    runner_identity_ref_id: sable.id)
-  end
-  let(:player3) do
-    create(:player, tournament:, corp_identity: btl.name, corp_identity_ref_id: btl.id, runner_identity: az.name,
-                    runner_identity_ref_id: az.id)
-  end
-  let(:player4) { create(:player, tournament:, corp_identity: btl.name, corp_identity_ref_id: btl.id) }
-
   describe '#save_json' do
     before do
       allow(NrtmJson).to receive(:new).with(tournament).and_return(

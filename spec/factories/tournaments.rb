@@ -13,4 +13,17 @@ FactoryBot.define do
       create_list(:player, evaluator.player_count, tournament:)
     end
   end
+
+  factory :sss_tournament, class: 'Tournament' do
+    name { 'SSS Tournament' }
+    user
+
+    transient do
+      player_count { 0 }
+    end
+
+    after(:create) do |tournament, evaluator|
+      create_list(:player, evaluator.player_count, tournament:)
+    end
+  end
 end
