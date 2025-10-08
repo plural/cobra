@@ -52,6 +52,7 @@ Rails.application.routes.draw do
     get :side_win_percentages, on: :member
     post :cut, on: :member
     get :qr, on: :member
+    get :my_tournament, on: :member
     get :registration, on: :member
     get :timer, on: :member
     patch :open_registration, on: :member
@@ -70,6 +71,8 @@ Rails.application.routes.draw do
     get 'type/:type_id', to: 'tournaments#index', on: :collection, as: :tournaments_by_type
   end
   resources :identities, only: [:index]
+
+  resources :profiles, only: [:index]
 
   get '/error', to: 'errors#show'
 
