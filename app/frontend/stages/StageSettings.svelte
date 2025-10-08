@@ -117,7 +117,7 @@
           {#if error}
             <div class="alert alert-danger">{error}</div>
           {/if}
-          {#each data.stage.table_ranges as tableRange (tableRange.id)}
+          {#each data.stage.table_ranges as tableRange (tableRange.first_table)}
             <TableRangeEdit stage={data.stage} {tableRange} />
           {/each}
           <TableRangeEdit bind:this={newTableRangeEdit} stage={data.stage} />
