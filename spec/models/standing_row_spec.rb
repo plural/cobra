@@ -5,10 +5,10 @@ RSpec.describe StandingRow do
   let(:row) { create(:standing_row, player:) }
 
   describe '#corp_identity' do
-    let!(:identity) { create(:identity, name: 'RP') }
+    let!(:identity) { create(:id_au_co) }
 
     before do
-      player.corp_identity = 'RP'
+      player.corp_identity = identity.name
       player.save!
     end
 
@@ -18,10 +18,10 @@ RSpec.describe StandingRow do
   end
 
   describe '#runner_identity' do
-    let!(:identity) { create(:identity, name: 'Reina Roja') }
+    let!(:identity) { create(:id_esa) }
 
     before do
-      player.runner_identity = 'Reina Roja'
+      player.runner_identity = identity.name
       player.save!
     end
 

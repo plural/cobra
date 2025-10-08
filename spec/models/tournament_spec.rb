@@ -59,31 +59,31 @@ RSpec.describe Tournament do
   end
 
   describe '#corp_counts' do
-    let!(:identity) { create(:identity, name: 'Something') }
-    let!(:other_identity) { create(:identity, name: 'Something else') }
+    let!(:id_pd) { create(:id_pd) }
+    let!(:id_nebula) { create(:id_nebula) }
 
     before do
       tournament.players = [
-        create(:player, corp_identity: 'Something'),
-        create(:player, corp_identity: 'Something'),
-        create(:player, corp_identity: 'Something else')
+        create(:player, corp_identity: id_pd.name),
+        create(:player, corp_identity: id_pd.name),
+        create(:player, corp_identity: id_nebula.name)
       ]
     end
 
     it 'returns counts' do
       expect(tournament.corp_counts).to eq([
-                                             [identity, 2, 3],
-                                             [other_identity, 1, 3]
+                                             [id_pd, 2, 3],
+                                             [id_nebula, 1, 3]
                                            ])
     end
   end
 
   describe '#runner_counts' do
-    let!(:identity) { create(:identity, name: 'Some runner') }
+    let!(:identity) { create(:id_esa) }
 
     before do
       tournament.players = [
-        create(:player, runner_identity: 'Some runner')
+        create(:player, runner_identity: identity.name)
       ]
     end
 
@@ -184,23 +184,23 @@ RSpec.describe Tournament do
     end
 
     it 'returns correct data for swiss and for cut' do
-      precision_design = create(:identity, side: 1, name: 'Precision Design', faction: 'haas-bioroid')
-      epiphany = create(:identity, side: 1, name: 'Epiphany', faction: 'nbn')
-      maxx = create(:identity, side: 2, name: 'Maxx', faction: 'anarch')
-      smoke = create(:identity, side: 2, name: 'Smoke', faction: 'shaper')
+      precision_design = create(:id_pd)
+      epiphany = create(:id_epiphany)
+      esa = create(:id_esa)
+      ari = create(:id_ari)
 
       # Add 6 more players with ids in addition to the 4 players already created without ids.
       alpha = create(:player, tournament:, name: 'Alpha',
                               corp_identity_ref_id: precision_design.id,
-                              runner_identity_ref_id: smoke.id)
+                              runner_identity_ref_id: ari.id)
 
       bravo = create(:player, tournament:, name: 'Bravo',
                               corp_identity_ref_id: epiphany.id,
-                              runner_identity_ref_id: maxx.id)
+                              runner_identity_ref_id: esa.id)
 
       charlie = create(:player, tournament:, name: 'Charlie',
                                 corp_identity_ref_id: precision_design.id,
-                                runner_identity_ref_id: maxx.id)
+                                runner_identity_ref_id: esa.id)
 
       delta = create(:player, tournament:, name: 'Delta')
       echo = create(:player, tournament:, name: 'Echo')
@@ -216,16 +216,16 @@ RSpec.describe Tournament do
 
       expect(tournament.id_and_faction_data).to eq(
         {
-          corp: { factions: { 'haas-bioroid' => 2, 'nbn' => 1, 'unspecified' => 7 },
-                  ids: { 'Epiphany' => { count: 1, faction: 'nbn' },
-                         'Precision Design' => { count: 2, faction: 'haas-bioroid' },
+          corp: { factions: { precision_design.faction => 2, epiphany.faction => 1, 'unspecified' => 7 },
+                  ids: { epiphany.name => { count: 1, faction: epiphany.faction },
+                         precision_design.name => { count: 2, faction: precision_design.faction },
                          'Unspecified' => { count: 7, faction: 'unspecified' } } },
           cut: { corp: { factions: {}, ids: {} }, num_players: 0,
                  runner: { factions: {}, ids: {} } },
           num_players: 10,
-          runner: { factions: { 'anarch' => 2, 'shaper' => 1, 'unspecified' => 7 },
-                    ids: { 'Maxx' => { count: 2, faction: 'anarch' },
-                           'Smoke' => { count: 1, faction: 'shaper' },
+          runner: { factions: { esa.faction => 2, ari.faction => 1, 'unspecified' => 7 },
+                    ids: { esa.name => { count: 2, faction: esa.faction },
+                           ari.name => { count: 1, faction: ari.faction },
                            'Unspecified' => { count: 7, faction: 'unspecified' } } }
         }
       )
@@ -235,24 +235,24 @@ RSpec.describe Tournament do
       expect(tournament.id_and_faction_data).to eq(
         {
           corp: { factions: { 'haas-bioroid' => 2, 'nbn' => 1, 'unspecified' => 7 },
-                  ids: { 'Epiphany' => { count: 1, faction: 'nbn' },
-                         'Precision Design' => { count: 2, faction: 'haas-bioroid' },
+                  ids: { epiphany.name => { count: 1, faction: epiphany.faction },
+                         precision_design.name => { count: 2, faction: precision_design.faction },
                          'Unspecified' => { count: 7, faction: 'unspecified' } } },
           cut: {
             corp: { factions: { 'haas-bioroid' => 2, 'unspecified' => 2 },
-                    ids: { 'Precision Design' => { count: 2, faction: 'haas-bioroid' },
+                    ids: { precision_design.name => { count: 2, faction: precision_design.faction },
                            'Unspecified' => { count: 2,
                                               faction: 'unspecified' } } },
             num_players: 4,
             runner: { factions: { 'anarch' => 1, 'shaper' => 1, 'unspecified' => 2 },
-                      ids: { 'Maxx' => { count: 1, faction: 'anarch' },
-                             'Smoke' => { count: 1, faction: 'shaper' },
+                      ids: { esa.name => { count: 1, faction: esa.faction },
+                             ari.name => { count: 1, faction: ari.faction },
                              'Unspecified' => { count: 2, faction: 'unspecified' } } }
           },
           num_players: 10,
           runner: { factions: { 'anarch' => 2, 'shaper' => 1, 'unspecified' => 7 },
-                    ids: { 'Maxx' => { count: 2, faction: 'anarch' },
-                           'Smoke' => { count: 1, faction: 'shaper' },
+                    ids: { esa.name => { count: 2, faction: esa.faction },
+                           ari.name => { count: 1, faction: ari.faction },
                            'Unspecified' => { count: 7, faction: 'unspecified' } } }
         }
       )
@@ -359,21 +359,21 @@ RSpec.describe Tournament do
       tournament.cut_to! :double_elim, 4
     end
 
-    let(:precision_design) { create(:identity, side: 1, name: 'Precision Design', faction: 'haas-bioroid') }
-    let(:epiphany) { create(:identity, side: 1, name: 'Epiphany', faction: 'nbn') }
-    let(:maxx) { create(:identity, side: 2, name: 'Maxx', faction: 'anarch') }
-    let(:smoke) { create(:identity, side: 2, name: 'Smoke', faction: 'shaper') }
+    let(:precision_design) { create(:id_pd) }
+    let(:epiphany) { create(:id_epiphany) }
+    let(:esa) { create(:id_esa) }
+    let(:ari) { create(:id_ari) }
 
     let(:alpha) do
       create(:player, tournament:, name: 'Alpha', corp_identity_ref_id: precision_design.id,
-                      runner_identity_ref_id: smoke.id)
+                      runner_identity_ref_id: ari.id)
     end
     let(:bravo) do
-      create(:player, tournament:, name: 'Bravo', corp_identity_ref_id: epiphany.id, runner_identity_ref_id: maxx.id)
+      create(:player, tournament:, name: 'Bravo', corp_identity_ref_id: epiphany.id, runner_identity_ref_id: esa.id)
     end
     let(:charlie) do
       create(:player, tournament:, name: 'Charlie', corp_identity_ref_id: precision_design.id,
-                      runner_identity_ref_id: maxx.id)
+                      runner_identity_ref_id: esa.id)
     end
     let(:delta) { create(:player, tournament:, name: 'Delta') }
     let(:echo) { create(:player, tournament:, name: 'Echo') }
@@ -394,30 +394,32 @@ RSpec.describe Tournament do
         {
           factions: {
             corp: {
-              'haas-bioroid' => { num_swiss_players: 2, num_cut_players: 0, cut_conversion_percentage: 0.0 },
-              'nbn' => { num_swiss_players: 1, num_cut_players: 0, cut_conversion_percentage: 0.0 },
+              precision_design.faction => { num_swiss_players: 2, num_cut_players: 0, cut_conversion_percentage: 0.0 },
+              epiphany.faction => { num_swiss_players: 1, num_cut_players: 0, cut_conversion_percentage: 0.0 },
               'Unspecified' => { num_swiss_players: 3, num_cut_players: 0, cut_conversion_percentage: 0.0 }
             },
             runner: {
-              'anarch' => { num_swiss_players: 2, num_cut_players: 0, cut_conversion_percentage: 0.0 },
-              'shaper' => { num_swiss_players: 1, num_cut_players: 0, cut_conversion_percentage: 0.0 },
+              esa.faction => { num_swiss_players: 2, num_cut_players: 0, cut_conversion_percentage: 0.0 },
+              ari.faction => { num_swiss_players: 1, num_cut_players: 0, cut_conversion_percentage: 0.0 },
               'Unspecified' => { num_swiss_players: 3, num_cut_players: 0, cut_conversion_percentage: 0.0 }
             }
           },
           identities: {
             corp: {
-              'Epiphany' => { faction: 'nbn', num_swiss_players: 1, num_cut_players: 0,
-                              cut_conversion_percentage: 0.0 },
-              'Precision Design' => { faction: 'haas-bioroid', num_swiss_players: 2, num_cut_players: 0,
-                                      cut_conversion_percentage: 0.0 },
+              epiphany.name => { faction: epiphany.faction, num_swiss_players: 1, num_cut_players: 0,
+                                 cut_conversion_percentage: 0.0 },
+              precision_design.name => { faction: precision_design.faction, num_swiss_players: 2, num_cut_players: 0,
+                                         cut_conversion_percentage: 0.0 },
               'Unspecified' => { faction: 'Unspecified', num_swiss_players: 3, num_cut_players: 0,
                                  cut_conversion_percentage: 0.0 }
             },
             runner: {
               'Unspecified' => { faction: 'Unspecified', num_swiss_players: 3, num_cut_players: 0,
                                  cut_conversion_percentage: 0.0 },
-              'Maxx' => { faction: 'anarch', num_swiss_players: 2, num_cut_players: 0, cut_conversion_percentage: 0.0 },
-              'Smoke' => { faction: 'shaper', num_swiss_players: 1, num_cut_players: 0, cut_conversion_percentage: 0.0 }
+              esa.name => { faction: esa.faction, num_swiss_players: 2, num_cut_players: 0,
+                            cut_conversion_percentage: 0.0 },
+              ari.name => { faction: ari.faction, num_swiss_players: 1, num_cut_players: 0,
+                            cut_conversion_percentage: 0.0 }
             }
           }
         }
@@ -449,20 +451,20 @@ RSpec.describe Tournament do
           },
           identities: {
             corp: {
-              'Epiphany' => { faction: 'nbn', num_swiss_players: 1, num_cut_players: 1,
-                              cut_conversion_percentage: 100.0 },
-              'Precision Design' => { faction: 'haas-bioroid', num_swiss_players: 2, num_cut_players: 2,
-                                      cut_conversion_percentage: 100.0 },
+              epiphany.name => { faction: epiphany.faction, num_swiss_players: 1, num_cut_players: 1,
+                                 cut_conversion_percentage: 100.0 },
+              precision_design.name => { faction: precision_design.faction, num_swiss_players: 2, num_cut_players: 2,
+                                         cut_conversion_percentage: 100.0 },
               'Unspecified' => { faction: 'Unspecified', num_swiss_players: 3, num_cut_players: 1,
                                  cut_conversion_percentage: ((1 / 3.0) * 100).floor(2) }
             },
             runner: {
               'Unspecified' => { faction: 'Unspecified', num_swiss_players: 3, num_cut_players: 1,
                                  cut_conversion_percentage: ((1 / 3.0) * 100).floor(2) },
-              'Maxx' => { faction: 'anarch', num_swiss_players: 2, num_cut_players: 2,
-                          cut_conversion_percentage: 100.0 },
-              'Smoke' => { faction: 'shaper', num_swiss_players: 1, num_cut_players: 1,
-                           cut_conversion_percentage: 100.0 }
+              esa.name => { faction: esa.faction, num_swiss_players: 2, num_cut_players: 2,
+                            cut_conversion_percentage: 100.0 },
+              ari.name => { faction: ari.faction, num_swiss_players: 1, num_cut_players: 1,
+                            cut_conversion_percentage: 100.0 }
             }
           }
         }
