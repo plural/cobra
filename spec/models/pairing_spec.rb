@@ -243,7 +243,8 @@ RSpec.describe Pairing do
         # Check pairing players and sides
         summarized_map = {}
         rows.each do |r|
-          summarized_map[r['pairing_id']] = { p1: r['player1_id'], p2: r['player2_id'], stage_format: r['stage_format'], side: r['side'] }
+          summarized_map[r['pairing_id']] =
+            { p1: r['player1_id'], p2: r['player2_id'], stage_format: r['stage_format'], side: r['side'] }
         end
 
         expect({
@@ -264,7 +265,7 @@ RSpec.describe Pairing do
                  },
                  pairing6.id => {
                    p1: stwyde.id, p2: nil, side: nil, stage_format: 0
-                 },
+                 }
                }).to eq(summarized_map)
       end
     end
