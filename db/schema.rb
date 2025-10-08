@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_05_152400) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_08_193019) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -557,11 +557,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_05_152400) do
               pwi_2.corp_faction AS player2_corp_faction,
               pwi_2.runner_identity AS player2_runner_identity,
               pwi_2.runner_faction AS player2_runner_faction
-             FROM ((((rounds r
-               JOIN pairings p ON ((p.round_id = r.id)))
+             FROM ((((pairings p
+               JOIN rounds r ON ((p.round_id = r.id)))
                JOIN stages s ON ((r.stage_id = s.id)))
-               JOIN players_with_identities pwi_1 ON ((p.player1_id = pwi_1.player_id)))
-               JOIN players_with_identities pwi_2 ON ((p.player2_id = pwi_2.player_id)))
+               LEFT JOIN players_with_identities pwi_1 ON ((p.player1_id = pwi_1.player_id)))
+               LEFT JOIN players_with_identities pwi_2 ON ((p.player2_id = pwi_2.player_id)))
           )
    SELECT tas.tournament_id,
       tas.stage_id,
@@ -597,8 +597,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_05_152400) do
       rap.player2_corp_faction,
       rap.player2_runner_identity,
       rap.player2_runner_faction
-     FROM (tournaments_and_stages tas
-       LEFT JOIN rounds_and_pairings rap ON ((rap.stage_id = tas.stage_id)));
+     FROM (rounds_and_pairings rap
+       LEFT JOIN tournaments_and_stages tas ON ((rap.stage_id = tas.stage_id)));
   SQL
   create_view "summarized_standings", sql_definition: <<-SQL
       WITH two_player_side_bias_by_pairing AS (
