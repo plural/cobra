@@ -355,7 +355,7 @@ class Tournament < ApplicationRecord
 
     sql = build_id_stats_sql(id, is_cut:)
     ActiveRecord::Base.connection.exec_query(sql).each do |row|
-      side = row['side'] == Pairing::SIDE_PLAYER1_CORP ? :corp : :runner
+      side = row['side'] == Pairing.sides[:player1_is_corp] ? :corp : :runner
 
       # We only need to use 1 side to get the total number of players
       results[:num_players] += row['num_ids'] if side == :corp

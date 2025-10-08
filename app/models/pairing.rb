@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class Pairing < ApplicationRecord
-  SIDE_PLAYER1_CORP = 1
-  SIDE_PLAYER2_CORP = 2
-
   belongs_to :round, touch: true
   belongs_to :player1, class_name: 'Player', optional: true
   belongs_to :player2, class_name: 'Player', optional: true

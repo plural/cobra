@@ -52,10 +52,14 @@ class PairingsController < ApplicationController
     # Construct markdown pages
     pages = []
     current_page = page_header
-    rows.sort_by { |r| r['table_number'] }.each do |p|
-      table_md = "\n### #{p['table_number']}"
-      table_md += "\n- #{pairing_player_markdown(p['player1_name'], p['player1_pronouns'], p['side'] == Pairing::SIDE_PLAYER1_CORP)}"
-      table_md += "\n- #{pairing_player_markdown(p['player2_name'], p['player2_pronouns'], p['side'] == Pairing::SIDE_PLAYER2_CORP)}"
+    rows.each do |p|
+      table_md = "\n### Table #{p['table_number']}"
+      table_md += "\n- #{pairing_player_markdown(
+        p['player1_name'], p['player1_pronouns'], p['side'] == Pairing.sides[:player1_is_corp]
+      )}"
+      table_md += "\n- #{pairing_player_markdown(
+        p['player2_name'], p['player2_pronouns'], p['side'] == Pairing.sides[:player2_is_corp]
+      )}"
 
       # Pages are capped at 2000 characters to fit within a single Discord message
       if current_page.length + table_md.length >= 2000
