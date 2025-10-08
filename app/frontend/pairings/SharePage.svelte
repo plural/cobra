@@ -33,9 +33,7 @@
   }
 </script>
 
-{#if page !== undefined}
-  <h3>Page {page}</h3>
-{/if}
+<h3>Page {page}</h3>
 
 <textarea readonly={true}>{text}</textarea>
 
