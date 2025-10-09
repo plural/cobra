@@ -199,4 +199,75 @@ RSpec.describe Pairing do
       expect(pairing.score2).to eq(0)
     end
   end
+
+  # While there is not a SummarizedPairings model, this is reasonable place to put these tests.
+  describe '#summarized_pairings_view' do
+    let(:tournament1) { create(:tournament, swiss_format: :single_sided) }
+    let(:stage1) { tournament1.current_stage }
+    let(:plural) { create(:player, name: 'plural') }
+    let(:evie) { create(:player, name: 'evie') }
+    let(:spiderbro) { create(:player, name: 'spiderbro') }
+    let(:stwyde) { create(:player, name: 'stwyde') }
+    let(:lia) { create(:player, name: 'lia') }
+
+    let(:pairing1) { create(:pairing, stage: stage1, player1: plural, player2: evie, side: :player1_is_corp) }
+    let(:pairing2) { create(:pairing, stage: stage1, player1: stwyde, player2: spiderbro, side: :player1_is_runner) }
+    let(:pairing3) { create(:pairing, stage: stage1, player1: lia, player2: nil) }
+
+    let(:tournament2) { create(:tournament, swiss_format: :double_sided) }
+    let(:stage2) { tournament2.current_stage }
+    let(:pairing4) { create(:pairing, stage: stage2, player1: lia, player2: evie) }
+    let(:pairing5) { create(:pairing, stage: stage2, player1: spiderbro, player2: plural) }
+    let(:pairing6) { create(:pairing, stage: stage2, player1: stwyde, player2: nil) }
+
+    context 'across tournament and pairing types' do
+      it 'returns the correct pairings' do
+        pairing1.save!
+        pairing2.save!
+        pairing3.save!
+        pairing4.save!
+        pairing5.save!
+        pairing6.save!
+
+        puts stage1.format
+        puts stage2.format
+
+        sql = ActiveRecord::Base.sanitize_sql(
+          'SELECT * FROM summarized_pairings'
+        )
+        rows = ActiveRecord::Base.connection.exec_query(sql).to_a
+
+        # Number of pairings records maatches number of summarized_pairings records.
+        expect(described_class.count).to eq(rows.length)
+
+        # Check pairing players and sides
+        summarized_map = {}
+        rows.each do |r|
+          summarized_map[r['pairing_id']] =
+            { p1: r['player1_id'], p2: r['player2_id'], stage_format: r['stage_format'], side: r['side'] }
+        end
+
+        expect({
+                 pairing1.id => {
+                   p1: plural.id, p2: evie.id, side: 1, stage_format: 2
+                 },
+                 pairing2.id => {
+                   p1: stwyde.id, p2: spiderbro.id, side: 2, stage_format: 2
+                 },
+                 pairing3.id => {
+                   p1: lia.id, p2: nil, side: nil, stage_format: 2
+                 },
+                 pairing4.id => {
+                   p1: lia.id, p2: evie.id, side: nil, stage_format: 0
+                 },
+                 pairing5.id => {
+                   p1: spiderbro.id, p2: plural.id, side: nil, stage_format: 0
+                 },
+                 pairing6.id => {
+                   p1: stwyde.id, p2: nil, side: nil, stage_format: 0
+                 }
+               }).to eq(summarized_map)
+      end
+    end
+  end
 end
