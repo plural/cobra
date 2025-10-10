@@ -30,5 +30,8 @@
           =< link_to tournament_round_pairings_path(round.tournament, round), class: 'btn btn-primary' do
             => fa_icon 'list-ul'
             | Pairings by name
+          =< link_to sharing_tournament_round_pairings_path(round.tournament, round), class: 'btn btn-primary' do
+            => fa_icon 'share'
+            | Export markdown
           = render 'round_timer_form', round: round
           = render 'pairings', round: round
