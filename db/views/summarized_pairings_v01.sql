@@ -61,8 +61,8 @@ rounds_and_pairings AS (
         rounds AS r
         INNER JOIN pairings AS p ON p.round_id = r.id
         INNER JOIN stages AS s ON r.stage_id = s.id
-        INNER JOIN players_with_identities AS pwi_1 ON p.player1_id = pwi_1.player_id
-        INNER JOIN players_with_identities AS pwi_2 ON p.player2_id = pwi_2.player_id
+        LEFT JOIN players_with_identities AS pwi_1 ON p.player1_id = pwi_1.player_id
+        LEFT JOIN players_with_identities AS pwi_2 ON p.player2_id = pwi_2.player_id
 )
 SELECT
     tas.tournament_id,

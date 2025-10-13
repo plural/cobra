@@ -297,12 +297,36 @@ class TournamentsController < ApplicationController
   def my_tournament
     authorize @tournament, :show?
 
-    if current_user.nil?
-      render json: { error: 'Not authorized' }, status: :unauthorized
-      return
-    end
+    respond_to do |format|
+      format.html do
+        unless current_user
+          redirect_to tournament_path(@tournament), alert: 'Please log in to view your tournament information.'
+          return
+        end
 
-    render json: SummarizedPairings.for_user_in_tournament(current_user.id, @tournament.id)
+        player = @tournament.players.find_by(user_id: current_user.id)
+        unless player
+          redirect_to tournament_path(@tournament), alert: 'You are not registered in this tournament.'
+          return
+        end
+
+        @my_tournament_data = SummarizedPairings.for_user_in_tournament(current_user.id, @tournament.id)
+      end
+      format.json do
+        if current_user.nil?
+          render json: { error: 'Not authorized' }, status: :unauthorized
+          return
+        end
+
+        player = @tournament.players.find_by(user_id: current_user.id)
+        unless player
+          render json: { error: 'You are not registered in this tournament.' }, status: :unauthorized
+          return
+        end
+
+        render json: SummarizedPairings.for_user_in_tournament(current_user.id, @tournament.id)
+      end
+    end
   end
 
   def close_registration
