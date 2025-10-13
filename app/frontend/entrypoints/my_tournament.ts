@@ -1,12 +1,10 @@
 import { mount } from "svelte";
 import MyTournamentPage from "../tournaments/MyTournamentPage.svelte";
 
-
 interface IdentityData {
   name: string | null;
   faction: string | null;
 }
-
 
 export interface MyTournamentData {
   tournament_id: number;
@@ -54,7 +52,7 @@ document.addEventListener("turbolinks:load", function () {
   if (anchor && anchor.childNodes.length == 0) {
     const dataJson = anchor.getAttribute("data-my-tournament") ?? "{}";
     const data = JSON.parse(dataJson) as MyTournamentData;
-    
+
     mount(MyTournamentPage, {
       target: anchor,
       props: {
@@ -63,4 +61,3 @@ document.addEventListener("turbolinks:load", function () {
     });
   }
 });
-
