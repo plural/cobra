@@ -132,7 +132,9 @@
                     </td>
                     <td class="text-center">
                       {#if isBye(pairing)}
-                        -
+                        {#if pairing.player_score !== null}
+                          {pairing.player_score}
+                        {/if}
                       {:else if pairing.player_score !== null || pairing.opponent_score !== null}
                         {pairing.player_score ?? 0} - {pairing.opponent_score ??
                           0}
