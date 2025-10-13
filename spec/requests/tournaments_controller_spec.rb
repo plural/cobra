@@ -123,34 +123,72 @@ RSpec.describe TournamentsController do
 
   # Test cases:
   # - when not signed in, returns unauthorized
-  # - when signed in as a user not in the tournament, returns empty response
+  # - when signed in as a user not in the tournament, redirects with message
   # - when signed in as a user in the tournament, returns their tournament info
   describe '#my_tournament' do
     let(:organizer) { create(:user) }
     let(:player) { create(:user) }
     let(:tournament) { create(:tournament, user: organizer) }
-    let(:other_tournament) { create(:tournament, user: other_user) }
 
-    before do
-      sign_in organizer
-      class_double(SummarizedPairings, for_user_in_tournament: { cool: 'pairings' }).as_stubbed_const
+    context 'when not signed in' do
+      it 'returns unauthorized when not signed in (JSON)' do
+        get my_tournament_tournament_path(tournament, format: :json)
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(JSON.parse(response.body)).to eq('error' => 'Not authorized')
+      end
+
+      it 'redirects when not signed in (HTML)' do
+        get my_tournament_tournament_path(tournament)
+
+        expect(response).to redirect_to(tournament_path(tournament))
+        expect(flash[:alert]).to eq('Please log in to view your tournament information.')
+      end
     end
 
-    it 'returns unauthorized when not signed in' do
-      sign_out
-      get my_tournament_tournament_path(tournament)
+    context 'when user is in the tournament' do
+      before do
+        create(:player, tournament: tournament, user: organizer)
+        sign_in organizer
+        allow(SummarizedPairings).to receive(:for_user_in_tournament)
+          .and_return({ tournament_id: tournament.id, user_id: organizer.id, pairings: [{ id: 1 }] })
+      end
 
-      expect(response).to have_http_status(:unauthorized)
-      expect(JSON.parse(response.body)).to eq('error' => 'Not authorized')
+      it 'returns tournament data (JSON)' do
+        get my_tournament_tournament_path(tournament, format: :json)
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to include('pairings')
+      end
+
+      it 'renders the my_tournament page (HTML)' do
+        get my_tournament_tournament_path(tournament)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('my_tournament_anchor')
+      end
     end
 
-    it 'returns an empty-ish response if the user is not a player' do
-      get my_tournament_tournament_path(tournament)
+    context 'when user is not in the tournament' do
+      before do
+        sign_in player
+        allow(SummarizedPairings).to receive(:for_user_in_tournament)
+          .and_return({ tournament_id: tournament.id, user_id: player.id, pairings: [] })
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)).to include(
-        'cool' => 'pairings'
-      )
+      it 'returns empty data (JSON)' do
+        get my_tournament_tournament_path(tournament, format: :json)
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(JSON.parse(response.body)).to eq('error' => 'You are not registered in this tournament.')
+      end
+
+      it 'redirects with message (HTML)' do
+        get my_tournament_tournament_path(tournament)
+
+        expect(response).to redirect_to(tournament_path(tournament))
+        expect(flash[:alert]).to eq('You are not registered in this tournament.')
+      end
     end
   end
 end
