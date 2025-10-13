@@ -10,9 +10,7 @@
   export let pairing: Pairing;
   let left_player = pairing.player1;
   let right_player = pairing.player2;
-  console.log(`Format: ${stage.format}`);
   if (pairing.player2.side == "corp" && stage.is_single_sided) {
-    console.log(`Swapping players for round ${round.id.toString()}...`);
     left_player = pairing.player2;
     right_player = pairing.player1;
   }
