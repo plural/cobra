@@ -229,9 +229,6 @@ RSpec.describe Pairing do
         pairing5.save!
         pairing6.save!
 
-        puts stage1.format
-        puts stage2.format
-
         sql = ActiveRecord::Base.sanitize_sql(
           'SELECT * FROM summarized_pairings'
         )
