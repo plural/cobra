@@ -31,6 +31,12 @@ class SummarizedPairings
       side = row['side']
       side = (side == 1 ? 2 : 1) if current_num == '2' && side
 
+      # Build opponent name with pronouns
+      opponent_name = row["#{opponent_prefix}name"]
+      opponent_pronouns = row["#{opponent_prefix}pronouns"]
+      opponent_name_with_pronouns =
+        opponent_pronouns.present? ? "#{opponent_name} (#{opponent_pronouns})" : opponent_name
+
       pairings << {
         stage_id: row['stage_id'],
         stage_number: row['stage_number'],
@@ -42,9 +48,9 @@ class SummarizedPairings
         side: side,
         opponent: {
           user_id: row["#{opponent_prefix}user_id"],
-          name: row["#{opponent_prefix}name"],
-          pronouns: row["#{opponent_prefix}pronouns"],
-          name_with_pronouns: "#{row["#{opponent_prefix}name"]}#{row["#{opponent_prefix}pronouns"].present? ? " (#{row["#{opponent_prefix}pronouns"]})" : ''}",
+          name: opponent_name,
+          pronouns: opponent_pronouns,
+          name_with_pronouns: opponent_name_with_pronouns,
           corp_identity: row["#{opponent_prefix}corp_identity"],
           corp_faction: row["#{opponent_prefix}corp_faction"],
           runner_identity: row["#{opponent_prefix}runner_identity"],

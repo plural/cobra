@@ -148,6 +148,7 @@ RSpec.describe TournamentsController do
 
     context 'when user is in the tournament' do
       before do
+        create(:player, tournament: tournament, user: organizer)
         sign_in organizer
         allow(SummarizedPairings).to receive(:for_user_in_tournament)
           .and_return({ tournament_id: tournament.id, user_id: organizer.id, pairings: [{ id: 1 }] })
