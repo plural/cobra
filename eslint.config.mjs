@@ -25,6 +25,10 @@ export default ts.config(
   },
   {
     languageOptions: { globals: globals.browser },
+
+		rules: {
+			"no-console": "error",
+		},
   },
   {
     files: ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"],

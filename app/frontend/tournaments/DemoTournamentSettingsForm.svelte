@@ -6,13 +6,13 @@
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   export let tournament: DemoTournamentSettings = {};
 
-  export let onSubmit = () => {
-    console.log("Submitted: ", tournament);
-  };
   export let submitLabel = "Save";
   export let submitIcon = "floppy-o";
   export let isSubmitting = false;
   export let errors: Errors = {};
+  export let onSubmit = () => {
+    isSubmitting = true;
+  };
 </script>
 
 <div class="form-group">
