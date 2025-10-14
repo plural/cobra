@@ -1,5 +1,9 @@
 <script lang="ts">
-  import type { BracketStage, BracketPairing, PredecessorMap } from "./BracketData.ts";
+  import type {
+    BracketStage,
+    BracketPairing,
+    PredecessorMap,
+  } from "./BracketData.ts";
   import BracketMatchNode from "./BracketMatchNode.svelte";
   import { SvelteMap } from "svelte/reactivity";
   import { showIdentities } from "../pairings/ShowIdentities";

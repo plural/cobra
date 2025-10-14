@@ -27,7 +27,10 @@
   }
 
   function hasWinner(match: BracketPairing): boolean {
-    return !!(match.score_label && (match.score_label.includes("R") || match.score_label.includes("C")));
+    return !!(
+      match.score_label &&
+      (match.score_label.includes("R") || match.score_label.includes("C"))
+    );
   }
 
   function isWinner(player: Player | undefined | null): boolean {
@@ -57,7 +60,10 @@
   $: bottomPlayer =
     match.player1?.side === "corp" ? match.player2 : match.player1;
 
-  function getPlayerBySide(match: BracketPairing, isWinner: boolean): Player | null {
+  function getPlayerBySide(
+    match: BracketPairing,
+    isWinner: boolean,
+  ): Player | null {
     if (!hasWinner(match)) return null;
     if (!match.player1 || !match.player2) return null;
     const winnerSide = parseWinnerSide(match.score_label);

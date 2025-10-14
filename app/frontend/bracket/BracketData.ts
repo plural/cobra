@@ -62,4 +62,3 @@ export interface PlayerSource {
 }
 
 export type PredecessorMap = Record<number, PlayerSource[]>;
-
