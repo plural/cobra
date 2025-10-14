@@ -1,16 +1,16 @@
 <script lang="ts">
   import type {
-    Pairing,
+    BracketPairing,
     Player,
     PlayerSource,
     PredecessorMap,
-  } from "./PairingsData";
+  } from "./BracketData";
   import type { Identity } from "../identities/Identity";
   import IdentityComponent from "../identities/Identity.svelte";
-  import { showIdentities } from "./ShowIdentities";
+  import { showIdentities } from "../pairings/ShowIdentities";
 
-  export let match: Pairing;
-  export let allMatches: Pairing[];
+  export let match: BracketPairing;
+  export let allMatches: BracketPairing[];
   export let predecessorMap: PredecessorMap;
   export let x: number;
   export let y: number;
@@ -26,8 +26,11 @@
     return res[1] === "C" ? "corp" : "runner";
   }
 
-  function hasWinner(match: Pairing): boolean {
-    return match.score_label.includes("R") || match.score_label.includes("C");
+  function hasWinner(match: BracketPairing): boolean {
+    return !!(
+      match.score_label &&
+      (match.score_label.includes("R") || match.score_label.includes("C"))
+    );
   }
 
   function isWinner(player: Player | undefined | null): boolean {
@@ -53,22 +56,26 @@
     return null;
   }
 
-  $: topPlayer = match.player1.side === "corp" ? match.player1 : match.player2;
+  $: topPlayer = match.player1?.side === "corp" ? match.player1 : match.player2;
   $: bottomPlayer =
-    match.player1.side === "corp" ? match.player2 : match.player1;
+    match.player1?.side === "corp" ? match.player2 : match.player1;
 
-  function getPlayerBySide(match: Pairing, isWinner: boolean): Player | null {
+  function getPlayerBySide(
+    match: BracketPairing,
+    isWinner: boolean,
+  ): Player | null {
     if (!hasWinner(match)) return null;
+    if (!match.player1 || !match.player2) return null;
     const winnerSide = parseWinnerSide(match.score_label);
     const player1IsWinner = match.player1.side === winnerSide;
     return player1IsWinner === isWinner ? match.player1 : match.player2;
   }
 
-  function getWinner(match: Pairing): Player | null {
+  function getWinner(match: BracketPairing): Player | null {
     return getPlayerBySide(match, true);
   }
 
-  function getLoser(match: Pairing): Player | null {
+  function getLoser(match: BracketPairing): Player | null {
     return getPlayerBySide(match, false);
   }
 
