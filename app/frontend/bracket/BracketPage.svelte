@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import BracketDisplay from "./BracketDisplay.svelte";
-  import type { BracketData } from "./PairingsData";
-  import { loadBrackets } from "./PairingsData";
+  import type { BracketData } from "./BracketData";
+  import { loadBrackets } from "./BracketData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { showIdentities } from "./ShowIdentities";
+  import { showIdentities } from "../pairings/ShowIdentities";
 
   export let tournamentId: number;
   let data: BracketData;

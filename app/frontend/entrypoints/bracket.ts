@@ -1,5 +1,5 @@
 import { mount } from "svelte";
-import BracketPage from "../pairings/BracketPage.svelte";
+import BracketPage from "../bracket/BracketPage.svelte";
 
 document.addEventListener("turbolinks:load", function () {
   const anchor = document.getElementById("bracket_anchor");

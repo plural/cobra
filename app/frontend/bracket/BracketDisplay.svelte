@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { Stage, Pairing, PredecessorMap } from "./PairingsData.ts";
+  import type { BracketStage, BracketPairing, PredecessorMap } from "./BracketData.ts";
   import BracketMatchNode from "./BracketMatchNode.svelte";
   import { SvelteMap } from "svelte/reactivity";
-  import { showIdentities } from "./ShowIdentities";
+  import { showIdentities } from "../pairings/ShowIdentities";
 
-  let { stage }: { stage: Stage } = $props();
+  let { stage }: { stage: BracketStage } = $props();
 
   const isDoubleElim = $derived(stage.format === "double_elim");
   const maxRoundNumber = $derived(
@@ -18,13 +18,12 @@
 
   // Filter function to exclude empty bracket reset games
   function shouldIncludePairing(
-    pairing: Pairing,
+    pairing: BracketPairing,
     roundNumber: number,
   ): boolean {
     // If this is the last round in double elim and the pairing has no players, exclude it
     if (isDoubleElim && roundNumber === maxRoundNumber) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      return !!(pairing.player1 || pairing.player2);
+      return !!(pairing.player1 ?? pairing.player2);
     }
     return true;
   }
@@ -89,7 +88,7 @@
   );
 
   // Extract a flattened list of matches per column to compute connectors
-  function roundsToColumns(rounds: typeof upperRounds): Pairing[][] {
+  function roundsToColumns(rounds: typeof upperRounds): BracketPairing[][] {
     return rounds.sort((a, b) => a.number - b.number).map((r) => r.pairings);
   }
 
@@ -157,7 +156,7 @@
     },
   );
 
-  function getIndex(cols: Pairing[][]) {
+  function getIndex(cols: BracketPairing[][]) {
     const index = new SvelteMap<string, { col: number; row: number }>();
     cols.forEach((col, cIdx) => {
       col.forEach((m, rIdx) => {
@@ -193,7 +192,7 @@
   );
 
   // Compute Y positions per column so that each game is centered between its predecessors
-  const computeYPositions = $derived((cols: Pairing[][]): number[][] => {
+  const computeYPositions = $derived((cols: BracketPairing[][]): number[][] => {
     const positions: number[][] = cols.map((col) =>
       new Array<number>(col.length).fill(0),
     );
