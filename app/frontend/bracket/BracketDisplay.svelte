@@ -248,42 +248,42 @@
     {#if upperRounds.length > 0}
       <g>
         <g>
-          <!-- Connectors -->
-          {#each upperCols as col, cIdx (cIdx)}
-            {#each col as m, rIdx (m.id)}
-              {#if m.winner_game != null}
-                {#if upperIndex.has(String(m.winner_game))}
-                  <path
-                    d={connectorPathTo(
-                      upperIndex,
-                      cIdx,
-                      rIdx,
-                      m.winner_game,
-                      upperY,
-                    )}
-                    stroke="#999"
-                    fill="none"
-                  />
-                {/if}
-              {/if}
-            {/each}
-          {/each}
-        </g>
-
-        <!-- Matches -->
+        <!-- Connectors -->
         {#each upperCols as col, cIdx (cIdx)}
-          {#each col as match, rIdx (match.id)}
-            <BracketMatchNode
-              {match}
-              allMatches={allPairings}
-              {predecessorMap}
-              x={columnX(cIdx)}
-              y={upperY[cIdx]?.[rIdx] ?? baseMatchY(rIdx)}
-              width={columnWidth}
-              height={matchHeight}
-            />
+          {#each col as m, rIdx (m.table_number)}
+            {#if m.winner_game != null}
+              {#if upperIndex.has(String(m.winner_game))}
+                <path
+                  d={connectorPathTo(
+                    upperIndex,
+                    cIdx,
+                    rIdx,
+                    m.winner_game,
+                    upperY,
+                  )}
+                  stroke="#999"
+                  fill="none"
+                />
+              {/if}
+            {/if}
           {/each}
         {/each}
+      </g>
+
+      <!-- Matches -->
+      {#each upperCols as col, cIdx (cIdx)}
+        {#each col as match, rIdx (match.table_number)}
+          <BracketMatchNode
+            {match}
+            allMatches={allPairings}
+            {predecessorMap}
+            x={columnX(cIdx)}
+            y={upperY[cIdx]?.[rIdx] ?? baseMatchY(rIdx)}
+            width={columnWidth}
+            height={matchHeight}
+          />
+        {/each}
+      {/each}
       </g>
     {/if}
 
@@ -293,7 +293,7 @@
         <!-- Connectors -->
         <g>
           {#each lowerCols as col, cIdx (cIdx)}
-            {#each col as match, rIdx (match.id)}
+            {#each col as match, rIdx (match.table_number)}
               {#if match.winner_game != null}
                 {#if lowerIndex.has(String(match.winner_game))}
                   <path
@@ -315,7 +315,7 @@
         </g>
         <!-- Matches -->
         {#each lowerCols as col, cIdx (cIdx)}
-          {#each col as match, rIdx (match.id)}
+          {#each col as match, rIdx (match.table_number)}
             <BracketMatchNode
               {match}
               allMatches={allPairings}
