@@ -192,13 +192,21 @@ class RoundsController < ApplicationController
   def pairings_data_rounds(stage, players)
     view_decks = stage.decks_visible_to(current_user) ? true : false
 
+    self_reports_by_pairing_id = if current_user
+                                   SelfReport.joins(pairing: :round)
+                                             .where(rounds: { stage_id: stage.id }, report_player_id: current_user.id)
+                                             .index_by(&:pairing_id)
+                                 else
+                                   {}
+                                 end
+
     # Get data for all paired rounds
     stage.rounds.map do |round|
-      pairings_data_round(stage, players, view_decks, round)
+      pairings_data_round(stage, players, view_decks, round, self_reports_by_pairing_id)
     end
   end
 
-  def pairings_data_round(stage, players, view_decks, round)
+  def pairings_data_round(stage, players, view_decks, round, self_reports_by_pairing_id)
     pairings = []
     pairings_reported = 0
     pairings_fields = %i[id table_number player1_id player2_id side intentional_draw
@@ -207,8 +215,7 @@ class RoundsController < ApplicationController
     id, table_number, player1_id, player2_id, side, intentional_draw,
       two_for_one, score1, score1_corp, score1_runner, score2, score2_corp, score2_runner|
       pairings_reported += score1.nil? && score2.nil? ? 0 : 1
-      # Only show own self report
-      self_report = SelfReport.where(pairing_id: id, report_player_id: current_user.id).first if current_user
+      self_report = self_reports_by_pairing_id[id]
       if self_report
         self_report_result = { report_player_id: self_report.report_player_id }
         if stage.single_sided? && side == 'player1_is_corp'
