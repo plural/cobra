@@ -250,7 +250,7 @@
         <g>
           <!-- Connectors -->
           {#each upperCols as col, cIdx (cIdx)}
-            {#each col as m, rIdx (m.id)}
+            {#each col as m, rIdx (m.table_number)}
               {#if m.winner_game != null}
                 {#if upperIndex.has(String(m.winner_game))}
                   <path
@@ -272,7 +272,7 @@
 
         <!-- Matches -->
         {#each upperCols as col, cIdx (cIdx)}
-          {#each col as match, rIdx (match.id)}
+          {#each col as match, rIdx (match.table_number)}
             <BracketMatchNode
               {match}
               allMatches={allPairings}
@@ -293,7 +293,7 @@
         <!-- Connectors -->
         <g>
           {#each lowerCols as col, cIdx (cIdx)}
-            {#each col as match, rIdx (match.id)}
+            {#each col as match, rIdx (match.table_number)}
               {#if match.winner_game != null}
                 {#if lowerIndex.has(String(match.winner_game))}
                   <path
@@ -315,7 +315,7 @@
         </g>
         <!-- Matches -->
         {#each lowerCols as col, cIdx (cIdx)}
-          {#each col as match, rIdx (match.id)}
+          {#each col as match, rIdx (match.table_number)}
             <BracketMatchNode
               {match}
               allMatches={allPairings}
