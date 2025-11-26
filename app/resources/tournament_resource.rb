@@ -67,7 +67,7 @@ class TournamentResource < ApplicationResource
     # Create a Time object in the specified timezone
     Time.zone = timezone
     Time.zone.parse(datetime_string)
-  rescue ArgumentError => e
+  rescue ArgumentError => _e
     nil
   end
 end
