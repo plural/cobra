@@ -155,7 +155,6 @@
       const x2 = x(toCol);
       const y2 = (yPos[toCol]?.[toRow] ?? baseMatchY(toRow)) + matchHeight / 2;
       const mx = (x1 + x2) / 2;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       return `M ${x1} ${y1} L ${mx} ${y1} L ${mx} ${y2} L ${x2} ${y2}`;
     },
   );
