@@ -17,6 +17,17 @@ RSpec.describe RoundsController do
           .to eq(
             'is_player_meeting' => true,
             'policy' => { 'update' => false },
+            'tournament' =>
+            {
+              'id' => tournament.id,
+              'player_meeting' => true,
+              'registration_open' => false,
+              'registration_unlocked' => false,
+              'self_registration' => false,
+              'locked_players' => 0,
+              'unlocked_players' => 3,
+              'allow_streaming_opt_out' => nil
+            },
             'stages' => [swiss_stage_with_rounds([])]
           )
       end
@@ -29,6 +40,17 @@ RSpec.describe RoundsController do
           .to eq(
             'is_player_meeting' => true,
             'policy' => { 'update' => false },
+            'tournament' =>
+            {
+              'id' => tournament.id,
+              'player_meeting' => true,
+              'registration_open' => false,
+              'registration_unlocked' => false,
+              'self_registration' => false,
+              'locked_players' => 0,
+              'unlocked_players' => 3,
+              'allow_streaming_opt_out' => nil
+            },
             'stages' => [swiss_stage_with_rounds([])]
           )
       end
@@ -41,6 +63,17 @@ RSpec.describe RoundsController do
           .to eq(
             'is_player_meeting' => true,
             'policy' => { 'update' => true },
+            'tournament' =>
+            {
+              'id' => tournament.id,
+              'player_meeting' => true,
+              'registration_open' => false,
+              'registration_unlocked' => false,
+              'self_registration' => false,
+              'locked_players' => 0,
+              'unlocked_players' => 3,
+              'allow_streaming_opt_out' => nil
+            },
             'stages' => [swiss_stage_with_rounds([])]
           )
       end
@@ -58,6 +91,17 @@ RSpec.describe RoundsController do
           .to eq({
                    'is_player_meeting' => false,
                    'policy' => { 'update' => false },
+                   'tournament' =>
+                   {
+                     'id' => tournament.id,
+                     'player_meeting' => false,
+                     'registration_open' => false,
+                     'registration_unlocked' => false,
+                     'self_registration' => false,
+                     'locked_players' => 0,
+                     'unlocked_players' => 3,
+                     'allow_streaming_opt_out' => nil
+                   },
                    'stages' => [swiss_stage_with_rounds(
                      [
                        {
@@ -91,6 +135,17 @@ RSpec.describe RoundsController do
           .to eq({
                    'is_player_meeting' => false,
                    'policy' => { 'update' => true },
+                   'tournament' =>
+                   {
+                     'id' => tournament.id,
+                     'player_meeting' => false,
+                     'registration_open' => false,
+                     'registration_unlocked' => false,
+                     'self_registration' => false,
+                     'locked_players' => 0,
+                     'unlocked_players' => 3,
+                     'allow_streaming_opt_out' => nil
+                   },
                    'stages' => [swiss_stage_with_rounds(
                      [
                        {
@@ -138,6 +193,17 @@ RSpec.describe RoundsController do
           .to eq({
                    'is_player_meeting' => false,
                    'policy' => { 'update' => false },
+                   'tournament' =>
+                   {
+                     'id' => tournament.id,
+                     'player_meeting' => false,
+                     'registration_open' => false,
+                     'registration_unlocked' => false,
+                     'self_registration' => false,
+                     'locked_players' => 0,
+                     'unlocked_players' => 3,
+                     'allow_streaming_opt_out' => nil
+                   },
                    'stages' => [
                      swiss_stage_with_rounds(
                        [
@@ -259,6 +325,17 @@ RSpec.describe RoundsController do
           .to eq({
                    'is_player_meeting' => false,
                    'policy' => { 'update' => false },
+                   'tournament' =>
+                   {
+                     'id' => tournament.id,
+                     'player_meeting' => false,
+                     'registration_open' => false,
+                     'registration_unlocked' => false,
+                     'self_registration' => false,
+                     'locked_players' => 0,
+                     'unlocked_players' => 3,
+                     'allow_streaming_opt_out' => nil
+                   },
                    'stages' => [swiss_stage_with_rounds(
                      [
                        {
@@ -303,6 +380,17 @@ RSpec.describe RoundsController do
           .to eq({
                    'is_player_meeting' => false,
                    'policy' => { 'update' => false },
+                   'tournament' =>
+                   {
+                     'id' => tournament.id,
+                     'player_meeting' => false,
+                     'registration_open' => false,
+                     'registration_unlocked' => false,
+                     'self_registration' => false,
+                     'locked_players' => 0,
+                     'unlocked_players' => 3,
+                     'allow_streaming_opt_out' => nil
+                   },
                    'stages' => [swiss_stage_with_rounds(
                      [
                        {
