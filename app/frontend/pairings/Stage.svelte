@@ -1,10 +1,16 @@
 <script lang="ts">
   import Round from "./Round.svelte";
-  import type { Stage } from "./PairingsData";
+  import type { Stage, Tournament } from "./PairingsData";
 
-  export let stage: Stage;
-  export let tournamentId: number;
-  export let start_expanded: boolean;
+  let {
+    tournament,
+    stage,
+    start_expanded
+  }: {
+    tournament: Tournament;
+    stage: Stage;
+    start_expanded: boolean;
+  } = $props();
 </script>
 
 <div class="accordion mb-3" role="tablist">
@@ -15,7 +21,7 @@
   </div>
   {#each stage.rounds.filter((r) => r.id) as round, index (round.id)}
     <Round
-      {tournamentId}
+      {tournament}
       {round}
       {stage}
       start_expanded={start_expanded && index === stage.rounds.length - 1}

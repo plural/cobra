@@ -1,12 +1,19 @@
 <script lang="ts">
-  import type { Stage, Round } from "./PairingsData";
+  import type { Stage, Round, Tournament } from "./PairingsData";
   import Pairing from "./Pairing.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
-  export let tournamentId: number;
-  export let stage: Stage;
-  export let round: Round;
-  export let start_expanded: boolean;
+  let {
+    tournament,
+    stage,
+    round,
+    start_expanded
+  }: {
+    tournament: Tournament;
+    stage: Stage;
+    round: Round;
+    start_expanded: boolean;
+  } = $props();
 </script>
 
 <div class="card">
@@ -29,7 +36,7 @@
         Pairings by name
       </a>
       {#each round.pairings as pairing (pairing.id)}
-        <Pairing {tournamentId} {pairing} {round} {stage} />
+        <Pairing {tournament} {pairing} {round} {stage} />
       {/each}
     </div>
   </div>

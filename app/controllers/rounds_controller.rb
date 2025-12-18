@@ -26,6 +26,16 @@ class RoundsController < ApplicationController
       policy: {
         update: @tournament.user == current_user
       },
+      tournament: {
+        id: @tournament.id,
+        player_meeting: @tournament.round_ids.empty?,
+        registration_open: @tournament.registration_open?,
+        registration_unlocked: @tournament.registration_unlocked?,
+        self_registration: @tournament.self_registration?,
+        locked_players: @tournament.locked_players.count,
+        unlocked_players: @tournament.unlocked_players.count,
+        allow_streaming_opt_out: @tournament.allow_streaming_opt_out
+      },
       is_player_meeting: @tournament.round_ids.empty?,
       stages: pairings_data_stages
     }

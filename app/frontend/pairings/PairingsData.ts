@@ -43,6 +43,7 @@ export async function loadSharingData(
 
 export interface PairingsData {
   policy: TournamentPolicies;
+  tournament: Tournament;
   is_player_meeting: boolean;
   stages: Stage[];
 }
@@ -60,6 +61,7 @@ export interface TournamentPolicies {
 }
 
 export class Tournament {
+  id = 0;
   player_meeting = false;
   registration_open = false;
   registration_unlocked = false;

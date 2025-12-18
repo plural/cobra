@@ -11,24 +11,22 @@
   import {
     type ScoreReport,
     readableReportScore,
-    reportsMatch,
-    scorePresets,
+    reportsMatch
   } from "./SelfReport";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import SelfReportOptions from "./SelfReportOptions.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";
-  import { csrfToken, redirectRequest } from "../utils/network";
   import PlayerDisplay from "./PlayerDisplay.svelte";
+  import { csrfToken, redirectRequest } from "../utils/network";
+  import AdminReportOptions from "./AdminReportOptions.svelte";
 
   let {
-    tournamentId,
     tournament,
     stage,
     round,
     pairing,
     tournamentPolicies,
   }: {
-    tournamentId: number;
     tournament: Tournament;
     stage: Stage;
     round: Round;
@@ -46,18 +44,6 @@
   let rightPlayerReport: ScoreReport | undefined = $state();
   let playersReported = $state(false);
   let selfReportsMatch = $state(false);
-
-  let showScorePresets = $state(!pairing.reported);
-  let customScore: ScoreReport = $state({
-    score1: pairing.score1,
-    score2: pairing.score2,
-    intentional_draw: pairing.intentional_draw,
-    two_for_one: pairing.two_for_one,
-    score1_corp: 0,
-    score2_runner: 0,
-    score1_runner: 0,
-    score2_corp: 0,
-  });
 
   onMount(() => {
     leftPlayerReport = pairing.self_reports?.find(
@@ -77,10 +63,6 @@
       leftPlayerReport?.score2_runner === rightPlayerReport?.score2_runner;
   });
 
-  function toggleShowScorePresets() {
-    showScorePresets = !showScorePresets;
-  }
-
   function changePlayerSide(player: Player, side: string) {
     if (
       !confirm(`Are you sure you want to switch ${player.name} to ${side}?`)
@@ -94,19 +76,10 @@
     }
 
     void redirectRequest(
-      `/tournaments/${tournamentId}/rounds/${round.id}/pairings/${pairing.id}/report`,
+      `/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
       "POST",
       csrfToken(),
       { side: `player1_is_${sideValue}` },
-    );
-  }
-
-  function submitScore(score: ScoreReport) {
-    void redirectRequest(
-      `/tournaments/${tournamentId}/rounds/${round.id}/pairings/${pairing.id}/report`,
-      "POST",
-      csrfToken(),
-      score,
     );
   }
 
@@ -116,9 +89,18 @@
     }
 
     void redirectRequest(
-      `/tournaments/${tournamentId}/rounds/${round.id}/pairings/${pairing.id}`,
+      `/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}`,
       "DELETE",
       csrfToken(),
+    );
+  }
+
+  function submitScore(score: ScoreReport) {
+    void redirectRequest(
+      `/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
+      "POST",
+      csrfToken(),
+      score,
     );
   }
 
@@ -128,7 +110,7 @@
     }
 
     void redirectRequest(
-      `/tournaments/${tournamentId}/rounds/${round.id}/pairings/${pairing.id}/reset_self_report`,
+      `/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/reset_self_report`,
       "DELETE",
       csrfToken(),
     );
@@ -176,14 +158,14 @@
     {#if tournamentPolicies?.update}
       {#if stage.is_single_sided}
         <a
-          href="/tournaments/{tournamentId}/rounds/{round.id}/pairings/{pairing.id}/view_decks?back_to=rounds"
+          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/{pairing.id}/view_decks?back_to=rounds"
         >
           <FontAwesomeIcon icon="eye" /> View decks
         </a>
       {/if}
     {:else if pairing.player1.side}
       <a
-        href="/tournaments/{tournamentId}/rounds/{round.id}/pairings/{pairing.id}/view_decks?back_to=pairings"
+        href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/{pairing.id}/view_decks?back_to=pairings"
       >
         <FontAwesomeIcon icon="eye" /> View decks
       </a>
@@ -204,105 +186,7 @@
 
   <!-- Score -->
   {#if tournamentPolicies?.update && (!stage.is_single_sided || pairing.player1.side)}
-    <!-- Admin reporting controls -->
-    <div class="col-sm-5 centre_score">
-      {#if showScorePresets}
-        <div>
-          {#each scorePresets(stage, pairing) as score (score.label)}
-            <button
-              type="button"
-              class="btn btn-primary mr-1"
-              onclick={() => {
-                submitScore(score);
-              }}
-            >
-              {score.label}
-            </button>
-          {/each}
-          <button
-            type="button"
-            class="btn btn-primary"
-            onclick={toggleShowScorePresets}>...</button
-          >
-        </div>
-      {:else}
-        <div class="form-row justify-content-center">
-          <div>
-            {#if leftPlayer == pairing.player1}
-              <input
-                id="pairing_score1"
-                class="form-control"
-                style="width: 2.5em;"
-                bind:value={customScore.score1}
-              />
-            {:else}
-              <input
-                id="pairing_score2"
-                class="form-control"
-                style="width: 2.5em;"
-                bind:value={customScore.score2}
-              />
-            {/if}
-          </div>
-
-          <button
-            type="button"
-            class="btn btn-primary mx-2"
-            onclick={() => {
-              submitScore(customScore);
-            }}><FontAwesomeIcon icon="flag-checkered" /> Save</button
-          >
-
-          <div>
-            {#if rightPlayer == pairing.player1}
-              <input
-                id="pairing_score1"
-                class="form-control"
-                style="width: 2.5em;"
-                bind:value={customScore.score1}
-              />
-            {:else}
-              <input
-                id="pairing_score2"
-                class="form-control"
-                style="width: 2.5em;"
-                bind:value={customScore.score2}
-              />
-            {/if}
-          </div>
-
-          <button class="btn btn-primary ml-2" onclick={toggleShowScorePresets}
-            >...</button
-          >
-        </div>
-        <div class="form-row justify-content-center">
-          <div class="form-check form-check-inline">
-            <input
-              id="pairing{pairing.id}ID"
-              type="checkbox"
-              class="form-check-input"
-              bind:checked={customScore.intentional_draw}
-            />
-            <label for="pairing{pairing.id}ID" class="form-check-label"
-              >Intentional Draw</label
-            >
-          </div>
-          {#if !stage.is_single_sided}
-            <div class="form-check form-check-inline">
-              <input
-                id="pairing{pairing.id}_241"
-                type="checkbox"
-                class="form-check-input"
-                bind:checked={customScore.two_for_one}
-              />
-              <label for="pairing{pairing.id}_241" class="form-check-label"
-                >2 for 1</label
-              >
-            </div>
-          {/if}
-        </div>
-      {/if}
-    </div>
+    <AdminReportOptions {stage} {pairing} {submitScore} />
   {:else}
     <!-- Player view -->
     <div class="col-sm-2 centre_score">
@@ -353,7 +237,7 @@
   {:else}
     <div class="col-sm-2">
       {#if pairing.policy.self_report}
-        <SelfReportOptions {tournamentId} {stage} {round} {pairing} />
+        <SelfReportOptions tournamentId={tournament.id} {stage} {round} {pairing} />
       {/if}
       {#if pairing.self_reports && pairing.self_reports.length !== 0}
         Report: {pairing.self_reports[0].label}
