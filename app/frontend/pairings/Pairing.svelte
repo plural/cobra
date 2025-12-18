@@ -76,7 +76,7 @@
     }
 
     void redirectRequest(
-      `/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
+      `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
       "POST",
       csrfToken(),
       { side: `player1_is_${sideValue}` },
@@ -89,7 +89,7 @@
     }
 
     void redirectRequest(
-      `/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}`,
+      `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}`,
       "DELETE",
       csrfToken(),
     );
@@ -97,7 +97,7 @@
 
   function submitScore(score: ScoreReport) {
     void redirectRequest(
-      `/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
+      `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
       "POST",
       csrfToken(),
       score,
@@ -110,7 +110,7 @@
     }
 
     void redirectRequest(
-      `/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/reset_self_report`,
+      `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/reset_self_report`,
       "DELETE",
       csrfToken(),
     );
