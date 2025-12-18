@@ -287,7 +287,6 @@
     {/if}
 
     {#if lowerRounds.length > 0}
-      <!-- eslint-disable-next-line @typescript-eslint/restrict-template-expressions -->
       <g transform={`translate(0, ${svgHeightUpper + bracketGap})`}>
         <!-- Connectors -->
         <g>
