@@ -5,7 +5,7 @@
   let {
     tournament,
     stage,
-    start_expanded
+    start_expanded,
   }: {
     tournament: Tournament;
     stage: Stage;

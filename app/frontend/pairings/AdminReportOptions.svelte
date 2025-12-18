@@ -6,7 +6,7 @@
   let {
     stage,
     pairing,
-    submitScore
+    submitScore,
   }: {
     stage: Stage;
     pairing: Pairing;
@@ -77,8 +77,9 @@
         class="btn btn-primary mx-2"
         onclick={() => {
           submitScore(customScore);
-        }}><FontAwesomeIcon icon="flag-checkered" /> Save</button>
-      
+        }}><FontAwesomeIcon icon="flag-checkered" /> Save</button
+      >
+
       <div>
         {#if rightPlayer == pairing.player1}
           <input

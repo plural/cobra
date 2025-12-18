@@ -11,7 +11,7 @@
   import {
     type ScoreReport,
     readableReportScore,
-    reportsMatch
+    reportsMatch,
   } from "./SelfReport";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import SelfReportOptions from "./SelfReportOptions.svelte";
@@ -237,7 +237,12 @@
   {:else}
     <div class="col-sm-2">
       {#if pairing.policy.self_report}
-        <SelfReportOptions tournamentId={tournament.id} {stage} {round} {pairing} />
+        <SelfReportOptions
+          tournamentId={tournament.id}
+          {stage}
+          {round}
+          {pairing}
+        />
       {/if}
       {#if pairing.self_reports && pairing.self_reports.length !== 0}
         Report: {pairing.self_reports[0].label}

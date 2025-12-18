@@ -7,7 +7,7 @@
     tournament,
     stage,
     round,
-    start_expanded
+    start_expanded,
   }: {
     tournament: Tournament;
     stage: Stage;
