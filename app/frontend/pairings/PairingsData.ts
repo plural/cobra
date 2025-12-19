@@ -58,6 +58,7 @@ export class SharingData {
 
 export interface TournamentPolicies {
   update: boolean;
+  custom_table_numbering: boolean;
 }
 
 export class Tournament {
