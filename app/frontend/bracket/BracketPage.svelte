@@ -4,7 +4,7 @@
   import type { BracketData } from "./BracketData";
   import { loadBrackets } from "./BracketData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { showIdentities } from "../pairings/ShowIdentities";
+  import { showIdentities } from "../utils/ShowIdentities";
 
   export let tournamentId: number;
   let data: BracketData;

@@ -1,19 +1,46 @@
 <script lang="ts">
-  import type { Stage, Round, Tournament } from "./PairingsData";
+  import type {
+    Stage,
+    Round,
+    TournamentPolicies,
+    Tournament,
+  } from "./PairingsData";
   import Pairing from "./Pairing.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
+  import { redirectRequest } from "../utils/network";
+  import { showReportedPairings } from "../utils/ShowReportedPairings";
+  import RoundTimerControls from "./RoundTimerControls.svelte";
 
   let {
     tournament,
     stage,
     round,
-    start_expanded,
+    startExpanded,
+    tournamentPolicies,
   }: {
     tournament: Tournament;
     stage: Stage;
     round: Round;
-    start_expanded: boolean;
+    startExpanded: boolean;
+    tournamentPolicies?: TournamentPolicies;
   } = $props();
+
+  function completeRound() {
+    if (
+      round.pairings.length != round.pairings_reported &&
+      !confirm(
+        "Are you sure you want to complete this round? Are all pairings reported?",
+      )
+    ) {
+      return;
+    }
+
+    void redirectRequest(
+      `/beta/tournaments/${tournament.id}/rounds/${round.id}/complete`,
+      "PATCH",
+      { completed: true },
+    );
+  }
 </script>
 
 <div class="card">
@@ -29,14 +56,61 @@
       </div>
     </div>
   </div>
-  <div class="collapse{start_expanded ? ' show' : ''}" id="round{round.id}">
+
+  <div class="collapse{startExpanded ? ' show' : ''}" id="round{round.id}">
     <div class="col-12 my-3">
-      <a class="btn btn-primary" href="{round.id}/pairings">
-        <FontAwesomeIcon icon="list-ul" />
-        Pairings by name
+      <!-- Admin controls -->
+      {#if tournamentPolicies?.update}
+        <a
+          class="btn btn-warning"
+          href="/tournaments/{tournament.id}/rounds/{round.id}"
+        >
+          <FontAwesomeIcon icon="pencil" /> Edit
+        </a>
+        {#if !round.completed}
+          <button type="button" class="btn btn-warning" onclick={completeRound}>
+            <FontAwesomeIcon icon="check" /> Complete
+          </button>
+        {/if}
+        <a
+          class="btn btn-primary"
+          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/match_slips"
+        >
+          <FontAwesomeIcon icon="flag-checkered" /> Match slips
+        </a>
+        <a
+          class="btn btn-primary"
+          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/sharing"
+        >
+          <FontAwesomeIcon icon="share" /> Export markdown
+        </a>
+      {/if}
+      <a
+        class="btn btn-primary"
+        href="/tournaments/{tournament.id}/rounds/{round.id}/pairings"
+      >
+        <FontAwesomeIcon icon="list-ul" /> Pairings by name
       </a>
+
+      <!-- Timer controls -->
+      {#if tournamentPolicies?.update && !round.completed}
+        <RoundTimerControls tournamentId={tournament.id} {round} />
+      {/if}
+
+      <!-- Pairings -->
       {#each round.pairings as pairing (pairing.id)}
-        <Pairing {tournament} {pairing} {round} {stage} />
+        {#if $showReportedPairings || !pairing.reported}
+          {#if tournamentPolicies?.update}
+            <hr />
+          {/if}
+          <Pairing
+            {tournament}
+            {pairing}
+            {round}
+            {stage}
+            {tournamentPolicies}
+          />
+        {/if}
       {/each}
     </div>
   </div>

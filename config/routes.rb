@@ -27,6 +27,8 @@ Rails.application.routes.draw do
           post :report, on: :member
           delete :reset_self_report, on: :member
         end
+        patch :complete, on: :member
+        patch :update_timer, on: :member
       end
     end
   end

@@ -18,7 +18,6 @@ export function csrfToken() {
 export async function redirectRequest(
   url: string,
   method: string,
-  csrfToken: string,
   body?: object,
 ) {
   const response = await fetch(url, {
@@ -26,7 +25,7 @@ export async function redirectRequest(
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
-      "X-CSRF-Token": csrfToken,
+      "X-CSRF-Token": csrfToken(),
     },
     body: JSON.stringify(body),
   });
