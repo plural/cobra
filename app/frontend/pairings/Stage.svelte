@@ -24,7 +24,7 @@
       {tournament}
       {round}
       {stage}
-      start_expanded={start_expanded && index === stage.rounds.length - 1}
+      startExpanded={start_expanded && index === stage.rounds.length - 1}
     />
   {/each}
 </div>

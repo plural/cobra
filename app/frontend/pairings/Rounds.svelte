@@ -4,7 +4,7 @@
   import type { PairingsData } from "./PairingsData";
   import { loadPairings } from "./PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { showIdentities } from "./ShowIdentities";
+  import { showIdentities } from "../utils/ShowIdentities";
 
   export let tournamentId: number;
   let data: PairingsData;
