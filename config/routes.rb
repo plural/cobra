@@ -20,6 +20,17 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :beta do
+    resources :tournaments do
+      resources :rounds, only: %i[index] do
+        resources :pairings, only: %i[destroy] do
+          post :report, on: :member
+          delete :reset_self_report, on: :member
+        end
+      end
+    end
+  end
+
   resources :tournaments do
     resources :players, only: %i[index new create update destroy] do
       get :standings, on: :collection
