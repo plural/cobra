@@ -106,6 +106,7 @@ RSpec.describe RoundsController do
                      [
                        {
                          'number' => 1,
+                         'completed' => false,
                          'pairings' => [
                            { 'intentional_draw' => false,
                              'player1' => player_with_no_ids('Charlie (she/her)'),
@@ -121,7 +122,15 @@ RSpec.describe RoundsController do
                              'ui_metadata' => { 'row_highlighted' => false },
                              'score_label' => '6 - 0', 'two_for_one' => false,
                              'table_label' => 'Table 2', 'table_number' => 2, 'self_report' => nil }
-                         ], 'pairings_reported' => 1
+                         ],
+                         'pairings_reported' => 1,
+                         'length_minutes' => 65,
+                         'timer' =>
+                         {
+                           'running' => false,
+                           'paused' => false,
+                           'started' => false
+                         }
                        }
                      ]
                    )]
@@ -150,6 +159,7 @@ RSpec.describe RoundsController do
                      [
                        {
                          'number' => 1,
+                         'completed' => false,
                          'pairings' => [
                            { 'intentional_draw' => false,
                              'player1' => player_with_no_ids('Charlie (she/her)'),
@@ -171,7 +181,15 @@ RSpec.describe RoundsController do
                              'ui_metadata' => { 'row_highlighted' => false },
                              'score_label' => '6 - 0', 'two_for_one' => false,
                              'table_label' => 'Table 2', 'table_number' => 2, 'self_report' => nil }
-                         ], 'pairings_reported' => 1
+                         ],
+                         'pairings_reported' => 1,
+                         'length_minutes' => 65,
+                         'timer' =>
+                         {
+                           'running' => false,
+                           'paused' => false,
+                           'started' => false
+                         }
                        }
                      ]
                    )]
@@ -209,6 +227,7 @@ RSpec.describe RoundsController do
                        [
                          {
                            'number' => 1,
+                           'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
                                'player1' => player_with_no_ids('Charlie (she/her)'),
@@ -224,7 +243,15 @@ RSpec.describe RoundsController do
                                'ui_metadata' => { 'row_highlighted' => false },
                                'score_label' => '6 - 0', 'two_for_one' => false,
                                'table_label' => 'Table 2', 'table_number' => 2, 'self_report' => nil }
-                           ], 'pairings_reported' => 1
+                           ],
+                           'pairings_reported' => 1,
+                           'length_minutes' => 65,
+                           'timer' =>
+                           {
+                             'running' => false,
+                             'paused' => false,
+                             'started' => false
+                           }
                          }
                        ]
                      ),
@@ -232,6 +259,7 @@ RSpec.describe RoundsController do
                        [
                          {
                            'number' => 1,
+                           'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
                                'player1' => player_with_no_ids('Bob (he/him)'),
@@ -241,7 +269,14 @@ RSpec.describe RoundsController do
                                'score_label' => ' - ', 'two_for_one' => false,
                                'table_label' => 'Game 1', 'table_number' => 1, 'self_report' => nil }
                            ],
-                           'pairings_reported' => 0
+                           'pairings_reported' => 0,
+                           'length_minutes' => 40,
+                           'timer' =>
+                           {
+                             'running' => false,
+                             'paused' => false,
+                             'started' => false
+                           }
                          }
                        ]
                      )
@@ -259,6 +294,7 @@ RSpec.describe RoundsController do
                        [
                          {
                            'number' => 1,
+                           'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
                                'player1' => player_with_no_ids('Charlie (she/her)'),
@@ -274,7 +310,15 @@ RSpec.describe RoundsController do
                                'ui_metadata' => { 'row_highlighted' => false },
                                'score_label' => '6 - 0', 'two_for_one' => false,
                                'table_label' => 'Table 2', 'table_number' => 2, 'self_report' => nil }
-                           ], 'pairings_reported' => 1
+                           ],
+                           'pairings_reported' => 1,
+                           'length_minutes' => 65,
+                           'timer' =>
+                           {
+                             'running' => false,
+                             'paused' => false,
+                             'started' => false
+                           }
                          }
                        ]
                      ),
@@ -282,6 +326,7 @@ RSpec.describe RoundsController do
                        [
                          {
                            'number' => 1,
+                           'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
                                'player1' => player_with_no_ids('Bob (he/him)'),
@@ -292,7 +337,14 @@ RSpec.describe RoundsController do
                                'table_label' => 'Game 1', 'table_number' => 1, 'self_report' => nil,
                                'round' => 1, 'winner_game' => 2, 'loser_game' => nil, 'bracket_type' => 'upper' }
                            ],
-                           'pairings_reported' => 0
+                           'pairings_reported' => 0,
+                           'length_minutes' => 40,
+                           'timer' =>
+                           {
+                             'running' => false,
+                             'paused' => false,
+                             'started' => false
+                           }
                          },
                          {
                            'number' => 2,
@@ -340,6 +392,7 @@ RSpec.describe RoundsController do
                      [
                        {
                          'number' => 1,
+                         'completed' => false,
                          'pairings' => [
                            { 'intentional_draw' => false,
                              'player1' => player_with_no_ids('Charlie (she/her)', side: 'corp', side_label: '(Corp)'),
@@ -355,7 +408,15 @@ RSpec.describe RoundsController do
                              'ui_metadata' => { 'row_highlighted' => false },
                              'score_label' => '6 - 0', 'two_for_one' => false,
                              'table_label' => 'Table 2', 'table_number' => 2, 'self_report' => nil }
-                         ], 'pairings_reported' => 2
+                         ],
+                         'pairings_reported' => 2,
+                         'length_minutes' => 65,
+                         'timer' =>
+                         {
+                           'running' => false,
+                           'paused' => false,
+                           'started' => false
+                         }
                        }
                      ]
                    )]
@@ -395,6 +456,7 @@ RSpec.describe RoundsController do
                      [
                        {
                          'number' => 1,
+                         'completed' => false,
                          'pairings' => [
                            { 'intentional_draw' => false,
                              'player1' => player_with_no_ids(
@@ -412,7 +474,15 @@ RSpec.describe RoundsController do
                              'ui_metadata' => { 'row_highlighted' => false },
                              'score_label' => '6 - 0', 'two_for_one' => false,
                              'table_label' => 'Table 2', 'table_number' => 2, 'self_report' => nil }
-                         ], 'pairings_reported' => 2
+                         ],
+                         'pairings_reported' => 2,
+                         'length_minutes' => 65,
+                         'timer' =>
+                         {
+                           'running' => false,
+                           'paused' => false,
+                           'started' => false
+                         }
                        }
                      ]
                    )]

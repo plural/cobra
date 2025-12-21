@@ -17,7 +17,7 @@
   import SelfReportOptions from "./SelfReportOptions.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";
   import PlayerDisplay from "./PlayerDisplay.svelte";
-  import { csrfToken, redirectRequest } from "../utils/network";
+  import { redirectRequest } from "../utils/network";
   import AdminReportOptions from "./AdminReportOptions.svelte";
 
   let {
@@ -78,7 +78,6 @@
     void redirectRequest(
       `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
       "POST",
-      csrfToken(),
       { side: `player1_is_${sideValue}` },
     );
   }
@@ -91,7 +90,6 @@
     void redirectRequest(
       `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}`,
       "DELETE",
-      csrfToken(),
     );
   }
 
@@ -99,7 +97,6 @@
     void redirectRequest(
       `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
       "POST",
-      csrfToken(),
       score,
     );
   }
@@ -112,7 +109,6 @@
     void redirectRequest(
       `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/reset_self_report`,
       "DELETE",
-      csrfToken(),
     );
   }
 </script>

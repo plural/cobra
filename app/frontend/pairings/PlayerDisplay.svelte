@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Pairing, Player, TournamentPolicies } from "./PairingsData";
   import Identity from "../identities/Identity.svelte";
-  import { showIdentities } from "./ShowIdentities";
+  import { showIdentities } from "../utils/ShowIdentities";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
   let {

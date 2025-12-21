@@ -7,7 +7,7 @@
   } from "./BracketData";
   import type { Identity } from "../identities/Identity";
   import IdentityComponent from "../identities/Identity.svelte";
-  import { showIdentities } from "../pairings/ShowIdentities";
+  import { showIdentities } from "../utils/ShowIdentities";
 
   export let match: BracketPairing;
   export let allMatches: BracketPairing[];
