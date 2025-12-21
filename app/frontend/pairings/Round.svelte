@@ -29,7 +29,7 @@
     if (
       round.pairings.length != round.pairings_reported &&
       !confirm(
-        "Are you sure you want to complete this round? Are all pairings reported?",
+        `${round.pairings.length - round.pairings_reported} pairings have not been reported. Are you sure you want to complete this round?`,
       )
     ) {
       return;
