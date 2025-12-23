@@ -30,6 +30,8 @@ Rails.application.routes.draw do
         patch :complete, on: :member
         patch :update_timer, on: :member
       end
+      resources :stages, only: %i[destroy] do
+      end
     end
   end
 
