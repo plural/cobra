@@ -42,7 +42,6 @@
 
     try {
       const response = await saveStage(
-        data.csrf_token,
         tournamentId,
         data.stage,
       );

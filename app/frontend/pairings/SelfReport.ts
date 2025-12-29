@@ -1,3 +1,4 @@
+import { csrfToken } from "../utils/network";
 import { type Pairing, type Stage } from "./PairingsData";
 
 declare const Routes: {
@@ -35,7 +36,6 @@ export async function selfReport(
   tournamentId: number,
   roundId: number,
   pairingId: number,
-  csrfToken: string,
   data: ScoreReport,
 ): Promise<SelfReportResult> {
   // Remove UI-specific data to prevent parameter errors on the server
@@ -54,7 +54,7 @@ export async function selfReport(
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        "X-CSRF-Token": csrfToken,
+        "X-CSRF-Token": csrfToken(),
       },
       body: JSON.stringify({ pairing: cleanData }),
     },

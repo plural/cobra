@@ -2,7 +2,6 @@
   import { type Pairing, Player, type Round, type Stage } from "./PairingsData";
   import { type ScoreReport, scorePresets, selfReport } from "./SelfReport";
   import ModalDialog from "../widgets/ModalDialog.svelte";
-  import { csrfToken } from "../utils/network";
 
   let {
     tournamentId,
@@ -49,7 +48,6 @@
       tournamentId,
       round.id,
       pairing.id,
-      csrfToken(),
       report,
     );
     if (!response.success) {
@@ -65,7 +63,6 @@
       tournamentId,
       round.id,
       pairing.id,
-      csrfToken(),
       {
         score1,
         score2,
