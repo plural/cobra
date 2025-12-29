@@ -5,12 +5,20 @@ module Beta
     before_action :set_tournament
     attr_reader :tournament
 
+    def create
+      authorize @tournament, :update?
+
+      round.pairings.create(pairing_params)
+
+      redirect_to beta_tournament_round_path(tournament, round)
+    end
+
     def destroy
       authorize @tournament, :update?
 
       pairing.destroy
 
-      render json: { url: tournament_round_path(tournament, round) }, status: :ok
+      render json: { url: beta_tournament_round_path(tournament, round) }, status: :ok
     end
 
     def report
@@ -45,12 +53,18 @@ module Beta
       pairing.save
     end
 
+    private
+
     def round
       @round ||= Round.find(params[:round_id])
     end
 
     def pairing
       @pairing ||= Pairing.find(params[:id])
+    end
+
+    def pairing_params
+      params.require(:pairing).permit(:player1_id, :player2_id, :table_number, :side)
     end
 
     def score_params

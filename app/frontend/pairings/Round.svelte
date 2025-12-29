@@ -63,7 +63,7 @@
       {#if tournamentPolicies?.update}
         <a
           class="btn btn-warning"
-          href="/tournaments/{tournament.id}/rounds/{round.id}"
+          href="/beta/tournaments/{tournament.id}/rounds/{round.id}"
         >
           <FontAwesomeIcon icon="pencil" /> Edit
         </a>
