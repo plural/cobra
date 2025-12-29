@@ -2,35 +2,12 @@ import { csrfToken } from "../utils/network";
 import { type Pairing, type Stage } from "./PairingsData";
 
 declare const Routes: {
-  pairing_presets_tournament_round_pairing_path: (
-    tournamentId: number,
-    roundId: number,
-    id: number,
-  ) => string;
   self_report_tournament_round_pairing_path: (
     tournamentId: number,
     roundId: number,
     id: number,
   ) => string;
 };
-
-export async function loadPresets(
-  tournamentId: number,
-  roundId: number,
-  pairingId: number,
-): Promise<SelfReportPresetsData> {
-  const response = await fetch(
-    Routes.pairing_presets_tournament_round_pairing_path(
-      tournamentId,
-      roundId,
-      pairingId,
-    ),
-    {
-      method: "GET",
-    },
-  );
-  return (await response.json()) as SelfReportPresetsData;
-}
 
 export async function selfReport(
   tournamentId: number,
@@ -62,16 +39,6 @@ export async function selfReport(
   return (await response.json()) as SelfReportResult;
 }
 
-export interface SelfReportPresets {
-  score1_corp: number;
-  score2_corp: number;
-  score1_runner: number;
-  score2_runner: number;
-  intentional_draw: boolean;
-  label: string;
-  extra_self_report_label?: string;
-}
-
 export interface ScoreReport {
   report_player_id?: number;
   score1: number | null;
@@ -84,11 +51,6 @@ export interface ScoreReport {
   two_for_one?: boolean;
   label?: string;
   extra_self_report_label?: string;
-}
-
-export interface SelfReportPresetsData {
-  presets: SelfReportPresets[];
-  csrf_token: string;
 }
 
 export type SelfReportResult =
