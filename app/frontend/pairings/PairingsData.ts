@@ -3,7 +3,6 @@ import { globalMessages } from "../utils/GlobalMessageState.svelte";
 import type { ScoreReport } from "./SelfReport";
 
 declare const Routes: {
-  pairings_data_tournament_rounds_path: (tournamentId: number) => string;
   markdown_tournament_round_pairings_path: (
     tournamentId: number,
     roundId: number,
@@ -14,7 +13,7 @@ export async function loadPairings(
   tournamentId: number,
 ): Promise<PairingsData> {
   const response = await fetch(
-    Routes.pairings_data_tournament_rounds_path(tournamentId),
+    `/beta/tournaments/${tournamentId}/rounds/pairings_data`,
     {
       method: "GET",
     },

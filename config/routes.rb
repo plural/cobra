@@ -31,6 +31,7 @@ Rails.application.routes.draw do
         patch :complete, on: :member
         get :round_data, on: :member
         patch :update_timer, on: :member
+        get :pairings_data, on: :collection
       end
       resources :stages, only: %i[create destroy]
       patch :open_registration, on: :member

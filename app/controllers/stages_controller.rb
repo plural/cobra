@@ -41,7 +41,7 @@ class StagesController < ApplicationController
       return render json: { error: error }, status: :unprocessable_content
     end
 
-    render json: { url: tournament_stage_path(@tournament, @stage) }, stats: :ok
+    render json: { url: tournament_stage_path(@tournament, @stage) }, status: :ok
   end
 
   def destroy
