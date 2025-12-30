@@ -8,11 +8,6 @@ declare const Routes: {
     tournamentId: number,
     roundId: number,
   ) => string;
-  pairing_presets_tournament_round_pairing_path: (
-    tournamentId: number,
-    roundId: number,
-    id: number,
-  ) => string;
 };
 
 export async function loadPairings(
@@ -43,6 +38,10 @@ export async function loadSharingData(
   );
 
   return (await response.json()) as SharingData;
+}
+
+export interface PairingsContext {
+  showOrganizerView: boolean;
 }
 
 export class PairingsData {
