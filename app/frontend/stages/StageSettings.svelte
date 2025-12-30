@@ -41,10 +41,7 @@
     newTableRangeEdit?.addRange();
 
     try {
-      const response = await saveStage(
-        tournamentId,
-        data.stage,
-      );
+      const response = await saveStage(tournamentId, data.stage);
       window.location.href = response.url;
     } catch (err) {
       error =

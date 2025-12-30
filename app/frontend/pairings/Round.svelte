@@ -2,7 +2,6 @@
   import type {
     Stage,
     Round,
-    TournamentPolicies,
     Tournament,
     PairingsContext,
   } from "./PairingsData";
@@ -105,12 +104,7 @@
           {#if pairingsContext.showOrganizerView}
             <hr />
           {/if}
-          <Pairing
-            {tournament}
-            {pairing}
-            {round}
-            {stage}
-          />
+          <Pairing {tournament} {pairing} {round} {stage} />
         {/if}
       {/each}
     </div>

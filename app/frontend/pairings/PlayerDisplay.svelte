@@ -22,7 +22,6 @@
   const pairingsContext: PairingsContext = getContext("pairingsContext");
 </script>
 
-
 {#snippet setSideButton(player: Player, side: string)}
   <button
     class="btn btn-sm mr-1 {player.side === side

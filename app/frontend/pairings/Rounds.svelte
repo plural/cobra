@@ -1,7 +1,11 @@
 <script lang="ts">
   import { onMount, setContext } from "svelte";
   import Stage from "./Stage.svelte";
-  import { loadPairings, PairingsData, type PairingsContext } from "./PairingsData";
+  import {
+    loadPairings,
+    PairingsData,
+    type PairingsContext,
+  } from "./PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { showIdentities } from "../utils/ShowIdentities";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
@@ -128,7 +132,7 @@
           class="btn btn-info"
           data-toggle="modal"
           data-target="#faq"
-          >
+        >
           <FontAwesomeIcon icon="question" /> FAQ
         </button>
         {#if data.policy.update}
