@@ -1,7 +1,8 @@
 <script lang="ts">
   import type {
-    Stage,
     Round,
+    Stage,
+    TournamentPolicies,
     Tournament,
     PairingsContext,
   } from "./PairingsData";
@@ -17,11 +18,13 @@
     stage,
     round,
     startExpanded,
+    deletePairingCallback,
   }: {
     tournament: Tournament;
     stage: Stage;
     round: Round;
     startExpanded: boolean;
+    deletePairingCallback?: (roundId: number, pairingId: number) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
@@ -104,7 +107,15 @@
           {#if pairingsContext.showOrganizerView}
             <hr />
           {/if}
-          <Pairing {tournament} {pairing} {round} {stage} />
+          <Pairing
+            {tournament}
+            {pairing}
+            {round}
+            {stage}
+            deleteCallback={(pairingId) => {
+              deletePairingCallback?.(round.id, pairingId);
+            }}
+          />
         {/if}
       {/each}
     </div>
