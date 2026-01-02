@@ -6,21 +6,17 @@
   let {
     stage,
     pairing,
-    submitScore,
+    reportScoreCallback,
   }: {
     stage: Stage;
     pairing: Pairing;
-    submitScore: (score: ScoreReport) => void;
+    reportScoreCallback?: (pairingId: number, report: ScoreReport) => void;
   } = $props();
 
-  let leftPlayer = $state(pairing.player1);
-  let rightPlayer = $state(pairing.player2);
-  if (pairing.player2.side == "corp" && stage.is_single_sided) {
-    leftPlayer = pairing.player2;
-    rightPlayer = pairing.player1;
-  }
-  let showScorePresets = $state(!pairing.reported);
-  let customScore: ScoreReport = $state({
+  let leftPlayer = $derived(pairing.player2.side == "corp" && stage.is_single_sided ? pairing.player2 : pairing.player1);
+  let rightPlayer = $derived(pairing.player2.side == "corp" && stage.is_single_sided ? pairing.player1 : pairing.player2);
+  let showScorePresets = $derived(!pairing.reported);
+  let customReport: ScoreReport = $derived({
     score1: pairing.score1,
     score2: pairing.score2,
     intentional_draw: pairing.intentional_draw,
@@ -39,15 +35,15 @@
 <div class="col-sm-5 centre_score">
   {#if showScorePresets}
     <div>
-      {#each scorePresets(stage, pairing) as score (score.label)}
+      {#each scorePresets(stage, pairing) as report (report.label)}
         <button
           type="button"
           class="btn btn-primary mr-1"
           onclick={() => {
-            submitScore(score);
+            reportScoreCallback?.(pairing.id, report);
           }}
         >
-          {score.label}
+          {report.label}
         </button>
       {/each}
       <button
@@ -64,14 +60,14 @@
             id="pairing_score1"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={customScore.score1}
+            bind:value={customReport.score1}
           />
         {:else}
           <input
             id="pairing_score2"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={customScore.score2}
+            bind:value={customReport.score2}
           />
         {/if}
       </div>
@@ -80,9 +76,11 @@
         type="button"
         class="btn btn-primary mx-2"
         onclick={() => {
-          submitScore(customScore);
-        }}><FontAwesomeIcon icon="flag-checkered" /> Save</button
+          reportScoreCallback?.(pairing.id, customReport);
+        }}
       >
+        <FontAwesomeIcon icon="flag-checkered" /> Save
+      </button>
 
       <div>
         {#if rightPlayer == pairing.player1}
@@ -90,14 +88,14 @@
             id="pairing_score1"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={customScore.score1}
+            bind:value={customReport.score1}
           />
         {:else}
           <input
             id="pairing_score2"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={customScore.score2}
+            bind:value={customReport.score2}
           />
         {/if}
       </div>
@@ -111,7 +109,7 @@
           id="pairing{pairing.id}ID"
           type="checkbox"
           class="form-check-input"
-          bind:checked={customScore.intentional_draw}
+          bind:checked={customReport.intentional_draw}
         />
         <label for="pairing{pairing.id}ID" class="form-check-label"
           >Intentional Draw</label
@@ -123,7 +121,7 @@
             id="pairing{pairing.id}_241"
             type="checkbox"
             class="form-check-input"
-            bind:checked={customScore.two_for_one}
+            bind:checked={customReport.two_for_one}
           />
           <label for="pairing{pairing.id}_241" class="form-check-label"
             >2 for 1</label

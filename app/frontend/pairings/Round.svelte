@@ -12,6 +12,7 @@
   import { showReportedPairings } from "../utils/ShowReportedPairings";
   import RoundTimerControls from "./RoundTimerControls.svelte";
   import { getContext } from "svelte";
+  import type { ScoreReport } from "./SelfReport";
 
   let {
     tournament,
@@ -19,12 +20,14 @@
     round,
     startExpanded,
     deletePairingCallback,
+    reportScoreCallback,
   }: {
     tournament: Tournament;
     stage: Stage;
     round: Round;
     startExpanded: boolean;
     deletePairingCallback?: (roundId: number, pairingId: number) => void;
+    reportScoreCallback?: (roundId: number, pairingId: number, report: ScoreReport) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
@@ -114,6 +117,9 @@
             {stage}
             deleteCallback={(pairingId) => {
               deletePairingCallback?.(round.id, pairingId);
+            }}
+            reportScoreCallback={(pairingId, report) => {
+              reportScoreCallback?.(round.id, pairingId, report);
             }}
           />
         {/if}

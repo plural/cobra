@@ -6,6 +6,7 @@
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import Pairing from "./Pairing.svelte";
   import { deletePairing } from "./PairingsData";
+  import { reportScore, type ScoreReport } from "./SelfReport";
 
   let {
     tournamentId,
@@ -63,6 +64,15 @@
     }
 
     const success = await deletePairing(tournamentId, roundId, pairingId);
+    if (!success) {
+      return;
+    }
+
+    data = await loadRound(tournamentId, roundId);
+  }
+
+  async function reportScoreCallback(pairingId: number, report: ScoreReport) {
+    const success = await reportScore(tournamentId, roundId, pairingId, report);
     if (!success) {
       return;
     }
@@ -129,6 +139,7 @@
         round={data.round}
         stage={data.stage}
         deleteCallback={deletePairingCallback}
+        {reportScoreCallback}
       />
     {/each}
     <hr />
