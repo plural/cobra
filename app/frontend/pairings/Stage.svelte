@@ -13,7 +13,7 @@
 
   let {
     tournament,
-    stage,
+    stage = $bindable(),
     startExpanded,
     tournamentPolicies,
     deletePairingCallback,
@@ -77,17 +77,17 @@
     </div>
     <Round
       {tournament}
-      round={stage.rounds[stage.rounds.length - 1]}
+      bind:round={stage.rounds[stage.rounds.length - 1]}
       {stage}
       {startExpanded}
       {deletePairingCallback}
       {reportScoreCallback}
     />
   {:else}
-    {#each stage.rounds.filter((r) => r.id) as round, index (round.id)}
+    {#each stage.rounds as round, index (round.id)}
       <Round
         {tournament}
-        {round}
+        bind:round={stage.rounds[index]}
         {stage}
         startExpanded={startExpanded && index === stage.rounds.length - 1}
         {deletePairingCallback}

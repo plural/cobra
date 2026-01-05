@@ -24,7 +24,7 @@
     tournament,
     stage,
     round,
-    pairing,
+    pairing = $bindable(),
     deleteCallback,
     reportScoreCallback,
   }: {
@@ -166,7 +166,7 @@
 
   <!-- Score -->
   {#if pairingsContext.showOrganizerView && (!stage.is_single_sided || pairing.player1.side)}
-    <AdminReportOptions {stage} {pairing} {reportScoreCallback} />
+    <AdminReportOptions {stage} bind:pairing {reportScoreCallback} />
   {:else}
     <!-- Player view -->
     <div class="col-sm-2 centre_score">
@@ -225,7 +225,7 @@
         <SelfReportOptions
           tournamentId={tournament.id}
           {stage}
-          {round}
+          roundId={round.id}
           {pairing}
         />
       {/if}

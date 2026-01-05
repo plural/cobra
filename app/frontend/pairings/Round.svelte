@@ -17,7 +17,7 @@
   let {
     tournament,
     stage,
-    round,
+    round = $bindable(),
     startExpanded,
     deletePairingCallback,
     reportScoreCallback,
@@ -105,14 +105,14 @@
       {/if}
 
       <!-- Pairings -->
-      {#each round.pairings as pairing (pairing.id)}
+      {#each round.pairings as pairing, index (pairing.id)}
         {#if $showReportedPairings || !pairing.reported}
           {#if pairingsContext.showOrganizerView}
             <hr />
           {/if}
           <Pairing
             {tournament}
-            {pairing}
+            bind:pairing={round.pairings[index]}
             {round}
             {stage}
             deleteCallback={(pairingId) => {

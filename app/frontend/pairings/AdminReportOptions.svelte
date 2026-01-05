@@ -5,7 +5,7 @@
 
   let {
     stage,
-    pairing,
+    pairing = $bindable(),
     reportScoreCallback,
   }: {
     stage: Stage;
@@ -47,6 +47,7 @@
         </button>
       {/each}
       <button
+        aria-label="show-custom"
         type="button"
         class="btn btn-primary"
         onclick={toggleShowScorePresets}>...</button
@@ -58,16 +59,18 @@
         {#if leftPlayer == pairing.player1}
           <input
             id="pairing_score1"
+            aria-label="corp-score"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={customReport.score1}
+            bind:value={pairing.score1}
           />
         {:else}
           <input
             id="pairing_score2"
+            aria-label="corp-score"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={customReport.score2}
+            bind:value={pairing.score2}
           />
         {/if}
       </div>
@@ -86,21 +89,28 @@
         {#if rightPlayer == pairing.player1}
           <input
             id="pairing_score1"
+            aria-label="runner-score"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={customReport.score1}
+            bind:value={pairing.score1}
           />
         {:else}
           <input
             id="pairing_score2"
+            aria-label="runner-score"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={customReport.score2}
+            bind:value={pairing.score2}
           />
         {/if}
       </div>
-      <button class="btn btn-primary ml-2" onclick={toggleShowScorePresets}
-        >...</button
+      <button
+        aria-label="show-preset"
+        class="btn btn-primary ml-2"
+        onclick={toggleShowScorePresets}
+      >
+        ...
+      </button
       >
     </div>
     <div class="form-row justify-content-center">
@@ -109,7 +119,7 @@
           id="pairing{pairing.id}ID"
           type="checkbox"
           class="form-check-input"
-          bind:checked={customReport.intentional_draw}
+          bind:checked={pairing.intentional_draw}
         />
         <label for="pairing{pairing.id}ID" class="form-check-label"
           >Intentional Draw</label
@@ -121,7 +131,7 @@
             id="pairing{pairing.id}_241"
             type="checkbox"
             class="form-check-input"
-            bind:checked={customReport.two_for_one}
+            bind:checked={pairing.two_for_one}
           />
           <label for="pairing{pairing.id}_241" class="form-check-label"
             >2 for 1</label

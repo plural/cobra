@@ -240,7 +240,7 @@
     <div class="mt-3">
       {#each data.stages as stage, index (stage.format)}
         <Stage
-          {stage}
+          bind:stage={data.stages[index]}
           startExpanded={index === data.stages.length - 1}
           tournament={data.tournament}
           tournamentPolicies={data.policy}
