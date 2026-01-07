@@ -2,11 +2,10 @@
   import { onMount } from "svelte";
   import Stage from "./Stage.svelte";
   import { PairingsData, deletePairing, loadPairings } from "./PairingsData";
-  import { showIdentities } from "./ShowIdentities";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";
   import { redirectRequest } from "../utils/network";
-  import GlobalMessages from "../utils/GlobalMessages.svelte";
+  import GlobalMessages from "../widgets/GlobalMessages.svelte";
 
   let { tournamentId }: { tournamentId: number } = $props();
 
@@ -20,11 +19,7 @@
   function addSwissStage(e: MouseEvent) {
     e.preventDefault();
 
-    void redirectRequest(
-      `/tournaments/${tournamentId}/stages`,
-      "POST",
-      data.csrf_token,
-    );
+    void redirectRequest(`/tournaments/${tournamentId}/stages`, "POST");
   }
 
   function pairNewRound(e: MouseEvent) {
@@ -39,11 +34,7 @@
       return;
     }
 
-    void redirectRequest(
-      `/tournaments/${tournamentId}/rounds`,
-      "POST",
-      data.csrf_token,
-    );
+    void redirectRequest(`/tournaments/${tournamentId}/rounds`, "POST");
   }
 
   function closeRegistration(e: MouseEvent) {
@@ -52,7 +43,6 @@
     void redirectRequest(
       `/tournaments/${tournamentId}/close_registration`,
       "PATCH",
-      data.csrf_token,
     );
   }
 
@@ -62,7 +52,6 @@
     void redirectRequest(
       `/tournaments/${tournamentId}/open_registration`,
       "PATCH",
-      data.csrf_token,
     );
   }
 
@@ -72,7 +61,6 @@
     void redirectRequest(
       `/tournaments/${tournamentId}/lock_player_registration`,
       "PATCH",
-      data.csrf_token,
     );
   }
 
@@ -82,32 +70,20 @@
     void redirectRequest(
       `/tournaments/${tournamentId}/unlock_player_registration`,
       "PATCH",
-      data.csrf_token,
     );
   }
 
   function addCutStage(e: MouseEvent, single_elim: boolean, num: number) {
     e.preventDefault();
 
-    void redirectRequest(
-      `/tournaments/${tournamentId}/cut`,
-      "POST",
-      data.csrf_token,
-      { number: num, ...(single_elim && { elimination_type: "single" }) },
-    );
+    void redirectRequest(`/tournaments/${tournamentId}/cut`, "POST", {
+      number: num,
+      ...(single_elim && { elimination_type: "single" }),
+    });
   }
 
   async function deletePairingCallback(roundId: number, pairingId: number) {
-    if (!data) {
-      return;
-    }
-
-    const success = await deletePairing(
-      tournamentId,
-      roundId,
-      pairingId,
-      data.csrf_token,
-    );
+    const success = await deletePairing(tournamentId, roundId, pairingId);
     if (!success) {
       return;
     }
@@ -151,7 +127,7 @@
         class="btn btn-primary"
         onclick={(e) => {
           e.preventDefault();
-          showIdentities.update((value) => !value);
+          showReportedPairings = !showReportedPairings;
         }}
       >
         <FontAwesomeIcon icon="eye-slash" /> Show/hide identities
@@ -222,12 +198,9 @@
     {#each data.stages as stage, index (stage.format)}
       <Stage
         {stage}
-        {tournamentId}
         tournament={data.tournament}
         startExpanded={index === data.stages.length - 1}
-        {showReportedPairings}
         tournamentPolicies={data.policy}
-        csrfToken={data.csrf_token}
         {deletePairingCallback}
       />
     {/each}

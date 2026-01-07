@@ -2,7 +2,6 @@
   import type {
     Round,
     Stage,
-    TournamentPolicies,
     Tournament,
     PairingsContext,
   } from "./PairingsData";
@@ -112,7 +111,7 @@
             {pairing}
             {round}
             {stage}
-            deleteCallback={(pairingId) => {
+            deleteCallback={(pairingId: number) => {
               deletePairingCallback?.(round.id, pairingId);
             }}
           />
