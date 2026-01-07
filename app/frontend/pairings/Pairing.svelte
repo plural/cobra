@@ -98,7 +98,7 @@
     }
 
     void redirectRequest(
-      `/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/reset_self_report`,
+      `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/reset_self_report`,
       "DELETE",
     );
   }
