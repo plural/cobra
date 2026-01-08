@@ -50,8 +50,10 @@
         aria-label="show-custom"
         type="button"
         class="btn btn-primary"
-        onclick={toggleShowScorePresets}>...</button
+        onclick={toggleShowScorePresets}
       >
+        ...
+      </button>
     </div>
   {:else}
     <div class="form-row justify-content-center">
