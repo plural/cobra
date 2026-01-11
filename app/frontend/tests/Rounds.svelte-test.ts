@@ -161,7 +161,7 @@ describe("Rounds", () => {
       beforeEach(() => {
         vi.mocked(reportScore).mockResolvedValue(true);
       });
-      
+
       it("6-0", async () => {
         const ReportedPairingsData = structuredClone(InitialPairingsData);
         ReportedPairingsData.stages[0].rounds[0].pairings[0].reported = true;
@@ -172,14 +172,26 @@ describe("Rounds", () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(within(table1Row).getByRole("button", { name: /6-0/i }));
+        await user.click(
+          within(table1Row).getByRole("button", { name: /6-0/i }),
+        );
 
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
-        expect(within(table1Row).getByRole("textbox", { name: /corp-score/i })).toHaveValue("6");
-        expect(within(table1Row).getByRole("textbox", { name: /runner-score/i })).toHaveValue("0");
-        expect(within(table1Row).getByRole("checkbox", { name: /intentional draw/i })).not.toBeChecked();
-        expect(within(table1Row).getByRole("checkbox", { name: /2 for 1/i })).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+        ).toHaveValue("6");
+        expect(
+          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+        ).toHaveValue("0");
+        expect(
+          within(table1Row).getByRole("checkbox", {
+            name: /intentional draw/i,
+          }),
+        ).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+        ).not.toBeChecked();
       });
 
       it("3-3 (C)", async () => {
@@ -192,14 +204,26 @@ describe("Rounds", () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(within(table1Row).getByRole("button", { name: /3-3 \(c\)/i }));
+        await user.click(
+          within(table1Row).getByRole("button", { name: /3-3 \(c\)/i }),
+        );
 
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
-        expect(within(table1Row).getByRole("textbox", { name: /corp-score/i })).toHaveValue("3");
-        expect(within(table1Row).getByRole("textbox", { name: /runner-score/i })).toHaveValue("3");
-        expect(within(table1Row).getByRole("checkbox", { name: /intentional draw/i })).not.toBeChecked();
-        expect(within(table1Row).getByRole("checkbox", { name: /2 for 1/i })).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+        ).toHaveValue("3");
+        expect(
+          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+        ).toHaveValue("3");
+        expect(
+          within(table1Row).getByRole("checkbox", {
+            name: /intentional draw/i,
+          }),
+        ).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+        ).not.toBeChecked();
       });
 
       it("3-3 (R)", async () => {
@@ -212,14 +236,26 @@ describe("Rounds", () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(within(table1Row).getByRole("button", { name: /3-3 \(r\)/i }));
+        await user.click(
+          within(table1Row).getByRole("button", { name: /3-3 \(r\)/i }),
+        );
 
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
-        expect(within(table1Row).getByRole("textbox", { name: /corp-score/i })).toHaveValue("3");
-        expect(within(table1Row).getByRole("textbox", { name: /runner-score/i })).toHaveValue("3");
-        expect(within(table1Row).getByRole("checkbox", { name: /intentional draw/i })).not.toBeChecked();
-        expect(within(table1Row).getByRole("checkbox", { name: /2 for 1/i })).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+        ).toHaveValue("3");
+        expect(
+          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+        ).toHaveValue("3");
+        expect(
+          within(table1Row).getByRole("checkbox", {
+            name: /intentional draw/i,
+          }),
+        ).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+        ).not.toBeChecked();
       });
 
       it("0-6", async () => {
@@ -232,14 +268,26 @@ describe("Rounds", () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(within(table1Row).getByRole("button", { name: /0-6/i }));
+        await user.click(
+          within(table1Row).getByRole("button", { name: /0-6/i }),
+        );
 
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
-        expect(within(table1Row).getByRole("textbox", { name: /corp-score/i })).toHaveValue("0");
-        expect(within(table1Row).getByRole("textbox", { name: /runner-score/i })).toHaveValue("6");
-        expect(within(table1Row).getByRole("checkbox", { name: /intentional draw/i })).not.toBeChecked();
-        expect(within(table1Row).getByRole("checkbox", { name: /2 for 1/i })).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+        ).toHaveValue("0");
+        expect(
+          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+        ).toHaveValue("6");
+        expect(
+          within(table1Row).getByRole("checkbox", {
+            name: /intentional draw/i,
+          }),
+        ).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+        ).not.toBeChecked();
       });
     });
 
@@ -258,17 +306,37 @@ describe("Rounds", () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(within(table1Row).getByRole("button", { name: /show-custom/i }));
-        await user.type(within(table1Row).getByRole("textbox", { name: /corp-score/i }), "1");
-        await user.type(within(table1Row).getByRole("textbox", { name: /runner-score/i }), "2");
-        await user.click(within(table1Row).getByRole("button", { name: /save/i }));
+        await user.click(
+          within(table1Row).getByRole("button", { name: /show-custom/i }),
+        );
+        await user.type(
+          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+          "1",
+        );
+        await user.type(
+          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+          "2",
+        );
+        await user.click(
+          within(table1Row).getByRole("button", { name: /save/i }),
+        );
 
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
-        expect(within(table1Row).getByRole("textbox", { name: /corp-score/i })).toHaveValue("1");
-        expect(within(table1Row).getByRole("textbox", { name: /runner-score/i })).toHaveValue("2");
-        expect(within(table1Row).getByRole("checkbox", { name: /intentional draw/i })).not.toBeChecked();
-        expect(within(table1Row).getByRole("checkbox", { name: /2 for 1/i })).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+        ).toHaveValue("1");
+        expect(
+          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+        ).toHaveValue("2");
+        expect(
+          within(table1Row).getByRole("checkbox", {
+            name: /intentional draw/i,
+          }),
+        ).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+        ).not.toBeChecked();
       });
 
       it("saves an intentional draw", async () => {
@@ -281,14 +349,28 @@ describe("Rounds", () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(within(table1Row).getByRole("button", { name: /show-custom/i }));
-        await user.click(within(table1Row).getByRole("checkbox", { name: /intentional draw/i }));
-        await user.click(within(table1Row).getByRole("button", { name: /save/i }));
+        await user.click(
+          within(table1Row).getByRole("button", { name: /show-custom/i }),
+        );
+        await user.click(
+          within(table1Row).getByRole("checkbox", {
+            name: /intentional draw/i,
+          }),
+        );
+        await user.click(
+          within(table1Row).getByRole("button", { name: /save/i }),
+        );
 
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
-        expect(within(table1Row).getByRole("checkbox", { name: /intentional draw/i })).toBeChecked();
-        expect(within(table1Row).getByRole("checkbox", { name: /2 for 1/i })).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("checkbox", {
+            name: /intentional draw/i,
+          }),
+        ).toBeChecked();
+        expect(
+          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+        ).not.toBeChecked();
       });
 
       it("saves a 2 for 1", async () => {
@@ -301,14 +383,26 @@ describe("Rounds", () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(within(table1Row).getByRole("button", { name: /show-custom/i }));
-        await user.click(within(table1Row).getByRole("checkbox", { name: /2 for 1/i }));
-        await user.click(within(table1Row).getByRole("button", { name: /save/i }));
+        await user.click(
+          within(table1Row).getByRole("button", { name: /show-custom/i }),
+        );
+        await user.click(
+          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+        );
+        await user.click(
+          within(table1Row).getByRole("button", { name: /save/i }),
+        );
 
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
-        expect(within(table1Row).getByRole("checkbox", { name: /intentional draw/i })).not.toBeChecked();
-        expect(within(table1Row).getByRole("checkbox", { name: /2 for 1/i })).toBeChecked();
+        expect(
+          within(table1Row).getByRole("checkbox", {
+            name: /intentional draw/i,
+          }),
+        ).not.toBeChecked();
+        expect(
+          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+        ).toBeChecked();
       });
     });
   });
@@ -327,18 +421,22 @@ describe("Rounds", () => {
       const centreScoreDiv = document.getElementsByClassName(
         "centre_score",
       )[0] as HTMLElement;
-      expect(centreScoreDiv).not.toContainElement(within(centreScoreDiv).queryByRole("button", {
-        name: /6-0/i,
-      }));
+      expect(centreScoreDiv).not.toContainElement(
+        within(centreScoreDiv).queryByRole("button", {
+          name: /6-0/i,
+        }),
+      );
     });
 
     it("does not show the Delete button", () => {
       const table1Row = document.getElementsByClassName(
         "table_1",
       )[0] as HTMLElement;
-      expect(table1Row).not.toContainElement(within(table1Row).queryByRole("button", {
-        name: /delete/i,
-      }));
+      expect(table1Row).not.toContainElement(
+        within(table1Row).queryByRole("button", {
+          name: /delete/i,
+        }),
+      );
     });
   });
 });

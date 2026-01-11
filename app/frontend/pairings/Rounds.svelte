@@ -98,7 +98,11 @@
     data = await loadPairings(tournamentId);
   }
 
-  async function reportScoreCallback(roundId: number, pairingId: number, report: ScoreReport) {
+  async function reportScoreCallback(
+    roundId: number,
+    pairingId: number,
+    report: ScoreReport,
+  ) {
     const success = await reportScore(tournamentId, roundId, pairingId, report);
     if (!success) {
       return;

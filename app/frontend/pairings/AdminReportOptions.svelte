@@ -13,8 +13,16 @@
     reportScoreCallback?: (pairingId: number, report: ScoreReport) => void;
   } = $props();
 
-  let leftPlayer = $derived(pairing.player2.side == "corp" && stage.is_single_sided ? pairing.player2 : pairing.player1);
-  let rightPlayer = $derived(pairing.player2.side == "corp" && stage.is_single_sided ? pairing.player1 : pairing.player2);
+  let leftPlayer = $derived(
+    pairing.player2.side == "corp" && stage.is_single_sided
+      ? pairing.player2
+      : pairing.player1,
+  );
+  let rightPlayer = $derived(
+    pairing.player2.side == "corp" && stage.is_single_sided
+      ? pairing.player1
+      : pairing.player2,
+  );
   let showScorePresets = $derived(!pairing.reported);
   let customReport: ScoreReport = $derived({
     score1: pairing.score1,
@@ -112,8 +120,7 @@
         onclick={toggleShowScorePresets}
       >
         ...
-      </button
-      >
+      </button>
     </div>
     <div class="form-row justify-content-center">
       <div class="form-check form-check-inline">

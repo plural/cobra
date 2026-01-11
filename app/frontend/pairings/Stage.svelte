@@ -24,7 +24,11 @@
     startExpanded: boolean;
     tournamentPolicies?: TournamentPolicies;
     deletePairingCallback?: (roundId: number, pairingId: number) => void;
-    reportScoreCallback?: (roundId: number, pairingId: number, report: ScoreReport) => void;
+    reportScoreCallback?: (
+      roundId: number,
+      pairingId: number,
+      report: ScoreReport,
+    ) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");

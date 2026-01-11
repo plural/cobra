@@ -32,7 +32,7 @@ export async function reportScore(
       body: JSON.stringify({ pairing: cleanData }),
     },
   );
-  
+
   return response.status === 200;
 }
 

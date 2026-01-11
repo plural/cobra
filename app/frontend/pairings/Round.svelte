@@ -26,7 +26,11 @@
     round: Round;
     startExpanded: boolean;
     deletePairingCallback?: (roundId: number, pairingId: number) => void;
-    reportScoreCallback?: (roundId: number, pairingId: number, report: ScoreReport) => void;
+    reportScoreCallback?: (
+      roundId: number,
+      pairingId: number,
+      report: ScoreReport,
+    ) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
@@ -117,7 +121,7 @@
             deleteCallback={(pairingId: number) => {
               deletePairingCallback?.(round.id, pairingId);
             }}
-            reportScoreCallback={(pairingId, report) => {
+            reportScoreCallback={(pairingId: number, report: ScoreReport) => {
               reportScoreCallback?.(round.id, pairingId, report);
             }}
           />
