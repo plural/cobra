@@ -10,7 +10,11 @@
   }: {
     stage: Stage;
     pairing: Pairing;
-    reportScoreCallback?: (pairingId: number, report: ScoreReport) => void;
+    reportScoreCallback?: (
+      pairingId: number,
+      report: ScoreReport,
+      selfReport: boolean,
+    ) => void;
   } = $props();
 
   let leftPlayer = $derived(
@@ -48,7 +52,7 @@
           type="button"
           class="btn btn-primary mr-1"
           onclick={() => {
-            reportScoreCallback?.(pairing.id, report);
+            reportScoreCallback?.(pairing.id, report, false);
           }}
         >
           {report.label}
@@ -89,7 +93,7 @@
         type="button"
         class="btn btn-primary mx-2"
         onclick={() => {
-          reportScoreCallback?.(pairing.id, customReport);
+          reportScoreCallback?.(pairing.id, customReport, false);
         }}
       >
         <FontAwesomeIcon icon="flag-checkered" /> Save

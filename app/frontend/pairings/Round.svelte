@@ -30,6 +30,7 @@
       roundId: number,
       pairingId: number,
       report: ScoreReport,
+      selfReport: boolean,
     ) => void;
   } = $props();
 
@@ -121,8 +122,12 @@
             deleteCallback={(pairingId: number) => {
               deletePairingCallback?.(round.id, pairingId);
             }}
-            reportScoreCallback={(pairingId: number, report: ScoreReport) => {
-              reportScoreCallback?.(round.id, pairingId, report);
+            reportScoreCallback={(
+              pairingId: number,
+              report: ScoreReport,
+              selfReport: boolean,
+            ) => {
+              reportScoreCallback?.(round.id, pairingId, report, selfReport);
             }}
           />
         {/if}

@@ -33,7 +33,11 @@
     round: Round;
     pairing: Pairing;
     deleteCallback?: (pairingId: number) => void;
-    reportScoreCallback?: (pairingId: number, report: ScoreReport) => void;
+    reportScoreCallback?: (
+      pairingId: number,
+      report: ScoreReport,
+      selfReport: boolean,
+    ) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
@@ -222,12 +226,7 @@
   {:else}
     <div class="col-sm-2">
       {#if pairing.policy.self_report}
-        <SelfReportOptions
-          tournamentId={tournament.id}
-          {stage}
-          roundId={round.id}
-          {pairing}
-        />
+        <SelfReportOptions {stage} bind:pairing {reportScoreCallback} />
       {/if}
       {#if pairing.self_reports && pairing.self_reports.length !== 0}
         Report: {pairing.self_reports[0].label}
@@ -251,8 +250,9 @@
     <button
       type="button"
       class="btn btn-primary"
+      data-dismiss="modal"
       onclick={() => {
-        reportScoreCallback?.(pairing.id, report);
+        reportScoreCallback?.(pairing.id, report, false);
       }}
       disabled={pairing.reported}
     >

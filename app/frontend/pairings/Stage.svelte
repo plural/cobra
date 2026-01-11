@@ -28,6 +28,7 @@
       roundId: number,
       pairingId: number,
       report: ScoreReport,
+      selfReport: boolean,
     ) => void;
   } = $props();
 

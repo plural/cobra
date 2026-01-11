@@ -72,7 +72,13 @@
   }
 
   async function reportScoreCallback(pairingId: number, report: ScoreReport) {
-    const success = await reportScore(tournamentId, roundId, pairingId, report);
+    const success = await reportScore(
+      tournamentId,
+      roundId,
+      pairingId,
+      report,
+      false,
+    );
     if (!success) {
       return;
     }

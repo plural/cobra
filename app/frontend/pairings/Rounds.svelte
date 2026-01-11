@@ -102,8 +102,15 @@
     roundId: number,
     pairingId: number,
     report: ScoreReport,
+    selfReport: boolean,
   ) {
-    const success = await reportScore(tournamentId, roundId, pairingId, report);
+    const success = await reportScore(
+      tournamentId,
+      roundId,
+      pairingId,
+      report,
+      selfReport,
+    );
     if (!success) {
       return;
     }
