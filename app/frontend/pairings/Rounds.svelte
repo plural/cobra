@@ -86,7 +86,7 @@
   }
 
   async function deletePairingCallback(roundId: number, pairingId: number) {
-    if (!data || !confirm("Are you sure? This cannot be reversed.")) {
+    if (!confirm("Are you sure? This cannot be reversed.")) {
       return;
     }
 
