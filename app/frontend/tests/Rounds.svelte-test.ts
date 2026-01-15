@@ -1,4 +1,4 @@
-import { fireEvent, render, within } from "@testing-library/svelte";
+import { render, within } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -10,130 +10,121 @@ import {
 import Rounds from "../pairings/Rounds.svelte";
 import { reportScore } from "../pairings/SelfReport";
 
+const MockPlayer1 = {
+  id: 1,
+  name: "Alice",
+  name_with_pronouns: "",
+  side: null,
+  user_id: null,
+  side_label: null,
+  corp_id: null,
+  runner_id: null,
+  include_in_stream: false,
+  active: null,
+};
+const MockPlayer2 = {
+  id: 2,
+  name: "Bob",
+  name_with_pronouns: "",
+  side: null,
+  user_id: null,
+  side_label: null,
+  corp_id: null,
+  runner_id: null,
+  include_in_stream: false,
+  active: null,
+};
+const MockPairingsData: PairingsData = {
+  tournament: new Tournament(),
+  policy: { update: true, custom_table_numbering: false },
+  stages: [
+    {
+      id: 1,
+      name: "Swiss",
+      format: "swiss",
+      is_single_sided: false,
+      is_elimination: false,
+      view_decks: false,
+      rounds: [
+        {
+          id: 1,
+          number: 1,
+          completed: false,
+          pairings: [
+            {
+              id: 1,
+              table_number: 1,
+              table_label: "Table 1",
+              policy: {
+                self_report: true,
+              },
+              player1: MockPlayer1,
+              player2: MockPlayer2,
+              score1: 0,
+              score1_corp: 0,
+              score1_runner: 0,
+              score2: 0,
+              score2_corp: 0,
+              score2_runner: 0,
+              score_label: "",
+              intentional_draw: false,
+              two_for_one: false,
+              self_reports: null,
+              reported: false,
+              winner_game: null,
+              loser_game: null,
+              bracket_type: null,
+              ui_metadata: {
+                row_highlighted: false,
+              },
+            },
+          ],
+          pairings_reported: 0,
+          length_minutes: 0,
+          timer: {
+            running: false,
+            paused: false,
+            started: false,
+          },
+          unpaired_players: [],
+        },
+      ],
+    },
+  ],
+};
+
 const user = userEvent.setup();
 
 vi.mock("../pairings/PairingsData", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/PairingsData")>()),
-  loadPairings: vi.fn(),
-  deletePairing: vi.fn(),
+  loadPairings: vi.fn(() => MockPairingsData),
+  deletePairing: vi.fn(() => true),
 }));
 
 vi.mock("../pairings/SelfReport", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/SelfReport")>()),
-  reportScore: vi.fn(),
+  reportScore: vi.fn(() => true),
 }));
 
 describe("Rounds", () => {
-  const Player1 = {
-    id: 1,
-    name: "Alice",
-    name_with_pronouns: "",
-    side: null,
-    user_id: null,
-    side_label: null,
-    corp_id: null,
-    runner_id: null,
-    include_in_stream: false,
-    active: null,
-  };
-  const Player2 = {
-    id: 2,
-    name: "Bob",
-    name_with_pronouns: "",
-    side: null,
-    user_id: null,
-    side_label: null,
-    corp_id: null,
-    runner_id: null,
-    include_in_stream: false,
-    active: null,
-  };
-  const InitialPairingsData: PairingsData = {
-    tournament: new Tournament(),
-    policy: { update: true, custom_table_numbering: false },
-    stages: [
-      {
-        id: 1,
-        name: "Swiss",
-        format: "swiss",
-        is_single_sided: false,
-        is_elimination: false,
-        view_decks: false,
-        rounds: [
-          {
-            id: 1,
-            number: 1,
-            completed: false,
-            pairings: [
-              {
-                id: 1,
-                table_number: 1,
-                table_label: "Table 1",
-                policy: {
-                  self_report: false,
-                },
-                player1: Player1,
-                player2: Player2,
-                score1: 0,
-                score1_corp: 0,
-                score1_runner: 0,
-                score2: 0,
-                score2_corp: 0,
-                score2_runner: 0,
-                score_label: "",
-                intentional_draw: false,
-                two_for_one: false,
-                self_reports: null,
-                reported: false,
-                winner_game: null,
-                loser_game: null,
-                bracket_type: null,
-                ui_metadata: {
-                  row_highlighted: false,
-                },
-              },
-            ],
-            pairings_reported: 0,
-            length_minutes: 0,
-            timer: {
-              running: false,
-              paused: false,
-              started: false,
-            },
-            unpaired_players: [],
-          },
-        ],
-      },
-    ],
-  };
-
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe("as organizer", () => {
-    const UnpairedPairingsData = structuredClone(InitialPairingsData);
-    UnpairedPairingsData.stages[0].rounds[0].pairings = [];
-    UnpairedPairingsData.stages[0].rounds[0].unpaired_players = [
-      Player1,
-      Player2,
-    ];
-
     beforeEach(() => {
-      vi.mocked(loadPairings).mockResolvedValue(InitialPairingsData);
-
-      render(Rounds);
+      render(Rounds, { tournamentId: 1 });
     });
 
-    it("deletes a pairing", async () => {
-      vi.mocked(deletePairing).mockResolvedValue(true);
-      vi.mocked(loadPairings).mockResolvedValue(UnpairedPairingsData);
+    it("deletes a pairing", async () => {      
+      vi.spyOn(MockPairingsData.stages[0].rounds[0], "pairings", "get").mockReturnValue([]);
+      vi.spyOn(MockPairingsData.stages[0].rounds[0], "unpaired_players", "get").mockReturnValue([MockPlayer1, MockPlayer2]);
       vi.spyOn(window, "confirm").mockReturnValue(true);
 
       const table1Row = document.getElementsByClassName(
         "table_1",
       )[0] as HTMLElement;
-      await fireEvent.click(
+      await user.click(
         within(table1Row).getByRole("button", { name: /delete/i }),
       );
       expect(deletePairing).toHaveBeenCalledOnce();
@@ -142,14 +133,12 @@ describe("Rounds", () => {
     });
 
     it("does not delete a pairing if cancelled", async () => {
-      vi.mocked(deletePairing).mockResolvedValue(true);
-      vi.mocked(loadPairings).mockResolvedValue(UnpairedPairingsData);
       vi.spyOn(window, "confirm").mockReturnValue(false);
 
       const table1Row = document.getElementsByClassName(
         "table_1",
       )[0] as HTMLElement;
-      await fireEvent.click(
+      await user.click(
         within(table1Row).getByRole("button", { name: /delete/i }),
       );
       expect(deletePairing).not.toHaveBeenCalled();
@@ -158,16 +147,10 @@ describe("Rounds", () => {
     });
 
     describe("using preset scores", () => {
-      beforeEach(() => {
-        vi.mocked(reportScore).mockResolvedValue(true);
-      });
-
       it("6-0", async () => {
-        const ReportedPairingsData = structuredClone(InitialPairingsData);
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].reported = true;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score1 = 6;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score2 = 0;
-        vi.mocked(loadPairings).mockResolvedValue(ReportedPairingsData);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "reported", "get").mockReturnValue(true);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score1", "get").mockReturnValue(6);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score2", "get").mockReturnValue(0);
 
         const table1Row = document.getElementsByClassName(
           "table_1",
@@ -195,11 +178,9 @@ describe("Rounds", () => {
       });
 
       it("3-3 (C)", async () => {
-        const ReportedPairingsData = structuredClone(InitialPairingsData);
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].reported = true;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score1 = 3;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score2 = 3;
-        vi.mocked(loadPairings).mockResolvedValue(ReportedPairingsData);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "reported", "get").mockReturnValue(true);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score1", "get").mockReturnValue(3);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score2", "get").mockReturnValue(3);
 
         const table1Row = document.getElementsByClassName(
           "table_1",
@@ -227,11 +208,9 @@ describe("Rounds", () => {
       });
 
       it("3-3 (R)", async () => {
-        const ReportedPairingsData = structuredClone(InitialPairingsData);
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].reported = true;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score1 = 3;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score2 = 3;
-        vi.mocked(loadPairings).mockResolvedValue(ReportedPairingsData);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "reported", "get").mockReturnValue(true);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score1", "get").mockReturnValue(3);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score2", "get").mockReturnValue(3);
 
         const table1Row = document.getElementsByClassName(
           "table_1",
@@ -259,11 +238,9 @@ describe("Rounds", () => {
       });
 
       it("0-6", async () => {
-        const ReportedPairingsData = structuredClone(InitialPairingsData);
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].reported = true;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score1 = 0;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score2 = 6;
-        vi.mocked(loadPairings).mockResolvedValue(ReportedPairingsData);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "reported", "get").mockReturnValue(true);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score1", "get").mockReturnValue(0);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score2", "get").mockReturnValue(6);
 
         const table1Row = document.getElementsByClassName(
           "table_1",
@@ -292,16 +269,10 @@ describe("Rounds", () => {
     });
 
     describe("using custom scores", () => {
-      beforeEach(() => {
-        vi.mocked(reportScore).mockResolvedValue(true);
-      });
-
       it("saves a custom score", async () => {
-        const ReportedPairingsData = structuredClone(InitialPairingsData);
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].reported = true;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score1 = 1;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].score2 = 2;
-        vi.mocked(loadPairings).mockResolvedValue(ReportedPairingsData);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "reported", "get").mockReturnValue(true);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score1", "get").mockReturnValue(1);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "score2", "get").mockReturnValue(2);
 
         const table1Row = document.getElementsByClassName(
           "table_1",
@@ -340,11 +311,9 @@ describe("Rounds", () => {
       });
 
       it("saves an intentional draw", async () => {
-        const ReportedPairingsData = structuredClone(InitialPairingsData);
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].reported = true;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].intentional_draw = true;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].two_for_one = false;
-        vi.mocked(loadPairings).mockResolvedValue(ReportedPairingsData);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "reported", "get").mockReturnValue(true);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "intentional_draw", "get").mockReturnValue(true);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "two_for_one", "get").mockReturnValue(false);
 
         const table1Row = document.getElementsByClassName(
           "table_1",
@@ -374,11 +343,9 @@ describe("Rounds", () => {
       });
 
       it("saves a 2 for 1", async () => {
-        const ReportedPairingsData = structuredClone(InitialPairingsData);
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].reported = true;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].intentional_draw = false;
-        ReportedPairingsData.stages[0].rounds[0].pairings[0].two_for_one = true;
-        vi.mocked(loadPairings).mockResolvedValue(ReportedPairingsData);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "reported", "get").mockReturnValue(true);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "intentional_draw", "get").mockReturnValue(false);
+        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0], "two_for_one", "get").mockReturnValue(true);
 
         const table1Row = document.getElementsByClassName(
           "table_1",
@@ -408,11 +375,8 @@ describe("Rounds", () => {
   });
 
   describe("as player", () => {
-    const UserPairingsData = structuredClone(InitialPairingsData);
-    UserPairingsData.policy.update = false;
-
     beforeEach(() => {
-      vi.mocked(loadPairings).mockResolvedValue(UserPairingsData);
+      vi.spyOn(MockPairingsData.policy, "update", "get").mockReturnValue(false);
 
       render(Rounds);
     });
