@@ -63,6 +63,7 @@
     {#if !customReporting}
       {#each scorePresets(stage, pairing) as report (report.label)}
         <button
+          type="button"
           class="btn btn-primary"
           data-dismiss="modal"
           onclick={() => {
@@ -107,6 +108,7 @@
         />
       {/if}
       <button
+        type="button"
         class="btn btn-primary"
         data-dismiss="modal"
         id="option-custom"
@@ -118,6 +120,7 @@
       </button>
     {/if}
     <button
+      type="button"
       class="btn btn-primary"
       id="option-custom"
       onclick={onCustomReportClicked}

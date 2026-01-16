@@ -113,7 +113,10 @@ describe("EditRound", () => {
   describe("delete pairings", () => {
     it("deletes a pairing", async () => {
       vi.spyOn(MockRoundData.round, "pairings", "get").mockReturnValue([]);
-      vi.spyOn(MockRoundData.round, "unpaired_players", "get").mockReturnValue([MockPlayer1, MockPlayer2]);
+      vi.spyOn(MockRoundData.round, "unpaired_players", "get").mockReturnValue([
+        MockPlayer1,
+        MockPlayer2,
+      ]);
       vi.spyOn(window, "confirm").mockReturnValue(true);
 
       const table1Row = document.getElementsByClassName(
@@ -150,9 +153,21 @@ describe("EditRound", () => {
     });
 
     it("Corp Win", async () => {
-      vi.spyOn(MockRoundData.round.pairings[0], "reported", "get").mockReturnValue(true);
-      vi.spyOn(MockRoundData.round.pairings[0], "score1", "get").mockReturnValue(3);
-      vi.spyOn(MockRoundData.round.pairings[0], "score2", "get").mockReturnValue(0);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "reported",
+        "get",
+      ).mockReturnValue(true);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score1",
+        "get",
+      ).mockReturnValue(3);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score2",
+        "get",
+      ).mockReturnValue(0);
 
       const table1Row = document.getElementsByClassName(
         "table_1",
@@ -177,16 +192,26 @@ describe("EditRound", () => {
     });
 
     it("Tie", async () => {
-      vi.spyOn(MockRoundData.round.pairings[0], "reported", "get").mockReturnValue(true);
-      vi.spyOn(MockRoundData.round.pairings[0], "score1", "get").mockReturnValue(1);
-      vi.spyOn(MockRoundData.round.pairings[0], "score2", "get").mockReturnValue(1);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "reported",
+        "get",
+      ).mockReturnValue(true);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score1",
+        "get",
+      ).mockReturnValue(1);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score2",
+        "get",
+      ).mockReturnValue(1);
 
       const table1Row = document.getElementsByClassName(
         "table_1",
       )[0] as HTMLElement;
-      await user.click(
-        within(table1Row).getByRole("button", { name: /tie/i }),
-      );
+      await user.click(within(table1Row).getByRole("button", { name: /tie/i }));
 
       expect(reportScore).toHaveBeenCalledOnce();
       expect(loadRound).toHaveBeenCalledTimes(2);
@@ -204,10 +229,26 @@ describe("EditRound", () => {
     });
 
     it("Intentional Draw", async () => {
-      vi.spyOn(MockRoundData.round.pairings[0], "reported", "get").mockReturnValue(true);
-      vi.spyOn(MockRoundData.round.pairings[0], "score1", "get").mockReturnValue(1);
-      vi.spyOn(MockRoundData.round.pairings[0], "score2", "get").mockReturnValue(1);
-      vi.spyOn(MockRoundData.round.pairings[0], "intentional_draw", "get").mockReturnValue(true);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "reported",
+        "get",
+      ).mockReturnValue(true);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score1",
+        "get",
+      ).mockReturnValue(1);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score2",
+        "get",
+      ).mockReturnValue(1);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "intentional_draw",
+        "get",
+      ).mockReturnValue(true);
 
       const table1Row = document.getElementsByClassName(
         "table_1",
@@ -232,9 +273,21 @@ describe("EditRound", () => {
     });
 
     it("Runner Win", async () => {
-      vi.spyOn(MockRoundData.round.pairings[0], "reported", "get").mockReturnValue(true);
-      vi.spyOn(MockRoundData.round.pairings[0], "score1", "get").mockReturnValue(0);
-      vi.spyOn(MockRoundData.round.pairings[0], "score2", "get").mockReturnValue(3);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "reported",
+        "get",
+      ).mockReturnValue(true);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score1",
+        "get",
+      ).mockReturnValue(0);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score2",
+        "get",
+      ).mockReturnValue(3);
 
       const table1Row = document.getElementsByClassName(
         "table_1",
@@ -265,9 +318,21 @@ describe("EditRound", () => {
     });
 
     it("saves a custom score", async () => {
-      vi.spyOn(MockRoundData.round.pairings[0], "reported", "get").mockReturnValue(true);
-      vi.spyOn(MockRoundData.round.pairings[0], "score1", "get").mockReturnValue(1);
-      vi.spyOn(MockRoundData.round.pairings[0], "score2", "get").mockReturnValue(2);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "reported",
+        "get",
+      ).mockReturnValue(true);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score1",
+        "get",
+      ).mockReturnValue(1);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "score2",
+        "get",
+      ).mockReturnValue(2);
 
       const table1Row = document.getElementsByClassName(
         "table_1",
@@ -303,8 +368,16 @@ describe("EditRound", () => {
     });
 
     it("saves an intentional draw", async () => {
-      vi.spyOn(MockRoundData.round.pairings[0], "reported", "get").mockReturnValue(true);
-      vi.spyOn(MockRoundData.round.pairings[0], "intentional_draw", "get").mockReturnValue(true);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "reported",
+        "get",
+      ).mockReturnValue(true);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "intentional_draw",
+        "get",
+      ).mockReturnValue(true);
 
       const table1Row = document.getElementsByClassName(
         "table_1",
