@@ -209,8 +209,11 @@
         data-target="#reports{pairing.id}"
       >
         Reports
-        {#if !pairing.reported && pairing.self_reports?.length == 2 && reportsMatch(pairing.self_reports[0], pairing.self_reports[1])}
-          <FontAwesomeIcon icon="exclamation-triangle" />
+        {#if !pairing.reported && pairing.self_reports?.length == 2 && !reportsMatch(pairing.self_reports[0], pairing.self_reports[1])}
+          <FontAwesomeIcon
+            icon="exclamation-triangle"
+            dataTestId="reportConflict"
+          />
         {/if}
       </button>
       <button

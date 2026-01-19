@@ -1,13 +1,22 @@
-import { getByRole, getByText, queryByRole, render, within } from "@testing-library/svelte";
-import { userEvent } from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, test, vi } from "vitest";
 import {
-  deletePairing,
-  loadPairings,
-} from "../pairings/PairingsData";
+  getByRole,
+  getByText,
+  queryByRole,
+  render,
+  within,
+} from "@testing-library/svelte";
+import { userEvent } from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { deletePairing, loadPairings } from "../pairings/PairingsData";
 import Rounds from "../pairings/Rounds.svelte";
 import { reportScore } from "../pairings/SelfReport";
-import { MockPairingsData, MockPlayer1, MockPlayer2, MockSelfReport } from "./RoundsTestData";
+import {
+  MockPairingsData,
+  MockPlayer1,
+  MockPlayer2,
+  MockSelfReport,
+  Pairing1,
+} from "./RoundsTestData";
 
 const user = userEvent.setup();
 
@@ -74,96 +83,67 @@ describe("Rounds", () => {
       [6, 0, false, false, /6-0/i, "6 - 0"],
       [3, 3, false, false, /3-3 \(c\)/i, "3 - 3 (c)"],
       [3, 3, false, false, /3-3 \(r\)/i, "3 - 3 (R)"],
-      [6, 0, false, false, /0-6/i, "0 - 6"]
-    ])("using preset score", (score1, score2, id, twoForOne, buttonText, scoreText) => {
-      test(scoreText, async () => {
-        vi.spyOn(
-        MockPairingsData.stages[0].rounds[0].pairings[0],
-        "reported",
-        "get",
-      ).mockReturnValue(true);
-      vi.spyOn(
-        MockPairingsData.stages[0].rounds[0].pairings[0],
-        "score1",
-        "get",
-      ).mockReturnValue(score1);
-      vi.spyOn(
-        MockPairingsData.stages[0].rounds[0].pairings[0],
-        "score2",
-        "get",
-      ).mockReturnValue(score2);
+      [6, 0, false, false, /0-6/i, "0 - 6"],
+    ])(
+      "using preset score",
+      (score1, score2, id, twoForOne, buttonText, scoreText) => {
+        it(scoreText, async () => {
+          vi.spyOn(Pairing1, "reported", "get").mockReturnValue(true);
+          vi.spyOn(Pairing1, "score1", "get").mockReturnValue(score1);
+          vi.spyOn(Pairing1, "score2", "get").mockReturnValue(score2);
 
-      const table1Row = document.getElementsByClassName(
-        "table_1",
-      )[0] as HTMLElement;
-      await user.click(
-        within(table1Row).getByRole("button", { name: buttonText }),
-      );
+          const table1Row = document.getElementsByClassName(
+            "table_1",
+          )[0] as HTMLElement;
+          await user.click(
+            within(table1Row).getByRole("button", { name: buttonText }),
+          );
 
-      expect(reportScore).toHaveBeenCalledOnce();
-      expect(loadPairings).toHaveBeenCalledTimes(2);
-      expect(
-        within(table1Row).getByRole("textbox", { name: /corp-score/i }),
-      ).toHaveValue(score1.toString());
-      expect(
-        within(table1Row).getByRole("textbox", { name: /runner-score/i }),
-      ).toHaveValue(score2.toString());
-      if (id) {
-        expect(
-          within(table1Row).getByRole("checkbox", {
-            name: /intentional draw/i,
-          }),
-        ).toBeChecked();
-      } else {
-        expect(
-          within(table1Row).getByRole("checkbox", {
-            name: /intentional draw/i,
-          }),
-        ).not.toBeChecked();
-      }
-      if (twoForOne) {
-        expect(
-          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
-        ).toBeChecked();
-      } else {
-        expect(
-          within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
-        ).not.toBeChecked();
-      }
-      });
-    });
+          expect(reportScore).toHaveBeenCalledOnce();
+          expect(loadPairings).toHaveBeenCalledTimes(2);
+          expect(
+            within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+          ).toHaveValue(score1.toString());
+          expect(
+            within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+          ).toHaveValue(score2.toString());
+          if (id) {
+            expect(
+              within(table1Row).getByRole("checkbox", {
+                name: /intentional draw/i,
+              }),
+            ).toBeChecked();
+          } else {
+            expect(
+              within(table1Row).getByRole("checkbox", {
+                name: /intentional draw/i,
+              }),
+            ).not.toBeChecked();
+          }
+          if (twoForOne) {
+            expect(
+              within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+            ).toBeChecked();
+          } else {
+            expect(
+              within(table1Row).getByRole("checkbox", { name: /2 for 1/i }),
+            ).not.toBeChecked();
+          }
+        });
+      },
+    );
 
     describe.each([
-      [1, 2, false, false, "saves a custom score" ],
+      [1, 2, false, false, "saves a custom score"],
       [3, 3, true, false, "saves an intentional draw"],
-      [6, 0, false, true, "saves a 2 for 1"]
+      [6, 0, false, true, "saves a 2 for 1"],
     ])("using custom score", (score1, score2, id, twoForOne, testName) => {
       it(testName, async () => {
-        vi.spyOn(
-          MockPairingsData.stages[0].rounds[0].pairings[0],
-          "reported",
-          "get",
-        ).mockReturnValue(true);
-        vi.spyOn(
-          MockPairingsData.stages[0].rounds[0].pairings[0],
-          "score1",
-          "get",
-        ).mockReturnValue(score1);
-        vi.spyOn(
-          MockPairingsData.stages[0].rounds[0].pairings[0],
-          "score2",
-          "get",
-        ).mockReturnValue(score2);
-        vi.spyOn(
-          MockPairingsData.stages[0].rounds[0].pairings[0],
-          "intentional_draw",
-          "get",
-        ).mockReturnValue(id);
-        vi.spyOn(
-          MockPairingsData.stages[0].rounds[0].pairings[0],
-          "two_for_one",
-          "get",
-        ).mockReturnValue(twoForOne);
+        vi.spyOn(Pairing1, "reported", "get").mockReturnValue(true);
+        vi.spyOn(Pairing1, "score1", "get").mockReturnValue(score1);
+        vi.spyOn(Pairing1, "score2", "get").mockReturnValue(score2);
+        vi.spyOn(Pairing1, "intentional_draw", "get").mockReturnValue(id);
+        vi.spyOn(Pairing1, "two_for_one", "get").mockReturnValue(twoForOne);
 
         const table1Row = document.getElementsByClassName(
           "table_1",
@@ -278,13 +258,15 @@ describe("Rounds", () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        expect(queryByRole(table1Row, "button", { name: /report pairing/i, })).not.toBeTruthy();
+        expect(
+          queryByRole(table1Row, "button", { name: /report pairing/i }),
+        ).not.toBeTruthy();
       });
     });
 
     describe("self-reporting enabled", () => {
       beforeEach(() => {
-        vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0].policy, "self_report", "get").mockReturnValue(true);
+        vi.spyOn(Pairing1.policy, "self_report", "get").mockReturnValue(true);
 
         render(Rounds, { tournamentId: 0 });
       });
@@ -293,15 +275,15 @@ describe("Rounds", () => {
         [6, 0, /6-0/i, "6 - 0"],
         [3, 3, /3-3 \(c\)/i, "3 - 3 (c)"],
         [3, 3, /3-3 \(r\)/i, "3 - 3 (R)"],
-        [6, 0, /0-6/i, "0 - 6"]
+        [6, 0, /0-6/i, "0 - 6"],
       ])("using preset score", (score1, score2, buttonText, scoreText) => {
-        test(scoreText, async () => {
-          vi.spyOn(MockPairingsData.stages[0].rounds[0].pairings[0].policy, "self_report", "get").mockReturnValue(false);
-          vi.spyOn(
-            MockPairingsData.stages[0].rounds[0].pairings[0],
-            "self_reports",
-            "get",
-          ).mockReturnValue([MockSelfReport]);
+        it(scoreText, async () => {
+          vi.spyOn(Pairing1.policy, "self_report", "get").mockReturnValue(
+            false,
+          );
+          vi.spyOn(Pairing1, "self_reports", "get").mockReturnValue([
+            MockSelfReport,
+          ]);
           vi.spyOn(MockSelfReport, "score1", "get").mockReturnValue(score1);
           vi.spyOn(MockSelfReport, "score2", "get").mockReturnValue(score2);
           vi.spyOn(MockSelfReport, "label", "get").mockReturnValue(scoreText);
@@ -310,7 +292,7 @@ describe("Rounds", () => {
             "table_1",
           )[0] as HTMLElement;
           await user.click(
-            getByRole(table1Row, "button", { name: /report pairing/i, })
+            getByRole(table1Row, "button", { name: /report pairing/i }),
           );
 
           const reportDialog = document.getElementById("reportModal");
@@ -318,13 +300,13 @@ describe("Rounds", () => {
           if (!reportDialog) {
             return;
           }
-          await user.click(
-            getByText(reportDialog, buttonText)
-          );
+          await user.click(getByText(reportDialog, buttonText));
 
           expect(reportScore).toHaveBeenCalledOnce();
           expect(loadPairings).toHaveBeenCalledTimes(2);
-          expect(queryByRole(table1Row, "button", { name: /report pairing/i, })).not.toBeTruthy();
+          expect(
+            queryByRole(table1Row, "button", { name: /report pairing/i }),
+          ).not.toBeTruthy();
           expect(getByText(table1Row, `Report: ${scoreText}`)).toBeTruthy();
         });
       });

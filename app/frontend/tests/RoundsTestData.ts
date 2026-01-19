@@ -1,4 +1,9 @@
-import { Player, Tournament, type PairingsData } from "../pairings/PairingsData";
+import {
+  Player,
+  Tournament,
+  type Pairing,
+  type PairingsData,
+} from "../pairings/PairingsData";
 import type { ScoreReport } from "../pairings/SelfReport";
 
 export const MockPlayer1: Player = {
@@ -27,6 +32,34 @@ export const MockPlayer2: Player = {
   active: null,
 };
 
+export const Pairing1: Pairing = {
+  id: 1,
+  table_number: 1,
+  table_label: "Table 1",
+  policy: {
+    self_report: false,
+  },
+  player1: MockPlayer1,
+  player2: MockPlayer2,
+  score1: 0,
+  score1_corp: 0,
+  score1_runner: 0,
+  score2: 0,
+  score2_corp: 0,
+  score2_runner: 0,
+  score_label: "",
+  intentional_draw: false,
+  two_for_one: false,
+  self_reports: null,
+  reported: false,
+  winner_game: null,
+  loser_game: null,
+  bracket_type: null,
+  ui_metadata: {
+    row_highlighted: false,
+  },
+};
+
 export const MockPairingsData: PairingsData = {
   tournament: new Tournament(),
   policy: { update: true, custom_table_numbering: false },
@@ -43,35 +76,7 @@ export const MockPairingsData: PairingsData = {
           id: 1,
           number: 1,
           completed: false,
-          pairings: [
-            {
-              id: 1,
-              table_number: 1,
-              table_label: "Table 1",
-              policy: {
-                self_report: false,
-              },
-              player1: MockPlayer1,
-              player2: MockPlayer2,
-              score1: 0,
-              score1_corp: 0,
-              score1_runner: 0,
-              score2: 0,
-              score2_corp: 0,
-              score2_runner: 0,
-              score_label: "",
-              intentional_draw: false,
-              two_for_one: false,
-              self_reports: null,
-              reported: false,
-              winner_game: null,
-              loser_game: null,
-              bracket_type: null,
-              ui_metadata: {
-                row_highlighted: false,
-              },
-            },
-          ],
+          pairings: [Pairing1],
           pairings_reported: 0,
           length_minutes: 0,
           timer: {
@@ -95,5 +100,5 @@ export const MockSelfReport: ScoreReport = {
   score1_corp: null,
   score2_corp: null,
   score1_runner: null,
-  score2_runner: null
+  score2_runner: null,
 };
