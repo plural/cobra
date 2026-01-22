@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import EditRound from "../pairings/EditRound.svelte";
 import { loadRound } from "../pairings/RoundData";
 import { deletePairing } from "../pairings/PairingsData";
-import { reportScore } from "../pairings/SelfReport";
+import { reportScore, resetReports } from "../pairings/SelfReport";
 import {
   MockPlayer1,
   MockPlayer2,
@@ -28,6 +28,7 @@ vi.mock("../pairings/PairingsData", async (importOriginal) => ({
 vi.mock("../pairings/SelfReport", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/SelfReport")>()),
   reportScore: vi.fn(() => true),
+  resetReports: vi.fn(() => true),
 }));
 
 describe("EditRound", () => {
@@ -305,6 +306,41 @@ describe("EditRound", () => {
             name: /intentional draw/i,
           }),
         ).not.toBeChecked();
+      });
+
+      it("resets the reports", async () => {
+        const table1Row = document.getElementsByClassName(
+          "table_1",
+        )[0] as HTMLElement;
+        const reportsButton = within(table1Row).getByRole("button", {
+          name: /reports/i,
+        });
+
+        await user.click(reportsButton);
+
+        const reportDialog = document.getElementById("reports1");
+        expect(reportDialog).not.toBeNull();
+        if (!reportDialog) {
+          return;
+        }
+        
+        vi.spyOn(Pairing1, "self_reports", "get").mockReturnValue(null);
+        vi.spyOn(Pairing1, "reported", "get").mockReturnValue(false);
+        vi.spyOn(Pairing1, "score1", "get").mockReturnValue(0);
+        vi.spyOn(Pairing1, "score2", "get").mockReturnValue(0);
+        await user.click(getByText(reportDialog, /reset/i));
+
+        expect(resetReports).toHaveBeenCalledOnce();
+        expect(loadRound).toHaveBeenCalledTimes(2);
+
+        await user.click(reportsButton);
+
+        expect(reportDialog).not.toContainElement(queryByText(reportDialog, /alice reported: 6 - 0/i));
+        expect(reportDialog).not.toContainElement(queryByText(reportDialog, /bob reported: 0 - 6/i));
+        expect(reportDialog).not.toContainElement(queryByText(reportDialog, /accept alice/i));
+        expect(reportDialog).not.toContainElement(
+          queryByText(reportDialog, /accept bob/i),
+        );
       });
     });
   });

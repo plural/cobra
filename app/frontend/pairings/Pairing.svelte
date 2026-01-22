@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { getContext } from "svelte";
   import {
     type Pairing,
     type PairingsContext,
@@ -27,6 +27,7 @@
     pairing = $bindable(),
     deleteCallback,
     reportScoreCallback,
+    resetReportsCallback,
   }: {
     tournament: Tournament;
     stage: Stage;
@@ -38,6 +39,7 @@
       report: ScoreReport,
       selfReport: boolean,
     ) => void;
+    resetReportsCallback?: (pairingId: number) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
@@ -48,28 +50,24 @@
     leftPlayer = pairing.player2;
     rightPlayer = pairing.player1;
   }
-  let leftPlayerReport: ScoreReport | undefined = $state();
-  let rightPlayerReport: ScoreReport | undefined = $state();
-  let playersReported = $state(false);
-  let selfReportsMatch = $state(false);
-
-  onMount(() => {
-    leftPlayerReport = pairing.self_reports?.find(
+  let leftPlayerReport: ScoreReport | undefined = $derived(
+    pairing.self_reports?.find(
       (r) => r.report_player_id === leftPlayer.user_id,
-    );
-    rightPlayerReport = pairing.self_reports?.find(
+    ));
+  let rightPlayerReport: ScoreReport | undefined = $derived(
+    pairing.self_reports?.find(
       (r) => r.report_player_id === rightPlayer.user_id,
-    );
-    playersReported =
-      leftPlayerReport !== undefined && rightPlayerReport !== undefined;
-    selfReportsMatch =
-      leftPlayerReport?.score1 === rightPlayerReport?.score1 &&
-      leftPlayerReport?.score2 === rightPlayerReport?.score2 &&
-      leftPlayerReport?.score1_corp === rightPlayerReport?.score1_corp &&
-      leftPlayerReport?.score2_corp === rightPlayerReport?.score2_corp &&
-      leftPlayerReport?.score1_runner === rightPlayerReport?.score1_runner &&
-      leftPlayerReport?.score2_runner === rightPlayerReport?.score2_runner;
-  });
+    )
+  );
+  let playersReported = $derived(leftPlayerReport !== undefined && rightPlayerReport !== undefined);
+  let selfReportsMatch = $derived(
+    leftPlayerReport?.score1 === rightPlayerReport?.score1 &&
+    leftPlayerReport?.score2 === rightPlayerReport?.score2 &&
+    leftPlayerReport?.score1_corp === rightPlayerReport?.score1_corp &&
+    leftPlayerReport?.score2_corp === rightPlayerReport?.score2_corp &&
+    leftPlayerReport?.score1_runner === rightPlayerReport?.score1_runner &&
+    leftPlayerReport?.score2_runner === rightPlayerReport?.score2_runner
+  );
 
   function changePlayerSide(player: Player, side: string) {
     if (
@@ -87,17 +85,6 @@
       `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
       "POST",
       { side: `player1_is_${sideValue}` },
-    );
-  }
-
-  function resetReports() {
-    if (!confirm("Are you sure? This cannot be reversed.")) {
-      return;
-    }
-
-    void redirectRequest(
-      `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/reset_self_report`,
-      "DELETE",
     );
   }
 </script>
@@ -286,7 +273,9 @@
         <button
           type="button"
           class="btn btn-primary"
-          onclick={resetReports}
+          onclick={() => {
+            resetReportsCallback?.(pairing.id);
+          }}
           title="Reset self reports of pairing"
         >
           <FontAwesomeIcon icon="undo" /> Reset
