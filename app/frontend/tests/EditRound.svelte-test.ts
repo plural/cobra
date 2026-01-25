@@ -1,4 +1,11 @@
-import { fireEvent, getByText, queryByTestId, queryByText, render, within } from "@testing-library/svelte";
+import {
+  fireEvent,
+  getByText,
+  queryByTestId,
+  queryByText,
+  render,
+  within,
+} from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import EditRound from "../pairings/EditRound.svelte";
@@ -210,7 +217,7 @@ describe("EditRound", () => {
           name: /reports/i,
         });
         expect(reportsButton).not.toContainElement(
-          queryByTestId(reportsButton, "reportConflict")
+          queryByTestId(reportsButton, "reportConflict"),
         );
 
         await user.click(reportsButton);
@@ -221,8 +228,12 @@ describe("EditRound", () => {
           return;
         }
         const aliceAcceptButton = getByText(reportDialog, /accept alice/i);
-        expect(reportDialog).toContainElement(getByText(reportDialog, /alice reported: 6 - 0/i));
-        expect(reportDialog).toContainElement(getByText(reportDialog, /bob reported: 6 - 0/i));
+        expect(reportDialog).toContainElement(
+          getByText(reportDialog, /alice reported: 6 - 0/i),
+        );
+        expect(reportDialog).toContainElement(
+          getByText(reportDialog, /bob reported: 6 - 0/i),
+        );
         expect(reportDialog).toContainElement(aliceAcceptButton);
         expect(reportDialog).toContainElement(
           queryByText(reportDialog, /accept bob/i),
@@ -270,7 +281,7 @@ describe("EditRound", () => {
           name: /reports/i,
         });
         expect(reportsButton).toContainElement(
-          queryByTestId(reportsButton, "reportConflict")
+          queryByTestId(reportsButton, "reportConflict"),
         );
 
         await user.click(reportsButton);
@@ -281,8 +292,12 @@ describe("EditRound", () => {
           return;
         }
         const aliceAcceptButton = getByText(reportDialog, /accept alice/i);
-        expect(reportDialog).toContainElement(getByText(reportDialog, /alice reported: 6 - 0/i));
-        expect(reportDialog).toContainElement(getByText(reportDialog, /bob reported: 0 - 6/i));
+        expect(reportDialog).toContainElement(
+          getByText(reportDialog, /alice reported: 6 - 0/i),
+        );
+        expect(reportDialog).toContainElement(
+          getByText(reportDialog, /bob reported: 0 - 6/i),
+        );
         expect(reportDialog).toContainElement(aliceAcceptButton);
         expect(reportDialog).toContainElement(
           queryByText(reportDialog, /accept bob/i),
@@ -323,7 +338,7 @@ describe("EditRound", () => {
         if (!reportDialog) {
           return;
         }
-        
+
         vi.spyOn(Pairing1, "self_reports", "get").mockReturnValue(null);
         vi.spyOn(Pairing1, "reported", "get").mockReturnValue(false);
         vi.spyOn(Pairing1, "score1", "get").mockReturnValue(0);
@@ -335,9 +350,15 @@ describe("EditRound", () => {
 
         await user.click(reportsButton);
 
-        expect(reportDialog).not.toContainElement(queryByText(reportDialog, /alice reported: 6 - 0/i));
-        expect(reportDialog).not.toContainElement(queryByText(reportDialog, /bob reported: 0 - 6/i));
-        expect(reportDialog).not.toContainElement(queryByText(reportDialog, /accept alice/i));
+        expect(reportDialog).not.toContainElement(
+          queryByText(reportDialog, /alice reported: 6 - 0/i),
+        );
+        expect(reportDialog).not.toContainElement(
+          queryByText(reportDialog, /bob reported: 0 - 6/i),
+        );
+        expect(reportDialog).not.toContainElement(
+          queryByText(reportDialog, /accept alice/i),
+        );
         expect(reportDialog).not.toContainElement(
           queryByText(reportDialog, /accept bob/i),
         );

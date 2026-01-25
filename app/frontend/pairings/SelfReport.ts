@@ -33,7 +33,7 @@ export async function resetReports(
   tournamentId: number,
   roundId: number,
   pairingId: number,
-) : Promise<boolean> {
+): Promise<boolean> {
   const response = await fetch(
     `/beta/tournaments/${tournamentId}/rounds/${roundId}/pairings/${pairingId}/reset_self_report`,
     {
@@ -47,7 +47,7 @@ export async function resetReports(
   );
 
   return response.status === 200;
-};
+}
 
 export interface ScoreReport {
   report_player_id?: number;

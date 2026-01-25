@@ -80,7 +80,9 @@ module Beta
       authorize @tournament, :self_report?
       authorize pairing, :can_self_report?
 
-      self_report_score = score_params(self_report: true).merge(pairing_id: pairing.id).merge(report_player_id: current_user.id)
+      self_report_score = score_params(self_report: true)
+                          .merge(pairing_id: pairing.id)
+                          .merge(report_player_id: current_user.id)
       SelfReport.create(self_report_score)
 
       # if both players have reported and the reported scores match, finalize scores for the pairing

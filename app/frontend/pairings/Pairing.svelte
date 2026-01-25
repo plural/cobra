@@ -53,20 +53,23 @@
   let leftPlayerReport: ScoreReport | undefined = $derived(
     pairing.self_reports?.find(
       (r) => r.report_player_id === leftPlayer.user_id,
-    ));
+    ),
+  );
   let rightPlayerReport: ScoreReport | undefined = $derived(
     pairing.self_reports?.find(
       (r) => r.report_player_id === rightPlayer.user_id,
-    )
+    ),
   );
-  let playersReported = $derived(leftPlayerReport !== undefined && rightPlayerReport !== undefined);
+  let playersReported = $derived(
+    leftPlayerReport !== undefined && rightPlayerReport !== undefined,
+  );
   let selfReportsMatch = $derived(
     leftPlayerReport?.score1 === rightPlayerReport?.score1 &&
-    leftPlayerReport?.score2 === rightPlayerReport?.score2 &&
-    leftPlayerReport?.score1_corp === rightPlayerReport?.score1_corp &&
-    leftPlayerReport?.score2_corp === rightPlayerReport?.score2_corp &&
-    leftPlayerReport?.score1_runner === rightPlayerReport?.score1_runner &&
-    leftPlayerReport?.score2_runner === rightPlayerReport?.score2_runner
+      leftPlayerReport?.score2 === rightPlayerReport?.score2 &&
+      leftPlayerReport?.score1_corp === rightPlayerReport?.score1_corp &&
+      leftPlayerReport?.score2_corp === rightPlayerReport?.score2_corp &&
+      leftPlayerReport?.score1_runner === rightPlayerReport?.score1_runner &&
+      leftPlayerReport?.score2_runner === rightPlayerReport?.score2_runner,
   );
 
   function changePlayerSide(player: Player, side: string) {
