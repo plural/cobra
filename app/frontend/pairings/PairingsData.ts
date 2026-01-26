@@ -13,6 +13,7 @@ declare const Routes: {
     roundId: number,
     pairingId: number,
   ) => string;
+  beta_tournament_round_repair_path: (tournamentId: number, roundId: number) => string;
 };
 
 export async function loadPairings(
@@ -52,6 +53,55 @@ export async function deletePairing(
 ): Promise<boolean> {
   const response = await fetch(
     Routes.beta_tournament_round_pairing_path(tournamentId, roundId, pairingId),
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+    },
+  );
+
+  return response.status === 200;
+}
+
+export async function rePairRound(tournamentId: number, roundId: number): Promise<boolean> {
+  const response = await fetch(
+    `/beta/tournaments/${tournamentId}/rounds/${roundId}/repair`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+    },
+  );
+
+  return response.status === 200;
+}
+
+export async function completeRound(tournamentId: number, roundId: number, completed: boolean): Promise<boolean> {
+  const response = await fetch(
+    `/beta/tournaments/${tournamentId}/rounds/${roundId}/complete`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+      body: JSON.stringify({ completed: completed }),
+    },
+  );
+
+  return response.status === 200;
+}
+
+export async function deleteRound(tournamentId: number, roundId: number): Promise<boolean> {
+  const response = await fetch(
+    `/beta/tournaments/${tournamentId}/rounds/${roundId}`,
     {
       method: "DELETE",
       headers: {

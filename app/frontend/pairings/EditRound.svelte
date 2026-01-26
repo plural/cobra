@@ -2,10 +2,10 @@
   import { onMount, setContext } from "svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { type RoundData, loadRound } from "./RoundData";
-  import { csrfToken, redirectRequest } from "../utils/network";
+  import { csrfToken } from "../utils/network";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import Pairing from "./Pairing.svelte";
-  import { deletePairing } from "./PairingsData";
+  import { completeRound, deletePairing, deleteRound as deleteRoundRequest, rePairRound } from "./PairingsData";
   import { reportScore, resetReports, type ScoreReport } from "./SelfReport";
 
   let {
@@ -24,38 +24,48 @@
     data = await loadRound(tournamentId, roundId);
   });
 
-  function rePair() {
+  async function rePair() {
     if (!data || !confirm("Are you sure? This cannot be reversed.")) {
       return;
     }
 
-    void redirectRequest(
-      `/beta/tournaments/${tournamentId}/rounds/${data.round.id}/repair`,
-      "PATCH",
-    );
-  }
-
-  function complete(completed: boolean) {
-    if (!data) {
+    const success = await rePairRound(tournamentId, roundId);
+    if (!success) {
       return;
     }
 
-    void redirectRequest(
-      `/beta/tournaments/${tournamentId}/rounds/${data.round.id}/complete`,
-      "PATCH",
-      { completed: completed },
-    );
+    data = await loadRound(tournamentId, roundId);
   }
 
-  function deleteRound() {
+  async function complete(completed: boolean) {
+    if (!data ||
+      (data.round.pairings.length != data.round.pairings_reported &&
+      !confirm(
+        `${data.round.pairings.length - data.round.pairings_reported} pairings have not been reported. Are you sure you want to complete this round?`,
+      ))
+    ) {
+      return;
+    }
+
+    const success = await completeRound(tournamentId, roundId, completed);
+    if (!success) {
+      return;
+    }
+
+    data = await loadRound(tournamentId, roundId);
+  }
+
+  async function deleteRound() {
     if (!data || !confirm("Are you sure? This cannot be reversed.")) {
       return;
     }
 
-    void redirectRequest(
-      `/beta/tournaments/${tournamentId}/rounds/${data.round.id}`,
-      "DELETE",
-    );
+    const success = await deleteRoundRequest(tournamentId, roundId);
+    if (!success) {
+      return;
+    }
+
+    window.location.replace(`/beta/tournaments/${tournamentId}/rounds`);
   }
 
   async function deletePairingCallback(pairingId: number) {

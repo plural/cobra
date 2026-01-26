@@ -39,7 +39,7 @@ module Beta
 
       @round.destroy!
 
-      render json: { url: tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def repair
@@ -47,7 +47,7 @@ module Beta
 
       @round.repair!
 
-      render json: { url: beta_tournament_round_path(@tournament, @round) }, status: :ok
+      head :ok
     end
 
     def complete
@@ -56,7 +56,7 @@ module Beta
       @round.update!(completed: params[:completed])
       @round.timer.stop!
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def update_timer
