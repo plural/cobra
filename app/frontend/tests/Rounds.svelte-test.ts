@@ -12,8 +12,8 @@ import Rounds from "../pairings/Rounds.svelte";
 import { reportScore } from "../pairings/SelfReport";
 import {
   MockPairingsData,
-  MockPlayer1,
-  MockPlayer2,
+  MockPlayerAlice,
+  MockPlayerBob,
   MockSelfReport,
   Pairing1,
 } from "./RoundsTestData";
@@ -51,7 +51,7 @@ describe("Rounds", () => {
         MockPairingsData.stages[0].rounds[0],
         "unpaired_players",
         "get",
-      ).mockReturnValue([MockPlayer1, MockPlayer2]);
+      ).mockReturnValue([MockPlayerAlice, MockPlayerBob]);
       vi.spyOn(window, "confirm").mockReturnValue(true);
 
       const table1Row = document.getElementsByClassName(

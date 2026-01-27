@@ -1,6 +1,19 @@
 import { csrfToken } from "../utils/network";
 import { type Pairing, type Stage } from "./PairingsData";
 
+declare const Routes: {
+  report_beta_tournament_round_pairing_path: (
+    tournamentId: number,
+    roundId: number,
+    pairingId: number,
+  ) => string;
+  reset_self_report_beta_tournament_round_pairing_path: (
+    tournamentId: number,
+    roundId: number,
+    pairingId: number,
+  ) => string;
+};
+
 export async function reportScore(
   tournamentId: number,
   roundId: number,
@@ -14,7 +27,11 @@ export async function reportScore(
   delete cleanData.extra_self_report_label;
 
   const response = await fetch(
-    `/beta/tournaments/${tournamentId}/rounds/${roundId}/pairings/${pairingId}/report`,
+    Routes.report_beta_tournament_round_pairing_path(
+      tournamentId,
+      roundId,
+      pairingId,
+    ),
     {
       method: "POST",
       headers: {
@@ -35,7 +52,11 @@ export async function resetReports(
   pairingId: number,
 ): Promise<boolean> {
   const response = await fetch(
-    `/beta/tournaments/${tournamentId}/rounds/${roundId}/pairings/${pairingId}/reset_self_report`,
+    Routes.reset_self_report_beta_tournament_round_pairing_path(
+      tournamentId,
+      roundId,
+      pairingId,
+    ),
     {
       method: "DELETE",
       headers: {
