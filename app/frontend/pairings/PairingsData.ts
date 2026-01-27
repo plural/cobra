@@ -8,13 +8,25 @@ declare const Routes: {
     tournamentId: number,
     roundId: number,
   ) => string;
+  beta_tournament_round_pairings_path: (
+    tournamentId: number,
+    roundId: number,
+  ) => string;
   beta_tournament_round_pairing_path: (
     tournamentId: number,
     roundId: number,
     pairingId: number,
   ) => string;
   pairings_data_beta_tournament_rounds_path: (tournamentId: number) => string;
-  beta_tournament_round_repair_path: (tournamentId: number, roundId: number) => string;
+  repair_beta_tournament_round_path: (
+    tournamentId: number,
+    roundId: number,
+  ) => string;
+  complete_beta_tournament_round_path: (
+    tournamentId: number,
+    roundId: number,
+  ) => string;
+  beta_tournament_round_path: (tournamentId: number, roundId: number) => string;
 };
 
 export async function loadPairings(
@@ -47,6 +59,27 @@ export async function loadSharingData(
   return (await response.json()) as SharingData;
 }
 
+export async function createPairing(
+  tournamentId: number,
+  roundId: number,
+  newPairing: NewPairing,
+): Promise<boolean> {
+  const response = await fetch(
+    Routes.beta_tournament_round_pairings_path(tournamentId, roundId),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+      body: JSON.stringify({ pairing: newPairing }),
+    },
+  );
+
+  return response.status === 200;
+}
+
 export async function deletePairing(
   tournamentId: number,
   roundId: number,
@@ -67,9 +100,12 @@ export async function deletePairing(
   return response.status === 200;
 }
 
-export async function rePairRound(tournamentId: number, roundId: number): Promise<boolean> {
+export async function rePairRound(
+  tournamentId: number,
+  roundId: number,
+): Promise<boolean> {
   const response = await fetch(
-    `/beta/tournaments/${tournamentId}/rounds/${roundId}/repair`,
+    Routes.repair_beta_tournament_round_path(tournamentId, roundId),
     {
       method: "PATCH",
       headers: {
@@ -83,9 +119,13 @@ export async function rePairRound(tournamentId: number, roundId: number): Promis
   return response.status === 200;
 }
 
-export async function completeRound(tournamentId: number, roundId: number, completed: boolean): Promise<boolean> {
+export async function completeRound(
+  tournamentId: number,
+  roundId: number,
+  completed: boolean,
+): Promise<boolean> {
   const response = await fetch(
-    `/beta/tournaments/${tournamentId}/rounds/${roundId}/complete`,
+    Routes.complete_beta_tournament_round_path(tournamentId, roundId),
     {
       method: "PATCH",
       headers: {
@@ -100,9 +140,12 @@ export async function completeRound(tournamentId: number, roundId: number, compl
   return response.status === 200;
 }
 
-export async function deleteRound(tournamentId: number, roundId: number): Promise<boolean> {
+export async function deleteRound(
+  tournamentId: number,
+  roundId: number,
+): Promise<boolean> {
   const response = await fetch(
-    `/beta/tournaments/${tournamentId}/rounds/${roundId}`,
+    Routes.beta_tournament_round_path(tournamentId, roundId),
     {
       method: "DELETE",
       headers: {
@@ -114,6 +157,13 @@ export async function deleteRound(tournamentId: number, roundId: number): Promis
   );
 
   return response.status === 200;
+}
+
+export interface NewPairing {
+  table_number: number;
+  player1_id: number;
+  side: string;
+  player2_id: number;
 }
 
 export interface PairingsContext {

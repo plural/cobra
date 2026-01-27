@@ -2,10 +2,16 @@
   import { onMount, setContext } from "svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { type RoundData, loadRound } from "./RoundData";
-  import { csrfToken } from "../utils/network";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
-  import Pairing from "./Pairing.svelte";
-  import { completeRound, deletePairing, deleteRound as deleteRoundRequest, rePairRound } from "./PairingsData";
+  import PairingComponent from "./Pairing.svelte";
+  import {
+    completeRound,
+    createPairing as createPairingRequest,
+    deletePairing,
+    deleteRound as deleteRoundRequest,
+    rePairRound,
+    type NewPairing,
+  } from "./PairingsData";
   import { reportScore, resetReports, type ScoreReport } from "./SelfReport";
 
   let {
@@ -16,7 +22,13 @@
     roundId: number;
   } = $props();
 
-  let data: RoundData | undefined = $state();
+  let data = $state<RoundData>();
+  let newPairing = $state<NewPairing>({
+    table_number: 0,
+    player1_id: 0,
+    side: "",
+    player2_id: 0,
+  });
 
   setContext("pairingsContext", { showOrganizerView: true });
 
@@ -38,11 +50,12 @@
   }
 
   async function complete(completed: boolean) {
-    if (!data ||
+    if (
+      !data ||
       (data.round.pairings.length != data.round.pairings_reported &&
-      !confirm(
-        `${data.round.pairings.length - data.round.pairings_reported} pairings have not been reported. Are you sure you want to complete this round?`,
-      ))
+        !confirm(
+          `${data.round.pairings.length - data.round.pairings_reported} pairings have not been reported. Are you sure you want to complete this round?`,
+        ))
     ) {
       return;
     }
@@ -66,6 +79,21 @@
     }
 
     window.location.replace(`/beta/tournaments/${tournamentId}/rounds`);
+  }
+
+  async function createPairing(e: SubmitEvent) {
+    e.preventDefault();
+
+    const success = await createPairingRequest(
+      tournamentId,
+      roundId,
+      newPairing,
+    );
+    if (!success) {
+      return;
+    }
+
+    data = await loadRound(tournamentId, roundId);
   }
 
   async function deletePairingCallback(pairingId: number) {
@@ -158,7 +186,7 @@
     <!-- Pairings -->
     {#each data.round.pairings as pairing, index (pairing.id)}
       <hr />
-      <Pairing
+      <PairingComponent
         tournament={data.tournament}
         bind:pairing={data.round.pairings[index]}
         round={data.round}
@@ -183,44 +211,38 @@
         </div>
       {/each}
 
-      {#snippet playerSelect(id: string)}
-        <select
-          id={`pairing_${id}`}
-          name={`pairing[${id}]`}
-          aria-label={`New pairing ${id}`}
-          class="form-control mx-2"
-        >
-          <option value="">(Bye)</option>
-          {#each data?.round.unpaired_players as player (player.id)}
-            <option value={player.id}>{player.name}</option>
-          {/each}
-        </select>
+      {#snippet playerOptions()}
+        <option value="">(Bye)</option>
+        {#each data?.round.unpaired_players as player (player.id)}
+          <option value={player.id}>{player.name}</option>
+        {/each}
       {/snippet}
 
       <h3 class="mt-2">Create pairing</h3>
       <form
         id="new_pairing"
-        action="/beta/tournaments/{tournamentId}/rounds/{roundId}/pairings"
-        method="POST"
+        onsubmit={createPairing}
         class="form-inline col-12"
       >
-        <input type="hidden" name="authenticity_token" value={csrfToken()} />
         <input
-          id="pairing_table_number"
-          name="pairing[table_number]"
           aria-label="New pairing table number"
           type="number"
           class="form-control"
           placeholder="Table number"
+          bind:value={newPairing.table_number}
         />
-        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-        {@render playerSelect("player1_id")}
+        <select
+          aria-label={`New pairing player 1`}
+          class="form-control mx-2"
+          bind:value={newPairing.player1_id}
+        >
+          {@render playerOptions()}
+        </select>
         {#if data.stage.is_single_sided}
           <select
-            id="side"
-            name="pairing[side]"
             aria-label="New pairing player 1 side"
             class="form-control mx-2"
+            bind:value={newPairing.side}
           >
             <option value="">Player 1 Side</option>
             <option value="player1_is_corp">Corp</option>
@@ -228,8 +250,13 @@
           </select>
         {/if}
         vs
-        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-        {@render playerSelect("player2_id")}
+        <select
+          aria-label={`New pairing player 2`}
+          class="form-control mx-2"
+          bind:value={newPairing.player2_id}
+        >
+          {@render playerOptions()}
+        </select>
         <button type="submit" class="btn btn-success">
           <FontAwesomeIcon icon="plus" /> Create
         </button>

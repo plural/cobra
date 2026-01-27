@@ -38,7 +38,8 @@
   const pairingsContext: PairingsContext = getContext("pairingsContext");
 
   function complete() {
-    if (round.pairings.length == round.pairings_reported ||
+    if (
+      round.pairings.length == round.pairings_reported ||
       confirm(
         `${round.pairings.length - round.pairings_reported} pairings have not been reported. Are you sure you want to complete this round?`,
       )
