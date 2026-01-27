@@ -6,12 +6,19 @@ import {
   type Stage,
 } from "./PairingsData";
 
+declare const Routes: {
+  round_data_beta_tournament_round_path: (
+    tournamentId: number,
+    roundId: number,
+  ) => string;
+};
+
 export async function loadRound(
   tournamentId: number,
   roundId: number,
 ): Promise<RoundData> {
   const response = await fetch(
-    `/beta/tournaments/${tournamentId}/rounds/${roundId}/round_data`,
+    Routes.round_data_beta_tournament_round_path(tournamentId, roundId),
     {
       method: "GET",
     },

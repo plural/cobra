@@ -13,8 +13,8 @@ import { loadRound } from "../pairings/RoundData";
 import { deletePairing } from "../pairings/PairingsData";
 import { reportScore, resetReports } from "../pairings/SelfReport";
 import {
-  MockPlayer1,
-  MockPlayer2,
+  MockPlayerAlice,
+  MockPlayerBob,
   MockRoundData,
   MockSelfReport2,
   Pairing1,
@@ -51,8 +51,8 @@ describe("EditRound", () => {
     it("deletes a pairing", async () => {
       vi.spyOn(MockRoundData.round, "pairings", "get").mockReturnValue([]);
       vi.spyOn(MockRoundData.round, "unpaired_players", "get").mockReturnValue([
-        MockPlayer1,
-        MockPlayer2,
+        MockPlayerAlice,
+        MockPlayerBob,
       ]);
       vi.spyOn(window, "confirm").mockReturnValue(true);
 

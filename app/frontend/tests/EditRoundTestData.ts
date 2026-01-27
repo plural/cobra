@@ -2,7 +2,7 @@ import { Tournament, type Pairing } from "../pairings/PairingsData";
 import type { RoundData } from "../pairings/RoundData";
 import type { ScoreReport } from "../pairings/SelfReport";
 
-export const MockPlayer1 = {
+export const MockPlayerAlice = {
   id: 1,
   name: "Alice",
   name_with_pronouns: "",
@@ -15,7 +15,7 @@ export const MockPlayer1 = {
   active: null,
 };
 
-export const MockPlayer2 = {
+export const MockPlayerBob = {
   id: 2,
   name: "Bob",
   name_with_pronouns: "",
@@ -29,7 +29,7 @@ export const MockPlayer2 = {
 };
 
 export const MockSelfReport1: ScoreReport = {
-  report_player_id: MockPlayer1.user_id,
+  report_player_id: MockPlayerAlice.user_id,
   score1: 6,
   score2: 0,
   intentional_draw: false,
@@ -40,7 +40,7 @@ export const MockSelfReport1: ScoreReport = {
 };
 
 export const MockSelfReport2: ScoreReport = {
-  report_player_id: MockPlayer2.user_id,
+  report_player_id: MockPlayerBob.user_id,
   score1: 6,
   score2: 0,
   intentional_draw: false,
@@ -57,8 +57,8 @@ export const Pairing1: Pairing = {
   policy: {
     self_report: false,
   },
-  player1: MockPlayer1,
-  player2: MockPlayer2,
+  player1: MockPlayerAlice,
+  player2: MockPlayerBob,
   score1: 0,
   score1_corp: 0,
   score1_runner: 0,

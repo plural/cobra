@@ -6,7 +6,7 @@ import {
 } from "../pairings/PairingsData";
 import type { ScoreReport } from "../pairings/SelfReport";
 
-export const MockPlayer1: Player = {
+export const MockPlayerAlice: Player = {
   id: 1,
   name: "Alice",
   name_with_pronouns: "",
@@ -19,7 +19,7 @@ export const MockPlayer1: Player = {
   active: null,
 };
 
-export const MockPlayer2: Player = {
+export const MockPlayerBob: Player = {
   id: 2,
   name: "Bob",
   name_with_pronouns: "",
@@ -39,8 +39,8 @@ export const Pairing1: Pairing = {
   policy: {
     self_report: false,
   },
-  player1: MockPlayer1,
-  player2: MockPlayer2,
+  player1: MockPlayerAlice,
+  player2: MockPlayerBob,
   score1: 0,
   score1_corp: 0,
   score1_runner: 0,
