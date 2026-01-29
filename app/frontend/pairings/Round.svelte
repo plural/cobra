@@ -65,38 +65,40 @@
 
   <div class="collapse{startExpanded ? ' show' : ''}" id="round{round.id}">
     <div class="col-12 my-3">
-      <!-- Admin controls -->
-      {#if pairingsContext.showOrganizerView}
-        <a
-          class="btn btn-warning"
-          href="/beta/tournaments/{tournament.id}/rounds/{round.id}"
-        >
-          <FontAwesomeIcon icon="pencil" /> Edit
-        </a>
-        {#if !round.completed}
-          <button type="button" class="btn btn-warning" onclick={complete}>
-            <FontAwesomeIcon icon="check" /> Complete
-          </button>
+      <div aria-label="round controls">
+        <!-- Admin controls -->
+        {#if pairingsContext.showOrganizerView}
+          <a
+            class="btn btn-warning"
+            href="/beta/tournaments/{tournament.id}/rounds/{round.id}"
+          >
+            <FontAwesomeIcon icon="pencil" /> Edit
+          </a>
+          {#if !round.completed}
+            <button type="button" class="btn btn-warning" onclick={complete}>
+              <FontAwesomeIcon icon="check" /> Complete
+            </button>
+          {/if}
+          <a
+            class="btn btn-primary"
+            href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/match_slips"
+          >
+            <FontAwesomeIcon icon="flag-checkered" /> Match slips
+          </a>
+          <a
+            class="btn btn-primary"
+            href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/sharing"
+          >
+            <FontAwesomeIcon icon="share" /> Export markdown
+          </a>
         {/if}
         <a
           class="btn btn-primary"
-          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/match_slips"
+          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings"
         >
-          <FontAwesomeIcon icon="flag-checkered" /> Match slips
+          <FontAwesomeIcon icon="list-ul" /> Pairings by name
         </a>
-        <a
-          class="btn btn-primary"
-          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/sharing"
-        >
-          <FontAwesomeIcon icon="share" /> Export markdown
-        </a>
-      {/if}
-      <a
-        class="btn btn-primary"
-        href="/tournaments/{tournament.id}/rounds/{round.id}/pairings"
-      >
-        <FontAwesomeIcon icon="list-ul" /> Pairings by name
-      </a>
+      </div>
 
       <!-- Timer controls -->
       {#if pairingsContext.showOrganizerView && !round.completed}

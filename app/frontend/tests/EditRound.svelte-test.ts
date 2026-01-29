@@ -1,16 +1,23 @@
 import {
-  fireEvent,
+  getByRole,
   getByText,
   queryByTestId,
   queryByText,
   render,
+  screen,
   within,
 } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import EditRound from "../pairings/EditRound.svelte";
 import { loadRound } from "../pairings/RoundData";
-import { deletePairing } from "../pairings/PairingsData";
+import {
+  completeRound,
+  createPairing,
+  deletePairing,
+  deleteRound,
+  rePairRound,
+} from "../pairings/PairingsData";
 import { reportScore, resetReports } from "../pairings/SelfReport";
 import {
   MockPlayerAlice,
@@ -29,6 +36,10 @@ vi.mock("../pairings/RoundData", async (importOriginal) => ({
 
 vi.mock("../pairings/PairingsData", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/PairingsData")>()),
+  rePairRound: vi.fn(() => true),
+  completeRound: vi.fn(() => true),
+  deleteRound: vi.fn(() => true),
+  createPairing: vi.fn(() => true),
   deletePairing: vi.fn(() => true),
 }));
 
@@ -41,6 +52,150 @@ vi.mock("../pairings/SelfReport", async (importOriginal) => ({
 describe("EditRound", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+  });
+
+  describe("re-pair", () => {
+    beforeEach(() => {
+      render(EditRound, { tournamentId: 1, roundId: 1 });
+    });
+
+    it("re-pairs the round", async () => {
+      vi.spyOn(window, "confirm").mockReturnValue(true);
+
+      await user.click(screen.getByRole("button", { name: /re-pair/i }));
+
+      expect(rePairRound).toHaveBeenCalledOnce();
+      expect(loadRound).toHaveBeenCalledTimes(2);
+    });
+
+    it("does not re-pair the round if cancelled", async () => {
+      vi.spyOn(window, "confirm").mockReturnValue(false);
+
+      await user.click(screen.getByRole("button", { name: /re-pair/i }));
+
+      expect(rePairRound).not.toHaveBeenCalled();
+      expect(loadRound).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("complete", () => {
+    beforeEach(() => {
+      render(EditRound, { tournamentId: 1, roundId: 1 });
+    });
+
+    it("completes the round", async () => {
+      vi.spyOn(MockRoundData.round, "completed", "get").mockReturnValue(true);
+      vi.spyOn(window, "confirm").mockReturnValue(true);
+
+      await user.click(screen.getByRole("button", { name: /complete/i }));
+
+      expect(completeRound).toHaveBeenCalledOnce();
+      expect(loadRound).toHaveBeenCalledTimes(2);
+      expect(
+        screen.getByRole("button", { name: /uncomplete/i }),
+      ).toBeInTheDocument();
+    });
+
+    it("does not complete the round if cancelled", async () => {
+      vi.spyOn(window, "confirm").mockReturnValue(false);
+
+      await user.click(screen.getByRole("button", { name: /complete/i }));
+
+      expect(completeRound).not.toHaveBeenCalled();
+      expect(loadRound).toHaveBeenCalledOnce();
+      expect(
+        screen.queryByRole("button", { name: /uncomplete/i }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  describe("delete round", () => {
+    beforeEach(() => {
+      render(EditRound, { tournamentId: 1, roundId: 1 });
+    });
+
+    it("deletes the round", async () => {
+      vi.spyOn(window, "confirm").mockReturnValue(true);
+
+      await user.click(screen.getByRole("button", { name: /delete round/i }));
+
+      expect(deleteRound).toHaveBeenCalledOnce();
+      expect(loadRound).toHaveBeenCalledOnce();
+    });
+
+    it("does not delete the round if cancelled", async () => {
+      vi.spyOn(window, "confirm").mockReturnValue(false);
+
+      await user.click(screen.getByRole("button", { name: /delete round/i }));
+
+      expect(deleteRound).not.toHaveBeenCalled();
+      expect(loadRound).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("create pairing", () => {
+    beforeEach(() => {
+      vi.spyOn(MockRoundData.round, "pairings", "get").mockReturnValue([]);
+      vi.spyOn(MockRoundData.round, "unpaired_players", "get").mockReturnValue([
+        MockPlayerAlice,
+        MockPlayerBob,
+      ]);
+
+      render(EditRound, { tournamentId: 1, roundId: 1 });
+    });
+
+    it("creates a pairing", async () => {
+      expect(document.getElementsByClassName("table_1").length).toBe(0);
+
+      vi.spyOn(Pairing1, "table_number", "get").mockReturnValue(11);
+      vi.spyOn(MockRoundData.round, "pairings", "get").mockReturnValue([
+        Pairing1,
+      ]);
+      vi.spyOn(MockRoundData.round, "unpaired_players", "get").mockReturnValue(
+        [],
+      );
+
+      const newPairingForm = document.getElementById("new_pairing");
+      expect(newPairingForm).not.toBeNull();
+      if (!newPairingForm) {
+        return;
+      }
+
+      await user.type(
+        getByRole(newPairingForm, "spinbutton", {
+          name: /new pairing table number/i,
+        }),
+        "11",
+      );
+      await user.selectOptions(
+        getByRole(newPairingForm, "combobox", {
+          name: /^new pairing player 1$/i,
+        }),
+        "Alice",
+      );
+      await user.selectOptions(
+        getByRole(newPairingForm, "combobox", {
+          name: /new pairing player 1 side/i,
+        }),
+        "Corp",
+      );
+      await user.selectOptions(
+        getByRole(newPairingForm, "combobox", {
+          name: /^new pairing player 2$/i,
+        }),
+        "Bob",
+      );
+      await user.click(
+        getByRole(newPairingForm, "button", { name: /create/i }),
+      );
+
+      expect(createPairing).toHaveBeenCalledOnce();
+      expect(loadRound).toHaveBeenCalledTimes(2);
+
+      expect(
+        document.getElementsByClassName("table_11")[0],
+      ).toBeInTheDocument();
+    });
   });
 
   describe("delete pairings", () => {
@@ -59,7 +214,7 @@ describe("EditRound", () => {
       const table1Row = document.getElementsByClassName(
         "table_1",
       )[0] as HTMLElement;
-      await fireEvent.click(
+      await user.click(
         within(table1Row).getByRole("button", { name: /delete/i }),
       );
 
@@ -74,7 +229,7 @@ describe("EditRound", () => {
       const table1Row = document.getElementsByClassName(
         "table_1",
       )[0] as HTMLElement;
-      await fireEvent.click(
+      await user.click(
         within(table1Row).getByRole("button", { name: /delete/i }),
       );
 

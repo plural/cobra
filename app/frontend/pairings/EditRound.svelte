@@ -232,7 +232,7 @@
           bind:value={newPairing.table_number}
         />
         <select
-          aria-label={`New pairing player 1`}
+          aria-label="New pairing player 1"
           class="form-control mx-2"
           bind:value={newPairing.player1_id}
         >
@@ -251,7 +251,7 @@
         {/if}
         vs
         <select
-          aria-label={`New pairing player 2`}
+          aria-label="New pairing player 2"
           class="form-control mx-2"
           bind:value={newPairing.player2_id}
         >

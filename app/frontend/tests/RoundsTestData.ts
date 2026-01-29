@@ -3,6 +3,7 @@ import {
   Tournament,
   type Pairing,
   type PairingsData,
+  type Round,
 } from "../pairings/PairingsData";
 import type { ScoreReport } from "../pairings/SelfReport";
 
@@ -60,6 +61,21 @@ export const Pairing1: Pairing = {
   },
 };
 
+export const Round1: Round = {
+  id: 1,
+  number: 1,
+  completed: false,
+  pairings: [Pairing1],
+  pairings_reported: 0,
+  length_minutes: 0,
+  timer: {
+    running: false,
+    paused: false,
+    started: false,
+  },
+  unpaired_players: [],
+};
+
 export const MockPairingsData: PairingsData = {
   tournament: new Tournament(),
   policy: { update: true, custom_table_numbering: false },
@@ -71,22 +87,7 @@ export const MockPairingsData: PairingsData = {
       is_single_sided: false,
       is_elimination: false,
       view_decks: false,
-      rounds: [
-        {
-          id: 1,
-          number: 1,
-          completed: false,
-          pairings: [Pairing1],
-          pairings_reported: 0,
-          length_minutes: 0,
-          timer: {
-            running: false,
-            paused: false,
-            started: false,
-          },
-          unpaired_players: [],
-        },
-      ],
+      rounds: [Round1],
     },
   ],
 };
