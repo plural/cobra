@@ -155,7 +155,7 @@
             type="button"
             class="btn btn-warning"
             onclick={() => {
-              complete(false);
+              void complete(false);
             }}
           >
             <FontAwesomeIcon icon="backward" /> Uncomplete
@@ -165,7 +165,7 @@
             type="button"
             class="btn btn-warning"
             onclick={() => {
-              complete(true);
+              void complete(true);
             }}
           >
             <FontAwesomeIcon icon="check" /> Complete
@@ -236,6 +236,7 @@
           class="form-control mx-2"
           bind:value={newPairing.player1_id}
         >
+          <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
           {@render playerOptions()}
         </select>
         {#if data.stage.is_single_sided}
@@ -255,6 +256,7 @@
           class="form-control mx-2"
           bind:value={newPairing.player2_id}
         >
+          <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
           {@render playerOptions()}
         </select>
         <button type="submit" class="btn btn-success">
