@@ -155,7 +155,7 @@
             type="button"
             class="btn btn-warning"
             onclick={() => {
-              complete(false);
+              void complete(false);
             }}
           >
             <FontAwesomeIcon icon="backward" /> Uncomplete
@@ -165,7 +165,7 @@
             type="button"
             class="btn btn-warning"
             onclick={() => {
-              complete(true);
+              void complete(true);
             }}
           >
             <FontAwesomeIcon icon="check" /> Complete
@@ -211,13 +211,6 @@
         </div>
       {/each}
 
-      {#snippet playerOptions()}
-        <option value="">(Bye)</option>
-        {#each data?.round.unpaired_players as player (player.id)}
-          <option value={player.id}>{player.name}</option>
-        {/each}
-      {/snippet}
-
       <h3 class="mt-2">Create pairing</h3>
       <form
         id="new_pairing"
@@ -236,7 +229,10 @@
           class="form-control mx-2"
           bind:value={newPairing.player1_id}
         >
-          {@render playerOptions()}
+          <option value="">(Bye)</option>
+          {#each data.round.unpaired_players as player (player.id)}
+            <option value={player.id}>{player.name}</option>
+          {/each}
         </select>
         {#if data.stage.is_single_sided}
           <select
@@ -255,7 +251,10 @@
           class="form-control mx-2"
           bind:value={newPairing.player2_id}
         >
-          {@render playerOptions()}
+          <option value="">(Bye)</option>
+          {#each data.round.unpaired_players as player (player.id)}
+            <option value={player.id}>{player.name}</option>
+          {/each}
         </select>
         <button type="submit" class="btn btn-success">
           <FontAwesomeIcon icon="plus" /> Create
