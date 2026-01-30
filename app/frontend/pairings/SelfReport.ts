@@ -2,10 +2,15 @@ import { csrfToken } from "../utils/network";
 import { type Pairing, type Stage } from "./PairingsData";
 
 declare const Routes: {
-  self_report_tournament_round_pairing_path: (
+  report_beta_tournament_round_pairing_path: (
     tournamentId: number,
     roundId: number,
-    id: number,
+    pairingId: number,
+  ) => string;
+  reset_self_report_beta_tournament_round_pairing_path: (
+    tournamentId: number,
+    roundId: number,
+    pairingId: number,
   ) => string;
 };
 
@@ -14,6 +19,7 @@ export async function reportScore(
   roundId: number,
   pairingId: number,
   data: ScoreReport,
+  selfReport: boolean,
 ): Promise<boolean> {
   // Remove UI-specific data to prevent parameter errors on the server
   const cleanData = { ...data };
@@ -21,34 +27,7 @@ export async function reportScore(
   delete cleanData.extra_self_report_label;
 
   const response = await fetch(
-    `/beta/tournaments/${tournamentId}/rounds/${roundId}/pairings/${pairingId}/report`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "X-CSRF-Token": csrfToken(),
-      },
-      body: JSON.stringify({ pairing: cleanData }),
-    },
-  );
-
-  return response.status === 200;
-}
-
-export async function selfReport(
-  tournamentId: number,
-  roundId: number,
-  pairingId: number,
-  data: ScoreReport,
-): Promise<SelfReportResult> {
-  // Remove UI-specific data to prevent parameter errors on the server
-  const cleanData = { ...data };
-  delete cleanData.label;
-  delete cleanData.extra_self_report_label;
-
-  const response = await fetch(
-    Routes.self_report_tournament_round_pairing_path(
+    Routes.report_beta_tournament_round_pairing_path(
       tournamentId,
       roundId,
       pairingId,
@@ -60,10 +39,35 @@ export async function selfReport(
         Accept: "application/json",
         "X-CSRF-Token": csrfToken(),
       },
-      body: JSON.stringify({ pairing: cleanData }),
+      body: JSON.stringify({ self_report: selfReport, pairing: cleanData }),
     },
   );
-  return (await response.json()) as SelfReportResult;
+
+  return response.status === 200;
+}
+
+export async function resetReports(
+  tournamentId: number,
+  roundId: number,
+  pairingId: number,
+): Promise<boolean> {
+  const response = await fetch(
+    Routes.reset_self_report_beta_tournament_round_pairing_path(
+      tournamentId,
+      roundId,
+      pairingId,
+    ),
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+    },
+  );
+
+  return response.status === 200;
 }
 
 export interface ScoreReport {
@@ -79,10 +83,6 @@ export interface ScoreReport {
   label?: string;
   extra_self_report_label?: string;
 }
-
-export type SelfReportResult =
-  | { success: true }
-  | { success: false; error: string };
 
 export function reportsMatch(
   report1: ScoreReport,

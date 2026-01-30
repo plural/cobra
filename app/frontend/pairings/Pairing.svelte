@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { getContext } from "svelte";
   import {
     type Pairing,
     type PairingsContext,
@@ -27,13 +27,19 @@
     pairing = $bindable(),
     deleteCallback,
     reportScoreCallback,
+    resetReportsCallback,
   }: {
     tournament: Tournament;
     stage: Stage;
     round: Round;
     pairing: Pairing;
     deleteCallback?: (pairingId: number) => void;
-    reportScoreCallback?: (pairingId: number, report: ScoreReport) => void;
+    reportScoreCallback?: (
+      pairingId: number,
+      report: ScoreReport,
+      selfReport: boolean,
+    ) => void;
+    resetReportsCallback?: (pairingId: number) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
@@ -44,28 +50,27 @@
     leftPlayer = pairing.player2;
     rightPlayer = pairing.player1;
   }
-  let leftPlayerReport: ScoreReport | undefined = $state();
-  let rightPlayerReport: ScoreReport | undefined = $state();
-  let playersReported = $state(false);
-  let selfReportsMatch = $state(false);
-
-  onMount(() => {
-    leftPlayerReport = pairing.self_reports?.find(
+  let leftPlayerReport: ScoreReport | undefined = $derived(
+    pairing.self_reports?.find(
       (r) => r.report_player_id === leftPlayer.user_id,
-    );
-    rightPlayerReport = pairing.self_reports?.find(
+    ),
+  );
+  let rightPlayerReport: ScoreReport | undefined = $derived(
+    pairing.self_reports?.find(
       (r) => r.report_player_id === rightPlayer.user_id,
-    );
-    playersReported =
-      leftPlayerReport !== undefined && rightPlayerReport !== undefined;
-    selfReportsMatch =
-      leftPlayerReport?.score1 === rightPlayerReport?.score1 &&
+    ),
+  );
+  let playersReported = $derived(
+    leftPlayerReport !== undefined && rightPlayerReport !== undefined,
+  );
+  let selfReportsMatch = $derived(
+    leftPlayerReport?.score1 === rightPlayerReport?.score1 &&
       leftPlayerReport?.score2 === rightPlayerReport?.score2 &&
       leftPlayerReport?.score1_corp === rightPlayerReport?.score1_corp &&
       leftPlayerReport?.score2_corp === rightPlayerReport?.score2_corp &&
       leftPlayerReport?.score1_runner === rightPlayerReport?.score1_runner &&
-      leftPlayerReport?.score2_runner === rightPlayerReport?.score2_runner;
-  });
+      leftPlayerReport?.score2_runner === rightPlayerReport?.score2_runner,
+  );
 
   function changePlayerSide(player: Player, side: string) {
     if (
@@ -83,17 +88,6 @@
       `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
       "POST",
       { side: `player1_is_${sideValue}` },
-    );
-  }
-
-  function resetReports() {
-    if (!confirm("Are you sure? This cannot be reversed.")) {
-      return;
-    }
-
-    void redirectRequest(
-      `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/reset_self_report`,
-      "DELETE",
     );
   }
 </script>
@@ -205,8 +199,11 @@
         data-target="#reports{pairing.id}"
       >
         Reports
-        {#if !pairing.reported && pairing.self_reports?.length == 2 && reportsMatch(pairing.self_reports[0], pairing.self_reports[1])}
-          <FontAwesomeIcon icon="exclamation-triangle" />
+        {#if !pairing.reported && pairing.self_reports?.length == 2 && !reportsMatch(pairing.self_reports[0], pairing.self_reports[1])}
+          <FontAwesomeIcon
+            icon="exclamation-triangle"
+            dataTestId="reportConflict"
+          />
         {/if}
       </button>
       <button
@@ -222,12 +219,7 @@
   {:else}
     <div class="col-sm-2">
       {#if pairing.policy.self_report}
-        <SelfReportOptions
-          tournamentId={tournament.id}
-          {stage}
-          roundId={round.id}
-          {pairing}
-        />
+        <SelfReportOptions {stage} bind:pairing {reportScoreCallback} />
       {/if}
       {#if pairing.self_reports && pairing.self_reports.length !== 0}
         Report: {pairing.self_reports[0].label}
@@ -251,8 +243,9 @@
     <button
       type="button"
       class="btn btn-primary"
+      data-dismiss="modal"
       onclick={() => {
-        reportScoreCallback?.(pairing.id, report);
+        reportScoreCallback?.(pairing.id, report, false);
       }}
       disabled={pairing.reported}
     >
@@ -283,7 +276,9 @@
         <button
           type="button"
           class="btn btn-primary"
-          onclick={resetReports}
+          onclick={() => {
+            resetReportsCallback?.(pairing.id);
+          }}
           title="Reset self reports of pairing"
         >
           <FontAwesomeIcon icon="undo" /> Reset

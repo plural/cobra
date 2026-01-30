@@ -1,79 +1,47 @@
 <script lang="ts">
   import { type Pairing, Player, type Stage } from "./PairingsData";
-  import { type ScoreReport, scorePresets, selfReport } from "./SelfReport";
+  import { type ScoreReport, scorePresets } from "./SelfReport";
   import ModalDialog from "../widgets/ModalDialog.svelte";
 
   let {
-    tournamentId,
     stage,
-    roundId,
-    pairing,
+    pairing = $bindable(),
+    reportScoreCallback,
   }: {
-    tournamentId: number;
     stage: Stage;
-    roundId: number;
     pairing: Pairing;
+    reportScoreCallback?: (
+      pairingId: number,
+      report: ScoreReport,
+      selfReport: boolean,
+    ) => void;
   } = $props();
 
   let customReporting = $state(false);
-  let presets = $derived(scorePresets(stage, pairing));
-
-  let score1 = $state(0);
-  let score2 = $state(0);
-
   let left_player_number = $state(1);
   let left_player = $state(new Player());
   let right_player = $state(new Player());
 
   left_player = pairing.player1;
   right_player = pairing.player2;
-  if (stage.is_single_sided) {
-    if (pairing.player1.side === "runner") {
-      left_player_number = 2;
-      left_player = pairing.player2;
-      right_player = pairing.player1;
-    }
+  if (stage.is_single_sided && pairing.player1.side === "runner") {
+    left_player_number = 2;
+    left_player = pairing.player2;
+    right_player = pairing.player1;
   }
+
+  let customReport: ScoreReport = $derived({
+    score1: pairing.score1,
+    score2: pairing.score2,
+    intentional_draw: pairing.intentional_draw,
+    score1_corp: 0,
+    score2_runner: 0,
+    score1_runner: 0,
+    score2_corp: 0,
+  });
 
   function onCustomReportClicked() {
     customReporting = !customReporting;
-  }
-
-  async function onSelfReportPresetClicked(data: ScoreReport) {
-    let report = { ...data };
-    report.score1 = null;
-    report.score2 = null;
-
-    const response = await selfReport(
-      tournamentId,
-      roundId,
-      pairing.id,
-      report,
-    );
-    if (!response.success) {
-      alert(response.error);
-      return;
-    }
-    // TODO: instead of reloading, maybe use result value
-    window.location.reload();
-  }
-
-  async function onCustomSelfReportSubmit(score1: number, score2: number) {
-    const response = await selfReport(tournamentId, roundId, pairing.id, {
-      score1,
-      score2,
-      intentional_draw: false,
-      score1_corp: null,
-      score1_runner: null,
-      score2_corp: null,
-      score2_runner: null,
-    });
-    if (!response.success) {
-      alert(response.error);
-      return;
-    }
-    // TODO: instead of reloading, maybe use result value
-    window.location.reload();
   }
 </script>
 
@@ -93,16 +61,16 @@
   </p>
   <div style="gap: 20px;" class="d-flex flex-row w-100 justify-content-center">
     {#if !customReporting}
-      {#each presets as preset, index (preset.label)}
+      {#each scorePresets(stage, pairing) as report (report.label)}
         <button
+          type="button"
           class="btn btn-primary"
           data-dismiss="modal"
-          id="option-{index}"
-          onclick={async () => {
-            return onSelfReportPresetClicked(preset);
+          onclick={() => {
+            reportScoreCallback?.(pairing.id, report, true);
           }}
         >
-          {preset.extra_self_report_label ?? preset.label}
+          {report.extra_self_report_label ?? report.label}
         </button>
       {/each}
     {:else}
@@ -112,7 +80,7 @@
           id="name"
           style="width: 2.5em;"
           class="form-control"
-          bind:value={score1}
+          bind:value={pairing.score1}
         />
         <p>-</p>
         <input
@@ -120,7 +88,7 @@
           id="name"
           style="width: 2.5em;"
           class="form-control"
-          bind:value={score2}
+          bind:value={pairing.score2}
         />
       {:else}
         <input
@@ -128,7 +96,7 @@
           id="name"
           style="width: 2.5em;"
           class="form-control"
-          bind:value={score2}
+          bind:value={pairing.score2}
         />
         <p>-</p>
         <input
@@ -136,21 +104,23 @@
           id="name"
           style="width: 2.5em;"
           class="form-control"
-          bind:value={score1}
+          bind:value={pairing.score1}
         />
       {/if}
       <button
+        type="button"
         class="btn btn-primary"
         data-dismiss="modal"
         id="option-custom"
-        onclick={async () => {
-          return onCustomSelfReportSubmit(score1, score2);
+        onclick={() => {
+          reportScoreCallback?.(pairing.id, customReport, true);
         }}
       >
         Submit
       </button>
     {/if}
     <button
+      type="button"
       class="btn btn-primary"
       id="option-custom"
       onclick={onCustomReportClicked}

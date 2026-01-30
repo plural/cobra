@@ -1,131 +1,59 @@
-import { fireEvent, render, within } from "@testing-library/svelte";
+import {
+  fireEvent,
+  getByText,
+  queryByTestId,
+  queryByText,
+  render,
+  within,
+} from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import EditRound from "../pairings/EditRound.svelte";
-import { loadRound, type RoundData } from "../pairings/RoundData";
-import { deletePairing, Tournament } from "../pairings/PairingsData";
-import { reportScore } from "../pairings/SelfReport";
+import { loadRound } from "../pairings/RoundData";
+import { deletePairing } from "../pairings/PairingsData";
+import { reportScore, resetReports } from "../pairings/SelfReport";
+import {
+  MockPlayerAlice,
+  MockPlayerBob,
+  MockRoundData,
+  MockSelfReport2,
+  Pairing1,
+} from "./EditRoundTestData";
 
 const user = userEvent.setup();
 
 vi.mock("../pairings/RoundData", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/RoundData")>()),
-  loadRound: vi.fn(),
+  loadRound: vi.fn(() => MockRoundData),
 }));
 
 vi.mock("../pairings/PairingsData", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/PairingsData")>()),
-  deletePairing: vi.fn(),
+  deletePairing: vi.fn(() => true),
 }));
 
 vi.mock("../pairings/SelfReport", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/SelfReport")>()),
-  reportScore: vi.fn(),
+  reportScore: vi.fn(() => true),
+  resetReports: vi.fn(() => true),
 }));
 
 describe("EditRound", () => {
-  const Player1 = {
-    id: 1,
-    name: "Alice",
-    name_with_pronouns: "",
-    side: "corp",
-    user_id: null,
-    side_label: null,
-    corp_id: null,
-    runner_id: null,
-    include_in_stream: false,
-    active: null,
-  };
-  const Player2 = {
-    id: 2,
-    name: "Bob",
-    name_with_pronouns: "",
-    side: "runner",
-    user_id: null,
-    side_label: null,
-    corp_id: null,
-    runner_id: null,
-    include_in_stream: false,
-    active: null,
-  };
-  const InitialRoundData: RoundData = {
-    tournament: new Tournament(),
-    policy: { update: true, custom_table_numbering: false },
-    stage: {
-      id: 1,
-      name: "Single Sided Swiss",
-      format: "single_sided_swiss",
-      is_single_sided: true,
-      is_elimination: false,
-      view_decks: false,
-      rounds: [],
-    },
-    round: {
-      id: 1,
-      number: 1,
-      completed: false,
-      pairings: [
-        {
-          id: 1,
-          table_number: 1,
-          table_label: "Table 1",
-          policy: {
-            self_report: false,
-          },
-          player1: Player1,
-          player2: Player2,
-          score1: 0,
-          score1_corp: 0,
-          score1_runner: 0,
-          score2: 0,
-          score2_corp: 0,
-          score2_runner: 0,
-          score_label: "",
-          intentional_draw: false,
-          two_for_one: false,
-          self_reports: null,
-          reported: false,
-          winner_game: null,
-          loser_game: null,
-          bracket_type: null,
-          ui_metadata: {
-            row_highlighted: false,
-          },
-        },
-      ],
-      pairings_reported: 0,
-      length_minutes: 0,
-      timer: {
-        running: false,
-        paused: false,
-        started: false,
-      },
-      unpaired_players: [],
-    },
-  };
-
-  const UnpairedRoundData = structuredClone(InitialRoundData);
-  UnpairedRoundData.round.pairings = [];
-  UnpairedRoundData.round.unpaired_players = [Player1, Player2];
-
-  beforeEach(async () => {
-    vi.clearAllMocks();
-
-    const { loadRound } = await import("../pairings/RoundData");
-    vi.mocked(loadRound).mockResolvedValue(InitialRoundData);
-
-    render(EditRound);
+  beforeEach(() => {
+    vi.restoreAllMocks();
   });
 
   describe("delete pairings", () => {
-    beforeEach(async () => {
-      const { deletePairing } = await import("../pairings/PairingsData");
-      vi.mocked(deletePairing).mockResolvedValue(true);
-
-      vi.mocked(loadRound).mockResolvedValue(UnpairedRoundData);
+    beforeEach(() => {
+      render(EditRound, { tournamentId: 1, roundId: 1 });
     });
 
     it("deletes a pairing", async () => {
+      vi.spyOn(MockRoundData.round, "pairings", "get").mockReturnValue([]);
+      vi.spyOn(MockRoundData.round, "unpaired_players", "get").mockReturnValue([
+        MockPlayerAlice,
+        MockPlayerBob,
+      ]);
       vi.spyOn(window, "confirm").mockReturnValue(true);
 
       const table1Row = document.getElementsByClassName(
@@ -134,6 +62,7 @@ describe("EditRound", () => {
       await fireEvent.click(
         within(table1Row).getByRole("button", { name: /delete/i }),
       );
+
       expect(deletePairing).toHaveBeenCalledOnce();
       expect(loadRound).toHaveBeenCalledTimes(2);
       expect(table1Row).not.toBeInTheDocument();
@@ -148,126 +77,181 @@ describe("EditRound", () => {
       await fireEvent.click(
         within(table1Row).getByRole("button", { name: /delete/i }),
       );
+
       expect(deletePairing).not.toHaveBeenCalled();
       expect(loadRound).toHaveBeenCalledOnce();
       expect(table1Row).toBeInTheDocument();
     });
+  });
 
-    describe("using preset scores", () => {
+  describe.each([
+    [3, 0, "Corp Win"],
+    [3, 3, "Tie"],
+    [3, 3, "Intentional Draw"],
+    [6, 0, "Runner Win"],
+  ])("using preset score", (score1, score2, buttonText) => {
+    beforeEach(() => {
+      render(EditRound, { tournamentId: 1, roundId: 1 });
+    });
+
+    it(buttonText, async () => {
+      vi.spyOn(Pairing1, "reported", "get").mockReturnValue(true);
+      vi.spyOn(Pairing1, "score1", "get").mockReturnValue(score1);
+      vi.spyOn(Pairing1, "score2", "get").mockReturnValue(score2);
+
+      const table1Row = document.getElementsByClassName(
+        "table_1",
+      )[0] as HTMLElement;
+      await user.click(
+        within(table1Row).getByRole("button", { name: buttonText }),
+      );
+
+      expect(reportScore).toHaveBeenCalledOnce();
+      expect(loadRound).toHaveBeenCalledTimes(2);
+      expect(
+        within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+      ).toHaveValue(score1.toString());
+      expect(
+        within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+      ).toHaveValue(score2.toString());
+      expect(
+        within(table1Row).getByRole("checkbox", {
+          name: /intentional draw/i,
+        }),
+      ).not.toBeChecked();
+    });
+  });
+
+  describe("using custom scores", () => {
+    beforeEach(() => {
+      render(EditRound, { tournamentId: 1, roundId: 1 });
+    });
+
+    it("saves a custom score", async () => {
+      vi.spyOn(Pairing1, "reported", "get").mockReturnValue(true);
+      vi.spyOn(Pairing1, "score1", "get").mockReturnValue(1);
+      vi.spyOn(Pairing1, "score2", "get").mockReturnValue(2);
+
+      const table1Row = document.getElementsByClassName(
+        "table_1",
+      )[0] as HTMLElement;
+      await user.click(
+        within(table1Row).getByRole("button", { name: /show-custom/i }),
+      );
+      await user.type(
+        within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+        "1",
+      );
+      await user.type(
+        within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+        "2",
+      );
+      await user.click(
+        within(table1Row).getByRole("button", { name: /save/i }),
+      );
+
+      expect(reportScore).toHaveBeenCalledOnce();
+      expect(loadRound).toHaveBeenCalledTimes(2);
+      expect(
+        within(table1Row).getByRole("textbox", { name: /corp-score/i }),
+      ).toHaveValue("1");
+      expect(
+        within(table1Row).getByRole("textbox", { name: /runner-score/i }),
+      ).toHaveValue("2");
+      expect(
+        within(table1Row).getByRole("checkbox", {
+          name: /intentional draw/i,
+        }),
+      ).not.toBeChecked();
+    });
+
+    it("saves an intentional draw", async () => {
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "reported",
+        "get",
+      ).mockReturnValue(true);
+      vi.spyOn(
+        MockRoundData.round.pairings[0],
+        "intentional_draw",
+        "get",
+      ).mockReturnValue(true);
+
+      const table1Row = document.getElementsByClassName(
+        "table_1",
+      )[0] as HTMLElement;
+      await user.click(
+        within(table1Row).getByRole("button", { name: /show-custom/i }),
+      );
+      await user.click(
+        within(table1Row).getByRole("checkbox", {
+          name: /intentional draw/i,
+        }),
+      );
+      await user.click(
+        within(table1Row).getByRole("button", { name: /save/i }),
+      );
+
+      expect(reportScore).toHaveBeenCalledOnce();
+      expect(loadRound).toHaveBeenCalledTimes(2);
+      expect(
+        within(table1Row).getByRole("checkbox", {
+          name: /intentional draw/i,
+        }),
+      ).toBeChecked();
+    });
+  });
+
+  describe("manage self-reports", () => {
+    describe("when self-reports agree", () => {
       beforeEach(() => {
-        vi.mocked(reportScore).mockResolvedValue(true);
+        render(EditRound, { tournamentId: 1, roundId: 1 });
       });
 
-      it("Corp Win", async () => {
-        const ReportedRoundData = structuredClone(InitialRoundData);
-        ReportedRoundData.round.pairings[0].reported = true;
-        ReportedRoundData.round.pairings[0].score1 = 3;
-        ReportedRoundData.round.pairings[0].score2 = 0;
-        vi.mocked(loadRound).mockResolvedValue(ReportedRoundData);
-
+      it("accepts a report", async () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(
-          within(table1Row).getByRole("button", { name: /corp win/i }),
+
+        const reportsButton = within(table1Row).getByRole("button", {
+          name: /reports/i,
+        });
+        expect(reportsButton).not.toContainElement(
+          queryByTestId(reportsButton, "reportConflict"),
         );
+
+        await user.click(reportsButton);
+
+        const reportDialog = document.getElementById("reports1");
+        expect(reportDialog).not.toBeNull();
+        if (!reportDialog) {
+          return;
+        }
+        const aliceAcceptButton = getByText(reportDialog, /accept alice/i);
+        expect(reportDialog).toContainElement(
+          getByText(reportDialog, /alice reported: 6 - 0/i),
+        );
+        expect(reportDialog).toContainElement(
+          getByText(reportDialog, /bob reported: 6 - 0/i),
+        );
+        expect(reportDialog).toContainElement(aliceAcceptButton);
+        expect(reportDialog).toContainElement(
+          queryByText(reportDialog, /accept bob/i),
+        );
+
+        vi.spyOn(Pairing1, "reported", "get").mockReturnValue(true);
+        vi.spyOn(Pairing1, "score1", "get").mockReturnValue(6);
+        vi.spyOn(Pairing1, "score2", "get").mockReturnValue(0);
+        await user.click(aliceAcceptButton);
 
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadRound).toHaveBeenCalledTimes(2);
         expect(
           within(table1Row).getByRole("textbox", { name: /corp-score/i }),
-        ).toHaveValue("3");
+        ).toHaveValue("6");
         expect(
           within(table1Row).getByRole("textbox", { name: /runner-score/i }),
         ).toHaveValue("0");
-        expect(
-          within(table1Row).getByRole("checkbox", {
-            name: /intentional draw/i,
-          }),
-        ).not.toBeChecked();
-      });
-
-      it("Tie", async () => {
-        const ReportedRoundData = structuredClone(InitialRoundData);
-        ReportedRoundData.round.pairings[0].reported = true;
-        ReportedRoundData.round.pairings[0].score1 = 1;
-        ReportedRoundData.round.pairings[0].score2 = 1;
-        vi.mocked(loadRound).mockResolvedValue(ReportedRoundData);
-
-        const table1Row = document.getElementsByClassName(
-          "table_1",
-        )[0] as HTMLElement;
-        await user.click(
-          within(table1Row).getByRole("button", { name: /tie/i }),
-        );
-
-        expect(reportScore).toHaveBeenCalledOnce();
-        expect(loadRound).toHaveBeenCalledTimes(2);
-        expect(
-          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
-        ).toHaveValue("1");
-        expect(
-          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
-        ).toHaveValue("1");
-        expect(
-          within(table1Row).getByRole("checkbox", {
-            name: /intentional draw/i,
-          }),
-        ).not.toBeChecked();
-      });
-
-      it("Intentional Draw", async () => {
-        const ReportedRoundData = structuredClone(InitialRoundData);
-        ReportedRoundData.round.pairings[0].reported = true;
-        ReportedRoundData.round.pairings[0].score1 = 1;
-        ReportedRoundData.round.pairings[0].score2 = 1;
-        ReportedRoundData.round.pairings[0].intentional_draw = true;
-        vi.mocked(loadRound).mockResolvedValue(ReportedRoundData);
-
-        const table1Row = document.getElementsByClassName(
-          "table_1",
-        )[0] as HTMLElement;
-        await user.click(
-          within(table1Row).getByRole("button", { name: /intentional draw/i }),
-        );
-
-        expect(reportScore).toHaveBeenCalledOnce();
-        expect(loadRound).toHaveBeenCalledTimes(2);
-        expect(
-          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
-        ).toHaveValue("1");
-        expect(
-          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
-        ).toHaveValue("1");
-        expect(
-          within(table1Row).getByRole("checkbox", {
-            name: /intentional draw/i,
-          }),
-        ).toBeChecked();
-      });
-
-      it("Runner Win", async () => {
-        const ReportedRoundData = structuredClone(InitialRoundData);
-        ReportedRoundData.round.pairings[0].reported = true;
-        ReportedRoundData.round.pairings[0].score1 = 0;
-        ReportedRoundData.round.pairings[0].score2 = 3;
-        vi.mocked(loadRound).mockResolvedValue(ReportedRoundData);
-
-        const table1Row = document.getElementsByClassName(
-          "table_1",
-        )[0] as HTMLElement;
-        await user.click(
-          within(table1Row).getByRole("button", { name: /runner win/i }),
-        );
-
-        expect(reportScore).toHaveBeenCalledOnce();
-        expect(loadRound).toHaveBeenCalledTimes(2);
-        expect(
-          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
-        ).toHaveValue("0");
-        expect(
-          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
-        ).toHaveValue("3");
         expect(
           within(table1Row).getByRole("checkbox", {
             name: /intentional draw/i,
@@ -276,44 +260,62 @@ describe("EditRound", () => {
       });
     });
 
-    describe("using custom scores", () => {
+    describe("when self-reports disagree", () => {
       beforeEach(() => {
-        vi.mocked(reportScore).mockResolvedValue(true);
+        vi.spyOn(MockSelfReport2, "score1", "get").mockReturnValue(0);
+        vi.spyOn(MockSelfReport2, "score2", "get").mockReturnValue(6);
+        vi.spyOn(MockSelfReport2, "score1_corp", "get").mockReturnValue(0);
+        vi.spyOn(MockSelfReport2, "score1_runner", "get").mockReturnValue(0);
+        vi.spyOn(MockSelfReport2, "score2_corp", "get").mockReturnValue(3);
+        vi.spyOn(MockSelfReport2, "score2_runner", "get").mockReturnValue(3);
+
+        render(EditRound, { tournamentId: 1, roundId: 1 });
       });
 
-      it("saves a custom score", async () => {
-        const ReportedRoundData = structuredClone(InitialRoundData);
-        ReportedRoundData.round.pairings[0].reported = true;
-        ReportedRoundData.round.pairings[0].score1 = 1;
-        ReportedRoundData.round.pairings[0].score2 = 2;
-        vi.mocked(loadRound).mockResolvedValue(ReportedRoundData);
-
+      it("accepts a report", async () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(
-          within(table1Row).getByRole("button", { name: /show-custom/i }),
+
+        const reportsButton = within(table1Row).getByRole("button", {
+          name: /reports/i,
+        });
+        expect(reportsButton).toContainElement(
+          queryByTestId(reportsButton, "reportConflict"),
         );
-        await user.type(
-          within(table1Row).getByRole("textbox", { name: /corp-score/i }),
-          "1",
+
+        await user.click(reportsButton);
+
+        const reportDialog = document.getElementById("reports1");
+        expect(reportDialog).not.toBeNull();
+        if (!reportDialog) {
+          return;
+        }
+        const aliceAcceptButton = getByText(reportDialog, /accept alice/i);
+        expect(reportDialog).toContainElement(
+          getByText(reportDialog, /alice reported: 6 - 0/i),
         );
-        await user.type(
-          within(table1Row).getByRole("textbox", { name: /runner-score/i }),
-          "2",
+        expect(reportDialog).toContainElement(
+          getByText(reportDialog, /bob reported: 0 - 6/i),
         );
-        await user.click(
-          within(table1Row).getByRole("button", { name: /save/i }),
+        expect(reportDialog).toContainElement(aliceAcceptButton);
+        expect(reportDialog).toContainElement(
+          queryByText(reportDialog, /accept bob/i),
         );
+
+        vi.spyOn(Pairing1, "reported", "get").mockReturnValue(true);
+        vi.spyOn(Pairing1, "score1", "get").mockReturnValue(6);
+        vi.spyOn(Pairing1, "score2", "get").mockReturnValue(0);
+        await user.click(aliceAcceptButton);
 
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadRound).toHaveBeenCalledTimes(2);
         expect(
           within(table1Row).getByRole("textbox", { name: /corp-score/i }),
-        ).toHaveValue("1");
+        ).toHaveValue("6");
         expect(
           within(table1Row).getByRole("textbox", { name: /runner-score/i }),
-        ).toHaveValue("2");
+        ).toHaveValue("0");
         expect(
           within(table1Row).getByRole("checkbox", {
             name: /intentional draw/i,
@@ -321,34 +323,45 @@ describe("EditRound", () => {
         ).not.toBeChecked();
       });
 
-      it("saves an intentional draw", async () => {
-        const ReportedRoundData = structuredClone(InitialRoundData);
-        ReportedRoundData.round.pairings[0].reported = true;
-        ReportedRoundData.round.pairings[0].intentional_draw = true;
-        vi.mocked(loadRound).mockResolvedValue(ReportedRoundData);
-
+      it("resets the reports", async () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
-        await user.click(
-          within(table1Row).getByRole("button", { name: /show-custom/i }),
-        );
-        await user.click(
-          within(table1Row).getByRole("checkbox", {
-            name: /intentional draw/i,
-          }),
-        );
-        await user.click(
-          within(table1Row).getByRole("button", { name: /save/i }),
-        );
+        const reportsButton = within(table1Row).getByRole("button", {
+          name: /reports/i,
+        });
 
-        expect(reportScore).toHaveBeenCalledOnce();
+        await user.click(reportsButton);
+
+        const reportDialog = document.getElementById("reports1");
+        expect(reportDialog).not.toBeNull();
+        if (!reportDialog) {
+          return;
+        }
+
+        vi.spyOn(Pairing1, "self_reports", "get").mockReturnValue(null);
+        vi.spyOn(Pairing1, "reported", "get").mockReturnValue(false);
+        vi.spyOn(Pairing1, "score1", "get").mockReturnValue(0);
+        vi.spyOn(Pairing1, "score2", "get").mockReturnValue(0);
+        await user.click(getByText(reportDialog, /reset/i));
+
+        expect(resetReports).toHaveBeenCalledOnce();
         expect(loadRound).toHaveBeenCalledTimes(2);
-        expect(
-          within(table1Row).getByRole("checkbox", {
-            name: /intentional draw/i,
-          }),
-        ).toBeChecked();
+
+        await user.click(reportsButton);
+
+        expect(reportDialog).not.toContainElement(
+          queryByText(reportDialog, /alice reported: 6 - 0/i),
+        );
+        expect(reportDialog).not.toContainElement(
+          queryByText(reportDialog, /bob reported: 0 - 6/i),
+        );
+        expect(reportDialog).not.toContainElement(
+          queryByText(reportDialog, /accept alice/i),
+        );
+        expect(reportDialog).not.toContainElement(
+          queryByText(reportDialog, /accept bob/i),
+        );
       });
     });
   });

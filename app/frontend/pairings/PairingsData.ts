@@ -13,13 +13,14 @@ declare const Routes: {
     roundId: number,
     pairingId: number,
   ) => string;
+  pairings_data_beta_tournament_rounds_path: (tournamentId: number) => string;
 };
 
 export async function loadPairings(
   tournamentId: number,
 ): Promise<PairingsData> {
   const response = await fetch(
-    `/beta/tournaments/${tournamentId}/rounds/pairings_data`,
+    Routes.pairings_data_beta_tournament_rounds_path(tournamentId),
     {
       method: "GET",
     },
