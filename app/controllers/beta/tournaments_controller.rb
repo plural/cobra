@@ -48,7 +48,7 @@ module Beta
 
       @tournament.cut_to!(format, number)
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def set_tournament

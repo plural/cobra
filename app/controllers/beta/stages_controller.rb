@@ -11,7 +11,7 @@ module Beta
       stage = @tournament.stages.create(format: (@tournament.single_sided? ? :single_sided_swiss : :swiss))
       @tournament.players.each { |p| stage.players << p }
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def destroy
@@ -19,7 +19,7 @@ module Beta
 
       @stage.destroy!
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def set_stage

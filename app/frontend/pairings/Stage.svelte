@@ -7,7 +7,6 @@
     TournamentPolicies,
   } from "./PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { redirectRequest } from "../utils/network";
   import { getContext } from "svelte";
   import type { ScoreReport } from "./SelfReport";
 
@@ -16,6 +15,7 @@
     stage = $bindable(),
     startExpanded,
     tournamentPolicies,
+    deleteCallback,
     deletePairingCallback,
     reportScoreCallback,
     completeRoundCallback,
@@ -24,6 +24,7 @@
     stage: Stage;
     startExpanded: boolean;
     tournamentPolicies?: TournamentPolicies;
+    deleteCallback?: (stageId: number) => void;
     deletePairingCallback?: (roundId: number, pairingId: number) => void;
     reportScoreCallback?: (
       roundId: number,
@@ -35,21 +36,6 @@
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
-
-  function deleteStage() {
-    if (
-      !confirm(
-        "Are you sure? This cannot be reversed and all rounds will be deleted!",
-      )
-    ) {
-      return;
-    }
-
-    void redirectRequest(
-      `/beta/tournaments/${tournament.id}/stages/${stage.id}`,
-      "DELETE",
-    );
-  }
 </script>
 
 <div class="accordion mb-3" role="tablist">
@@ -60,7 +46,7 @@
 
     <!-- Admin controls -->
     {#if pairingsContext.showOrganizerView}
-      <div class="col-sm-2">
+      <div class="col-sm-2" aria-label="admin controls">
         {#if !stage.is_elimination && tournamentPolicies?.custom_table_numbering}
           <a
             href="/tournaments/{tournament.id}/stages/{stage.id}"
@@ -69,7 +55,7 @@
             <FontAwesomeIcon icon="pencil" />
           </a>
         {/if}
-        <button class="btn btn-danger mx-1" onclick={deleteStage}>
+        <button class="btn btn-danger mx-1" onclick={() => { deleteCallback?.(stage.id); }} aria-label="delete">
           <FontAwesomeIcon icon="trash" />
         </button>
       </div>

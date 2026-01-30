@@ -3,9 +3,12 @@
   import Stage from "./Stage.svelte";
   import {
     completeRound,
+    createStage,
     deletePairing,
+    deleteStage,
     loadPairings,
     PairingsData,
+    pairRound,
     type PairingsContext,
   } from "./PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
@@ -34,11 +37,16 @@
     ctx.showOrganizerView = data.policy.update && !forcePlayerView;
   }
 
-  function addSwissStage() {
-    void redirectRequest(`/beta/tournaments/${tournamentId}/stages`, "POST");
+  async function addStage(cutSingleElim?: boolean, cutCount?: number) {
+    const success = await createStage(tournamentId, cutSingleElim, cutCount);
+    if (!success) {
+      return;
+    }
+
+    data = await loadPairings(tournamentId);
   }
 
-  function pairNewRound() {
+  async function pairNewRound() {
     if (
       data.tournament.registration_unlocked &&
       !confirm(
@@ -48,7 +56,12 @@
       return;
     }
 
-    void redirectRequest(`/beta/tournaments/${tournamentId}/rounds`, "POST");
+    const success = await pairRound(tournamentId);
+    if (!success) {
+      return;
+    }
+
+    data = await loadPairings(tournamentId);
   }
 
   function closeRegistration() {
@@ -77,13 +90,6 @@
       `/beta/tournaments/${tournamentId}/unlock_player_registrations`,
       "PATCH",
     );
-  }
-
-  function addCutStage(single_elim: boolean, num: number) {
-    void redirectRequest(`/beta/tournaments/${tournamentId}/cut`, "POST", {
-      number: num,
-      ...(single_elim && { elimination_type: "single" }),
-    });
   }
 
   async function deletePairingCallback(roundId: number, pairingId: number) {
@@ -127,6 +133,19 @@
 
     data = await loadPairings(tournamentId);
   }
+
+  async function deleteStageCallback(stageId: number) {
+    if (!confirm("Are you sure? This cannot be reversed and all rounds will be deleted.")) {
+      return;
+    }
+
+    const success = await deleteStage(tournamentId, stageId);
+    if (!success) {
+      return;
+    }
+
+    data = await loadPairings(tournamentId);
+  }
 </script>
 
 <GlobalMessages />
@@ -137,7 +156,7 @@
   {#if data.stages.length == 0}
     <!-- Add Swiss stage button -->
     {#if ctx.showOrganizerView}
-      <button type="button" class="btn btn-success" onclick={addSwissStage}>
+      <button type="button" class="btn btn-success" onclick={() => { addStage(); }}>
         <FontAwesomeIcon icon="plus" /> Add Swiss stage
       </button>
     {/if}
@@ -265,6 +284,7 @@
           startExpanded={index === data.stages.length - 1}
           tournament={data.tournament}
           tournamentPolicies={data.policy}
+          deleteCallback={deleteStageCallback}
           {deletePairingCallback}
           {reportScoreCallback}
           {completeRoundCallback}
@@ -285,7 +305,7 @@
                   type="button"
                   class="btn btn-success"
                   onclick={() => {
-                    addCutStage(true, num);
+                    addStage(true, num);
                   }}
                 >
                   <FontAwesomeIcon icon="scissors" /> Top {num}
@@ -302,7 +322,7 @@
                   type="button"
                   class="btn btn-success"
                   onclick={() => {
-                    addCutStage(false, num);
+                    addStage(false, num);
                   }}
                 >
                   <FontAwesomeIcon icon="scissors" /> Top {num}
