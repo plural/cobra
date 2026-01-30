@@ -211,6 +211,13 @@
         </div>
       {/each}
 
+      {#snippet playerOptions()}
+        <option value="">(Bye)</option>
+        {#each data?.round.unpaired_players as player (player.id)}
+          <option value={player.id}>{player.name}</option>
+        {/each}
+      {/snippet}
+
       <h3 class="mt-2">Create pairing</h3>
       <form
         id="new_pairing"
@@ -229,10 +236,8 @@
           class="form-control mx-2"
           bind:value={newPairing.player1_id}
         >
-          <option value="">(Bye)</option>
-          {#each data.round.unpaired_players as player (player.id)}
-            <option value={player.id}>{player.name}</option>
-          {/each}
+          <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+          {@render playerOptions()}
         </select>
         {#if data.stage.is_single_sided}
           <select
@@ -251,10 +256,8 @@
           class="form-control mx-2"
           bind:value={newPairing.player2_id}
         >
-          <option value="">(Bye)</option>
-          {#each data.round.unpaired_players as player (player.id)}
-            <option value={player.id}>{player.name}</option>
-          {/each}
+          <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+          {@render playerOptions()}
         </select>
         <button type="submit" class="btn btn-success">
           <FontAwesomeIcon icon="plus" /> Create
