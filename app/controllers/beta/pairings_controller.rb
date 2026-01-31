@@ -10,7 +10,7 @@ module Beta
 
       round.pairings.create(pairing_params)
 
-      redirect_to beta_tournament_round_path(tournament, round)
+      head :ok
     end
 
     def destroy
@@ -36,7 +36,7 @@ module Beta
 
       SelfReport.where(pairing_id: pairing.id).destroy_all
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def save_report

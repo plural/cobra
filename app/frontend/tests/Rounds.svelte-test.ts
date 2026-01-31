@@ -3,11 +3,16 @@ import {
   getByText,
   queryByRole,
   render,
+  screen,
   within,
 } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { deletePairing, loadPairings } from "../pairings/PairingsData";
+import {
+  completeRound,
+  deletePairing,
+  loadPairings,
+} from "../pairings/PairingsData";
 import Rounds from "../pairings/Rounds.svelte";
 import { reportScore } from "../pairings/SelfReport";
 import {
@@ -16,6 +21,7 @@ import {
   MockPlayerBob,
   MockSelfReport,
   Pairing1,
+  Round1,
 } from "./RoundsTestData";
 
 const user = userEvent.setup();
@@ -23,6 +29,7 @@ const user = userEvent.setup();
 vi.mock("../pairings/PairingsData", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/PairingsData")>()),
   loadPairings: vi.fn(() => MockPairingsData),
+  completeRound: vi.fn(() => true),
   deletePairing: vi.fn(() => true),
 }));
 
@@ -41,17 +48,39 @@ describe("Rounds", () => {
       render(Rounds, { tournamentId: 0 });
     });
 
+    describe("complete round", () => {
+      it("completes the round", async () => {
+        vi.spyOn(Round1, "completed", "get").mockReturnValue(true);
+        vi.spyOn(window, "confirm").mockReturnValue(true);
+
+        await user.click(screen.getByRole("button", { name: /complete/i }));
+
+        expect(completeRound).toHaveBeenCalledOnce();
+        expect(loadPairings).toHaveBeenCalledTimes(2);
+        expect(
+          screen.queryByRole("button", { name: /complete/i }),
+        ).not.toBeInTheDocument();
+      });
+
+      it("does not complete the round if cancelled", async () => {
+        vi.spyOn(window, "confirm").mockReturnValue(false);
+
+        await user.click(screen.getByRole("button", { name: /complete/i }));
+
+        expect(completeRound).not.toHaveBeenCalled();
+        expect(loadPairings).toHaveBeenCalledOnce();
+        expect(
+          screen.getByRole("button", { name: /complete/i }),
+        ).toBeInTheDocument();
+      });
+    });
+
     it("deletes a pairing", async () => {
-      vi.spyOn(
-        MockPairingsData.stages[0].rounds[0],
-        "pairings",
-        "get",
-      ).mockReturnValue([]);
-      vi.spyOn(
-        MockPairingsData.stages[0].rounds[0],
-        "unpaired_players",
-        "get",
-      ).mockReturnValue([MockPlayerAlice, MockPlayerBob]);
+      vi.spyOn(Round1, "pairings", "get").mockReturnValue([]);
+      vi.spyOn(Round1, "unpaired_players", "get").mockReturnValue([
+        MockPlayerAlice,
+        MockPlayerBob,
+      ]);
       vi.spyOn(window, "confirm").mockReturnValue(true);
 
       const table1Row = document.getElementsByClassName(
@@ -232,21 +261,32 @@ describe("Rounds", () => {
         render(Rounds, { tournamentId: 0 });
       });
 
-      it("the TO reporting buttons", () => {
-        const centreScoreDiv = document.getElementsByClassName(
-          "centre_score",
-        )[0] as HTMLElement;
-        expect(centreScoreDiv).not.toContainElement(
-          within(centreScoreDiv).queryByRole("button", {
-            name: /6-0/i,
-          }),
+      it("the TO round controls", () => {
+        const roundControlsDiv = screen.getByLabelText(/round controls/i);
+        expect(roundControlsDiv).not.toContainElement(
+          queryByRole(roundControlsDiv, "link", { name: /edit/i }),
+        );
+        expect(roundControlsDiv).not.toContainElement(
+          queryByRole(roundControlsDiv, "button", { name: /complete/i }),
+        );
+        expect(roundControlsDiv).not.toContainElement(
+          queryByRole(roundControlsDiv, "link", { name: /match slips/i }),
+        );
+        expect(roundControlsDiv).not.toContainElement(
+          queryByRole(roundControlsDiv, "link", { name: /export markdown/i }),
         );
       });
 
-      it("the Delete button", () => {
+      it("the TO pairing controls", () => {
         const table1Row = document.getElementsByClassName(
           "table_1",
         )[0] as HTMLElement;
+        expect(table1Row).not.toContainElement(
+          queryByRole(table1Row, "button", { name: /6-0/i }),
+        );
+        expect(table1Row).not.toContainElement(
+          queryByRole(table1Row, "button", { name: /reports/i }),
+        );
         expect(table1Row).not.toContainElement(
           within(table1Row).queryByRole("button", {
             name: /delete/i,

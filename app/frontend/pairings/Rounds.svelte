@@ -2,6 +2,7 @@
   import { onMount, setContext } from "svelte";
   import Stage from "./Stage.svelte";
   import {
+    completeRound,
     deletePairing,
     loadPairings,
     PairingsData,
@@ -111,6 +112,15 @@
       report,
       selfReport,
     );
+    if (!success) {
+      return;
+    }
+
+    data = await loadPairings(tournamentId);
+  }
+
+  async function completeRoundCallback(roundId: number) {
+    const success = await completeRound(tournamentId, roundId, true);
     if (!success) {
       return;
     }
@@ -257,6 +267,7 @@
           tournamentPolicies={data.policy}
           {deletePairingCallback}
           {reportScoreCallback}
+          {completeRoundCallback}
         />
       {/each}
     </div>

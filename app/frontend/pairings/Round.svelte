@@ -7,7 +7,6 @@
   } from "./PairingsData";
   import Pairing from "./Pairing.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { redirectRequest } from "../utils/network";
   import { showReportedPairings } from "../utils/ShowReportedPairings";
   import RoundTimerControls from "./RoundTimerControls.svelte";
   import { getContext } from "svelte";
@@ -20,6 +19,7 @@
     startExpanded,
     deletePairingCallback,
     reportScoreCallback,
+    completeCallback,
   }: {
     tournament: Tournament;
     stage: Stage;
@@ -32,25 +32,20 @@
       report: ScoreReport,
       selfReport: boolean,
     ) => void;
+    completeCallback?: (roundId: number) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
 
-  function completeRound() {
+  function complete() {
     if (
-      round.pairings.length != round.pairings_reported &&
-      !confirm(
+      round.pairings.length == round.pairings_reported ||
+      confirm(
         `${round.pairings.length - round.pairings_reported} pairings have not been reported. Are you sure you want to complete this round?`,
       )
     ) {
-      return;
+      completeCallback?.(round.id);
     }
-
-    void redirectRequest(
-      `/beta/tournaments/${tournament.id}/rounds/${round.id}/complete`,
-      "PATCH",
-      { completed: true },
-    );
   }
 </script>
 
@@ -70,38 +65,40 @@
 
   <div class="collapse{startExpanded ? ' show' : ''}" id="round{round.id}">
     <div class="col-12 my-3">
-      <!-- Admin controls -->
-      {#if pairingsContext.showOrganizerView}
-        <a
-          class="btn btn-warning"
-          href="/beta/tournaments/{tournament.id}/rounds/{round.id}"
-        >
-          <FontAwesomeIcon icon="pencil" /> Edit
-        </a>
-        {#if !round.completed}
-          <button type="button" class="btn btn-warning" onclick={completeRound}>
-            <FontAwesomeIcon icon="check" /> Complete
-          </button>
+      <div aria-label="round controls">
+        <!-- Admin controls -->
+        {#if pairingsContext.showOrganizerView}
+          <a
+            class="btn btn-warning"
+            href="/beta/tournaments/{tournament.id}/rounds/{round.id}"
+          >
+            <FontAwesomeIcon icon="pencil" /> Edit
+          </a>
+          {#if !round.completed}
+            <button type="button" class="btn btn-warning" onclick={complete}>
+              <FontAwesomeIcon icon="check" /> Complete
+            </button>
+          {/if}
+          <a
+            class="btn btn-primary"
+            href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/match_slips"
+          >
+            <FontAwesomeIcon icon="flag-checkered" /> Match slips
+          </a>
+          <a
+            class="btn btn-primary"
+            href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/sharing"
+          >
+            <FontAwesomeIcon icon="share" /> Export markdown
+          </a>
         {/if}
         <a
           class="btn btn-primary"
-          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/match_slips"
+          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings"
         >
-          <FontAwesomeIcon icon="flag-checkered" /> Match slips
+          <FontAwesomeIcon icon="list-ul" /> Pairings by name
         </a>
-        <a
-          class="btn btn-primary"
-          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings/sharing"
-        >
-          <FontAwesomeIcon icon="share" /> Export markdown
-        </a>
-      {/if}
-      <a
-        class="btn btn-primary"
-        href="/tournaments/{tournament.id}/rounds/{round.id}/pairings"
-      >
-        <FontAwesomeIcon icon="list-ul" /> Pairings by name
-      </a>
+      </div>
 
       <!-- Timer controls -->
       {#if pairingsContext.showOrganizerView && !round.completed}

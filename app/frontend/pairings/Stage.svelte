@@ -18,6 +18,7 @@
     tournamentPolicies,
     deletePairingCallback,
     reportScoreCallback,
+    completeRoundCallback,
   }: {
     tournament: Tournament;
     stage: Stage;
@@ -30,6 +31,7 @@
       report: ScoreReport,
       selfReport: boolean,
     ) => void;
+    completeRoundCallback?: (roundId: number) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
@@ -87,6 +89,7 @@
       {startExpanded}
       {deletePairingCallback}
       {reportScoreCallback}
+      completeCallback={completeRoundCallback}
     />
   {:else}
     {#each stage.rounds as round, index (round.id)}
@@ -97,6 +100,7 @@
         startExpanded={startExpanded && index === stage.rounds.length - 1}
         {deletePairingCallback}
         {reportScoreCallback}
+        completeCallback={completeRoundCallback}
       />
     {/each}
   {/if}
