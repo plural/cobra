@@ -38,7 +38,7 @@
   const pairingsContext: PairingsContext = getContext("pairingsContext");
 </script>
 
-<div class="accordion mb-3" role="tablist">
+<div id={`stage${stage.id}`} class="accordion mb-3" role="tablist">
   <div class="row mb-1">
     <div class="col-sm-10 d-flex align-items-baseline gap-2">
       <h4>{stage.name}</h4>
@@ -51,11 +51,12 @@
           <a
             href="/tournaments/{tournament.id}/stages/{stage.id}"
             class="btn btn-warning mx-1"
+            aria-label="edit stage"
           >
             <FontAwesomeIcon icon="pencil" />
           </a>
         {/if}
-        <button class="btn btn-danger mx-1" onclick={() => { deleteCallback?.(stage.id); }} aria-label="delete">
+        <button class="btn btn-danger mx-1" onclick={() => { deleteCallback?.(stage.id); }} aria-label="delete stage">
           <FontAwesomeIcon icon="trash" />
         </button>
       </div>

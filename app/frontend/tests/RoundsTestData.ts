@@ -4,6 +4,7 @@ import {
   type Pairing,
   type PairingsData,
   type Round,
+  type Stage,
 } from "../pairings/PairingsData";
 import type { ScoreReport } from "../pairings/SelfReport";
 
@@ -33,7 +34,7 @@ export const MockPlayerBob: Player = {
   active: null,
 };
 
-export const Pairing1: Pairing = {
+export const MockPairing1: Pairing = {
   id: 1,
   table_number: 1,
   table_label: "Table 1",
@@ -61,11 +62,11 @@ export const Pairing1: Pairing = {
   },
 };
 
-export const Round1: Round = {
+export const MockRound1: Round = {
   id: 1,
   number: 1,
   completed: false,
-  pairings: [Pairing1],
+  pairings: [MockPairing1],
   pairings_reported: 0,
   length_minutes: 0,
   timer: {
@@ -76,20 +77,35 @@ export const Round1: Round = {
   unpaired_players: [],
 };
 
+export const MockRound2: Round = {
+  id: 2,
+  number: 2,
+  completed: false,
+  pairings: [MockPairing1],
+  pairings_reported: 0,
+  length_minutes: 0,
+  timer: {
+    running: false,
+    paused: false,
+    started: false,
+  },
+  unpaired_players: [],
+};
+
+export const MockSwissStage: Stage = {
+  id: 1,
+  name: "Swiss",
+  format: "swiss",
+  is_single_sided: false,
+  is_elimination: false,
+  view_decks: false,
+  rounds: [MockRound1],
+};
+
 export const MockPairingsData: PairingsData = {
   tournament: new Tournament(),
   policy: { update: true, custom_table_numbering: false },
-  stages: [
-    {
-      id: 1,
-      name: "Swiss",
-      format: "swiss",
-      is_single_sided: false,
-      is_elimination: false,
-      view_decks: false,
-      rounds: [Round1],
-    },
-  ],
+  stages: [MockSwissStage],
 };
 
 export const MockSelfReport: ScoreReport = {
