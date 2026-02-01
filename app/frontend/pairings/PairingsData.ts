@@ -26,7 +26,11 @@ declare const Routes: {
     tournamentId: number,
     roundId: number,
   ) => string;
+  beta_tournament_rounds_path: (tournamentId: number) => string;
   beta_tournament_round_path: (tournamentId: number, roundId: number) => string;
+  beta_tournament_stages_path: (tournamentId: number) => string;
+  beta_tournament_stage_path: (tournamentId: number, stageId: number) => string;
+  cut_beta_tournament_path: (tournamentId: number) => string;
 };
 
 export async function loadPairings(
@@ -100,6 +104,22 @@ export async function deletePairing(
   return response.status === 200;
 }
 
+export async function pairRound(tournamentId: number) {
+  const response = await fetch(
+    Routes.beta_tournament_rounds_path(tournamentId),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+    },
+  );
+
+  return response.status === 200;
+}
+
 export async function rePairRound(
   tournamentId: number,
   roundId: number,
@@ -146,6 +166,51 @@ export async function deleteRound(
 ): Promise<boolean> {
   const response = await fetch(
     Routes.beta_tournament_round_path(tournamentId, roundId),
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+    },
+  );
+
+  return response.status === 200;
+}
+
+export async function createStage(
+  tournamentId: number,
+  cutSingleElim?: boolean,
+  cutCount?: number,
+) {
+  const isCut = cutSingleElim !== undefined && cutCount !== undefined;
+  const path = isCut
+    ? Routes.cut_beta_tournament_path(tournamentId)
+    : Routes.beta_tournament_stages_path(tournamentId);
+  const body = isCut
+    ? { number: cutCount, ...(cutSingleElim && { elimination_type: "single" }) }
+    : null;
+
+  const response = await fetch(path, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken(),
+    },
+    body: JSON.stringify(body),
+  });
+
+  return response.status === 200;
+}
+
+export async function deleteStage(
+  tournamentId: number,
+  stageId: number,
+): Promise<boolean> {
+  const response = await fetch(
+    Routes.beta_tournament_stage_path(tournamentId, stageId),
     {
       method: "DELETE",
       headers: {
