@@ -56,7 +56,13 @@
             <FontAwesomeIcon icon="pencil" />
           </a>
         {/if}
-        <button class="btn btn-danger mx-1" onclick={() => { deleteCallback?.(stage.id); }} aria-label="delete stage">
+        <button
+          class="btn btn-danger mx-1"
+          onclick={() => {
+            deleteCallback?.(stage.id);
+          }}
+          aria-label="delete stage"
+        >
           <FontAwesomeIcon icon="trash" />
         </button>
       </div>

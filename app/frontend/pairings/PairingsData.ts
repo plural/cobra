@@ -179,23 +179,28 @@ export async function deleteRound(
   return response.status === 200;
 }
 
-export async function createStage(tournamentId: number, cutSingleElim?: boolean, cutCount?: number) {
+export async function createStage(
+  tournamentId: number,
+  cutSingleElim?: boolean,
+  cutCount?: number,
+) {
   const isCut = cutSingleElim !== undefined && cutCount !== undefined;
-  const path = isCut ? Routes.cut_beta_tournament_path(tournamentId) : Routes.beta_tournament_stages_path(tournamentId);
-  const body = isCut ? { number: cutCount, ...(cutSingleElim && { elimination_type: "single" }) } : null;
+  const path = isCut
+    ? Routes.cut_beta_tournament_path(tournamentId)
+    : Routes.beta_tournament_stages_path(tournamentId);
+  const body = isCut
+    ? { number: cutCount, ...(cutSingleElim && { elimination_type: "single" }) }
+    : null;
 
-  const response = await fetch(
-    path,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "X-CSRF-Token": csrfToken(),
-      },
-      body: JSON.stringify(body)
+  const response = await fetch(path, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken(),
     },
-  );
+    body: JSON.stringify(body),
+  });
 
   return response.status === 200;
 }

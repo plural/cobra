@@ -135,7 +135,11 @@
   }
 
   async function deleteStageCallback(stageId: number) {
-    if (!confirm("Are you sure? This cannot be reversed and all rounds will be deleted.")) {
+    if (
+      !confirm(
+        "Are you sure? This cannot be reversed and all rounds will be deleted.",
+      )
+    ) {
       return;
     }
 
@@ -156,7 +160,13 @@
   {#if data.stages.length == 0}
     <!-- Add Swiss stage button -->
     {#if ctx.showOrganizerView}
-      <button type="button" class="btn btn-success" onclick={() => { addStage(); }}>
+      <button
+        type="button"
+        class="btn btn-success"
+        onclick={() => {
+          void addStage();
+        }}
+      >
         <FontAwesomeIcon icon="plus" /> Add Swiss stage
       </button>
     {/if}
@@ -305,7 +315,7 @@
                   type="button"
                   class="btn btn-success"
                   onclick={() => {
-                    addStage(true, num);
+                    void addStage(true, num);
                   }}
                   aria-label={`cut to single elimination top ${num}`}
                 >
@@ -323,7 +333,7 @@
                   type="button"
                   class="btn btn-success"
                   onclick={() => {
-                    addStage(false, num);
+                    void addStage(false, num);
                   }}
                   aria-label={`cut to double elimination top ${num}`}
                 >
