@@ -154,8 +154,8 @@
           <button
             type="button"
             class="btn btn-warning"
-            onclick={() => {
-              void complete(false);
+            onclick={async () => {
+              await complete(false);
             }}
           >
             <FontAwesomeIcon icon="backward" /> Uncomplete
@@ -164,8 +164,8 @@
           <button
             type="button"
             class="btn btn-warning"
-            onclick={() => {
-              void complete(true);
+            onclick={async () => {
+              await complete(true);
             }}
           >
             <FontAwesomeIcon icon="check" /> Complete

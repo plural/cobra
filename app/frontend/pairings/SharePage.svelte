@@ -15,9 +15,7 @@
   let showCopied = $state(false);
   let error = $state("");
 
-  async function copyMarkdown(e: MouseEvent) {
-    e.preventDefault();
-
+  async function copyMarkdown() {
     try {
       await navigator.clipboard.writeText(text);
 
@@ -39,9 +37,8 @@
 
 <span>
   <button
-    onclick={(e) => {
-      void copyMarkdown(e);
-    }}
+    type="button"
+    onclick={async () => { await copyMarkdown(); }}
     class="btn btn-info align-top"
   >
     {#if showCopy}

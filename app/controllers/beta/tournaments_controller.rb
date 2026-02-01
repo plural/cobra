@@ -12,7 +12,7 @@ module Beta
 
       @tournament.open_registration!
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def close_registration
@@ -20,7 +20,7 @@ module Beta
 
       @tournament.close_registration!
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def lock_player_registrations
@@ -28,7 +28,7 @@ module Beta
 
       @tournament.lock_player_registrations!
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def unlock_player_registrations
@@ -36,7 +36,7 @@ module Beta
 
       @tournament.unlock_player_registrations!
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def cut

@@ -9,6 +9,8 @@
     loadPairings,
     PairingsData,
     pairRound,
+    setPlayerRegistrationStatus as setPlayerRegistrationStatusRequest,
+    setRegistrationStatus as setRegistrationStatusRequest,
     type PairingsContext,
   } from "./PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
@@ -16,7 +18,6 @@
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";
   import { showReportedPairings } from "../utils/ShowReportedPairings";
-  import { redirectRequest } from "../utils/network";
   import { reportScore, type ScoreReport } from "./SelfReport";
 
   let { tournamentId }: { tournamentId: number } = $props();
@@ -64,32 +65,22 @@
     data = await loadPairings(tournamentId);
   }
 
-  function closeRegistration() {
-    void redirectRequest(
-      `/beta/tournaments/${tournamentId}/close_registration`,
-      "PATCH",
-    );
+  async function setRegistrationStatus(open: boolean) {
+    const success = await setRegistrationStatusRequest(tournamentId, open);
+    if (!success) {
+      return;
+    }
+
+    data = await loadPairings(tournamentId);
   }
 
-  function openRegistration() {
-    void redirectRequest(
-      `/beta/tournaments/${tournamentId}/open_registration`,
-      "PATCH",
-    );
-  }
+  async function setPlayerRegistrationStatus(open: boolean) {
+    const success = await setPlayerRegistrationStatusRequest(tournamentId, open);
+    if (!success) {
+      return;
+    }
 
-  function lockPlayerRegistration() {
-    void redirectRequest(
-      `/beta/tournaments/${tournamentId}/lock_player_registrations`,
-      "PATCH",
-    );
-  }
-
-  function unlockPlayerRegistration() {
-    void redirectRequest(
-      `/beta/tournaments/${tournamentId}/unlock_player_registrations`,
-      "PATCH",
-    );
+    data = await loadPairings(tournamentId);
   }
 
   async function deletePairingCallback(roundId: number, pairingId: number) {
@@ -163,8 +154,8 @@
       <button
         type="button"
         class="btn btn-success"
-        onclick={() => {
-          void addStage();
+        onclick={async () => {
+          await addStage();
         }}
       >
         <FontAwesomeIcon icon="plus" /> Add Swiss stage
@@ -239,7 +230,7 @@
           <button
             type="button"
             class="btn btn-info"
-            onclick={closeRegistration}
+            onclick={async () => { await setRegistrationStatus(false); }}
           >
             <FontAwesomeIcon icon="lock" /> Close registration
           </button>
@@ -247,7 +238,7 @@
           <button
             type="button"
             class="btn btn-secondary"
-            onclick={openRegistration}
+            onclick={async () => { await setRegistrationStatus(true); }}
           >
             <FontAwesomeIcon icon="folder-open" /> Open registration
           </button>
@@ -255,7 +246,7 @@
             <button
               type="button"
               class="btn btn-secondary"
-              onclick={unlockPlayerRegistration}
+              onclick={async () => { await setPlayerRegistrationStatus(false); }}
             >
               <FontAwesomeIcon icon="unlock" /> Unlock all players
             </button>
@@ -264,7 +255,7 @@
             <button
               type="button"
               class="btn btn-info"
-              onclick={lockPlayerRegistration}
+              onclick={async () => { await setPlayerRegistrationStatus(true); }}
             >
               <FontAwesomeIcon icon="lock" /> Lock all players
             </button>
@@ -314,8 +305,8 @@
                 <button
                   type="button"
                   class="btn btn-success"
-                  onclick={() => {
-                    void addStage(true, num);
+                  onclick={async () => {
+                    await addStage(true, num);
                   }}
                   aria-label={`cut to single elimination top ${num}`}
                 >
@@ -332,8 +323,8 @@
                 <button
                   type="button"
                   class="btn btn-success"
-                  onclick={() => {
-                    void addStage(false, num);
+                  onclick={async () => {
+                    await addStage(false, num);
                   }}
                   aria-label={`cut to double elimination top ${num}`}
                 >
