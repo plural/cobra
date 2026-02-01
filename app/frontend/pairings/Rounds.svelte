@@ -307,6 +307,7 @@
                   onclick={() => {
                     addStage(true, num);
                   }}
+                  aria-label={`cut to single elimination top ${num}`}
                 >
                   <FontAwesomeIcon icon="scissors" /> Top {num}
                 </button>
@@ -324,6 +325,7 @@
                   onclick={() => {
                     addStage(false, num);
                   }}
+                  aria-label={`cut to double elimination top ${num}`}
                 >
                   <FontAwesomeIcon icon="scissors" /> Top {num}
                 </button>

@@ -102,6 +102,26 @@ export const MockSwissStage: Stage = {
   rounds: [MockRound1],
 };
 
+export const MockSingleElimCutStage: Stage = {
+  id: 2,
+  name: "Single Elim",
+  format: "single_elim",
+  is_single_sided: false,
+  is_elimination: true,
+  view_decks: false,
+  rounds: [],
+};
+
+export const MockDoubleElimCutStage: Stage = {
+  id: 2,
+  name: "Double Elim",
+  format: "double_elim",
+  is_single_sided: false,
+  is_elimination: true,
+  view_decks: false,
+  rounds: [],
+};
+
 export const MockPairingsData: PairingsData = {
   tournament: new Tournament(),
   policy: { update: true, custom_table_numbering: false },

@@ -19,6 +19,7 @@ import {
 import Rounds from "../pairings/Rounds.svelte";
 import { reportScore } from "../pairings/SelfReport";
 import {
+  MockDoubleElimCutStage,
   MockPairing1,
   MockPairingsData,
   MockPlayerAlice,
@@ -26,6 +27,7 @@ import {
   MockRound1,
   MockRound2,
   MockSelfReport,
+  MockSingleElimCutStage,
   MockSwissStage,
 } from "./RoundsTestData";
 
@@ -52,8 +54,6 @@ describe("Rounds", () => {
   });
 
   describe("as organizer", () => {
-    // TODO: Create cut stage(s)
-
     describe("with no stages", () => {
       beforeEach(() => {
         vi.spyOn(MockPairingsData, "stages", "get").mockReturnValue([]);
@@ -314,6 +314,28 @@ describe("Rounds", () => {
         expect(pairRound).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
         expect(screen.queryByText(/round 2/i)).not.toBeNull();
+      });
+
+      it("creates a single elim cut stage", async () => {
+        expect(screen.queryByText(/^single elim$/i)).toBeNull();
+
+        vi.spyOn(MockPairingsData, "stages", "get").mockReturnValue([MockSwissStage, MockSingleElimCutStage]);
+        await user.click(screen.getByRole("button", { name: /cut to single elimination top 3/i }));
+
+        expect(createStage).toHaveBeenCalledOnce();
+        expect(loadPairings).toHaveBeenCalledTimes(2);
+        expect(screen.queryByText(/^single elim$/i)).not.toBeNull();
+      });
+
+      it("creates a double elim cut stage", async () => {
+        expect(screen.queryByText(/^double elim$/i)).toBeNull();
+
+        vi.spyOn(MockPairingsData, "stages", "get").mockReturnValue([MockSwissStage, MockDoubleElimCutStage]);
+        await user.click(screen.getByRole("button", { name: /cut to double elimination top 4/i }));
+
+        expect(createStage).toHaveBeenCalledOnce();
+        expect(loadPairings).toHaveBeenCalledTimes(2);
+        expect(screen.queryByText(/^double elim$/i)).not.toBeNull();
       });
     });
   });
