@@ -3,6 +3,8 @@
 namespace :ids do
   desc 'update identities'
   task update: :environment do
+    puts 'Updating identities from NRDB...'
+    puts "DB currently has #{Identity.count} identities."
     Nrdb::Connection.new
                     .cards
                     .select { |card| card[:type_code] == 'identity' }
@@ -16,11 +18,14 @@ namespace :ids do
               )
     end
 
+    puts 'Updating autocomplete text for specific identities...'
     Identity.where(nrdb_code: '10030').update(
       autocomplete: 'Palana Foods: Sustainable Growth'
     )
     Identity.where(nrdb_code: %w[02046 20037]).update(
       autocomplete: 'Chaos Theory: Wunderkind'
     )
+
+    puts "DB now has #{Identity.count} identities."
   end
 end
