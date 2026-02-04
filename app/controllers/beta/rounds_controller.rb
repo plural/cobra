@@ -73,7 +73,7 @@ module Beta
         @round.timer.reset!
       end
 
-      render json: { url: beta_tournament_rounds_path(@tournament) }, status: :ok
+      head :ok
     end
 
     def pairings_data

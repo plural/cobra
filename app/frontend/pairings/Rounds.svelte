@@ -11,6 +11,7 @@
     pairRound,
     setPlayerRegistrationStatus as setPlayerRegistrationStatusRequest,
     setRegistrationStatus as setRegistrationStatusRequest,
+    updateRoundTimer,
     type PairingsContext,
   } from "./PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
@@ -143,6 +144,31 @@
     }
 
     data = await loadPairings(tournamentId);
+  }
+
+  async function updateTimerCallback(
+    roundId: number,
+    length_minutes: number,
+    operation: string,
+  ) {
+    if (
+      operation === "reset" &&
+      !confirm("This will clear all elapsed time in the round. Are you sure?")
+    ) {
+      return;
+    }
+
+    const success = await updateRoundTimer(
+      tournamentId,
+      roundId,
+      length_minutes,
+      operation,
+    );
+    if (!success) {
+      return;
+    }
+
+    window.location.href = `/beta/tournaments/${tournamentId}/rounds`;
   }
 </script>
 
@@ -300,6 +326,7 @@
           {deletePairingCallback}
           {reportScoreCallback}
           {completeRoundCallback}
+          {updateTimerCallback}
         />
       {/each}
     </div>

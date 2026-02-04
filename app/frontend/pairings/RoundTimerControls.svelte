@@ -1,32 +1,20 @@
 <script lang="ts">
-  import { redirectRequest } from "../utils/network";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import type { Round } from "./PairingsData";
 
   let {
-    tournamentId,
     round,
+    updateCallback,
   }: {
-    tournamentId: number;
     round: Round;
+    updateCallback?: (
+      roundId: number,
+      length_minutes: number,
+      operation: string,
+    ) => void;
   } = $props();
 
   let roundTimerLength = $state(round.length_minutes);
-
-  function updateTimer(operation: string) {
-    if (
-      operation === "reset" &&
-      !confirm("This will clear all elapsed time in the round. Are you sure?")
-    ) {
-      return;
-    }
-
-    void redirectRequest(
-      `/beta/tournaments/${tournamentId}/rounds/${round.id}/update_timer`,
-      "PATCH",
-      { length_minutes: roundTimerLength, operation: operation },
-    );
-  }
 </script>
 
 <div class="form-inline mt-2 round-timer-form">
@@ -43,7 +31,7 @@
         type="button"
         class="btn btn-danger"
         onclick={() => {
-          updateTimer("stop");
+          updateCallback?.(round.id, roundTimerLength, "stop");
         }}
       >
         <FontAwesomeIcon icon="clock-o" /> Pause
@@ -53,7 +41,7 @@
         type="button"
         class="btn btn-success"
         onclick={() => {
-          updateTimer("start");
+          updateCallback?.(round.id, roundTimerLength, "start");
         }}
       >
         <FontAwesomeIcon icon="clock-o" /> Resume
@@ -63,7 +51,7 @@
         type="button"
         class="btn btn-success"
         onclick={() => {
-          updateTimer("start");
+          updateCallback?.(round.id, roundTimerLength, "start");
         }}
       >
         <FontAwesomeIcon icon="clock-o" /> Start
@@ -72,7 +60,7 @@
     <button
       class="btn btn-info ml-2"
       onclick={() => {
-        updateTimer("reset");
+        updateCallback?.(round.id, roundTimerLength, "reset");
       }}
     >
       <FontAwesomeIcon icon="undo" /> Reset
