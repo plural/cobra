@@ -75,7 +75,10 @@
   }
 
   async function setPlayerRegistrationStatus(open: boolean) {
-    const success = await setPlayerRegistrationStatusRequest(tournamentId, open);
+    const success = await setPlayerRegistrationStatusRequest(
+      tournamentId,
+      open,
+    );
     if (!success) {
       return;
     }
@@ -230,7 +233,9 @@
           <button
             type="button"
             class="btn btn-info"
-            onclick={async () => { await setRegistrationStatus(false); }}
+            onclick={async () => {
+              await setRegistrationStatus(false);
+            }}
           >
             <FontAwesomeIcon icon="lock" /> Close registration
           </button>
@@ -238,7 +243,9 @@
           <button
             type="button"
             class="btn btn-secondary"
-            onclick={async () => { await setRegistrationStatus(true); }}
+            onclick={async () => {
+              await setRegistrationStatus(true);
+            }}
           >
             <FontAwesomeIcon icon="folder-open" /> Open registration
           </button>
@@ -246,7 +253,9 @@
             <button
               type="button"
               class="btn btn-secondary"
-              onclick={async () => { await setPlayerRegistrationStatus(false); }}
+              onclick={async () => {
+                await setPlayerRegistrationStatus(false);
+              }}
             >
               <FontAwesomeIcon icon="unlock" /> Unlock all players
             </button>
@@ -255,7 +264,9 @@
             <button
               type="button"
               class="btn btn-info"
-              onclick={async () => { await setPlayerRegistrationStatus(true); }}
+              onclick={async () => {
+                await setPlayerRegistrationStatus(true);
+              }}
             >
               <FontAwesomeIcon icon="lock" /> Lock all players
             </button>

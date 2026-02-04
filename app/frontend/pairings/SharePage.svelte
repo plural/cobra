@@ -38,7 +38,9 @@
 <span>
   <button
     type="button"
-    onclick={async () => { await copyMarkdown(); }}
+    onclick={async () => {
+      await copyMarkdown();
+    }}
     class="btn btn-info align-top"
   >
     {#if showCopy}

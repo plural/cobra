@@ -130,8 +130,8 @@ export const MockTournament: Tournament = {
   self_registration: true,
   locked_players: 0,
   unlocked_players: 2,
-  allow_streaming_opt_out: false
-}
+  allow_streaming_opt_out: false,
+};
 
 export const MockPairingsData: PairingsData = {
   tournament: MockTournament,
