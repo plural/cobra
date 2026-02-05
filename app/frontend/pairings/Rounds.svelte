@@ -19,7 +19,11 @@
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";
   import { showReportedPairings } from "../utils/ShowReportedPairings";
-  import { reportScore, type ScoreReport } from "./SelfReport";
+  import {
+    changePlayerSide,
+    reportScore,
+    type ScoreReport,
+  } from "./SelfReport";
 
   let { tournamentId }: { tournamentId: number } = $props();
 
@@ -93,6 +97,24 @@
     }
 
     const success = await deletePairing(tournamentId, roundId, pairingId);
+    if (!success) {
+      return;
+    }
+
+    data = await loadPairings(tournamentId);
+  }
+
+  async function changePlayerSideCallback(
+    roundId: number,
+    pairingId: number,
+    side: string,
+  ) {
+    const success = await changePlayerSide(
+      tournamentId,
+      roundId,
+      pairingId,
+      side,
+    );
     if (!success) {
       return;
     }
@@ -324,6 +346,7 @@
           tournamentPolicies={data.policy}
           deleteCallback={deleteStageCallback}
           {deletePairingCallback}
+          {changePlayerSideCallback}
           {reportScoreCallback}
           {completeRoundCallback}
           {updateTimerCallback}

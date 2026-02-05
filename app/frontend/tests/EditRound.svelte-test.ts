@@ -18,7 +18,11 @@ import {
   deleteRound,
   rePairRound,
 } from "../pairings/PairingsData";
-import { reportScore, resetReports } from "../pairings/SelfReport";
+import {
+  changePlayerSide,
+  reportScore,
+  resetReports,
+} from "../pairings/SelfReport";
 import {
   MockPlayerAlice,
   MockPlayerBob,
@@ -45,6 +49,7 @@ vi.mock("../pairings/PairingsData", async (importOriginal) => ({
 
 vi.mock("../pairings/SelfReport", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/SelfReport")>()),
+  changePlayerSide: vi.fn(() => true),
   reportScore: vi.fn(() => true),
   resetReports: vi.fn(() => true),
 }));
@@ -236,6 +241,41 @@ describe("EditRound", () => {
       expect(deletePairing).not.toHaveBeenCalled();
       expect(loadRound).toHaveBeenCalledOnce();
       expect(table1Row).toBeInTheDocument();
+    });
+  });
+
+  describe("player side", () => {
+    beforeEach(() => {
+      render(EditRound, { tournamentId: 1, roundId: 1 });
+    });
+
+    it("changes player side", async () => {
+      vi.spyOn(MockPlayerAlice, "side", "get").mockReturnValue("runner");
+      vi.spyOn(MockPlayerBob, "side", "get").mockReturnValue("corp");
+      vi.spyOn(window, "confirm").mockReturnValue(true);
+
+      const table1Row = document.getElementsByClassName(
+        "table_1",
+      )[0] as HTMLElement;
+      const aliceRunnerButton = getByRole(table1Row, "button", {
+        name: /change alice to runner/i,
+      });
+
+      expect(aliceRunnerButton).not.toContainElement(
+        queryByTestId(aliceRunnerButton, "selected"),
+      );
+
+      await user.click(aliceRunnerButton);
+
+      expect(changePlayerSide).toHaveBeenCalled();
+      expect(loadRound).toHaveBeenCalledTimes(2);
+
+      const aliceRunnerButton2 = getByRole(table1Row, "button", {
+        name: /change alice to runner/i,
+      });
+      expect(aliceRunnerButton2).toContainElement(
+        queryByTestId(aliceRunnerButton2, "selected"),
+      );
     });
   });
 

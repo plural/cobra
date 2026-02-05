@@ -30,9 +30,10 @@
     onclick={() => {
       changePlayerSide(player, side);
     }}
+    aria-label={`change ${player.name} to ${side}`}
   >
     {#if player.side === side}
-      <FontAwesomeIcon icon="check" />
+      <FontAwesomeIcon icon="check" dataTestId="selected" />
     {/if}
     {side == "corp" ? "Corp" : "Runner"}
   </button>

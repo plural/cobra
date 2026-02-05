@@ -17,7 +17,6 @@
   import SelfReportOptions from "./SelfReportOptions.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";
   import PlayerDisplay from "./PlayerDisplay.svelte";
-  import { redirectRequest } from "../utils/network";
   import AdminReportOptions from "./AdminReportOptions.svelte";
 
   let {
@@ -26,6 +25,7 @@
     round,
     pairing = $bindable(),
     deleteCallback,
+    changePlayerSideCallback,
     reportScoreCallback,
     resetReportsCallback,
   }: {
@@ -34,6 +34,7 @@
     round: Round;
     pairing: Pairing;
     deleteCallback?: (pairingId: number) => void;
+    changePlayerSideCallback?: (pairingId: number, side: string) => void;
     reportScoreCallback?: (
       pairingId: number,
       report: ScoreReport,
@@ -44,18 +45,22 @@
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
 
-  let leftPlayer = $state(pairing.player1);
-  let rightPlayer = $state(pairing.player2);
-  if (pairing.player2.side == "corp" && stage.is_single_sided) {
-    leftPlayer = pairing.player2;
-    rightPlayer = pairing.player1;
-  }
-  let leftPlayerReport: ScoreReport | undefined = $derived(
+  let leftPlayer = $derived(
+    stage.is_single_sided && pairing.player1.side == "corp"
+      ? pairing.player1
+      : pairing.player2,
+  );
+  let rightPlayer = $derived(
+    stage.is_single_sided && pairing.player1.side == "corp"
+      ? pairing.player2
+      : pairing.player1,
+  );
+  let leftPlayerReport = $derived(
     pairing.self_reports?.find(
       (r) => r.report_player_id === leftPlayer.user_id,
     ),
   );
-  let rightPlayerReport: ScoreReport | undefined = $derived(
+  let rightPlayerReport = $derived(
     pairing.self_reports?.find(
       (r) => r.report_player_id === rightPlayer.user_id,
     ),
@@ -74,21 +79,18 @@
 
   function changePlayerSide(player: Player, side: string) {
     if (
+      !changePlayerSideCallback ||
       !confirm(`Are you sure you want to switch ${player.name} to ${side}?`)
     ) {
       return;
     }
 
-    let sideValue = side;
+    let adjSide = side;
     if (player !== pairing.player1) {
-      sideValue = side === "corp" ? "runner" : "corp";
+      adjSide = side === "corp" ? "runner" : "corp";
     }
 
-    void redirectRequest(
-      `/beta/tournaments/${tournament.id}/rounds/${round.id}/pairings/${pairing.id}/report`,
-      "POST",
-      { side: `player1_is_${sideValue}` },
-    );
+    changePlayerSideCallback(pairing.id, adjSide);
   }
 </script>
 

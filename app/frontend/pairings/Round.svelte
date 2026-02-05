@@ -18,6 +18,7 @@
     round = $bindable(),
     startExpanded,
     deletePairingCallback,
+    changePlayerSideCallback,
     reportScoreCallback,
     completeCallback,
     updateTimerCallback,
@@ -27,6 +28,11 @@
     round: Round;
     startExpanded: boolean;
     deletePairingCallback?: (roundId: number, pairingId: number) => void;
+    changePlayerSideCallback?: (
+      roundId: number,
+      pairingId: number,
+      side: string,
+    ) => void;
     reportScoreCallback?: (
       roundId: number,
       pairingId: number,
@@ -124,6 +130,9 @@
             {stage}
             deleteCallback={(pairingId: number) => {
               deletePairingCallback?.(round.id, pairingId);
+            }}
+            changePlayerSideCallback={(pairingId: number, side: string) => {
+              changePlayerSideCallback?.(round.id, pairingId, side);
             }}
             reportScoreCallback={(
               pairingId: number,

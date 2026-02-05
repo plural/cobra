@@ -17,6 +17,7 @@
     tournamentPolicies,
     deleteCallback,
     deletePairingCallback,
+    changePlayerSideCallback,
     reportScoreCallback,
     completeRoundCallback,
     updateTimerCallback,
@@ -27,6 +28,11 @@
     tournamentPolicies?: TournamentPolicies;
     deleteCallback?: (stageId: number) => void;
     deletePairingCallback?: (roundId: number, pairingId: number) => void;
+    changePlayerSideCallback?: (
+      roundId: number,
+      pairingId: number,
+      side: string,
+    ) => void;
     reportScoreCallback?: (
       roundId: number,
       pairingId: number,
@@ -87,6 +93,7 @@
       {stage}
       {startExpanded}
       {deletePairingCallback}
+      {changePlayerSideCallback}
       {reportScoreCallback}
       completeCallback={completeRoundCallback}
       {updateTimerCallback}
@@ -99,6 +106,7 @@
         {stage}
         startExpanded={startExpanded && index === stage.rounds.length - 1}
         {deletePairingCallback}
+        {changePlayerSideCallback}
         {reportScoreCallback}
         completeCallback={completeRoundCallback}
         {updateTimerCallback}
