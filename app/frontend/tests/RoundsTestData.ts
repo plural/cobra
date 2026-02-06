@@ -122,8 +122,19 @@ export const MockDoubleElimCutStage: Stage = {
   rounds: [],
 };
 
+export const MockTournament: Tournament = {
+  id: 0,
+  player_meeting: false,
+  registration_open: true,
+  registration_unlocked: true,
+  self_registration: true,
+  locked_players: 0,
+  unlocked_players: 2,
+  allow_streaming_opt_out: false,
+};
+
 export const MockPairingsData: PairingsData = {
-  tournament: new Tournament(),
+  tournament: MockTournament,
   policy: { update: true, custom_table_numbering: false },
   stages: [MockSwissStage],
 };

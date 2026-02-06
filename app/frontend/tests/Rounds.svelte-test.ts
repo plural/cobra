@@ -15,6 +15,8 @@ import {
   deleteStage,
   loadPairings,
   pairRound,
+  setPlayerRegistrationStatus,
+  setRegistrationStatus,
 } from "../pairings/PairingsData";
 import Rounds from "../pairings/Rounds.svelte";
 import { reportScore } from "../pairings/SelfReport";
@@ -38,6 +40,8 @@ vi.mock("../pairings/PairingsData", async (importOriginal) => ({
   loadPairings: vi.fn(() => MockPairingsData),
   createStage: vi.fn(() => true),
   deleteStage: vi.fn(() => true),
+  setRegistrationStatus: vi.fn(() => true),
+  setPlayerRegistrationStatus: vi.fn(() => true),
   pairRound: vi.fn(() => true),
   completeRound: vi.fn(() => true),
   deletePairing: vi.fn(() => true),
@@ -74,6 +78,157 @@ describe("Rounds", () => {
         expect(createStage).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
         expect(screen.queryByText(/^swiss$/i)).not.toBeNull();
+      });
+    });
+
+    describe("with no rounds", () => {
+      beforeEach(() => {
+        vi.spyOn(MockSwissStage, "rounds", "get").mockReturnValue([]);
+      });
+
+      describe("with registration open", () => {
+        beforeEach(() => {
+          render(Rounds, { tournamentId: 0 });
+        });
+
+        it("closes registration", async () => {
+          vi.spyOn(
+            MockPairingsData.tournament,
+            "registration_open",
+            "get",
+          ).mockReturnValue(false);
+          vi.spyOn(
+            MockPairingsData.tournament,
+            "registration_unlocked",
+            "get",
+          ).mockReturnValue(false);
+          vi.spyOn(
+            MockPairingsData.tournament,
+            "locked_players",
+            "get",
+          ).mockReturnValue(2);
+          vi.spyOn(
+            MockPairingsData.tournament,
+            "unlocked_players",
+            "get",
+          ).mockReturnValue(0);
+          await user.click(
+            screen.getByRole("button", { name: /close registration/i }),
+          );
+
+          expect(setRegistrationStatus).toHaveBeenCalledOnce();
+          expect(loadPairings).toHaveBeenCalledTimes(2);
+          expect(screen.queryByText(/open registration/i)).not.toBeNull();
+          expect(screen.queryByText(/unlock all players/i)).not.toBeNull();
+        });
+      });
+
+      describe("with registration closed", () => {
+        beforeEach(() => {
+          vi.spyOn(
+            MockPairingsData.tournament,
+            "registration_open",
+            "get",
+          ).mockReturnValue(false);
+          vi.spyOn(
+            MockPairingsData.tournament,
+            "registration_unlocked",
+            "get",
+          ).mockReturnValue(false);
+        });
+
+        describe("with all players unlocked", () => {
+          beforeEach(() => {
+            render(Rounds, { tournamentId: 0 });
+          });
+
+          it("locks player registration", async () => {
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "registration_unlocked",
+              "get",
+            ).mockReturnValue(false);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "locked_players",
+              "get",
+            ).mockReturnValue(2);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "unlocked_players",
+              "get",
+            ).mockReturnValue(0);
+            await user.click(
+              screen.getByRole("button", { name: /lock all players/i }),
+            );
+
+            expect(setPlayerRegistrationStatus).toHaveBeenCalledOnce();
+            expect(loadPairings).toHaveBeenCalledTimes(2);
+            expect(screen.queryByText(/unlock all players/i)).not.toBeNull();
+          });
+        });
+
+        describe("with all players locked", () => {
+          beforeEach(() => {
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "locked_players",
+              "get",
+            ).mockReturnValue(2);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "unlocked_players",
+              "get",
+            ).mockReturnValue(0);
+            render(Rounds, { tournamentId: 0 });
+          });
+
+          it("opens registration", async () => {
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "registration_open",
+              "get",
+            ).mockReturnValue(true);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "registration_unlocked",
+              "get",
+            ).mockReturnValue(true);
+            await user.click(
+              screen.getByRole("button", { name: /open registration/i }),
+            );
+
+            expect(setRegistrationStatus).toHaveBeenCalledOnce();
+            expect(loadPairings).toHaveBeenCalledTimes(2);
+            expect(screen.queryByText(/close registration/i)).not.toBeNull();
+            expect(screen.queryByText(/lock all players/i)).toBeNull();
+          });
+
+          it("unlocks player registration", async () => {
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "registration_unlocked",
+              "get",
+            ).mockReturnValue(true);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "locked_players",
+              "get",
+            ).mockReturnValue(0);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "unlocked_players",
+              "get",
+            ).mockReturnValue(2);
+            await user.click(
+              screen.getByRole("button", { name: /unlock all players/i }),
+            );
+
+            expect(setPlayerRegistrationStatus).toHaveBeenCalledOnce();
+            expect(loadPairings).toHaveBeenCalledTimes(2);
+            expect(screen.queryByText(/lock all players/i)).not.toBeNull();
+          });
+        });
       });
     });
 
@@ -319,6 +474,7 @@ describe("Rounds", () => {
           MockRound1,
           MockRound2,
         ]);
+        vi.spyOn(window, "confirm").mockReturnValue(true);
 
         await user.click(
           screen.getByRole("button", { name: /pair new round!/i }),
@@ -381,6 +537,10 @@ describe("Rounds", () => {
         expect(screen.queryByText(/add swiss stage/i)).toBeNull();
         expect(screen.queryByText(/show\/hide reported pairings/i)).toBeNull();
         expect(screen.queryByText(/see player pairings view/i)).toBeNull();
+        expect(screen.queryByText(/open registration/i)).toBeNull();
+        expect(screen.queryByText(/close registration/i)).toBeNull();
+        expect(screen.queryByText(/unlock all players/i)).toBeNull();
+        expect(screen.queryByText(/lock all players/i)).toBeNull();
         expect(screen.queryByText(/pair new round!/i)).toBeNull();
       });
 

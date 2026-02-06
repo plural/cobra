@@ -31,6 +31,14 @@ declare const Routes: {
   beta_tournament_stages_path: (tournamentId: number) => string;
   beta_tournament_stage_path: (tournamentId: number, stageId: number) => string;
   cut_beta_tournament_path: (tournamentId: number) => string;
+  open_registration_beta_tournament_path: (tournamentId: number) => string;
+  close_registration_beta_tournament_path: (tournamentId: number) => string;
+  unlock_player_registrations_beta_tournament_path: (
+    tournamentId: number,
+  ) => string;
+  lock_player_registrations_beta_tournament_path: (
+    tournamentId: number,
+  ) => string;
 };
 
 export async function loadPairings(
@@ -220,6 +228,46 @@ export async function deleteStage(
       },
     },
   );
+
+  return response.status === 200;
+}
+
+export async function setRegistrationStatus(
+  tournamentId: number,
+  open: boolean,
+): Promise<boolean> {
+  const path = open
+    ? Routes.open_registration_beta_tournament_path(tournamentId)
+    : Routes.close_registration_beta_tournament_path(tournamentId);
+
+  const response = await fetch(path, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken(),
+    },
+  });
+
+  return response.status === 200;
+}
+
+export async function setPlayerRegistrationStatus(
+  tournamentId: number,
+  locked: boolean,
+): Promise<boolean> {
+  const path = locked
+    ? Routes.lock_player_registrations_beta_tournament_path(tournamentId)
+    : Routes.unlock_player_registrations_beta_tournament_path(tournamentId);
+
+  const response = await fetch(path, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken(),
+    },
+  });
 
   return response.status === 200;
 }
