@@ -83,7 +83,7 @@
       return;
     }
 
-    window.location.replace(`/beta/tournaments/${tournamentId}/rounds`);
+    window.location.href = `/beta/tournaments/${tournamentId}/rounds`;
   }
 
   async function createPairing(e: SubmitEvent) {

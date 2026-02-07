@@ -17,6 +17,7 @@ import {
   pairRound,
   setPlayerRegistrationStatus,
   setRegistrationStatus,
+  updateRoundTimer,
 } from "../pairings/PairingsData";
 import Rounds from "../pairings/Rounds.svelte";
 import { reportScore } from "../pairings/SelfReport";
@@ -27,6 +28,7 @@ import {
   MockPlayerAlice,
   MockPlayerBob,
   MockRound1,
+  MockRound1Timer,
   MockRound2,
   MockSelfReport,
   MockSingleElimCutStage,
@@ -45,6 +47,7 @@ vi.mock("../pairings/PairingsData", async (importOriginal) => ({
   pairRound: vi.fn(() => true),
   completeRound: vi.fn(() => true),
   deletePairing: vi.fn(() => true),
+  updateRoundTimer: vi.fn(() => true),
 }));
 
 vi.mock("../pairings/SelfReport", async (importOriginal) => ({
@@ -62,7 +65,7 @@ describe("Rounds", () => {
       beforeEach(() => {
         vi.spyOn(MockPairingsData, "stages", "get").mockReturnValue([]);
 
-        render(Rounds, { tournamentId: 0 });
+        render(Rounds, { tournamentId: 1 });
       });
 
       it("creates a new swiss stage", async () => {
@@ -88,7 +91,7 @@ describe("Rounds", () => {
 
       describe("with registration open", () => {
         beforeEach(() => {
-          render(Rounds, { tournamentId: 0 });
+          render(Rounds, { tournamentId: 1 });
         });
 
         it("closes registration", async () => {
@@ -139,7 +142,7 @@ describe("Rounds", () => {
 
         describe("with all players unlocked", () => {
           beforeEach(() => {
-            render(Rounds, { tournamentId: 0 });
+            render(Rounds, { tournamentId: 1 });
           });
 
           it("locks player registration", async () => {
@@ -180,7 +183,7 @@ describe("Rounds", () => {
               "unlocked_players",
               "get",
             ).mockReturnValue(0);
-            render(Rounds, { tournamentId: 0 });
+            render(Rounds, { tournamentId: 1 });
           });
 
           it("opens registration", async () => {
@@ -234,7 +237,7 @@ describe("Rounds", () => {
 
     describe("with no completed rounds", () => {
       beforeEach(() => {
-        render(Rounds, { tournamentId: 0 });
+        render(Rounds, { tournamentId: 1 });
       });
 
       describe("complete round", () => {
@@ -458,13 +461,107 @@ describe("Rounds", () => {
           }),
         );
       });
+
+      it("starts the round timer", async () => {
+        const roundTimerForm = document.getElementsByClassName(
+          "round-timer-form",
+        )[0] as HTMLElement;
+
+        const mockLocation = { href: "" };
+        Object.defineProperty(window, "location", {
+          value: mockLocation,
+          writable: true,
+        });
+
+        await user.click(
+          getByRole(roundTimerForm, "button", { name: /start/i }),
+        );
+
+        expect(updateRoundTimer).toHaveBeenCalledWith(1, 1, 65, "start");
+        expect(mockLocation.href).toBe("/beta/tournaments/1/rounds");
+      });
+
+      it("resets the round timer", async () => {
+        vi.spyOn(window, "confirm").mockReturnValue(true);
+        const roundTimerForm = document.getElementsByClassName(
+          "round-timer-form",
+        )[0] as HTMLElement;
+
+        const mockLocation = { href: "" };
+        Object.defineProperty(window, "location", {
+          value: mockLocation,
+          writable: true,
+        });
+
+        await user.click(
+          getByRole(roundTimerForm, "button", { name: /reset/i }),
+        );
+
+        expect(updateRoundTimer).toHaveBeenCalledWith(1, 1, 65, "reset");
+        expect(mockLocation.href).toBe("/beta/tournaments/1/rounds");
+      });
+    });
+
+    describe("with the round timer started", () => {
+      beforeEach(() => {
+        vi.spyOn(MockRound1Timer, "running", "get").mockReturnValue(true);
+
+        render(Rounds, { tournamentId: 1 });
+      });
+
+      it("pauses the round timer", async () => {
+        const roundTimerForm = document.getElementsByClassName(
+          "round-timer-form",
+        )[0] as HTMLElement;
+
+        const mockLocation = { href: "" };
+        Object.defineProperty(window, "location", {
+          value: mockLocation,
+          writable: true,
+        });
+
+        await user.click(
+          getByRole(roundTimerForm, "button", { name: /pause/i }),
+        );
+
+        expect(updateRoundTimer).toHaveBeenCalledWith(1, 1, 65, "stop");
+        expect(mockLocation.href).toBe("/beta/tournaments/1/rounds");
+      });
+    });
+
+    describe("with the round timer paused", () => {
+      beforeEach(() => {
+        vi.spyOn(MockRound1Timer, "started", "get").mockReturnValue(true);
+        vi.spyOn(MockRound1Timer, "paused", "get").mockReturnValue(true);
+
+        render(Rounds, { tournamentId: 1 });
+      });
+
+      it("pauses the round timer", async () => {
+        const roundTimerForm = document.getElementsByClassName(
+          "round-timer-form",
+        )[0] as HTMLElement;
+
+        const mockLocation = { href: "" };
+        Object.defineProperty(window, "location", {
+          value: mockLocation,
+          writable: true,
+        });
+
+        await user.click(
+          getByRole(roundTimerForm, "button", { name: /resume/i }),
+        );
+
+        expect(updateRoundTimer).toHaveBeenCalledWith(1, 1, 65, "start");
+        expect(mockLocation.href).toBe("/beta/tournaments/1/rounds");
+      });
     });
 
     describe("with one round completed", () => {
       beforeEach(() => {
         vi.spyOn(MockRound1, "completed", "get").mockReturnValue(true);
 
-        render(Rounds, { tournamentId: 0 });
+        render(Rounds, { tournamentId: 1 });
       });
 
       it("pairs a new round", async () => {
@@ -530,7 +627,7 @@ describe("Rounds", () => {
 
     describe("does not show", () => {
       beforeEach(() => {
-        render(Rounds, { tournamentId: 0 });
+        render(Rounds, { tournamentId: 1 });
       });
 
       it("the TO general controls", () => {
@@ -608,7 +705,7 @@ describe("Rounds", () => {
           true,
         );
 
-        render(Rounds, { tournamentId: 0 });
+        render(Rounds, { tournamentId: 1 });
       });
 
       describe.each([

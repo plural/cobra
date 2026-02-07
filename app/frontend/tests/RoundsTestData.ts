@@ -4,6 +4,7 @@ import {
   type Pairing,
   type PairingsData,
   type Round,
+  type RoundTimer,
   type Stage,
 } from "../pairings/PairingsData";
 import type { ScoreReport } from "../pairings/SelfReport";
@@ -62,18 +63,20 @@ export const MockPairing1: Pairing = {
   },
 };
 
+export const MockRound1Timer: RoundTimer = {
+  running: false,
+  paused: false,
+  started: false,
+};
+
 export const MockRound1: Round = {
   id: 1,
   number: 1,
   completed: false,
   pairings: [MockPairing1],
   pairings_reported: 0,
-  length_minutes: 0,
-  timer: {
-    running: false,
-    paused: false,
-    started: false,
-  },
+  length_minutes: 65,
+  timer: MockRound1Timer,
   unpaired_players: [],
 };
 
@@ -123,7 +126,7 @@ export const MockDoubleElimCutStage: Stage = {
 };
 
 export const MockTournament: Tournament = {
-  id: 0,
+  id: 1,
   player_meeting: false,
   registration_open: true,
   registration_unlocked: true,

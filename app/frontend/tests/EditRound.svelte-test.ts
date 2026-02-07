@@ -122,10 +122,17 @@ describe("EditRound", () => {
     it("deletes the round", async () => {
       vi.spyOn(window, "confirm").mockReturnValue(true);
 
+      const mockLocation = { href: "" };
+      Object.defineProperty(window, "location", {
+        value: mockLocation,
+        writable: true,
+      });
+
       await user.click(screen.getByRole("button", { name: /delete round/i }));
 
       expect(deleteRound).toHaveBeenCalledOnce();
       expect(loadRound).toHaveBeenCalledOnce();
+      expect(mockLocation.href).toBe("/beta/tournaments/1/rounds");
     });
 
     it("does not delete the round if cancelled", async () => {
