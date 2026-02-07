@@ -23,7 +23,7 @@
     tournament,
     stage,
     round,
-    pairing = $bindable(),
+    pairing = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
     deleteCallback,
     changePlayerSideCallback,
     reportScoreCallback,

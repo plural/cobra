@@ -5,7 +5,7 @@
 
   let {
     stage,
-    pairing = $bindable(),
+    pairing = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
     reportScoreCallback,
   }: {
     stage: Stage;

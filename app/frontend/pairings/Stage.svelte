@@ -12,7 +12,7 @@
 
   let {
     tournament,
-    stage = $bindable(),
+    stage = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
     startExpanded,
     tournamentPolicies,
     deleteCallback,

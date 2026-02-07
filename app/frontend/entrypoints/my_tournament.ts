@@ -49,7 +49,7 @@ export interface Pairing {
 
 document.addEventListener("turbolinks:load", function () {
   const anchor = document.getElementById("my_tournament_anchor");
-  if (anchor && anchor.childNodes.length == 0) {
+  if (anchor?.childNodes.length == 0) {
     const dataJson = anchor.getAttribute("data-my-tournament") ?? "{}";
     const data = JSON.parse(dataJson) as MyTournamentData;
 

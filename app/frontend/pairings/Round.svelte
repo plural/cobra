@@ -15,7 +15,7 @@
   let {
     tournament,
     stage,
-    round = $bindable(),
+    round = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
     startExpanded,
     deletePairingCallback,
     changePlayerSideCallback,
