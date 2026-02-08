@@ -18,14 +18,21 @@
     round = $bindable(),
     startExpanded,
     deletePairingCallback,
+    changePlayerSideCallback,
     reportScoreCallback,
     completeCallback,
+    updateTimerCallback,
   }: {
     tournament: Tournament;
     stage: Stage;
     round: Round;
     startExpanded: boolean;
     deletePairingCallback?: (roundId: number, pairingId: number) => void;
+    changePlayerSideCallback?: (
+      roundId: number,
+      pairingId: number,
+      side: string,
+    ) => void;
     reportScoreCallback?: (
       roundId: number,
       pairingId: number,
@@ -33,6 +40,11 @@
       selfReport: boolean,
     ) => void;
     completeCallback?: (roundId: number) => void;
+    updateTimerCallback?: (
+      roundId: number,
+      length_minutes: number,
+      operation: string,
+    ) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
@@ -102,7 +114,7 @@
 
       <!-- Timer controls -->
       {#if pairingsContext.showOrganizerView && !round.completed}
-        <RoundTimerControls tournamentId={tournament.id} {round} />
+        <RoundTimerControls {round} updateCallback={updateTimerCallback} />
       {/if}
 
       <!-- Pairings -->
@@ -118,6 +130,9 @@
             {stage}
             deleteCallback={(pairingId: number) => {
               deletePairingCallback?.(round.id, pairingId);
+            }}
+            changePlayerSideCallback={(pairingId: number, side: string) => {
+              changePlayerSideCallback?.(round.id, pairingId, side);
             }}
             reportScoreCallback={(
               pairingId: number,

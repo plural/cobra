@@ -11,6 +11,7 @@
     pairRound,
     setPlayerRegistrationStatus as setPlayerRegistrationStatusRequest,
     setRegistrationStatus as setRegistrationStatusRequest,
+    updateRoundTimer,
     type PairingsContext,
   } from "./PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
@@ -18,7 +19,11 @@
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";
   import { showReportedPairings } from "../utils/ShowReportedPairings";
-  import { reportScore, type ScoreReport } from "./SelfReport";
+  import {
+    changePlayerSide,
+    reportScore,
+    type ScoreReport,
+  } from "./SelfReport";
 
   let { tournamentId }: { tournamentId: number } = $props();
 
@@ -99,6 +104,24 @@
     data = await loadPairings(tournamentId);
   }
 
+  async function changePlayerSideCallback(
+    roundId: number,
+    pairingId: number,
+    side: string,
+  ) {
+    const success = await changePlayerSide(
+      tournamentId,
+      roundId,
+      pairingId,
+      side,
+    );
+    if (!success) {
+      return;
+    }
+
+    data = await loadPairings(tournamentId);
+  }
+
   async function reportScoreCallback(
     roundId: number,
     pairingId: number,
@@ -143,6 +166,31 @@
     }
 
     data = await loadPairings(tournamentId);
+  }
+
+  async function updateTimerCallback(
+    roundId: number,
+    length_minutes: number,
+    operation: string,
+  ) {
+    if (
+      operation === "reset" &&
+      !confirm("This will clear all elapsed time in the round. Are you sure?")
+    ) {
+      return;
+    }
+
+    const success = await updateRoundTimer(
+      tournamentId,
+      roundId,
+      length_minutes,
+      operation,
+    );
+    if (!success) {
+      return;
+    }
+
+    window.location.href = `/beta/tournaments/${tournamentId}/rounds`;
   }
 </script>
 
@@ -298,8 +346,10 @@
           tournamentPolicies={data.policy}
           deleteCallback={deleteStageCallback}
           {deletePairingCallback}
+          {changePlayerSideCallback}
           {reportScoreCallback}
           {completeRoundCallback}
+          {updateTimerCallback}
         />
       {/each}
     </div>

@@ -12,7 +12,12 @@
     rePairRound,
     type NewPairing,
   } from "./PairingsData";
-  import { reportScore, resetReports, type ScoreReport } from "./SelfReport";
+  import {
+    changePlayerSide,
+    reportScore,
+    resetReports,
+    type ScoreReport,
+  } from "./SelfReport";
 
   let {
     tournamentId,
@@ -78,7 +83,7 @@
       return;
     }
 
-    window.location.replace(`/beta/tournaments/${tournamentId}/rounds`);
+    window.location.href = `/beta/tournaments/${tournamentId}/rounds`;
   }
 
   async function createPairing(e: SubmitEvent) {
@@ -102,6 +107,20 @@
     }
 
     const success = await deletePairing(tournamentId, roundId, pairingId);
+    if (!success) {
+      return;
+    }
+
+    data = await loadRound(tournamentId, roundId);
+  }
+
+  async function changePlayerSideCallback(pairingId: number, side: string) {
+    const success = await changePlayerSide(
+      tournamentId,
+      roundId,
+      pairingId,
+      side,
+    );
     if (!success) {
       return;
     }
@@ -192,6 +211,7 @@
         round={data.round}
         stage={data.stage}
         deleteCallback={deletePairingCallback}
+        {changePlayerSideCallback}
         {reportScoreCallback}
         {resetReportsCallback}
       />

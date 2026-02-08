@@ -39,6 +39,10 @@ declare const Routes: {
   lock_player_registrations_beta_tournament_path: (
     tournamentId: number,
   ) => string;
+  update_timer_beta_tournament_round_path: (
+    tournamentId: number,
+    roundId: number,
+  ) => string;
 };
 
 export async function loadPairings(
@@ -268,6 +272,31 @@ export async function setPlayerRegistrationStatus(
       "X-CSRF-Token": csrfToken(),
     },
   });
+
+  return response.status === 200;
+}
+
+export async function updateRoundTimer(
+  tournamentId: number,
+  roundId: number,
+  length_minutes: number,
+  operation: string,
+): Promise<boolean> {
+  const response = await fetch(
+    Routes.update_timer_beta_tournament_round_path(tournamentId, roundId),
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+      body: JSON.stringify({
+        length_minutes: length_minutes,
+        operation: operation,
+      }),
+    },
+  );
 
   return response.status === 200;
 }

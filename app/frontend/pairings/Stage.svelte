@@ -17,8 +17,10 @@
     tournamentPolicies,
     deleteCallback,
     deletePairingCallback,
+    changePlayerSideCallback,
     reportScoreCallback,
     completeRoundCallback,
+    updateTimerCallback,
   }: {
     tournament: Tournament;
     stage: Stage;
@@ -26,6 +28,11 @@
     tournamentPolicies?: TournamentPolicies;
     deleteCallback?: (stageId: number) => void;
     deletePairingCallback?: (roundId: number, pairingId: number) => void;
+    changePlayerSideCallback?: (
+      roundId: number,
+      pairingId: number,
+      side: string,
+    ) => void;
     reportScoreCallback?: (
       roundId: number,
       pairingId: number,
@@ -33,6 +40,11 @@
       selfReport: boolean,
     ) => void;
     completeRoundCallback?: (roundId: number) => void;
+    updateTimerCallback?: (
+      roundId: number,
+      length_minutes: number,
+      operation: string,
+    ) => void;
   } = $props();
 
   const pairingsContext: PairingsContext = getContext("pairingsContext");
@@ -81,8 +93,10 @@
       {stage}
       {startExpanded}
       {deletePairingCallback}
+      {changePlayerSideCallback}
       {reportScoreCallback}
       completeCallback={completeRoundCallback}
+      {updateTimerCallback}
     />
   {:else}
     {#each stage.rounds as round, index (round.id)}
@@ -92,8 +106,10 @@
         {stage}
         startExpanded={startExpanded && index === stage.rounds.length - 1}
         {deletePairingCallback}
+        {changePlayerSideCallback}
         {reportScoreCallback}
         completeCallback={completeRoundCallback}
+        {updateTimerCallback}
       />
     {/each}
   {/if}

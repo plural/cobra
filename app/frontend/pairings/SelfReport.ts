@@ -14,6 +14,32 @@ declare const Routes: {
   ) => string;
 };
 
+export async function changePlayerSide(
+  tournamentId: number,
+  roundId: number,
+  pairingId: number,
+  side: string,
+): Promise<boolean> {
+  const response = await fetch(
+    Routes.report_beta_tournament_round_pairing_path(
+      tournamentId,
+      roundId,
+      pairingId,
+    ),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+      body: JSON.stringify({ side: `player1_is_${side}` }),
+    },
+  );
+
+  return response.status === 200;
+}
+
 export async function reportScore(
   tournamentId: number,
   roundId: number,
