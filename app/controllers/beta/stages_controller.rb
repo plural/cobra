@@ -4,6 +4,7 @@ module Beta
   class StagesController < ApplicationController
     before_action :set_tournament
     before_action :set_stage, only: %i[destroy]
+    before_action :authorize_beta_testing
 
     def create
       authorize @tournament, :update?
@@ -21,6 +22,8 @@ module Beta
 
       head :ok
     end
+
+    private
 
     def set_stage
       @stage = Stage.find(params[:id])

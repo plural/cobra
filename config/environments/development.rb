@@ -78,6 +78,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
   config.after_initialize do
+    Flipper.enable :beta_testing
     Flipper.enable :allow_self_reporting
     Flipper.enable :demo_tournaments
     Flipper.enable :custom_table_numbering

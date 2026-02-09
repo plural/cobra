@@ -4,6 +4,7 @@ module Beta
   class RoundsController < ApplicationController
     before_action :set_tournament
     before_action :set_round, only: %i[destroy repair complete update_timer round_data]
+    before_action :authorize_beta_testing
 
     def index
       authorize @tournament, :show?

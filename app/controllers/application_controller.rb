@@ -26,6 +26,10 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def authorize_beta_testing
+    authorize :beta, :beta_testing_enabled?
+  end
+
   def user_not_authorised
     respond_to do |format|
       format.html do

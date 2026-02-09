@@ -2,7 +2,7 @@
 
 class BetaController < ApplicationController
   def set_beta
-    skip_authorization
+    authorize :beta, :beta_testing_enabled?
 
     cookies[:beta_enabled] = params.fetch(:beta_enabled, true)
 
