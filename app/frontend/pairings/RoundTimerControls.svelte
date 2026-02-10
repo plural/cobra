@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import type { Round } from "./PairingsData";
 
@@ -14,7 +15,11 @@
     ) => void;
   } = $props();
 
-  let roundTimerLength = $state(round.length_minutes);
+  let roundTimerLength = $state(0);
+
+  onMount(() => {
+    roundTimerLength = round.length_minutes;
+  });
 </script>
 
 <div class="form-inline mt-2 round-timer-form">
@@ -24,7 +29,7 @@
       id="round{round.id}Length"
       size="3"
       class="form-control ml-2 mr-2"
-      value={roundTimerLength}
+      bind:value={roundTimerLength}
     />
     {#if round.timer.running}
       <button
