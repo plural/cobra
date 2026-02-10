@@ -23,7 +23,7 @@
     tournament,
     stage,
     round,
-    pairing = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
+    pairing,
     deleteCallback,
     changePlayerSideCallback,
     reportScoreCallback,
@@ -162,7 +162,7 @@
 
   <!-- Score -->
   {#if pairingsContext.showOrganizerView && (!stage.is_single_sided || pairing.player1.side)}
-    <AdminReportOptions {stage} bind:pairing {reportScoreCallback} />
+    <AdminReportOptions {stage} {pairing} {reportScoreCallback} />
   {:else}
     <!-- Player view -->
     <div class="col-sm-2 centre_score">
@@ -221,7 +221,7 @@
   {:else}
     <div class="col-sm-2">
       {#if pairing.policy.self_report}
-        <SelfReportOptions {stage} bind:pairing {reportScoreCallback} />
+        <SelfReportOptions {stage} {pairing} {reportScoreCallback} />
       {/if}
       {#if pairing.self_reports && pairing.self_reports.length !== 0}
         Report: {pairing.self_reports[0].label}

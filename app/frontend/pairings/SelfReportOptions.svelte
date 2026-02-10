@@ -2,11 +2,10 @@
   import { type Pairing, type Stage } from "./PairingsData";
   import { type ScoreReport, scorePresets } from "./SelfReport";
   import ModalDialog from "../widgets/ModalDialog.svelte";
-  import { onMount } from "svelte";
 
   let {
     stage,
-    pairing = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
+    pairing,
     reportScoreCallback,
   }: {
     stage: Stage;
@@ -19,9 +18,16 @@
   } = $props();
 
   let customReporting = $state(false);
-  let left_player_number = $state(1);
-  let left_player = $state(pairing.player1);
-  let right_player = $state(pairing.player2);
+  let left_player = $derived(
+    pairing.player2.side === "corp" && stage.is_single_sided
+      ? pairing.player2
+      : pairing.player1,
+  );
+  let right_player = $derived(
+    pairing.player2.side === "corp" && stage.is_single_sided
+      ? pairing.player1
+      : pairing.player2,
+  );
   let customReport: ScoreReport = $derived({
     score1: pairing.score1,
     score2: pairing.score2,
@@ -30,14 +36,6 @@
     score2_runner: 0,
     score1_runner: 0,
     score2_corp: 0,
-  });
-
-  onMount(() => {
-    if (stage.is_single_sided && pairing.player1.side === "runner") {
-      left_player_number = 2;
-      left_player = pairing.player2;
-      right_player = pairing.player1;
-    }
   });
 
   function onCustomReportClicked() {
@@ -74,13 +72,13 @@
         </button>
       {/each}
     {:else}
-      {#if left_player_number === 1}
+      {#if left_player === pairing.player1}
         <input
           type="text"
           id="name"
           style="width: 2.5em;"
           class="form-control"
-          bind:value={pairing.score1}
+          bind:value={customReport.score1}
         />
         <p>-</p>
         <input
@@ -88,7 +86,7 @@
           id="name"
           style="width: 2.5em;"
           class="form-control"
-          bind:value={pairing.score2}
+          bind:value={customReport.score2}
         />
       {:else}
         <input
@@ -96,7 +94,7 @@
           id="name"
           style="width: 2.5em;"
           class="form-control"
-          bind:value={pairing.score2}
+          bind:value={customReport.score2}
         />
         <p>-</p>
         <input
@@ -104,7 +102,7 @@
           id="name"
           style="width: 2.5em;"
           class="form-control"
-          bind:value={pairing.score1}
+          bind:value={customReport.score1}
         />
       {/if}
       <button

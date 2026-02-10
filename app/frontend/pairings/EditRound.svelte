@@ -203,11 +203,11 @@
     </p>
 
     <!-- Pairings -->
-    {#each data.round.pairings as pairing, index (pairing.id)}
+    {#each data.round.pairings as pairing (pairing.id)}
       <hr />
       <PairingComponent
         tournament={data.tournament}
-        bind:pairing={data.round.pairings[index]}
+        {pairing}
         round={data.round}
         stage={data.stage}
         deleteCallback={deletePairingCallback}

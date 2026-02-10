@@ -5,7 +5,7 @@
 
   let {
     stage,
-    pairing = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
+    pairing,
     reportScoreCallback,
   }: {
     stage: Stage;
@@ -18,12 +18,12 @@
   } = $props();
 
   let leftPlayer = $derived(
-    pairing.player2.side == "corp" && stage.is_single_sided
+    pairing.player2.side === "corp" && stage.is_single_sided
       ? pairing.player2
       : pairing.player1,
   );
   let rightPlayer = $derived(
-    pairing.player2.side == "corp" && stage.is_single_sided
+    pairing.player2.side === "corp" && stage.is_single_sided
       ? pairing.player1
       : pairing.player2,
   );
@@ -70,13 +70,13 @@
   {:else}
     <div class="form-row justify-content-center">
       <div>
-        {#if leftPlayer == pairing.player1}
+        {#if leftPlayer === pairing.player1}
           <input
             id="pairing_score1"
             aria-label="corp-score"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={pairing.score1}
+            bind:value={customReport.score1}
           />
         {:else}
           <input
@@ -84,7 +84,7 @@
             aria-label="corp-score"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={pairing.score2}
+            bind:value={customReport.score2}
           />
         {/if}
       </div>
@@ -100,13 +100,13 @@
       </button>
 
       <div>
-        {#if rightPlayer == pairing.player1}
+        {#if rightPlayer === pairing.player1}
           <input
             id="pairing_score1"
             aria-label="runner-score"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={pairing.score1}
+            bind:value={customReport.score1}
           />
         {:else}
           <input
@@ -114,7 +114,7 @@
             aria-label="runner-score"
             class="form-control"
             style="width: 2.5em;"
-            bind:value={pairing.score2}
+            bind:value={customReport.score2}
           />
         {/if}
       </div>
@@ -132,7 +132,7 @@
           id="pairing{pairing.id}ID"
           type="checkbox"
           class="form-check-input"
-          bind:checked={pairing.intentional_draw}
+          bind:checked={customReport.intentional_draw}
         />
         <label for="pairing{pairing.id}ID" class="form-check-label"
           >Intentional Draw</label
@@ -144,7 +144,7 @@
             id="pairing{pairing.id}_241"
             type="checkbox"
             class="form-check-input"
-            bind:checked={pairing.two_for_one}
+            bind:checked={customReport.two_for_one}
           />
           <label for="pairing{pairing.id}_241" class="form-check-label"
             >2 for 1</label

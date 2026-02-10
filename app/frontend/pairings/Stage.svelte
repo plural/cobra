@@ -12,7 +12,7 @@
 
   let {
     tournament,
-    stage = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
+    stage,
     startExpanded,
     tournamentPolicies,
     deleteCallback,
@@ -89,7 +89,7 @@
     </div>
     <Round
       {tournament}
-      bind:round={stage.rounds[stage.rounds.length - 1]}
+      round={stage.rounds[stage.rounds.length - 1]}
       {stage}
       {startExpanded}
       {deletePairingCallback}
@@ -102,7 +102,7 @@
     {#each stage.rounds as round, index (round.id)}
       <Round
         {tournament}
-        bind:round={stage.rounds[index]}
+        {round}
         {stage}
         startExpanded={startExpanded && index === stage.rounds.length - 1}
         {deletePairingCallback}
