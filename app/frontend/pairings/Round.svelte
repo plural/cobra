@@ -15,7 +15,7 @@
   let {
     tournament,
     stage,
-    round = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
+    round,
     startExpanded,
     deletePairingCallback,
     changePlayerSideCallback,
@@ -118,14 +118,14 @@
       {/if}
 
       <!-- Pairings -->
-      {#each round.pairings as pairing, index (pairing.id)}
+      {#each round.pairings as pairing (pairing.id)}
         {#if $showReportedPairings || !pairing.reported}
           {#if pairingsContext.showOrganizerView}
             <hr />
           {/if}
           <Pairing
             {tournament}
-            bind:pairing={round.pairings[index]}
+            {pairing}
             {round}
             {stage}
             deleteCallback={(pairingId: number) => {
