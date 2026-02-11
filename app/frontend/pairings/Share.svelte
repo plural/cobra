@@ -13,14 +13,21 @@
   let { tournamentId, roundId }: Props = $props();
 
   let data = $state(new SharingData());
+  let betaEnabledCookie: CookieListItem | null = $state(null);
 
   onMount(async () => {
     data = await loadSharingData(tournamentId, roundId);
+    betaEnabledCookie = await cookieStore.get("beta_enabled");
   });
 </script>
 
 <p>
-  <a href="/tournaments/{tournamentId}/rounds" class="btn btn-primary">
+  <a
+    href={betaEnabledCookie?.value === "true"
+      ? `/beta/tournaments/${tournamentId}/rounds`
+      : `/tournaments/${tournamentId}/rounds`}
+    class="btn btn-primary"
+  >
     <FontAwesomeIcon icon="arrow-left" /> Back to Pairings
   </a>
 </p>

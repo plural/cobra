@@ -12,11 +12,23 @@ html
   body
     nav.navbar.navbar-expand-lg.fixed-top.navbar-dark.dontprint
       .container
-        = link_to "Cobra", root_path, class: 'navbar-brand'
+        - if Flipper.enabled?(:beta_testing, current_user) && cookies[:beta_enabled] == "true"
+          = link_to "Cobra (BETA)", root_path, class: 'navbar-brand'
+        - else
+          = link_to "Cobra", root_path, class: 'navbar-brand'
         button.navbar-toggler type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
           span.navbar-toggler-icon
         #navbarNav.collapse.navbar-collapse
           ul.navbar-nav.ml-auto
+            - if Flipper.enabled?(:beta_testing, current_user)
+              - if cookies[:beta_enabled] == "true"
+                li.nav-item.nav-link.text-light = link_to beta_set_beta_path(beta_enabled: false), method: :post
+                  => fa_icon 'flask'
+                  | Switch to Classic
+              - else
+                li.nav-item.nav-link.text-light = link_to beta_set_beta_path(beta_enabled: true), method: :post
+                  => fa_icon 'flask'
+                  | Switch to Beta
             li.nav-item= link_to help_path, class: 'nav-link text-light' do
               => fa_icon 'life-ring'
               | How to
@@ -90,9 +102,14 @@ html
               => fa_icon 'users'
               | Players
           - if policy(@tournament).edit?
-            li.nav-item= link_to tournament_rounds_path(@tournament), class: "nav-link #{'active' if controller_name == 'rounds' || controller_name == 'pairings'}" do
-              => fa_icon 'calendar-check-o'
-              | Pairings
+            - if Flipper.enabled?(:beta_testing, current_user) && cookies[:beta_enabled] == "true"
+              li.nav-item = link_to beta_tournament_rounds_path(@tournament), class: "nav-link #{'active' if controller_name == 'rounds' || controller_name == 'pairings'}" do
+                => fa_icon 'calendar-check-o'
+                | Pairings
+            - else
+              li.nav-item= link_to tournament_rounds_path(@tournament), class: "nav-link #{'active' if controller_name == 'rounds' || controller_name == 'pairings'}" do
+                => fa_icon 'calendar-check-o'
+                | Pairings
           - elsif policy(@tournament).show?
             li.nav-item= link_to view_pairings_tournament_rounds_path(@tournament), class: "nav-link #{'active' if controller_name == 'rounds' || controller_name == 'pairings'}" do
               => fa_icon 'calendar-check-o'

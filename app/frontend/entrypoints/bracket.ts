@@ -3,7 +3,7 @@ import BracketPage from "../bracket/BracketPage.svelte";
 
 document.addEventListener("turbolinks:load", function () {
   const anchor = document.getElementById("bracket_anchor");
-  if (anchor && anchor.childNodes.length == 0) {
+  if (anchor?.childNodes.length == 0) {
     mount(BracketPage, {
       target: anchor,
       props: {

@@ -3,7 +3,7 @@ import StageSettings from "../pairings/Share.svelte";
 
 document.addEventListener("turbolinks:load", function () {
   const anchor = document.getElementById("share_pairings_anchor");
-  if (anchor && anchor.childNodes.length === 0) {
+  if (anchor?.childNodes.length === 0) {
     mount(StageSettings, {
       target: anchor,
       props: {

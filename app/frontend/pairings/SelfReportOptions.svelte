@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { type Pairing, Player, type Stage } from "./PairingsData";
+  import { type Pairing, type Stage } from "./PairingsData";
   import { type ScoreReport, scorePresets } from "./SelfReport";
   import ModalDialog from "../widgets/ModalDialog.svelte";
+  import { onMount } from "svelte";
 
   let {
     stage,
-    pairing = $bindable(),
+    pairing = $bindable(), // eslint-disable-line @typescript-eslint/no-useless-default-assignment
     reportScoreCallback,
   }: {
     stage: Stage;
@@ -19,17 +20,8 @@
 
   let customReporting = $state(false);
   let left_player_number = $state(1);
-  let left_player = $state(new Player());
-  let right_player = $state(new Player());
-
-  left_player = pairing.player1;
-  right_player = pairing.player2;
-  if (stage.is_single_sided && pairing.player1.side === "runner") {
-    left_player_number = 2;
-    left_player = pairing.player2;
-    right_player = pairing.player1;
-  }
-
+  let left_player = $state(pairing.player1);
+  let right_player = $state(pairing.player2);
   let customReport: ScoreReport = $derived({
     score1: pairing.score1,
     score2: pairing.score2,
@@ -38,6 +30,14 @@
     score2_runner: 0,
     score1_runner: 0,
     score2_corp: 0,
+  });
+
+  onMount(() => {
+    if (stage.is_single_sided && pairing.player1.side === "runner") {
+      left_player_number = 2;
+      left_player = pairing.player2;
+      right_player = pairing.player1;
+    }
   });
 
   function onCustomReportClicked() {

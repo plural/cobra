@@ -6,6 +6,7 @@ module Beta
       open_registration close_registration lock_player_registrations unlock_player_registrations
       cut
     ]
+    before_action :authorize_beta_testing
 
     def open_registration
       authorize @tournament, :edit?
@@ -50,6 +51,8 @@ module Beta
 
       head :ok
     end
+
+    private
 
     def set_tournament
       @tournament = Tournament.find(params[:id])

@@ -3,6 +3,7 @@
 module Beta
   class PairingsController < ApplicationController
     before_action :set_tournament
+    before_action :authorize_beta_testing
     attr_reader :tournament
 
     def create
@@ -39,22 +40,6 @@ module Beta
       head :ok
     end
 
-    def save_report
-      pairing.update(score_params)
-
-      return unless score_params.key?('side') && pairing.reported?
-
-      score1_corp = pairing.score1_corp
-      pairing.score1_corp = pairing.score1_runner
-      pairing.score1_runner = score1_corp
-
-      score2_corp = pairing.score2_corp
-      pairing.score2_corp = pairing.score2_runner
-      pairing.score2_runner = score2_corp
-
-      pairing.save
-    end
-
     private
 
     def round
@@ -74,6 +59,22 @@ module Beta
       params.require(:pairing)
             .permit(:score1_runner, :score1_corp, :score2_runner, :score2_corp,
                     :score1, :score2, :side, :intentional_draw, :two_for_one)
+    end
+
+    def save_report
+      pairing.update(score_params)
+
+      return unless score_params.key?('side') && pairing.reported?
+
+      score1_corp = pairing.score1_corp
+      pairing.score1_corp = pairing.score1_runner
+      pairing.score1_runner = score1_corp
+
+      score2_corp = pairing.score2_corp
+      pairing.score2_corp = pairing.score2_runner
+      pairing.score2_runner = score2_corp
+
+      pairing.save
     end
 
     def self_report

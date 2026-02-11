@@ -27,10 +27,12 @@
   let isSubmitting = $state(false);
   let error = $state("");
   let newTableRangeEdit = $state<TableRangeEditInterface>();
+  let betaEnabledCookie: CookieListItem | null = $state(null);
 
   onMount(async () => {
     data = await loadStage(tournamentId, stageId);
     dataBackup = structuredClone($state.snapshot(data));
+    betaEnabledCookie = await cookieStore.get("beta_enabled");
   });
 
   async function submitStage(e: SubmitEvent) {
@@ -60,7 +62,12 @@
 </script>
 
 <p>
-  <a href="/tournaments/{tournamentId}/rounds" class="btn btn-primary">
+  <a
+    href={betaEnabledCookie?.value === "true"
+      ? `/beta/tournaments/${tournamentId}/rounds`
+      : `/tournaments/${tournamentId}/rounds`}
+    class="btn btn-primary"
+  >
     <FontAwesomeIcon icon="arrow-left" /> Back to Pairings
   </a>
 </p>
