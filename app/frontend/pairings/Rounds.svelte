@@ -265,7 +265,7 @@
           </button>
         {/if}
 
-        {#if !$showReportedPairings}
+        {#if ctx.showOrganizerView && !$showReportedPairings}
           <div class="alert alert-info mt-3">
             Reported scores are currently hidden on this page. This will not
             affect other users viewing this page.
