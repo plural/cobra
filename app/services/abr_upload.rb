@@ -22,7 +22,7 @@ class AbrUpload
     r = Faraday.new do |conn|
       conn.request :multipart
       conn.adapter :net_http
-      conn.request :basic_auth, 'cobra', Rails.configuration.abr_auth
+      conn.request :authorization, :basic, 'cobra', Rails.configuration.abr_auth
     end
     r.post endpoint do |req|
       upload = Faraday::UploadIO.new(StringIO.new(json(@tournament, @tournament_url)), 'text/json')
