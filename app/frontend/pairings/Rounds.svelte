@@ -217,7 +217,7 @@
     <div>
       {#if data.tournament.player_meeting}
         <a
-          href="/tournaments/{tournamentId}/players/meeting"
+          href={`/tournaments/${tournamentId}/players/meeting?back_to=${ctx.showOrganizerView ? "pairings" : "view_pairings"}`}
           class="btn btn-primary"
         >
           <FontAwesomeIcon icon="list-ul" /> Player meeting

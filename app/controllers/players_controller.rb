@@ -405,6 +405,15 @@ class PlayersController < ApplicationController
 
   def meeting
     authorize @tournament, :show?
+
+    back_to = params[:back_to]
+    if back_to == 'pairings'
+      @back_to_path = tournament_rounds_path(@tournament)
+    elsif back_to == 'view_pairings'
+      @back_to_path = view_pairings_tournament_rounds_path(@tournament)
+    elsif back_to == 'players'
+      @back_to_path = tournament_players_path(@tournament)
+    end
   end
 
   def registration
