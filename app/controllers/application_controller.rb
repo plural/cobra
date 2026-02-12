@@ -56,15 +56,13 @@ class ApplicationController < ActionController::Base
   end
 
   def correct_beta_path(path)
-    if path.blank?
-      return '/'
-    end
+    return '/' if path.blank?
 
     new_path = path
     if cookies[:beta_enabled] == 'false'
       new_path.delete_prefix!('/beta')
     elsif !new_path.start_with?('/beta') && BETA_PATHS.any? { |r| new_path =~ r }
-      new_path = new_path.prepend('/beta')
+      new_path.prepend('/beta')
     end
 
     new_path
