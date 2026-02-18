@@ -9,13 +9,13 @@ namespace :ids do
                     .cards
                     .select { |card| card[:type_code] == 'identity' }
                     .each do |id|
-      Identity.find_or_create_by(nrdb_code: id[:code])
-              .update(
-                name: id[:title],
-                side: id[:side_code],
-                faction: id[:faction_code],
-                autocomplete: id[:stripped_title]
-              )
+                      Identity.find_or_create_by(nrdb_code: id[:code])
+                              .update(
+                                name: id[:title],
+                                side: id[:side_code],
+                                faction: id[:faction_code],
+                                autocomplete: id[:stripped_title]
+                              )
     end
 
     puts 'Updating autocomplete text for specific identities...'
