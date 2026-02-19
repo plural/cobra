@@ -9,8 +9,7 @@ namespace :card do
   desc 'Rename an NRDB v3 API card id to a new id in all tables containing card ids.'
 
   task :rename, %i[card_id new_id dry_run] => [:environment] do |_t, args|
-    dry_run = true
-    dry_run = false if args[:dry_run].present? && args[:dry_run].to_s.downcase == 'false'
+    dry_run = args[:dry_run].blank? || args[:dry_run].to_s.downcase != 'false'
 
     puts "Renaming card #{args[:card_id]} to #{args[:new_id]}"
 
