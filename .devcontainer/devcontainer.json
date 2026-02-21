@@ -16,7 +16,6 @@
         "ghcr.io/devcontainers/features/ruby:1": {
             "version": "3.4.4" // Change to match Ruby version from Gemfile
         },
-        "ruby": "3.4.4",
         "ghcr.io/devcontainers/features/node:1": {
             "version": 20 // Change Node version as required
         },
