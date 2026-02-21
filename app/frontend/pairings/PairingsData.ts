@@ -17,6 +17,7 @@ declare const Routes: {
     roundId: number,
     pairingId: number,
   ) => string;
+  pairings_data_tournament_rounds_path: (tournamentId: number) => string;
   pairings_data_beta_tournament_rounds_path: (tournamentId: number) => string;
   repair_beta_tournament_round_path: (
     tournamentId: number,
@@ -48,8 +49,11 @@ declare const Routes: {
 export async function loadPairings(
   tournamentId: number,
 ): Promise<PairingsData> {
+  const betaEnabledCookie = await cookieStore.get("beta_enabled");
   const response = await fetch(
-    Routes.pairings_data_beta_tournament_rounds_path(tournamentId),
+    betaEnabledCookie?.value === "true"
+      ? Routes.pairings_data_beta_tournament_rounds_path(tournamentId)
+      : Routes.pairings_data_tournament_rounds_path(tournamentId),
     {
       method: "GET",
     },
