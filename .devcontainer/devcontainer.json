@@ -109,6 +109,7 @@
                 "mtxr.sqltools-driver-pg",
                 "mtxr.sqltools",
                 "rubocop.vscode-rubocop",
+                "Shopify.ruby-lsp",
                 "svelte.svelte-vscode",
                 "vscode-icons-team.vscode-icons",
                 "waderyan.gitblame"

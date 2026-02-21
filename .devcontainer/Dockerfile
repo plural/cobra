@@ -18,7 +18,7 @@ RUN curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
 
 # Force a recent bundler version.
-RUN gem install bundler
+RUN gem install bundler ruby-lsp ruby-lsp-rails ruby-lsp-rails-factory-bot ruby-lsp-rspec
 RUN gem update --system 4.0.6
 
 # [Optional] Uncomment this line to install global node packages.
