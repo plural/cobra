@@ -2,6 +2,16 @@ import { csrfToken } from "../utils/network";
 import { type Pairing, type Stage } from "./PairingsData";
 
 declare const Routes: {
+  report_tournament_round_pairing_path: (
+    tournamentId: number,
+    roundId: number,
+    pairingId: number,
+  ) => string;
+  self_report_tournament_round_pairing_path: (
+    tournamentId: number,
+    roundId: number,
+    pairingId: number,
+  ) => string;
   report_beta_tournament_round_pairing_path: (
     tournamentId: number,
     roundId: number,
@@ -52,22 +62,40 @@ export async function reportScore(
   delete cleanData.label;
   delete cleanData.extra_self_report_label;
 
-  const response = await fetch(
-    Routes.report_beta_tournament_round_pairing_path(
+  const betaEnabledCookie = await cookieStore.get("beta_enabled");
+  let url: string;
+  if (betaEnabledCookie?.value === "true") {
+    url = Routes.report_beta_tournament_round_pairing_path(
       tournamentId,
       roundId,
       pairingId,
-    ),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "X-CSRF-Token": csrfToken(),
-      },
-      body: JSON.stringify({ self_report: selfReport, pairing: cleanData }),
+    );
+  } else {
+    url = selfReport
+      ? Routes.self_report_tournament_round_pairing_path(
+          tournamentId,
+          roundId,
+          pairingId,
+        )
+      : Routes.report_tournament_round_pairing_path(
+          tournamentId,
+          roundId,
+          pairingId,
+        );
+  }
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken(),
     },
-  );
+    body: JSON.stringify({
+      pairing: cleanData,
+      ...(betaEnabledCookie?.value === "true" && { self_report: selfReport }),
+    }),
+  });
 
   return response.status === 200;
 }
