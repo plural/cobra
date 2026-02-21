@@ -39,10 +39,40 @@
         "vscode": {
             // Set *default* container specific settings.json values on container create.
             "settings": {
-                "workbench.iconTheme": "vscode-icons",
+                "editor.formatOnSave": false,
                 "emmet.includeLanguages": {
                     "erb": "html"
                 },
+                "rubocop.yjitEnabled": false,
+                "rubyLsp.enabledFeatures": {
+                    "codeActions": true,
+                    "codeLens": true,
+                    "completion": true,
+                    "definition": true,
+                    "diagnostics": true,
+                    "documentHighlights": true,
+                    "documentLink": true,
+                    "documentSymbols": true,
+                    "foldingRanges": true,
+                    "formatting": true,
+                    "hover": true,
+                    "inlayHint": true,
+                    "onTypeFormatting": true,
+                    "selectionRanges": true,
+                    "semanticHighlighting": true,
+                    "signatureHelp": true,
+                    "typeHierarchy": true,
+                    "workspaceSymbol": true
+                },
+                "rubyLsp.featuresConfiguration": {},
+                "rubyLsp.formatter": "auto",
+                "rubyLsp.rubyVersionManager": {
+                    "identifier": "auto"
+                },
+                "rubyLsp.rubyExecutablePath": "bundle exec ruby",
+                "rubyLsp.useBundler": true,
+                "rubyTestExplorer.debugCommand": "bundle exec rdebug-ide",
+                "rubyTestExplorer.testFramework": "rspec",
                 "sqltools.connections": [
                     {
                         "name": "Rails Development Database",
@@ -67,39 +97,20 @@
                         "password": "cobra"
                     }
                 ],
-                "ruby.format": "rubocop",
-                "rubocop.yjitEnabled": false,
-                "editor.formatOnSave": false,
-                "rubyLsp.useBundler": true,
-                "rubyTestExplorer.debugCommand": "bundle exec rdebug-ide",
-                "rubyTestExplorer.testFramework": "rspec",
-                "rubyLsp.enabledFeatures": {
-                    "codeActions": true,
-                    "diagnostics": true,
-                    "documentHighlights": true,
-                    "documentLink": true,
-                    "documentSymbols": true,
-                    "foldingRanges": true,
-                    "formatting": true,
-                    "hover": true,
-                    "inlayHint": true,
-                    "onTypeFormatting": true,
-                    "selectionRanges": true,
-                    "semanticHighlighting": true,
-                    "completion": true,
-                    "codeLens": true,
-                    "definition": true,
-                    "workspaceSymbol": true,
-                    "signatureHelp": true,
-                    "typeHierarchy": true
+                "workbench.iconTheme": "vscode-icons",
+                "[ruby]": {
+                    "editor.defaultFormatter": "Shopify.ruby-lsp", // Use the Ruby LSP as the default formatter
+                    "editor.formatOnSave": true, // Format files automatically when saving
+                    "editor.tabSize": 2, // Use 2 spaces for indentation
+                    "editor.insertSpaces": true, // Use spaces and not tabs for indentation
+                    "editor.semanticHighlighting.enabled": true, // Enable semantic highlighting
+                    "editor.formatOnType": true // Enable formatting while typing
                 }
             },
             "extensions": [
                 "aki77.rails-db-schema",
                 "bung87.rails",
                 "bung87.vscode-gemfile",
-                "connorshea.vscode-ruby-test-adapter",
-                "eamodio.gitlens",
                 "github.vscode-github-actions",
                 "hbenl.vscode-test-explorer",
                 "IBM.output-colorizer",
@@ -108,14 +119,15 @@
                 "ms-azuretools.vscode-docker",
                 "mtxr.sqltools-driver-pg",
                 "mtxr.sqltools",
-                "rubocop.vscode-rubocop",
+                "ruby-slim.tmbundle",
                 "Shopify.ruby-lsp",
+                "sianglim.slim",
                 "svelte.svelte-vscode",
                 "vscode-icons-team.vscode-icons",
                 "waderyan.gitblame"
             ]
         }
-    },
+    }
     // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
     // "remoteUser": "root"
 }
