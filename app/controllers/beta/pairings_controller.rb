@@ -6,6 +6,12 @@ module Beta
     before_action :authorize_beta_testing
     attr_reader :tournament
 
+    def index
+      authorize @tournament, :show?
+
+      @round_id = params[:round_id]
+    end
+
     def create
       authorize @tournament, :update?
 
