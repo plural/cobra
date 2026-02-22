@@ -46,14 +46,14 @@
   const pairingsContext: PairingsContext = getContext("pairingsContext");
 
   let leftPlayer = $derived(
-    stage.is_single_sided && pairing.player1.side == "corp"
-      ? pairing.player1
-      : pairing.player2,
-  );
-  let rightPlayer = $derived(
-    stage.is_single_sided && pairing.player1.side == "corp"
+    stage.is_single_sided && pairing.player2.side == "corp"
       ? pairing.player2
       : pairing.player1,
+  );
+  let rightPlayer = $derived(
+    stage.is_single_sided && pairing.player2.side == "corp"
+      ? pairing.player1
+      : pairing.player2,
   );
   let leftPlayerReport = $derived(
     pairing.self_reports?.find(
