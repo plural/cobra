@@ -1,25 +1,55 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { loadPairings, Player, type Pairing } from "./PairingsData";
+  import { loadPairings, type Pairing, type Stage } from "./PairingsData";
+  import PlayerDisplay from "../pairings/PlayerDisplay.svelte";
 
-  let { tournamentId, roundId }: { tournamentId: number; roundId: number; } = $props();
+  let {
+    tournamentId,
+    roundId,
+  }: {
+    tournamentId: number;
+    roundId: number;
+  } = $props();
 
-  let format = $state("");
+  let isSingleSided = $state(true);
+  let viewDecks = $state(false);
   let pairings = $state<Pairing[]>();
   let betaEnabledCookie: CookieListItem | null = $state(null);
 
   onMount(async () => {
     pairings = undefined;
     const pairingsData = await loadPairings(tournamentId);
-    
+
     for (const stage of pairingsData.stages) {
-      const round = stage.rounds.find(round => round.id === roundId);
-      if (round) {
-        format = stage.format;
-        pairings = round.pairings;
-        break;
+      const round = stage.rounds.find((round) => round.id === roundId);
+      if (!round) {
+        continue;
       }
+
+      isSingleSided = stage.is_single_sided;
+      viewDecks = stage.view_decks;
+
+      // Create duplicate pairings with the players swapped for the alphabetized display
+      pairings = [];
+      for (const pairing of round.pairings) {
+        pairings.push(pairing);
+        pairings.push({
+          ...pairing,
+          player1: pairing.player2,
+          player2: pairing.player1,
+        });
+      }
+      pairings.sort((p1, p2) => {
+        const p1Name = p1.player1.name_with_pronouns.toLowerCase();
+        const p2Name = p2.player1.name_with_pronouns.toLowerCase();
+        if (p1Name < p2Name) {
+          return -1;
+        } else if (p1Name > p2Name) {
+          return 1;
+        }
+        return 0;
+      });
     }
 
     betaEnabledCookie = await cookieStore.get("beta_enabled");
@@ -40,33 +70,48 @@
 <h2>Round {roundId} pairings</h2>
 
 {#if pairings}
-  {#snippet playerDisplay(player: Player)}
-    {#if format === "single_sided_swiss"}
-      {`${player.name_with_pronouns} (${player.side_label})`}
-    {:else}
-      {`${player.name_with_pronouns}`}
-    {/if}
-  {/snippet}
-
   <table class="table table-striped">
     <thead>
       <tr>
         <th>Table</th>
-        <!-- TODO: Decks -->
+        {#if viewDecks}
+          <th>Decks</th>
+        {/if}
         <th>Player</th>
         <th>Opponent</th>
       </tr>
     </thead>
     <tbody>
-      {#each pairings as pairing (pairing.id)}
+      {#each pairings as pairing (pairing.player1)}
         <tr>
           <td>{pairing.table_number}</td>
-          <!-- TODO: Decks -->
+          {#if viewDecks}
+            <td>
+              <a
+                class="ml-2"
+                href={`/tournaments/${tournamentId}/rounds/${roundId}/pairings/${pairing.id}/view_decks`}
+              >
+                <FontAwesomeIcon icon="eye" /> View decks
+              </a>
+            </td>
+          {/if}
           <td>
-            {@render playerDisplay(pairing.player1)}
+            <PlayerDisplay
+              player={pairing.player1}
+              {pairing}
+              left_or_right="left"
+              is_single_sided={isSingleSided}
+              show_ids={false}
+            />
           </td>
           <td>
-            {@render playerDisplay(pairing.player2)}
+            <PlayerDisplay
+              player={pairing.player2}
+              {pairing}
+              left_or_right="right"
+              is_single_sided={isSingleSided}
+              show_ids={false}
+            />
           </td>
         </tr>
       {/each}

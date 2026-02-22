@@ -10,16 +10,19 @@
     pairing,
     left_or_right,
     is_single_sided,
+    show_ids = true,
     changePlayerSide,
   }: {
     player: Player;
     pairing: Pairing;
     left_or_right: string;
     is_single_sided: boolean;
-    changePlayerSide: (player: Player, side: string) => void;
+    show_ids?: boolean;
+    changePlayerSide?: (player: Player, side: string) => void;
   } = $props();
 
-  const pairingsContext: PairingsContext = getContext("pairingsContext");
+  const pairingsContext: PairingsContext | undefined =
+    getContext("pairingsContext");
 </script>
 
 {#snippet setSideButton(player: Player, side: string)}
@@ -28,7 +31,7 @@
       ? 'btn-dark'
       : 'btn-outline-dark'}"
     onclick={() => {
-      changePlayerSide(player, side);
+      changePlayerSide?.(player, side);
     }}
     aria-label={`change ${player.name} to ${side}`}
   >
@@ -46,7 +49,7 @@
   <!-- Side -->
   {#if is_single_sided && pairing.player1.id && pairing.player2.id}
     <br />
-    {#if pairingsContext.showOrganizerView}
+    {#if pairingsContext && pairingsContext.showOrganizerView && changePlayerSide}
       <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
       {@render setSideButton(player, "corp")}
       <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
@@ -57,24 +60,26 @@
   {/if}
 
   <!-- IDs -->
-  <div class="ids" style={$showIdentities ? "display: block;" : ""}>
-    {#if is_single_sided}
-      <Identity
-        identity={player.side == "corp" ? player.corp_id : player.runner_id}
-        name_if_missing="Unspecified"
-        icon_if_missing="interrupt"
-      />
-    {:else}
-      <Identity
-        identity={player.corp_id}
-        name_if_missing="Unspecified"
-        icon_if_missing="interrupt"
-      />
-      <Identity
-        identity={player.runner_id}
-        name_if_missing="Unspecified"
-        icon_if_missing="interrupt"
-      />
-    {/if}
-  </div>
+  {#if show_ids}
+    <div class="ids" style={$showIdentities ? "display: block;" : ""}>
+      {#if is_single_sided}
+        <Identity
+          identity={player.side == "corp" ? player.corp_id : player.runner_id}
+          name_if_missing="Unspecified"
+          icon_if_missing="interrupt"
+        />
+      {:else}
+        <Identity
+          identity={player.corp_id}
+          name_if_missing="Unspecified"
+          icon_if_missing="interrupt"
+        />
+        <Identity
+          identity={player.runner_id}
+          name_if_missing="Unspecified"
+          icon_if_missing="interrupt"
+        />
+      {/if}
+    </div>
+  {/if}
 </div>
