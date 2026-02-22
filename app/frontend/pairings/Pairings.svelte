@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { loadPairings, type Pairing, type Stage } from "./PairingsData";
+  import { loadPairings, type Pairing } from "./PairingsData";
   import PlayerDisplay from "../pairings/PlayerDisplay.svelte";
 
   let {
@@ -14,8 +14,8 @@
 
   let isSingleSided = $state(true);
   let viewDecks = $state(false);
+  let roundNumber = $state(0);
   let pairings = $state<Pairing[]>();
-  let betaEnabledCookie: CookieListItem | null = $state(null);
 
   onMount(async () => {
     pairings = undefined;
@@ -29,6 +29,7 @@
 
       isSingleSided = stage.is_single_sided;
       viewDecks = stage.view_decks;
+      roundNumber = round.number;
 
       // Create duplicate pairings with the players swapped for the alphabetized display
       pairings = [];
@@ -51,23 +52,16 @@
         return 0;
       });
     }
-
-    betaEnabledCookie = await cookieStore.get("beta_enabled");
   });
 </script>
 
 <p>
-  <a
-    href={betaEnabledCookie?.value === "true"
-      ? `/beta/tournaments/${tournamentId}/rounds`
-      : `/tournaments/${tournamentId}/rounds`}
-    class="btn btn-primary"
-  >
+  <a href={`/beta/tournaments/${tournamentId}/rounds`} class="btn btn-primary">
     <FontAwesomeIcon icon="arrow-left" /> Back to Pairings
   </a>
 </p>
 
-<h2>Round {roundId} pairings</h2>
+<h2>Round {roundNumber} pairings</h2>
 
 {#if pairings}
   <table class="table table-striped">
