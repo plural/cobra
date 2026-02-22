@@ -57,7 +57,7 @@ describe("Pairings", () => {
       render(Pairings, { tournamentId: 1, roundId: 1 });
     });
 
-    it("does displays the Decks column", () => {
+    it("displays the Decks column", () => {
       const rowGroups = screen.getAllByRole("rowgroup");
 
       expect(loadPairings).toHaveBeenCalledOnce();
