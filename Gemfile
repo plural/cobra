@@ -44,12 +44,12 @@ group :development, :test do
   gem 'brakeman'
   gem 'bullet'
   gem 'debug'
-  gem 'factory_bot_rails'
+  gem 'factory_bot_rails', require: false
   gem 'graphiti_spec_helpers'
   gem 'pry'
   gem 'ruby-lsp'
   gem 'ruby-lsp-rails', require: false
-  gem 'ruby-lsp-rails-factory-bot', '~> 0.6.0'
+  gem 'ruby-lsp-rails-factory-bot', require: false
   gem 'ruby-lsp-rspec', require: false
   gem 'simplecov'
   gem 'simplecov-cobertura'

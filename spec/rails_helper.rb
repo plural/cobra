@@ -8,6 +8,7 @@ require 'rspec/rails'
 
 require 'capybara/rails'
 require 'database_cleaner'
+require 'factory_bot_rails'
 require 'vcr'
 require 'active_support/testing/time_helpers'
 
@@ -17,7 +18,6 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   config.include Rails.application.routes.url_helpers
-  config.fixture_paths = ["#{::Rails.root}/spec/fixtures"]
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!

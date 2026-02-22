@@ -575,7 +575,7 @@ DEPENDENCIES
   rubocop-rspec_rails
   ruby-lsp
   ruby-lsp-rails
-  ruby-lsp-rails-factory-bot (~> 0.6.0)
+  ruby-lsp-rails-factory-bot
   ruby-lsp-rspec
   sassc-rails
   scenic
