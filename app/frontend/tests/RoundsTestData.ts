@@ -12,7 +12,7 @@ import type { ScoreReport } from "../pairings/SelfReport";
 export const MockPlayerAlice: Player = {
   id: 1,
   name: "Alice",
-  name_with_pronouns: "",
+  name_with_pronouns: "Alice (she/her)",
   side: null,
   user_id: null,
   side_label: null,
@@ -25,7 +25,7 @@ export const MockPlayerAlice: Player = {
 export const MockPlayerBob: Player = {
   id: 2,
   name: "Bob",
-  name_with_pronouns: "",
+  name_with_pronouns: "Bob (he/him)",
   side: null,
   user_id: null,
   side_label: null,

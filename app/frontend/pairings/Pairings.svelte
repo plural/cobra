@@ -89,7 +89,7 @@
               </a>
             </td>
           {/if}
-          <td>
+          <td aria-label="player">
             <PlayerDisplay
               player={pairing.player1}
               {pairing}
@@ -98,7 +98,7 @@
               show_ids={false}
             />
           </td>
-          <td>
+          <td aria-label="opponent">
             <PlayerDisplay
               player={pairing.player2}
               {pairing}
