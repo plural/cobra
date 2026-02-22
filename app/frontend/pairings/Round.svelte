@@ -106,7 +106,7 @@
         {/if}
         <a
           class="btn btn-primary"
-          href="/tournaments/{tournament.id}/rounds/{round.id}/pairings"
+          href="/beta/tournaments/{tournament.id}/rounds/{round.id}/pairings"
         >
           <FontAwesomeIcon icon="list-ul" /> Pairings by name
         </a>
