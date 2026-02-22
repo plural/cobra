@@ -8,23 +8,12 @@ module Beta
 
     def index
       authorize @tournament, :show?
-
-      @stages = @tournament.stages.includes(
-        :tournament,
-        rounds: [:tournament, :stage, { pairings: %i[tournament stage round self_reports player1 player2] }]
-      )
-      @players = @tournament.players
-                            .includes(:corp_identity_ref, :runner_identity_ref)
-                            .index_by(&:id).merge({ nil => NilPlayer.new })
     end
 
     def show
       authorize @tournament, :update?
-      @round = Round.includes([:stage, { pairings: %i[stage tournament player1 player2 self_reports] }])
-                    .find(params[:id])
-      @players = @tournament.players
-                            .includes(:corp_identity_ref, :runner_identity_ref)
-                            .index_by(&:id).merge({ nil => NilPlayer.new })
+
+      @round_id = params[:id]
     end
 
     def create
