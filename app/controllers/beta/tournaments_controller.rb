@@ -4,7 +4,7 @@ module Beta
   class TournamentsController < ApplicationController
     before_action :set_tournament, only: %i[
       open_registration close_registration lock_player_registrations unlock_player_registrations
-      cut stats
+      cut stats id_and_faction_data
     ]
     before_action :authorize_beta_testing
 
@@ -52,14 +52,42 @@ module Beta
       head :ok
     end
 
+    def stats
+      authorize @tournament, :show?
+    end
+
+    def id_and_faction_data
+      authorize @tournament, :show?
+
+      data = @tournament.id_and_faction_data
+
+      render json: { swiss: transform_stats(data), cut: transform_stats(data[:cut]) }
+    end
+
     private
 
     def set_tournament
       @tournament = Tournament.find(params[:id])
     end
 
-    def stats
-      authorize @tournament, :show?
+    def transform_stats(stats)
+      {
+        num_players: stats[:num_players],
+        corp: stats[:corp][:ids].keys.map do |id|
+          {
+            name: id,
+            faction: stats[:corp][:ids][id][:faction],
+            count: stats[:corp][:ids][id][:count]
+          }
+        end,
+        runner: stats[:runner][:ids].keys.map do |id|
+          {
+            name: id,
+            faction: stats[:runner][:ids][id][:faction],
+            count: stats[:runner][:ids][id][:count]
+          }
+        end
+      }
     end
   end
 end

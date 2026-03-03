@@ -44,6 +44,7 @@ declare const Routes: {
     tournamentId: number,
     roundId: number,
   ) => string;
+  id_and_faction_data_beta_tournament_path: (tournamentId: number) => string;
 };
 
 export async function loadPairings(
@@ -305,6 +306,17 @@ export async function updateRoundTimer(
   return response.status === 200;
 }
 
+export async function loadStats(tournamentId: number): Promise<Stats> {
+  const response = await fetch(
+    Routes.id_and_faction_data_beta_tournament_path(tournamentId),
+    {
+      method: "GET",
+    },
+  );
+
+  return (await response.json()) as Stats;
+}
+
 export interface NewPairing {
   table_number: number;
   player1_id: number;
@@ -433,4 +445,21 @@ export class Player {
   runner_id: Identity | null = null;
   include_in_stream = false;
   active: boolean | null = null;
+}
+
+export interface IdCount {
+  name: string;
+  faction: string;
+  count: number;
+}
+
+export interface StageStats {
+  num_players: number;
+  corp: IdCount[];
+  runner: IdCount[];
+}
+
+export interface Stats {
+  swiss: StageStats;
+  elim: StageStats;
 }
