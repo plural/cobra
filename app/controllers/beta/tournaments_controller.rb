@@ -4,7 +4,7 @@ module Beta
   class TournamentsController < ApplicationController
     before_action :set_tournament, only: %i[
       open_registration close_registration lock_player_registrations unlock_player_registrations
-      cut
+      cut stats
     ]
     before_action :authorize_beta_testing
 
@@ -56,6 +56,10 @@ module Beta
 
     def set_tournament
       @tournament = Tournament.find(params[:id])
+    end
+
+    def stats
+      authorize @tournament, :show?
     end
   end
 end
