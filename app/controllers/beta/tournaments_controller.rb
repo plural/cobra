@@ -75,15 +75,19 @@ module Beta
         num_players: stats[:num_players],
         corp: stats[:corp][:ids].keys.map do |id|
           {
-            name: id,
-            faction: stats[:corp][:ids][id][:faction],
+            identity: {
+              name: id,
+              faction: stats[:corp][:ids][id][:faction]
+            },
             count: stats[:corp][:ids][id][:count]
           }
         end,
         runner: stats[:runner][:ids].keys.map do |id|
           {
-            name: id,
-            faction: stats[:runner][:ids][id][:faction],
+            identity: {
+              name: id,
+              faction: stats[:runner][:ids][id][:faction]
+            },
             count: stats[:runner][:ids][id][:count]
           }
         end

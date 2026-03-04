@@ -448,8 +448,7 @@ export class Player {
 }
 
 export interface IdCount {
-  name: string;
-  faction: string;
+  identity: Identity;
   count: number;
 }
 
