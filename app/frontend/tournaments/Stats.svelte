@@ -1,13 +1,42 @@
 <script lang="ts">
+  import ApexCharts from "apexcharts";
+  import type { ApexOptions } from "apexcharts";
   import { onMount } from "svelte";
   import { loadPairings, loadStats, PairingsData, type IdCount, type Stats } from "../pairings/PairingsData";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import Identity from "../identities/Identity.svelte";
+  import { getFaction } from "../utils/factions";
+
+  interface FactionCount {
+    name: string;
+    count: number;
+    color?: string;
+  }
+
+  interface PieChartData {
+    series: number[];
+    labels: string[];
+    colors: string[];
+  }
 
   let { tournamentId }: { tournamentId: number; } = $props();
 
   let data: PairingsData | undefined = $state();
   let stats: Stats | undefined = $state();
+  
+  onMount(async () => {
+    data = await loadPairings(tournamentId);
+    stats = await loadStats(tournamentId);
+  });
+
+  $effect(() => {
+    if (!stats) {
+      return;
+    }
+
+    drawPieChart("swiss-corp-faction-chart", stats.swiss.corp);
+    drawPieChart("swiss-runner-faction-chart", stats.swiss.runner);
+  });
 
   // Sort by count in descending order, then by ID in ascending order
   function idTableComparator(id1: IdCount, id2: IdCount) {
@@ -16,10 +45,69 @@
       : id1.identity.name.localeCompare(id2.identity.name);
   }
 
-  onMount(async () => {
-    data = await loadPairings(tournamentId);
-    stats = await loadStats(tournamentId);
-  });
+  function getPieChartData(ids: IdCount[]) {
+    const results: PieChartData = {
+      series: [],
+      labels: [],
+      colors: [],
+    };
+
+    ids.reduce((factionCounts, id) => {
+      let factionCount = factionCounts.get(id.identity.faction);
+      factionCount ??= { name: id.identity.faction, count: 0 };
+      factionCount.count += id.count;
+
+      factionCounts.set(id.identity.faction, factionCount);
+
+      return factionCounts;
+    }, new Map<string, FactionCount>())
+    .forEach((factionCount) => {
+      const faction = getFaction(factionCount.name);
+
+      results.series.push(factionCount.count);
+      results.labels.push(faction.displayName);
+      results.colors.push(faction.color);
+    });
+
+    return results;
+  }
+
+  function drawPieChart(elementId: string, data: IdCount[]) {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      return;
+    }
+
+    const factions = getPieChartData(data);
+    const options: ApexOptions = {
+      chart: {
+        offsetY: 20,
+        animations: {
+          enabled: false
+        },
+        selection: {
+          enabled: false,
+        },
+        height: "300px",
+        type: "pie",
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+      },
+      plotOptions: {
+        pie: {
+          expandOnClick: false,
+          dataLabels: {
+              offset: -10,
+          },
+        },
+      },
+      series: factions.series,
+      labels: factions.labels,
+      colors: factions.colors,
+    }
+
+    var chart = new ApexCharts(element, options);
+    void chart.render();
+  }
 </script>
 
 <GlobalMessages />
@@ -69,7 +157,7 @@
               <tbody>
                 <tr>
                   <td>
-                    <div id="corp_faction_chart"></div>
+                     <div id="swiss-corp-faction-chart"></div>
                   </td>
                 </tr>
               </tbody>
@@ -85,7 +173,7 @@
               <tbody>
                 <tr>
                   <td>
-                    <div id="runner_faction_chart"></div>
+                    <div id="swiss-runner-faction-chart"></div>
                   </td>
                 </tr>
               </tbody>
@@ -96,9 +184,11 @@
         <!-- Swiss stage faction tables -->
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
+            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
             {@render idTable("Corp", stats.swiss.corp.toSorted(idTableComparator), stats.swiss.num_players)}
           </div>
           <div class="col-md-6">
+            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
             {@render idTable("Runner", stats.swiss.runner.toSorted(idTableComparator), stats.swiss.num_players)}
           </div>
         </div>
