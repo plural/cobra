@@ -486,4 +486,3 @@ export interface CutStats {
   corp: CutIdStats[];
   runner: CutIdStats[];
 }
-

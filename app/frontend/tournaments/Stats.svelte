@@ -6,6 +6,7 @@
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import Identity from "../identities/Identity.svelte";
   import { getFaction } from "../utils/factions";
+  import Faction from "../widgets/Faction.svelte";
 
   interface FactionStats {
     name: string;
@@ -171,9 +172,7 @@
         {#each ids as id (id.identity.name)}
           <tr>
             <td>
-              <div>
-                <Identity identity={id.identity} name_if_missing="Unspecified" icon_if_missing="interrupt" />
-              </div>
+              <Identity identity={id.identity} name_if_missing="Unspecified" icon_if_missing="interrupt" />
             </td>
             <td>
               {id.count} ({((id.count / num_players) * 100).toFixed(1)}%)
@@ -196,9 +195,7 @@
         {#each factions as faction (faction.name)}
           <tr>
             <td>
-              <div class="{faction.name}">
-                <i class="fa icon icon-{faction.name}"></i> {getFaction(faction.name).displayName}
-              </div>
+              <Faction name={faction.name} />
             </td>
             <td>
               {faction.numCutPlayers} / {faction.numSwissPlayers} ({faction.cutConversion.toFixed(1)}%)
@@ -221,9 +218,7 @@
         {#each ids as id (id.identity.name)}
           <tr>
             <td>
-              <div>
-                <Identity identity={id.identity} name_if_missing="Unspecified" icon_if_missing="interrupt" />
-              </div>
+              <Identity identity={id.identity} name_if_missing="Unspecified" icon_if_missing="interrupt" />
             </td>
             <td>
               {id.numCutPlayers} / {id.numSwissPlayers} ({id.cutConversion.toFixed(1)}%)
