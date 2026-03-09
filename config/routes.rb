@@ -43,6 +43,7 @@ Rails.application.routes.draw do
       post :cut, on: :member
       get :stats, on: :member
       get :id_and_faction_data, on: :member
+      get :cut_conversion_rates, on: :member
     end
   end
 

@@ -4,7 +4,7 @@ module Beta
   class TournamentsController < ApplicationController
     before_action :set_tournament, only: %i[
       open_registration close_registration lock_player_registrations unlock_player_registrations
-      cut stats id_and_faction_data
+      cut stats id_and_faction_data cut_conversion_rates
     ]
     before_action :authorize_beta_testing
 
@@ -61,7 +61,13 @@ module Beta
 
       data = @tournament.id_and_faction_data
 
-      render json: { swiss: transform_stats(data), cut: transform_stats(data[:cut]) }
+      render json: { swiss: transform_stats(data), elim: transform_stats(data[:cut]) }
+    end
+
+    def cut_conversion_rates
+      authorize @tournament, :show?
+
+      render json: transform_cut_stats(@tournament.cut_conversion_rates_data[:identities])
     end
 
     private
@@ -89,6 +95,33 @@ module Beta
               faction: stats[:runner][:ids][id][:faction]
             },
             count: stats[:runner][:ids][id][:count]
+          }
+        end
+      }
+    end
+
+    def transform_cut_stats(stats)
+      {
+        corp: stats[:corp].keys.map do |id|
+          {
+            identity: {
+              name: id,
+              faction: stats[:corp][id][:faction]
+            },
+            numSwissPlayers: stats[:corp][id][:num_swiss_players],
+            numCutPlayers: stats[:corp][id][:num_cut_players],
+            cutConversion: stats[:corp][id][:cut_conversion_percentage]
+          }
+        end,
+        runner: stats[:runner].keys.map do |id|
+          {
+            identity: {
+              name: id,
+              faction: stats[:runner][id][:faction]
+            },
+            numSwissPlayers: stats[:runner][id][:num_swiss_players],
+            numCutPlayers: stats[:runner][id][:num_cut_players],
+            cutConversion: stats[:runner][id][:cut_conversion_percentage]
           }
         end
       }

@@ -11,7 +11,7 @@ export const Factions = new Map<string, Faction>([
   ["shaper", { displayName: "Shaper", color: "limegreen" }],
   ["adam", { displayName: "Adam", color: "olive" }],
   ["apex", { displayName: "Apex", color: "#C25048" }],
-  ["sunny-lebeau", { displayName: "Sunny Lebeau", color: "#8886E8F" }],
+  ["sunny-lebeau", { displayName: "Sunny Lebeau", color: "#886E8F" }],
   ["haas-bioroid", { displayName: "Haas-Bioroid", color: "blueviolet" }],
   ["jinteki", { displayName: "Jinteki", color: "crimson" }],
   ["neutral-corp", { displayName: "Neutral", color: "lightgrey" }],
