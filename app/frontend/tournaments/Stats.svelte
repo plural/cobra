@@ -2,24 +2,11 @@
   import ApexCharts from "apexcharts";
   import type { ApexOptions } from "apexcharts";
   import { onMount } from "svelte";
-  import { loadCutStats, loadPairings, loadStats, PairingsData, type CutIdStats, type CutStats, type IdStats, type Stats } from "../pairings/PairingsData";
+  import { loadCutStats, loadPairings, loadStats, PairingsData, type CutFactionStats, type CutIdStats, type CutStats, type FactionStats, type IdStats, type Stats } from "../pairings/PairingsData";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import Identity from "../identities/Identity.svelte";
   import { getFaction } from "../utils/factions";
   import Faction from "../widgets/Faction.svelte";
-
-  interface FactionStats {
-    name: string;
-    count: number;
-    color?: string;
-  }
-
-  interface CutFactionStats {
-    name: string;
-    numSwissPlayers: number;
-    numCutPlayers: number;
-    cutConversion: number;
-  }
 
   interface PieChartData {
     series: number[];
@@ -32,8 +19,6 @@
   let data: PairingsData | undefined = $state();
   let stats: Stats | undefined = $state();
   let cutStats: CutStats | undefined = $state();
-  let corpCutStats: CutFactionStats[] = $state([]);
-  let runnerCutStats: CutFactionStats[] = $state([]);
 
   onMount(async () => {
     data = await loadPairings(tournamentId);
@@ -41,20 +26,6 @@
 
     if (data.stages.length > 1 && data.stages.at(-1)?.is_elimination) {
       cutStats = await loadCutStats(tournamentId);
-
-      const factionAggregator = (factionMap: Map<string, CutFactionStats>, id: CutIdStats) => {
-        let factionStats = factionMap.get(id.identity.faction);
-        factionStats ??= { name: id.identity.faction, numSwissPlayers: 0, numCutPlayers: 0, cutConversion: 0.0 };
-        factionStats.numCutPlayers += id.numCutPlayers;
-        factionStats.numSwissPlayers += id.numSwissPlayers;
-        factionStats.cutConversion = (factionStats.numCutPlayers / factionStats.numSwissPlayers) * 100;
-
-        factionMap.set(id.identity.faction, factionStats);
-
-        return factionMap;
-      };
-      corpCutStats = Array.from(cutStats.corp.reduce(factionAggregator, new Map<string, CutFactionStats>()).values());
-      runnerCutStats = Array.from(cutStats.runner.reduce(factionAggregator, new Map<string, CutFactionStats>()).values());
     }
   });
 
@@ -63,10 +34,10 @@
       return;
     }
 
-    drawPieChart("swiss-corp-faction-chart", stats.swiss.corp);
-    drawPieChart("swiss-runner-faction-chart", stats.swiss.runner);
-    drawPieChart("elim-corp-faction-chart", stats.elim.corp);
-    drawPieChart("elim-runner-faction-chart", stats.elim.runner);
+    drawPieChart("swiss-corp-faction-chart", stats.swiss.corp.factions);
+    drawPieChart("swiss-runner-faction-chart", stats.swiss.runner.factions);
+    drawPieChart("elim-corp-faction-chart", stats.elim.corp.factions);
+    drawPieChart("elim-runner-faction-chart", stats.elim.runner.factions);
   });
 
   // Sort by count in descending order, then by ID in ascending order
@@ -90,26 +61,17 @@
       : id2.numCutPlayers - id1.numCutPlayers;
   }
 
-  function getPieChartData(ids: IdStats[]) {
+  function getPieChartData(factions: FactionStats[]) {
     const results: PieChartData = {
       series: [],
       labels: [],
       colors: [],
     };
 
-    ids.reduce((factionCounts, id) => {
-      let factionCount = factionCounts.get(id.identity.faction);
-      factionCount ??= { name: id.identity.faction, count: 0 };
-      factionCount.count += id.count;
+    factions.forEach((stats) => {
+      const faction = getFaction(stats.name);
 
-      factionCounts.set(id.identity.faction, factionCount);
-
-      return factionCounts;
-    }, new Map<string, FactionStats>())
-    .forEach((factionCount) => {
-      const faction = getFaction(factionCount.name);
-
-      results.series.push(factionCount.count);
+      results.series.push(stats.count);
       results.labels.push(faction.displayName);
       results.colors.push(faction.color);
     });
@@ -117,7 +79,7 @@
     return results;
   }
 
-  function drawPieChart(elementId: string, data: IdStats[]) {
+  function drawPieChart(elementId: string, data: FactionStats[]) {
     const element = document.getElementById(elementId);
     if (!element) {
       return;
@@ -274,11 +236,11 @@
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render idTable("Corp", stats.swiss.corp.toSorted(idTableComparator), stats.swiss.num_players)}
+            {@render idTable("Corp", stats.swiss.corp.ids.toSorted(idTableComparator), stats.swiss.num_players)}
           </div>
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render idTable("Runner", stats.swiss.runner.toSorted(idTableComparator), stats.swiss.num_players)}
+            {@render idTable("Runner", stats.swiss.runner.ids.toSorted(idTableComparator), stats.swiss.num_players)}
           </div>
         </div>
       {:else}
@@ -331,11 +293,11 @@
           <div class="row mt-3 dontprint">
             <div class="col-md-6">
               <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-              {@render idTable("Corp", stats.elim.corp.toSorted(idTableComparator), stats.elim.num_players)}
+              {@render idTable("Corp", stats.elim.corp.ids.toSorted(idTableComparator), stats.elim.num_players)}
             </div>
             <div class="col-md-6">
               <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-              {@render idTable("Runner", stats.elim.runner.toSorted(idTableComparator), stats.elim.num_players)}
+              {@render idTable("Runner", stats.elim.runner.ids.toSorted(idTableComparator), stats.elim.num_players)}
             </div>
           </div>
         {:else}
@@ -352,11 +314,11 @@
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutFactionTable("Corp", corpCutStats.toSorted(cutFactionTableComparator))}
+            {@render cutFactionTable("Corp", cutStats.corp.factions.toSorted(cutFactionTableComparator))}
           </div>
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutFactionTable("Runner", runnerCutStats.toSorted(cutFactionTableComparator))}
+            {@render cutFactionTable("Runner", cutStats.runner.factions.toSorted(cutFactionTableComparator))}
           </div>
         </div>
 
@@ -364,11 +326,11 @@
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutIdTable("Corp", cutStats.corp.toSorted(cutIdTableComparator))}
+            {@render cutIdTable("Corp", cutStats.corp.ids.toSorted(cutIdTableComparator))}
           </div>
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutIdTable("Runner", cutStats.runner.toSorted(cutIdTableComparator))}
+            {@render cutIdTable("Runner", cutStats.runner.ids.toSorted(cutIdTableComparator))}
           </div>
         </div>
       {:else}

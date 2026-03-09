@@ -67,7 +67,7 @@ module Beta
     def cut_conversion_rates
       authorize @tournament, :show?
 
-      render json: transform_cut_stats(@tournament.cut_conversion_rates_data[:identities])
+      render json: transform_cut_stats(@tournament.cut_conversion_rates_data)
     end
 
     private
@@ -79,51 +79,87 @@ module Beta
     def transform_stats(stats)
       {
         num_players: stats[:num_players],
-        corp: stats[:corp][:ids].keys.map do |id|
-          {
-            identity: {
-              name: id,
-              faction: stats[:corp][:ids][id][:faction]
-            },
-            count: stats[:corp][:ids][id][:count]
-          }
-        end,
-        runner: stats[:runner][:ids].keys.map do |id|
-          {
-            identity: {
-              name: id,
-              faction: stats[:runner][:ids][id][:faction]
-            },
-            count: stats[:runner][:ids][id][:count]
-          }
-        end
+        corp: {
+          ids: stats[:corp][:ids].keys.map do |id|
+            {
+              identity: {
+                name: id,
+                faction: stats[:corp][:ids][id][:faction]
+              },
+              count: stats[:corp][:ids][id][:count]
+            }
+          end,
+          factions: stats[:corp][:factions].keys.map do |faction|
+            {
+              name: faction,
+              count: stats[:corp][:factions][faction]
+            }
+          end
+        },
+        runner: {
+          ids: stats[:runner][:ids].keys.map do |id|
+            {
+              identity: {
+                name: id,
+                faction: stats[:runner][:ids][id][:faction]
+              },
+              count: stats[:runner][:ids][id][:count]
+            }
+          end,
+          factions: stats[:runner][:factions].keys.map do |faction|
+            {
+              name: faction,
+              count: stats[:runner][:factions][faction]
+            }
+          end
+        }
       }
     end
 
     def transform_cut_stats(stats)
       {
-        corp: stats[:corp].keys.map do |id|
-          {
-            identity: {
-              name: id,
-              faction: stats[:corp][id][:faction]
-            },
-            numSwissPlayers: stats[:corp][id][:num_swiss_players],
-            numCutPlayers: stats[:corp][id][:num_cut_players],
-            cutConversion: stats[:corp][id][:cut_conversion_percentage]
-          }
-        end,
-        runner: stats[:runner].keys.map do |id|
-          {
-            identity: {
-              name: id,
-              faction: stats[:runner][id][:faction]
-            },
-            numSwissPlayers: stats[:runner][id][:num_swiss_players],
-            numCutPlayers: stats[:runner][id][:num_cut_players],
-            cutConversion: stats[:runner][id][:cut_conversion_percentage]
-          }
-        end
+        corp: {
+          ids: stats[:identities][:corp].keys.map do |id|
+            {
+              identity: {
+                name: id,
+                faction: stats[:identities][:corp][id][:faction]
+              },
+              numSwissPlayers: stats[:identities][:corp][id][:num_swiss_players],
+              numCutPlayers: stats[:identities][:corp][id][:num_cut_players],
+              cutConversion: stats[:identities][:corp][id][:cut_conversion_percentage]
+            }
+          end,
+          factions: stats[:factions][:corp].keys.map do |faction|
+            {
+              name: faction,
+              numSwissPlayers: stats[:factions][:corp][faction][:num_swiss_players],
+              numCutPlayers: stats[:factions][:corp][faction][:num_cut_players],
+              cutConversion: stats[:factions][:corp][faction][:cut_conversion_percentage]
+            }
+          end
+        },
+        runner: {
+          ids: stats[:identities][:runner].keys.map do |id|
+            {
+              identity: {
+                name: id,
+                faction: stats[:identities][:runner][id][:faction]
+              },
+              numSwissPlayers: stats[:identities][:runner][id][:num_swiss_players],
+              numCutPlayers: stats[:identities][:runner][id][:num_cut_players],
+              cutConversion: stats[:identities][:runner][id][:cut_conversion_percentage]
+            }
+          end,
+          factions: stats[:factions][:runner].keys.map do |faction|
+            {
+              name: faction,
+              numSwissPlayers: stats[:factions][:runner][faction][:num_swiss_players],
+              numCutPlayers: stats[:factions][:runner][faction][:num_cut_players],
+              cutConversion: stats[:factions][:runner][faction][:cut_conversion_percentage]
+            }
+          end
+        }
       }
     end
   end
