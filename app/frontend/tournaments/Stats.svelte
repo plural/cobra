@@ -48,17 +48,25 @@
   }
 
   // Sort by cut conversion in descending order, then by number of players in ascending order
-  function cutFactionTableComparator(id1: CutFactionStats, id2: CutFactionStats) {
-    return id1.cutConversion !== id2.cutConversion
-      ? id2.cutConversion - id1.cutConversion
-      : id2.numCutPlayers - id1.numCutPlayers;
+  function cutFactionTableComparator(faction1: CutFactionStats, faction2: CutFactionStats) {
+      if (faction1.cutConversion !== faction2.cutConversion) {
+        return faction2.cutConversion - faction1.cutConversion;
+      }
+      if (faction1.numCutPlayers !== faction2.numCutPlayers) {
+        return faction2.numCutPlayers - faction1.numCutPlayers;
+      }
+      return faction1.name.localeCompare(faction2.name);
   }
 
   // Sort by cut conversion in descending order, then by number of players in ascending order
   function cutIdTableComparator(id1: CutIdStats, id2: CutIdStats) {
-    return id1.cutConversion !== id2.cutConversion
-      ? id2.cutConversion - id1.cutConversion
-      : id2.numCutPlayers - id1.numCutPlayers;
+    if (id1.cutConversion !== id2.cutConversion) {
+      return id2.cutConversion - id1.cutConversion;
+    }
+    if (id1.numCutPlayers !== id2.numCutPlayers) {
+      return id2.numCutPlayers - id1.numCutPlayers;
+    }
+    return id1.identity.name.localeCompare(id2.identity.name);
   }
 
   function getPieChartData(factions: FactionStats[]) {
@@ -145,8 +153,8 @@
     </table>
   {/snippet}
 
-  {#snippet cutFactionTable(idHeader: string, factions: CutFactionStats[])}
-    <table class="table">
+  {#snippet cutFactionTable(tableId: string, idHeader: string, factions: CutFactionStats[])}
+    <table id={tableId} class="table">
       <thead>
         <tr>
           <th>{idHeader}</th>
@@ -168,8 +176,8 @@
     </table>
   {/snippet}
 
-  {#snippet cutIdTable(idHeader: string, ids: CutIdStats[])}
-    <table class="table">
+  {#snippet cutIdTable(tableId: string, idHeader: string, ids: CutIdStats[])}
+    <table id={tableId} class="table">
       <thead>
         <tr>
           <th>{idHeader}</th>
@@ -314,11 +322,11 @@
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutFactionTable("Corp", cutStats.corp.factions.toSorted(cutFactionTableComparator))}
+            {@render cutFactionTable("cut-corp-faction-table", "Corp", cutStats.corp.factions.toSorted(cutFactionTableComparator))}
           </div>
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutFactionTable("Runner", cutStats.runner.factions.toSorted(cutFactionTableComparator))}
+            {@render cutFactionTable("cut-runner-faction-table", "Runner", cutStats.runner.factions.toSorted(cutFactionTableComparator))}
           </div>
         </div>
 
@@ -326,11 +334,11 @@
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutIdTable("Corp", cutStats.corp.ids.toSorted(cutIdTableComparator))}
+            {@render cutIdTable("cut-corp-id-table", "Corp", cutStats.corp.ids.toSorted(cutIdTableComparator))}
           </div>
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutIdTable("Runner", cutStats.runner.ids.toSorted(cutIdTableComparator))}
+            {@render cutIdTable("cut-runner-id-table", "Runner", cutStats.runner.ids.toSorted(cutIdTableComparator))}
           </div>
         </div>
       {:else}
