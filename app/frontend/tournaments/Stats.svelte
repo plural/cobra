@@ -122,8 +122,8 @@
 <h2>Stats</h2>
 
 {#if data}
-  {#snippet idTable(idHeader: string, ids: IdStats[], num_players: number)}
-    <table class="table">
+  {#snippet idTable(tableId: string, idHeader: string, ids: IdStats[], num_players: number)}
+    <table id={tableId} class="table">
       <thead>
         <tr>
           <th>{idHeader}</th>
@@ -236,11 +236,11 @@
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render idTable("Corp", stats.swiss.corp.ids.toSorted(idTableComparator), stats.swiss.num_players)}
+            {@render idTable("swiss-corp-table", "Corp", stats.swiss.corp.ids.toSorted(idTableComparator), stats.swiss.num_players)}
           </div>
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render idTable("Runner", stats.swiss.runner.ids.toSorted(idTableComparator), stats.swiss.num_players)}
+            {@render idTable("swiss-runner-table", "Runner", stats.swiss.runner.ids.toSorted(idTableComparator), stats.swiss.num_players)}
           </div>
         </div>
       {:else}
@@ -293,11 +293,11 @@
           <div class="row mt-3 dontprint">
             <div class="col-md-6">
               <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-              {@render idTable("Corp", stats.elim.corp.ids.toSorted(idTableComparator), stats.elim.num_players)}
+              {@render idTable("elim-corp-table", "Corp", stats.elim.corp.ids.toSorted(idTableComparator), stats.elim.num_players)}
             </div>
             <div class="col-md-6">
               <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-              {@render idTable("Runner", stats.elim.runner.ids.toSorted(idTableComparator), stats.elim.num_players)}
+              {@render idTable("elim-runner-table", "Runner", stats.elim.runner.ids.toSorted(idTableComparator), stats.elim.num_players)}
             </div>
           </div>
         {:else}
