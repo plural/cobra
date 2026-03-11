@@ -3,7 +3,10 @@ interface Faction {
   color: string;
 }
 
-const UnspecifiedFaction: Faction = { displayName: "Unspecified", color: "charcoal" };
+const UnspecifiedFaction: Faction = {
+  displayName: "Unspecified",
+  color: "charcoal",
+};
 
 export const Factions = new Map<string, Faction>([
   ["anarch", { displayName: "Anarch", color: "orangered" }],
@@ -17,7 +20,10 @@ export const Factions = new Map<string, Faction>([
   ["neutral-corp", { displayName: "Neutral", color: "lightgrey" }],
   ["neutral-runner", { displayName: "Neutral", color: "lightgrey" }],
   ["nbn", { displayName: "NBN", color: "darkorange" }],
-  ["weyland-consortium", { displayName: "Weyland Consortium", color: "darkgreen" }],
+  [
+    "weyland-consortium",
+    { displayName: "Weyland Consortium", color: "darkgreen" },
+  ],
   ["unspecified", UnspecifiedFaction],
 ]);
 

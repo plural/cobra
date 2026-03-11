@@ -2,7 +2,18 @@
   import ApexCharts from "apexcharts";
   import type { ApexOptions } from "apexcharts";
   import { onMount } from "svelte";
-  import { loadCutStats, loadPairings, loadStats, PairingsData, type CutFactionStats, type CutIdStats, type CutStats, type FactionStats, type IdStats, type Stats } from "../pairings/PairingsData";
+  import {
+    loadCutStats,
+    loadPairings,
+    loadStats,
+    PairingsData,
+    type CutFactionStats,
+    type CutIdStats,
+    type CutStats,
+    type FactionStats,
+    type IdStats,
+    type Stats,
+  } from "../pairings/PairingsData";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import Identity from "../identities/Identity.svelte";
   import { getFaction } from "../utils/factions";
@@ -14,7 +25,7 @@
     colors: string[];
   }
 
-  let { tournamentId }: { tournamentId: number; } = $props();
+  let { tournamentId }: { tournamentId: number } = $props();
 
   let data: PairingsData | undefined = $state();
   let stats: Stats | undefined = $state();
@@ -48,14 +59,17 @@
   }
 
   // Sort by cut conversion in descending order, then by number of players in ascending order
-  function cutFactionTableComparator(faction1: CutFactionStats, faction2: CutFactionStats) {
-      if (faction1.cutConversion !== faction2.cutConversion) {
-        return faction2.cutConversion - faction1.cutConversion;
-      }
-      if (faction1.numCutPlayers !== faction2.numCutPlayers) {
-        return faction2.numCutPlayers - faction1.numCutPlayers;
-      }
-      return faction1.name.localeCompare(faction2.name);
+  function cutFactionTableComparator(
+    faction1: CutFactionStats,
+    faction2: CutFactionStats,
+  ) {
+    if (faction1.cutConversion !== faction2.cutConversion) {
+      return faction2.cutConversion - faction1.cutConversion;
+    }
+    if (faction1.numCutPlayers !== faction2.numCutPlayers) {
+      return faction2.numCutPlayers - faction1.numCutPlayers;
+    }
+    return faction1.name.localeCompare(faction2.name);
   }
 
   // Sort by cut conversion in descending order, then by number of players in ascending order
@@ -98,27 +112,28 @@
       chart: {
         offsetY: 20,
         animations: {
-          enabled: false
+          enabled: false,
         },
         selection: {
           enabled: false,
         },
         height: "300px",
         type: "pie",
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
       },
       plotOptions: {
         pie: {
           expandOnClick: false,
           dataLabels: {
-              offset: -10,
+            offset: -10,
           },
         },
       },
       series: factions.series,
       labels: factions.labels,
       colors: factions.colors,
-    }
+    };
 
     var chart = new ApexCharts(element, options);
     void chart.render();
@@ -130,7 +145,12 @@
 <h2>Stats</h2>
 
 {#if data}
-  {#snippet idTable(tableId: string, idHeader: string, ids: IdStats[], num_players: number)}
+  {#snippet idTable(
+    tableId: string,
+    idHeader: string,
+    ids: IdStats[],
+    num_players: number,
+  )}
     <table id={tableId} class="table">
       <thead>
         <tr>
@@ -142,7 +162,11 @@
         {#each ids as id (id.identity.name)}
           <tr>
             <td>
-              <Identity identity={id.identity} name_if_missing="Unspecified" icon_if_missing="interrupt" />
+              <Identity
+                identity={id.identity}
+                name_if_missing="Unspecified"
+                icon_if_missing="interrupt"
+              />
             </td>
             <td>
               {id.count} ({((id.count / num_players) * 100).toFixed(1)}%)
@@ -153,7 +177,11 @@
     </table>
   {/snippet}
 
-  {#snippet cutFactionTable(tableId: string, idHeader: string, factions: CutFactionStats[])}
+  {#snippet cutFactionTable(
+    tableId: string,
+    idHeader: string,
+    factions: CutFactionStats[],
+  )}
     <table id={tableId} class="table">
       <thead>
         <tr>
@@ -168,7 +196,9 @@
               <Faction name={faction.name} />
             </td>
             <td>
-              {faction.numCutPlayers} / {faction.numSwissPlayers} ({faction.cutConversion.toFixed(1)}%)
+              {faction.numCutPlayers} / {faction.numSwissPlayers} ({faction.cutConversion.toFixed(
+                1,
+              )}%)
             </td>
           </tr>
         {/each}
@@ -188,10 +218,16 @@
         {#each ids as id (id.identity.name)}
           <tr>
             <td>
-              <Identity identity={id.identity} name_if_missing="Unspecified" icon_if_missing="interrupt" />
+              <Identity
+                identity={id.identity}
+                name_if_missing="Unspecified"
+                icon_if_missing="interrupt"
+              />
             </td>
             <td>
-              {id.numCutPlayers} / {id.numSwissPlayers} ({id.cutConversion.toFixed(1)}%)
+              {id.numCutPlayers} / {id.numSwissPlayers} ({id.cutConversion.toFixed(
+                1,
+              )}%)
             </td>
           </tr>
         {/each}
@@ -216,7 +252,7 @@
               <tbody>
                 <tr>
                   <td>
-                     <div id="swiss-corp-faction-chart"></div>
+                    <div id="swiss-corp-faction-chart"></div>
                   </td>
                 </tr>
               </tbody>
@@ -239,16 +275,26 @@
             </table>
           </div>
         </div>
-  
+
         <!-- Swiss stage ID tables -->
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render idTable("swiss-corp-table", "Corp", stats.swiss.corp.ids.toSorted(idTableComparator), stats.swiss.num_players)}
+            {@render idTable(
+              "swiss-corp-table",
+              "Corp",
+              stats.swiss.corp.ids.toSorted(idTableComparator),
+              stats.swiss.num_players,
+            )}
           </div>
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render idTable("swiss-runner-table", "Runner", stats.swiss.runner.ids.toSorted(idTableComparator), stats.swiss.num_players)}
+            {@render idTable(
+              "swiss-runner-table",
+              "Runner",
+              stats.swiss.runner.ids.toSorted(idTableComparator),
+              stats.swiss.num_players,
+            )}
           </div>
         </div>
       {:else}
@@ -296,16 +342,26 @@
               </table>
             </div>
           </div>
-  
+
           <!-- Elimination stage ID tables -->
           <div class="row mt-3 dontprint">
             <div class="col-md-6">
               <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-              {@render idTable("elim-corp-table", "Corp", stats.elim.corp.ids.toSorted(idTableComparator), stats.elim.num_players)}
+              {@render idTable(
+                "elim-corp-table",
+                "Corp",
+                stats.elim.corp.ids.toSorted(idTableComparator),
+                stats.elim.num_players,
+              )}
             </div>
             <div class="col-md-6">
               <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-              {@render idTable("elim-runner-table", "Runner", stats.elim.runner.ids.toSorted(idTableComparator), stats.elim.num_players)}
+              {@render idTable(
+                "elim-runner-table",
+                "Runner",
+                stats.elim.runner.ids.toSorted(idTableComparator),
+                stats.elim.num_players,
+              )}
             </div>
           </div>
         {:else}
@@ -322,11 +378,19 @@
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutFactionTable("cut-corp-faction-table", "Corp", cutStats.corp.factions.toSorted(cutFactionTableComparator))}
+            {@render cutFactionTable(
+              "cut-corp-faction-table",
+              "Corp",
+              cutStats.corp.factions.toSorted(cutFactionTableComparator),
+            )}
           </div>
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutFactionTable("cut-runner-faction-table", "Runner", cutStats.runner.factions.toSorted(cutFactionTableComparator))}
+            {@render cutFactionTable(
+              "cut-runner-faction-table",
+              "Runner",
+              cutStats.runner.factions.toSorted(cutFactionTableComparator),
+            )}
           </div>
         </div>
 
@@ -334,20 +398,34 @@
         <div class="row mt-3 dontprint">
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutIdTable("cut-corp-id-table", "Corp", cutStats.corp.ids.toSorted(cutIdTableComparator))}
+            {@render cutIdTable(
+              "cut-corp-id-table",
+              "Corp",
+              cutStats.corp.ids.toSorted(cutIdTableComparator),
+            )}
           </div>
           <div class="col-md-6">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render cutIdTable("cut-runner-id-table", "Runner", cutStats.runner.ids.toSorted(cutIdTableComparator))}
+            {@render cutIdTable(
+              "cut-runner-id-table",
+              "Runner",
+              cutStats.runner.ids.toSorted(cutIdTableComparator),
+            )}
           </div>
         </div>
       {:else}
         <h3>No elimination stage</h3>
-        <p>If an elimination stage is played, cut conversion rate info will be available here.</p>
+        <p>
+          If an elimination stage is played, cut conversion rate info will be
+          available here.
+        </p>
       {/if}
     {:else}
       <h3>No stats available</h3>
-      <p>This tournament has no rounds yet. Stats will be available once the tournament has started and rounds have been played.</p>
+      <p>
+        This tournament has no rounds yet. Stats will be available once the
+        tournament has started and rounds have been played.
+      </p>
     {/if}
   </div>
 {:else}
