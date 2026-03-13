@@ -43,6 +43,10 @@ namespace :tournament_metadata do
     end
 
     official_prize_kits = [
+      { name: '2026 District Championship Kit', position: 8 },
+      { name: '2026 H1 Casual Tournament Kit', position: 7 },
+      { name: '2026 Q1 Game Night Kit', position: 6 },
+      { name: '2025 Q4 Game Night Kit', position: 5 },
       { name: '2025 District Championship Kit', position: 4 },
       { name: '2025 H1 Casual Tournament Kit', position: 3 },
       { name: '2025 Q2 Game Night Kit', position: 2 },
