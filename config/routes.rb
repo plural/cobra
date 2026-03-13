@@ -41,6 +41,9 @@ Rails.application.routes.draw do
       patch :lock_player_registrations, on: :member
       patch :unlock_player_registrations, on: :member
       post :cut, on: :member
+      get :stats, on: :member
+      get :id_and_faction_data, on: :member
+      get :cut_conversion_rates, on: :member
     end
   end
 

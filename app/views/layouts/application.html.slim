@@ -102,14 +102,9 @@ html
               => fa_icon 'users'
               | Players
           - if policy(@tournament).edit?
-            - if Flipper.enabled?(:beta_testing, current_user) && cookies[:beta_enabled] == "true"
-              li.nav-item = link_to beta_tournament_rounds_path(@tournament), class: "nav-link #{'active' if controller_name == 'rounds' || controller_name == 'pairings'}" do
-                => fa_icon 'calendar-check-o'
-                | Pairings
-            - else
-              li.nav-item= link_to tournament_rounds_path(@tournament), class: "nav-link #{'active' if controller_name == 'rounds' || controller_name == 'pairings'}" do
-                => fa_icon 'calendar-check-o'
-                | Pairings
+            li.nav-item = link_to correct_beta_path(tournament_rounds_path(@tournament)), class: "nav-link #{'active' if controller_name == 'rounds' || controller_name == 'pairings'}" do
+              => fa_icon 'calendar-check-o'
+              | Pairings
           - elsif policy(@tournament).show?
             - if Flipper.enabled?(:beta_testing, current_user) && cookies[:beta_enabled] == "true"
               li.nav-item = link_to beta_tournament_rounds_path(@tournament), class: "nav-link #{'active' if controller_name == 'rounds' || controller_name == 'pairings'}" do
@@ -128,7 +123,7 @@ html
               => fa_icon 'sitemap'
               | Bracket
           - if policy(@tournament).show?
-            li.nav-item= link_to stats_tournament_path(@tournament), class: "nav-link #{'active' if controller_name == 'tournaments' && action_name == 'stats'}" do
+            li.nav-item = link_to correct_beta_path(stats_tournament_path(@tournament)), class: "nav-link #{'active' if controller_name == 'tournaments' && action_name == 'stats'}" do
               => fa_icon 'pie-chart'
               | Stats
           - if policy(@tournament).edit?

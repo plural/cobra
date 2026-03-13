@@ -17,6 +17,7 @@
     "@tsconfig/svelte": "^5.0.4",
     "@types/node": "^24.0.1",
     "@vitest/ui": "^3",
+    "apexcharts": "^5.10.3",
     "eslint": "^9.24.0",
     "eslint-plugin-svelte": "^3.5.1",
     "globals": "^16.0.0",

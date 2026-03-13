@@ -44,6 +44,8 @@ declare const Routes: {
     tournamentId: number,
     roundId: number,
   ) => string;
+  id_and_faction_data_beta_tournament_path: (tournamentId: number) => string;
+  cut_conversion_rates_beta_tournament_path: (tournamentId: number) => string;
 };
 
 export async function loadPairings(
@@ -305,6 +307,28 @@ export async function updateRoundTimer(
   return response.status === 200;
 }
 
+export async function loadStats(tournamentId: number): Promise<Stats> {
+  const response = await fetch(
+    Routes.id_and_faction_data_beta_tournament_path(tournamentId),
+    {
+      method: "GET",
+    },
+  );
+
+  return (await response.json()) as Stats;
+}
+
+export async function loadCutStats(tournamentId: number): Promise<CutStats> {
+  const response = await fetch(
+    Routes.cut_conversion_rates_beta_tournament_path(tournamentId),
+    {
+      method: "GET",
+    },
+  );
+
+  return (await response.json()) as CutStats;
+}
+
 export interface NewPairing {
   table_number: number;
   player1_id: number;
@@ -433,4 +457,56 @@ export class Player {
   runner_id: Identity | null = null;
   include_in_stream = false;
   active: boolean | null = null;
+}
+
+export interface IdStats {
+  identity: Identity;
+  count: number;
+}
+
+export interface FactionStats {
+  name: string;
+  count: number;
+}
+
+export interface CutIdStats {
+  identity: Identity;
+  numSwissPlayers: number;
+  numCutPlayers: number;
+  cutConversion: number;
+}
+
+export interface CutFactionStats {
+  name: string;
+  numSwissPlayers: number;
+  numCutPlayers: number;
+  cutConversion: number;
+}
+
+export interface StageStats {
+  num_players: number;
+  corp: {
+    ids: IdStats[];
+    factions: FactionStats[];
+  };
+  runner: {
+    ids: IdStats[];
+    factions: FactionStats[];
+  };
+}
+
+export interface Stats {
+  swiss: StageStats;
+  elim: StageStats;
+}
+
+export interface CutStats {
+  corp: {
+    ids: CutIdStats[];
+    factions: CutFactionStats[];
+  };
+  runner: {
+    ids: CutIdStats[];
+    factions: CutFactionStats[];
+  };
 }
