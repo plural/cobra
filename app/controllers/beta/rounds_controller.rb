@@ -239,8 +239,8 @@ module Beta
                                current_user.id == players[player2_id]&.dig('user_id')
                              end
           },
-          player1: pairings_data_player(players[player1_id], player1_side(side)),
-          player2: pairings_data_player(players[player2_id], player2_side(side)),
+          player1: helpers.player_json(players[player1_id], player1_side(side)),
+          player2: helpers.player_json(players[player2_id], player2_side(side)),
           score1:,
           score2:,
           score_label: score_label(@tournament.swiss_format, player1_side(side),
@@ -268,21 +268,6 @@ module Beta
       }
     end
 
-    def pairings_data_player(player, side)
-      {
-        id: (player['id'] if player),
-        name: (player['name'] if player),
-        name_with_pronouns: name_with_pronouns(player),
-        side:,
-        user_id: (player['user_id'] if player),
-        side_label: side_label(side),
-        corp_id: id(player, 'corp'),
-        runner_id: id(player, 'runner'),
-        include_in_stream: (player['include_in_stream'] if player),
-        active: (player['active'] if player)
-      }
-    end
-
     def pairings_data_players
       players_results = Player.connection.exec_query("
         SELECT
@@ -307,35 +292,6 @@ module Beta
         players[p['id']] = p
       end
       players
-    end
-
-    def name_with_pronouns(player)
-      if player.nil?
-        '(Bye)'
-      elsif player['pronouns'].present?
-        "#{player['name']} (#{player['pronouns']})"
-      else
-        player['name']
-      end
-    end
-
-    def side_label(side)
-      if side.nil?
-        nil
-      else
-        "(#{side.to_s.titleize})"
-      end
-    end
-
-    def id(player, side)
-      if player.nil?
-        nil
-      else
-        {
-          "name": player["#{side}_identity"],
-          "faction": player["#{side}_faction"]
-        }
-      end
     end
 
     def player1_side(pairing_side)

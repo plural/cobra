@@ -1,4 +1,5 @@
 import type { Identity } from "../identities/Identity";
+import type { Player } from "../players/PlayersData";
 import { globalMessages } from "../utils/GlobalMessageState.svelte";
 import { csrfToken } from "../utils/network";
 import type { ScoreReport } from "./SelfReport";
@@ -444,19 +445,6 @@ export interface SelfReport {
 export interface PairingPolicies {
   view_decks?: boolean;
   self_report: boolean;
-}
-
-export class Player {
-  id = 0;
-  name = "";
-  name_with_pronouns = "";
-  side: string | null = null;
-  user_id: number | null = null;
-  side_label: string | null = null;
-  corp_id: Identity | null = null;
-  runner_id: Identity | null = null;
-  include_in_stream = false;
-  active: boolean | null = null;
 }
 
 export interface IdStats {
