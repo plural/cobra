@@ -3,7 +3,6 @@
   import {
     type Pairing,
     type PairingsContext,
-    type Player,
     type Round,
     type Stage,
     Tournament,
@@ -18,6 +17,7 @@
   import ModalDialog from "../widgets/ModalDialog.svelte";
   import PlayerDisplay from "./PlayerDisplay.svelte";
   import AdminReportOptions from "./AdminReportOptions.svelte";
+  import type { Player } from "../players/PlayersData";
 
   let {
     tournament,

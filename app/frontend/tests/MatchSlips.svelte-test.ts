@@ -1,9 +1,10 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/svelte";
 import MatchSlips from "../pairings/MatchSlips.svelte";
-import { loadPairings, Player, type Pairing } from "../pairings/PairingsData";
+import { loadPairings, type Pairing } from "../pairings/PairingsData";
 import { MockPairingsData, MockRound1 } from "./RoundsTestData";
 import userEvent from "@testing-library/user-event";
+import { Player } from "../players/PlayersData";
 
 const user = userEvent.setup();
 
