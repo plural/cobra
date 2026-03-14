@@ -367,6 +367,7 @@ export class Tournament {
   registration_open = false;
   registration_unlocked = false;
   self_registration = false;
+  nrdb_deck_registration = false;
   locked_players = 0;
   unlocked_players = 0;
   allow_streaming_opt_out = false;

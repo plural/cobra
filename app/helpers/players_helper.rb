@@ -5,12 +5,14 @@ module PlayersHelper
     {
       id: (player['id'] if player),
       name: (player['name'] if player),
+      pronouns: (player['pronouns'] if player),
       name_with_pronouns: name_with_pronouns(player),
       user_id: (player['user_id'] if player),
       corp_id: id(player, 'corp'),
       runner_id: id(player, 'runner'),
       include_in_stream: (player['include_in_stream'] if player),
       active: (player['active'] if player),
+      first_round_bye: (player['first_round_bye'] if player),
       side:,
       side_label: side.nil? ? nil : "(#{side.to_s.titleize})"
     }

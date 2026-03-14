@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import { loadPlayers, type PlayersData } from "./PlayersData";
+  import PlayerForm from "./PlayerForm.svelte";
 
   let { tournamentId }: { tournamentId: number } = $props();
 
@@ -29,7 +30,7 @@
   <ul class="list-group list-group-flush">
     {#each data.activePlayers as player (player.id)}
       <li class="list-group-item">
-        {player.name}
+        <PlayerForm {player} tournament={data.tournament} tournamentPolicies={data.tournamentPolicies} />
       </li>
     {/each}
   </ul>

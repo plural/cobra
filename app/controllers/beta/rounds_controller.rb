@@ -70,20 +70,8 @@ module Beta
       authorize @tournament, :show?
 
       render json: {
-        policy: {
-          update: @tournament.user == current_user,
-          custom_table_numbering: Flipper.enabled?(:custom_table_numbering, current_user)
-        },
-        tournament: {
-          id: @tournament.id,
-          player_meeting: @tournament.round_ids.empty?,
-          registration_open: @tournament.registration_open?,
-          registration_unlocked: @tournament.registration_unlocked?,
-          self_registration: @tournament.self_registration?,
-          locked_players: @tournament.locked_players.count,
-          unlocked_players: @tournament.unlocked_players.count,
-          allow_streaming_opt_out: @tournament.allow_streaming_opt_out
-        },
+        policy: helpers.tournament_policies_json(@tournament),
+        tournament: helpers.tournament_json(@tournament),
         stages: pairings_data_stages,
         warnings: ([@tournament.current_stage&.validate_table_count] if policy(@tournament).update?)
       }

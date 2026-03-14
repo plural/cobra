@@ -15,6 +15,8 @@ module Beta
       dropped = @tournament.players.dropped.sort_by { |p| p.name.downcase || '' }
 
       render json: {
+        tournament: helpers.tournament_json(@tournament),
+        tournamentPolicies: helpers.tournament_policies_json(@tournament),
         activePlayers: players.map do |player|
           helpers.player_json(player)
         end,
