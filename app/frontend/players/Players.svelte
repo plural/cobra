@@ -27,7 +27,7 @@
   <!-- TODO: Deck visibility controls -->
 
   <!-- Active players -->
-  <ul class="list-group list-group-flush">
+  <ul class="list-group">
     {#each data.activePlayers as player (player.id)}
       <li class="list-group-item">
         <PlayerForm {player} tournament={data.tournament} tournamentPolicies={data.tournamentPolicies} />

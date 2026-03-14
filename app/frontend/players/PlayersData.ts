@@ -31,9 +31,11 @@ export class Player {
   user_id: number | null = null;
   corp_id: Identity | null = null;
   runner_id: Identity | null = null;
+  registration_locked = false;
   include_in_stream = false;
   active: boolean | null = null;
   first_round_bye = false;
+  manual_seed: number | null = null;
   side: string | null = null;
   side_label: string | null = null;
 }

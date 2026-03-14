@@ -17,7 +17,8 @@ module TournamentHelper
       nrdb_deck_registration: tournament.nrdb_deck_registration?,
       locked_players: tournament.locked_players.count,
       unlocked_players: tournament.unlocked_players.count,
-      allow_streaming_opt_out: tournament.allow_streaming_opt_out
+      allow_streaming_opt_out: tournament.allow_streaming_opt_out,
+      manual_seed: tournament.manual_seed
     }
   end
 

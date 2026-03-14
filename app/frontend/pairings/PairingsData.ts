@@ -371,6 +371,7 @@ export class Tournament {
   locked_players = 0;
   unlocked_players = 0;
   allow_streaming_opt_out = false;
+  manual_seed = false;
 }
 
 export interface Stage {
