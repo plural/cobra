@@ -1,31 +1,41 @@
+import { Identity } from "../identities/Identity";
 import { Tournament, type Pairing } from "../pairings/PairingsData";
 import type { RoundData } from "../pairings/RoundData";
 import type { ScoreReport } from "../pairings/SelfReport";
+import type { Player } from "../players/PlayersData";
 
-export const MockPlayerAlice = {
+export const MockPlayerAlice: Player = {
   id: 1,
   name: "Alice",
   name_with_pronouns: "",
   side: "corp",
   user_id: 1,
   side_label: null,
-  corp_id: null,
-  runner_id: null,
+  corp_id: new Identity(),
+  runner_id: new Identity(),
   include_in_stream: false,
   active: null,
+  pronouns: "",
+  registration_locked: false,
+  first_round_bye: false,
+  manual_seed: null
 };
 
-export const MockPlayerBob = {
+export const MockPlayerBob: Player = {
   id: 2,
   name: "Bob",
   name_with_pronouns: "",
   side: "runner",
   user_id: 2,
   side_label: null,
-  corp_id: null,
-  runner_id: null,
+  corp_id: new Identity(),
+  runner_id: new Identity(),
   include_in_stream: false,
   active: null,
+  pronouns: "",
+  registration_locked: false,
+  first_round_bye: false,
+  manual_seed: null
 };
 
 export const MockSelfReport1: ScoreReport = {

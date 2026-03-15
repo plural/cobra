@@ -1,20 +1,32 @@
 <script lang="ts">
+  import { fade } from "svelte/transition";
   import type { Tournament, TournamentPolicies } from "../pairings/PairingsData";
-    import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import type { Player } from "./PlayersData";
+  import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
+  import { Player, savePlayer } from "./PlayersData";
+
+  const SaveState = Object.freeze({
+    NONE: -1,
+    UNSAVED: 0,
+    SAVING: 1,
+    SAVED: 2,
+  });
+  const FADE_DURATION = 1000;
 
   let { player, tournament, tournamentPolicies }: { player: Player, tournament: Tournament, tournamentPolicies: TournamentPolicies } = $props();
 
-  let playerEdit = $derived({
-    id: player.id,
-    name: player.name,
-    pronouns: player.pronouns,
-    corp_name: player.corp_id ? player.corp_id.name : "",
-    runner_name: player.runner_id ? player.runner_id.name : "",
-    include_in_stream: player.include_in_stream,
-    first_round_bye: player.first_round_bye,
-    manual_seed: player.manual_seed,
-  });
+  let playerEdit = $derived($state.snapshot(player));
+  let saveState: number = $state(SaveState.UNSAVED);
+
+  async function save() {
+    saveState = SaveState.SAVING;
+    await savePlayer(tournament.id, playerEdit);
+    saveState = SaveState.SAVED;
+
+    setTimeout(() => { saveState = SaveState.NONE }, 1);
+    setTimeout(() => {
+      saveState = SaveState.UNSAVED;
+    }, FADE_DURATION);
+  }
 </script>
 
 <div class="identities_form form-row">
@@ -39,13 +51,13 @@
   <!-- Corp ID -->
   <div class="col">
     <label for="player_name_{playerEdit.id}">Corp ID</label>
-    <input id="player_name_{playerEdit.id}" type="text" class="form-control corp_identities" placeholder="Example: they/them" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.corp_name} />
+    <input id="player_name_{playerEdit.id}" type="text" class="form-control corp_identities" placeholder="Example: they/them" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.corp_id.name} />
   </div>
 
   <!-- Runner ID -->
   <div class="col">
     <label for="player_name_{playerEdit.id}">Runner ID</label>
-    <input id="player_name_{playerEdit.id}" type="text" class="form-control runner_identities" placeholder="Example: they/them" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.runner_name} />
+    <input id="player_name_{playerEdit.id}" type="text" class="form-control runner_identities" placeholder="Example: they/them" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.runner_id.name} />
   </div>
 </div>
 
@@ -73,4 +85,26 @@
       </div>
     {/if}
   {/if}
+</div>
+
+<!-- Actions -->
+<div class="text-right">
+  <!-- TODO: Lock/unlock -->
+  <!-- TODO: View decks -->
+  <!-- TODO: Assign table number -->
+  
+  {#if saveState === SaveState.UNSAVED}
+    <button type="button" class="btn btn-link text-success" onclick={save}>
+      <FontAwesomeIcon icon="floppy-o" /> Save
+    </button>
+  {:else if saveState === SaveState.SAVING}
+    <div class="spinner-border spinner-border-sm text-success m-auto"></div> Saving
+  {:else if saveState === SaveState.SAVED}
+    <div class="text-success" out:fade={{ duration: FADE_DURATION }}>
+      <FontAwesomeIcon icon="check" /> Saved
+    </div>
+  {/if}
+
+  <!-- TODO: Drop -->
+  <!-- TODO: Delete -->
 </div>

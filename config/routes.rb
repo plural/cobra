@@ -35,7 +35,7 @@ Rails.application.routes.draw do
         patch :update_timer, on: :member
         get :pairings_data, on: :collection
       end
-      resources :players, only: %i[index] do
+      resources :players, only: %i[index update] do
         get :players_data, on: :collection
       end
       resources :stages, only: %i[create destroy]

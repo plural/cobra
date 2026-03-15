@@ -1,8 +1,10 @@
-import type { Identity } from "../identities/Identity";
+import { Identity } from "../identities/Identity";
 import type { Tournament, TournamentPolicies } from "../pairings/PairingsData";
+import { csrfToken } from "../utils/network";
 
 declare const Routes: {
   players_data_beta_tournament_players_path: (tournamentId: number) => string;
+  beta_tournament_player_path: (tournamentId: number, playerId: number) => string;
 };
 
 export async function loadPlayers(tournamentId: number): Promise<PlayersData> {
@@ -14,6 +16,35 @@ export async function loadPlayers(tournamentId: number): Promise<PlayersData> {
   );
 
   return (await response.json()) as PlayersData;
+}
+
+export async function savePlayer(tournamentId: number, player: Player) {
+  const response = await fetch(
+    Routes.beta_tournament_player_path(tournamentId, player.id),
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+      body: JSON.stringify({ player: playerRequestObject(player) }),
+    },
+  );
+
+  return response.status === 200;
+}
+
+function playerRequestObject(player: Player) {
+  return {
+    name: player.name,
+    pronouns: player.pronouns,
+    corp_identity: player.corp_id.name,
+    runner_identity: player.runner_id.name,
+    include_in_stream: player.include_in_stream,
+    first_round_bye: player.first_round_bye,
+    manual_seed: player.manual_seed,
+  };
 }
 
 export interface PlayersData {
@@ -28,9 +59,9 @@ export class Player {
   name = "";
   pronouns = "";
   name_with_pronouns = "";
-  user_id: number | null = null;
-  corp_id: Identity | null = null;
-  runner_id: Identity | null = null;
+  user_id = 0;
+  corp_id = new Identity();
+  runner_id = new Identity();
   registration_locked = false;
   include_in_stream = false;
   active: boolean | null = null;

@@ -3,6 +3,7 @@
 module Beta
   class PlayersController < ApplicationController
     before_action :set_tournament
+    before_action :set_player, only: %i[update]
 
     def index
       authorize @tournament, :update?
@@ -24,6 +25,37 @@ module Beta
           helpers.player_json(player)
         end
       }
+    end
+
+    def update
+      authorize @player
+
+      update = player_params
+      update[:user_id] = current_user.id unless organiser_view?
+
+      head :ok
+
+      @player.update(update.except(:corp_deck, :runner_deck))
+      return unless @tournament.nrdb_deck_registration?
+
+      save_deck(update, :corp_deck, 'corp')
+      save_deck(update, :runner_deck, 'runner')
+    end
+
+    private
+
+    def set_player
+      @player = Player.find(params[:id])
+    end
+
+    def player_params
+      params.require(:player)
+            .permit(%i[name pronouns corp_identity runner_identity corp_deck runner_deck
+                       first_round_bye manual_seed include_in_stream fixed_table_number])
+    end
+
+    def organiser_view?
+      params.require(:player)[:organiser_view] && @tournament.user_id == current_user.id
     end
   end
 end
