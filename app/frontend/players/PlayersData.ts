@@ -35,6 +35,23 @@ export async function savePlayer(tournamentId: number, player: Player) {
   return response.status === 200;
 }
 
+export async function deletePlayer(tournamentId: number, player: Player) {
+  const response = await fetch(
+    Routes.beta_tournament_player_path(tournamentId, player.id),
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": csrfToken(),
+      },
+      body: JSON.stringify({ player: playerRequestObject(player) }),
+    },
+  );
+
+  return response.status === 200;
+}
+
 function playerRequestObject(player: Player) {
   return {
     name: player.name,

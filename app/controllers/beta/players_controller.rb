@@ -3,7 +3,7 @@
 module Beta
   class PlayersController < ApplicationController
     before_action :set_tournament
-    before_action :set_player, only: %i[update]
+    before_action :set_player, only: %i[update destroy]
 
     def index
       authorize @tournament, :update?
@@ -40,6 +40,16 @@ module Beta
 
       save_deck(update, :corp_deck, 'corp')
       save_deck(update, :runner_deck, 'runner')
+    end
+
+    def destroy
+      authorize @tournament, :update?
+
+      @player.destroy
+      @tournament.update(any_player_unlocked: @tournament.unlocked_players.count.positive?,
+                         all_players_unlocked: @tournament.locked_players.count.zero?)
+
+      head :ok
     end
 
     private

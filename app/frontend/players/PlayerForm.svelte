@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import type { Tournament, TournamentPolicies } from "../pairings/PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { Player, savePlayer } from "./PlayersData";
+  import { Player, savePlayer, deletePlayer as deletePlayerRequest } from "./PlayersData";
 
   const SaveState = Object.freeze({
     NONE: -1,
@@ -12,7 +12,17 @@
   });
   const FADE_DURATION = 1000;
 
-  let { player, tournament, tournamentPolicies }: { player: Player, tournament: Tournament, tournamentPolicies: TournamentPolicies } = $props();
+  let {
+    player,
+    tournament,
+    tournamentPolicies,
+    deletedCallback,
+  }: {
+    player: Player;
+    tournament: Tournament;
+    tournamentPolicies: TournamentPolicies;
+    deletedCallback?: (player: Player) => void;
+  } = $props();
 
   let playerEdit = $derived($state.snapshot(player));
   let saveState: number = $state(SaveState.UNSAVED);
@@ -26,6 +36,19 @@
     setTimeout(() => {
       saveState = SaveState.UNSAVED;
     }, FADE_DURATION);
+  }
+
+  async function deletePlayer() {
+    if (!confirm(`Are you sure you want to delete player "${player.name}"?`)) {
+      return;
+    }
+
+    const success = await deletePlayerRequest(tournament.id, playerEdit);
+    if (!success) {
+      return;
+    }
+
+    deletedCallback?.(player);
   }
 </script>
 
@@ -98,13 +121,16 @@
       <FontAwesomeIcon icon="floppy-o" /> Save
     </button>
   {:else if saveState === SaveState.SAVING}
-    <div class="spinner-border spinner-border-sm text-success m-auto"></div> Saving
+    <span class="spinner-border spinner-border-sm text-success m-auto"></span> Saving
   {:else if saveState === SaveState.SAVED}
-    <div class="text-success" out:fade={{ duration: FADE_DURATION }}>
+    <span class="text-success" out:fade={{ duration: FADE_DURATION }}>
       <FontAwesomeIcon icon="check" /> Saved
-    </div>
+    </span>
   {/if}
 
   <!-- TODO: Drop -->
-  <!-- TODO: Delete -->
+  
+  <button type="button" class="btn btn-link text-danger" onclick={deletePlayer}>
+    <FontAwesomeIcon icon="trash" /> Delete
+  </button>
 </div>

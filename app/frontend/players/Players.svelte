@@ -11,6 +11,10 @@
   onMount(async () => {
     data = await loadPlayers(tournamentId);
   });
+
+  async function playerDeletedCallback() {
+    data = await loadPlayers(tournamentId);
+  }
 </script>
 
 <GlobalMessages />
@@ -30,7 +34,7 @@
   <ul class="list-group">
     {#each data.activePlayers as player (player.id)}
       <li class="list-group-item">
-        <PlayerForm {player} tournament={data.tournament} tournamentPolicies={data.tournamentPolicies} />
+        <PlayerForm {player} tournament={data.tournament} tournamentPolicies={data.tournamentPolicies} deletedCallback={playerDeletedCallback} />
       </li>
     {/each}
   </ul>
