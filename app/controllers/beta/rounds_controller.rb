@@ -227,8 +227,8 @@ module Beta
                                current_user.id == players[player2_id]&.dig('user_id')
                              end
           },
-          player1: helpers.player_json(players[player1_id], player1_side(side)),
-          player2: helpers.player_json(players[player2_id], player2_side(side)),
+          player1: helpers.player_hash_json(players[player1_id], player1_side(side)),
+          player2: helpers.player_hash_json(players[player2_id], player2_side(side)),
           score1:,
           score2:,
           score_label: score_label(@tournament.swiss_format, player1_side(side),

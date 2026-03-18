@@ -20,10 +20,37 @@ module PlayersHelper
     }
   end
 
+  def player_hash_json(player, side = nil)
+    {
+      id: player && player['id'],
+      name: player && player['name'],
+      pronouns: player && player['pronouns'],
+      name_with_pronouns: hash_name_with_pronouns(player),
+      user_id: player && player['user_id'],
+      corp_id: id(player, 'corp'),
+      runner_id: id(player, 'runner'),
+      registration_locked: player && player['registration_locked?'],
+      include_in_stream: player && player['include_in_stream'],
+      active: player && player['active'],
+      first_round_bye: player && player['first_round_bye'],
+      manual_seed: player && player['manual_seed'],
+      side:,
+      side_label: side.nil? ? nil : "(#{side.to_s.titleize})"
+    }
+  end
+
+  private
+
   def name_with_pronouns(player)
     return '(Bye)' if player.nil?
 
     player.pronouns.present? ? "#{player.name} (#{player.pronouns})" : player.name
+  end
+
+  def hash_name_with_pronouns(player)
+    return '(Bye)' if player.nil?
+
+    player['pronouns'].present? ? "#{player['name']} (#{player['pronouns']})" : player['name']
   end
 
   def id(player, side)

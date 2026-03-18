@@ -65,7 +65,7 @@ module Beta
     end
 
     def organiser_view?
-      params.require(:player)[:organiser_view] && @tournament.user_id == current_user.id
+      @tournament.user_id == current_user.id
     end
   end
 end
