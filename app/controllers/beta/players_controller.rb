@@ -3,7 +3,7 @@
 module Beta
   class PlayersController < ApplicationController
     before_action :set_tournament
-    before_action :set_player, only: %i[update destroy]
+    before_action :set_player, only: %i[update destroy drop reinstate]
 
     def index
       authorize @tournament, :update?
@@ -48,6 +48,22 @@ module Beta
       @player.destroy
       @tournament.update(any_player_unlocked: @tournament.unlocked_players.count.positive?,
                          all_players_unlocked: @tournament.locked_players.count.zero?)
+
+      head :ok
+    end
+
+    def drop
+      authorize @tournament, :update?
+
+      @player.update(active: false)
+
+      head :ok
+    end
+
+    def reinstate
+      authorize @tournament, :update?
+
+      @player.update(active: true)
 
       head :ok
     end

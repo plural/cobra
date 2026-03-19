@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import type { Tournament, TournamentPolicies } from "../pairings/PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { Player, savePlayer, deletePlayer as deletePlayerRequest } from "./PlayersData";
+  import { Player, savePlayer, deletePlayer as deletePlayerRequest, dropPlayer as dropPlayerRequest } from "./PlayersData";
 
   const SaveState = Object.freeze({
     NONE: -1,
@@ -16,11 +16,13 @@
     player,
     tournament,
     tournamentPolicies,
+    droppedCallback,
     deletedCallback,
   }: {
     player: Player;
     tournament: Tournament;
     tournamentPolicies: TournamentPolicies;
+    droppedCallback?: (player: Player) => void;
     deletedCallback?: (player: Player) => void;
   } = $props();
 
@@ -36,6 +38,15 @@
     setTimeout(() => {
       saveState = SaveState.UNSAVED;
     }, FADE_DURATION);
+  }
+
+  async function dropPlayer() {
+    const success = await dropPlayerRequest(tournament.id, playerEdit);
+    if (!success) {
+      return;
+    }
+
+    droppedCallback?.(player);
   }
 
   async function deletePlayer() {
@@ -128,7 +139,9 @@
     </span>
   {/if}
 
-  <!-- TODO: Drop -->
+  <button type="button" class="btn btn-link text-warning" onclick={dropPlayer}>
+    <FontAwesomeIcon icon="arrow-down" /> Drop
+  </button>
   
   <button type="button" class="btn btn-link text-danger" onclick={deletePlayer}>
     <FontAwesomeIcon icon="trash" /> Delete
