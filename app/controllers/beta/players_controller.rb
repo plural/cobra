@@ -27,6 +27,25 @@ module Beta
       }
     end
 
+    def create
+      authorize Player
+      if @tournament.registration_open?
+        authorize @tournament, :show?
+      else
+        authorize @tournament, :update?
+      end
+
+      params = player_params
+      params[:user_id] = current_user.id unless organiser_view?
+
+      player = @tournament.players.create(params.except(:corp_deck, :runner_deck))
+      @tournament.current_stage.players << player unless @tournament.current_stage.nil?
+      @tournament.update(any_player_unlocked: true,
+                         all_players_unlocked: @tournament.locked_players.count.zero?)
+
+      head :ok
+    end
+
     def update
       authorize @player
 

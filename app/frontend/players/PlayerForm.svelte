@@ -16,12 +16,14 @@
     player,
     tournament,
     tournamentPolicies,
+    savedCallback,
     droppedCallback,
     deletedCallback,
   }: {
     player: Player;
     tournament: Tournament;
     tournamentPolicies: TournamentPolicies;
+    savedCallback?: (player: Player) => void;
     droppedCallback?: (player: Player) => void;
     deletedCallback?: (player: Player) => void;
   } = $props();
@@ -30,8 +32,13 @@
   let saveState: number = $state(SaveState.UNSAVED);
 
   async function save() {
+    if (playerEdit.id === 0 && !tournament.registration_open && !confirm("Tournament is closed, add new player anyway?")) {
+      return;
+    }
+
     saveState = SaveState.SAVING;
     await savePlayer(tournament.id, playerEdit);
+    savedCallback?.(player);
     saveState = SaveState.SAVED;
 
     setTimeout(() => { saveState = SaveState.NONE }, 1);
@@ -66,7 +73,7 @@
 <div class="identities_form form-row">
   <!-- Player name -->
   <div class="col">
-    {#if tournament.self_registration}
+    {#if player.id !== 0 && tournament.self_registration}
       <span class="text-info float-left mr-2" style="width: 12px">
         <FontAwesomeIcon icon={player.registration_locked ? "lock" : "unlock"} />
       </span>
@@ -119,31 +126,58 @@
       </div>
     {/if}
   {/if}
+
+  <!-- Fixed table number -->
+  <div class="col-auto form-inline">
+    <label for="table_number_{playerEdit.id}">Fixed table number:</label>
+    <input id="table_number_{playerEdit.id}" type="number" class="form-control ml-1" style="width: 6em" placeholder="Table number" bind:value={playerEdit.fixed_table_number} />
+  </div>
 </div>
 
 <!-- Actions -->
 <div class="text-right">
   <!-- TODO: Lock/unlock -->
   <!-- TODO: View decks -->
-  <!-- TODO: Assign table number -->
   
-  {#if saveState === SaveState.UNSAVED}
-    <button type="button" class="btn btn-link text-success" onclick={save}>
-      <FontAwesomeIcon icon="floppy-o" /> Save
-    </button>
-  {:else if saveState === SaveState.SAVING}
-    <span class="spinner-border spinner-border-sm text-success m-auto"></span> Saving
-  {:else if saveState === SaveState.SAVED}
-    <span class="text-success" out:fade={{ duration: FADE_DURATION }}>
-      <FontAwesomeIcon icon="check" /> Saved
-    </span>
+  {#if player.id === 0}
+    {#if saveState === SaveState.UNSAVED}
+      <button type="button" class="btn btn-success" onclick={save}>
+        <FontAwesomeIcon icon="plus" /> Create
+      </button>
+    {:else if saveState === SaveState.SAVING}
+      <button type="button" class="btn btn-success">
+        <span class="spinner-border spinner-border-sm m-auto"></span>
+        Creating
+      </button>
+    {:else if saveState === SaveState.SAVED}
+      <button type="button" class="btn btn-success" out:fade={{ duration: FADE_DURATION }}>
+        <FontAwesomeIcon icon="check" /> Created
+      </button>
+    {/if}
+  {:else}
+    {#if saveState === SaveState.UNSAVED}
+      <button type="button" class="btn btn-success" onclick={save}>
+        <FontAwesomeIcon icon="floppy-o" /> Save
+      </button>
+    {:else if saveState === SaveState.SAVING}
+      <button type="button" class="btn btn-success">
+        <span class="spinner-border spinner-border-sm m-auto"></span>
+        Saving
+      </button>
+    {:else if saveState === SaveState.SAVED}
+      <button type=button class="btn btn-success" out:fade={{ duration: FADE_DURATION }}>
+        <FontAwesomeIcon icon="check" /> Saved
+      </button>
+    {/if}
   {/if}
 
-  <button type="button" class="btn btn-link text-warning" onclick={dropPlayer}>
-    <FontAwesomeIcon icon="arrow-down" /> Drop
-  </button>
-  
-  <button type="button" class="btn btn-link text-danger" onclick={deletePlayer}>
-    <FontAwesomeIcon icon="trash" /> Delete
-  </button>
+  {#if player.id !== 0}
+    <button type="button" class="btn btn-warning" onclick={dropPlayer}>
+      <FontAwesomeIcon icon="arrow-down" /> Drop
+    </button>
+
+    <button type="button" class="btn btn-danger" onclick={deletePlayer}>
+      <FontAwesomeIcon icon="trash" /> Delete
+    </button>
+  {/if}
 </div>

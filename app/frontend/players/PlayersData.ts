@@ -21,10 +21,13 @@ export async function loadPlayers(tournamentId: number): Promise<PlayersData> {
 }
 
 export async function savePlayer(tournamentId: number, player: Player) {
+  const route = player.id === 0
+    ? `/beta/tournaments/${tournamentId}/players`
+    : Routes.beta_tournament_player_path(tournamentId, player.id);
   const response = await fetch(
-    Routes.beta_tournament_player_path(tournamentId, player.id),
+    route,
     {
-      method: "PATCH",
+      method: player.id === 0 ? "POST" : "PATCH",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -97,6 +100,7 @@ function playerRequestObject(player: Player) {
     include_in_stream: player.include_in_stream,
     first_round_bye: player.first_round_bye,
     manual_seed: player.manual_seed,
+    fixed_table_number: player.fixed_table_number,
   };
 }
 
@@ -120,6 +124,7 @@ export class Player {
   active: boolean | null = null;
   first_round_bye = false;
   manual_seed: number | null = null;
+  fixed_table_number: number | null = null;
   side: string | null = null;
   side_label: string | null = null;
 }

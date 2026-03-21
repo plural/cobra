@@ -15,6 +15,7 @@ module PlayersHelper
       active: player&.active,
       first_round_bye: player&.first_round_bye,
       manual_seed: player&.manual_seed,
+      fixed_table_number: player&.fixed_table_number,
       side:,
       side_label: side.nil? ? nil : "(#{side.to_s.titleize})"
     }
@@ -34,6 +35,7 @@ module PlayersHelper
       active: player && player['active'],
       first_round_bye: player && player['first_round_bye'],
       manual_seed: player && player['manual_seed'],
+      fixed_table_number: player && player['fixed_table_number'],
       side:,
       side_label: side.nil? ? nil : "(#{side.to_s.titleize})"
     }
