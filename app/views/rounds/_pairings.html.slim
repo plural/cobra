@@ -46,14 +46,14 @@
       <br />
       - unless pairing.bye?
         =< render 'player_side', pairing: pairing, player: left_player, single_sided: single_sided
-      - if left_player.id
+      - if left_player.id && (!single_sided || is_side_set)
         .ids
           - if round.stage.single_sided?
             = render left_player.corp_identity_object
           - else
             = render left_player.corp_identity_object
             = render left_player.runner_identity_object
-    - if policy(round.tournament).edit? && (!single_sided || (single_sided && is_side_set))
+    - if policy(round.tournament).edit? && (!single_sided || is_side_set)
       .col-sm-5.centre_score
         .preset_score
           - presets(pairing).each do |data|
@@ -100,7 +100,7 @@
       <br />
       - unless pairing.bye?
         =< render 'player_side', pairing: pairing, player: right_player, single_sided: single_sided
-      - if right_player.id
+      - if right_player.id && (!single_sided || is_side_set)
         .ids
           - if round.stage.single_sided?
             = render right_player.runner_identity_object

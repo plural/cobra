@@ -158,6 +158,7 @@
     left_or_right="left"
     is_single_sided={stage.is_single_sided}
     {changePlayerSide}
+    show_ids={!stage.is_single_sided || pairing.player1.side !== null}
   />
 
   <!-- Score -->
@@ -184,6 +185,7 @@
     left_or_right="right"
     is_single_sided={stage.is_single_sided}
     {changePlayerSide}
+    show_ids={!stage.is_single_sided || pairing.player2.side !== null}
   />
   {#if !pairingsContext.showOrganizerView && stage.view_decks && !pairing.player1.side && pairing.player2.id}
     <a href="../players/{pairing.player2.id}/view_decks?back_to=pairings">
