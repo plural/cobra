@@ -5,12 +5,7 @@
     TournamentPolicies,
   } from "../pairings/PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import {
-    Player,
-    savePlayer,
-    deletePlayer as deletePlayerRequest,
-    dropPlayer as dropPlayerRequest,
-  } from "./PlayersData";
+  import { Player, savePlayer, deletePlayer as deletePlayerRequest, togglePlayerLock as togglePlayerLockRequest, dropPlayer as dropPlayerRequest } from "./PlayersData";
 
   const SaveState = Object.freeze({
     NONE: -1,
@@ -39,6 +34,16 @@
   let playerEdit = $derived($state.snapshot(player));
   let saveState: number = $state(SaveState.UNSAVED);
 
+  async function togglePlayerLock() {
+    const success = await togglePlayerLockRequest(tournament.id, playerEdit);
+    if (!success) {
+      return;
+    }
+    playerEdit.registration_locked = !playerEdit.registration_locked;
+
+    savedCallback?.(playerEdit);
+  }
+
   async function save() {
     if (
       playerEdit.id === 0 &&
@@ -50,7 +55,7 @@
 
     saveState = SaveState.SAVING;
     await savePlayer(tournament.id, playerEdit);
-    savedCallback?.(player);
+    savedCallback?.(playerEdit);
     saveState = SaveState.SAVED;
 
     setTimeout(() => {
@@ -67,11 +72,11 @@
       return;
     }
 
-    droppedCallback?.(player);
+    droppedCallback?.(playerEdit);
   }
 
   async function deletePlayer() {
-    if (!confirm(`Are you sure you want to delete player "${player.name}"?`)) {
+    if (!confirm(`Are you sure you want to delete player "${playerEdit.name}"?`)) {
       return;
     }
 
@@ -80,18 +85,16 @@
       return;
     }
 
-    deletedCallback?.(player);
+    deletedCallback?.(playerEdit);
   }
 </script>
 
 <div class="identities_form form-row">
-  <!-- Player name -->
+  <!-- Name -->
   <div class="col">
-    {#if player.id !== 0 && tournament.self_registration}
+    {#if playerEdit.id !== 0 && tournament.self_registration}
       <span class="text-info float-left mr-2" style="width: 12px">
-        <FontAwesomeIcon
-          icon={player.registration_locked ? "lock" : "unlock"}
-        />
+        <FontAwesomeIcon icon={playerEdit.registration_locked ? "lock" : "unlock"} />
       </span>
     {/if}
 
@@ -212,10 +215,29 @@
 
 <!-- Actions -->
 <div class="text-right">
-  <!-- TODO: Lock/unlock -->
-  <!-- TODO: View decks -->
+  <!-- Lock/unlock player -->
+  {#if tournament.self_registration}
+    <button type="button" class="btn btn-link text-info" onclick={togglePlayerLock}>
+      {#if playerEdit.registration_locked}
+        <FontAwesomeIcon icon="unlock" />
+        Unlock player
+      {:else}
+        <FontAwesomeIcon icon="lock" />
+        Lock player
+      {/if}
+    </button>
+  {/if}
 
-  {#if player.id === 0}
+  <!-- View decks -->
+  {#if tournament.nrdb_deck_registration}
+    <a href={`/tournaments/${tournament.id}/players/${playerEdit.id}/registration`} class="btn btn-link text-info">
+      <FontAwesomeIcon icon="eye" />
+      View decks
+    </a>
+  {/if}
+  
+  <!-- Create/Save -->
+  {#if playerEdit.id === 0}
     {#if saveState === SaveState.UNSAVED}
       <button type="button" class="btn btn-success" onclick={save}>
         <FontAwesomeIcon icon="plus" /> Create
@@ -253,11 +275,13 @@
     </button>
   {/if}
 
-  {#if player.id !== 0}
+  {#if playerEdit.id !== 0}
+    <!-- Drop -->
     <button type="button" class="btn btn-warning" onclick={dropPlayer}>
       <FontAwesomeIcon icon="arrow-down" /> Drop
     </button>
 
+    <!-- Delete -->
     <button type="button" class="btn btn-danger" onclick={deletePlayer}>
       <FontAwesomeIcon icon="trash" /> Delete
     </button>

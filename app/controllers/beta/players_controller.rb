@@ -3,7 +3,7 @@
 module Beta
   class PlayersController < ApplicationController
     before_action :set_tournament
-    before_action :set_player, only: %i[update destroy drop reinstate]
+    before_action :set_player, only: %i[update destroy lock_registration unlock_registration drop reinstate]
 
     def index
       authorize @tournament, :update?
@@ -72,6 +72,26 @@ module Beta
       head :ok
     end
 
+    def lock_registration
+      authorize @tournament, :update?
+
+      @player.update(registration_locked: true)
+      @tournament.update(all_players_unlocked: false,
+                         any_player_unlocked: @tournament.unlocked_players.count.positive?)
+
+      head :ok
+    end
+
+    def unlock_registration
+      authorize @tournament, :update?
+
+      @player.update(registration_locked: false)
+      @tournament.update(any_player_unlocked: true,
+                         all_players_unlocked: @tournament.locked_players.count.zero?)
+
+      head :ok
+    end
+
     def drop
       authorize @tournament, :update?
 
@@ -102,6 +122,26 @@ module Beta
 
     def organiser_view?
       @tournament.user_id == current_user.id
+    end
+
+    def save_deck(params, param, side)
+      return unless params.key?(param)
+
+      begin
+        request = JSON.parse(params[param])
+      rescue StandardError
+        @player.decks.destroy_by(side_id: side)
+        return
+      end
+      details = request['details']
+      return if details['user_id'] && details['user_id'] != current_user.id
+
+      details.keep_if { |key| Deck.column_names.include? key }
+      details['side_id'] = side
+      details['user_id'] = current_user.id
+      @player.decks.destroy_by(side_id: side)
+      deck = @player.decks.create(details)
+      deck.cards.create(request['cards'])
     end
   end
 end

@@ -16,20 +16,16 @@
   let newPlayer = $state(new Player());
 
   onMount(async () => {
-    data = await loadPlayers(tournamentId);
+    await loadData();
   });
 
-  async function playerSavedCallback() {
+  async function loadData() {
+    data = await loadPlayers(tournamentId);
+  }
+
+  async function newPlayerSavedCallback() {
     newPlayer = new Player();
-    data = await loadPlayers(tournamentId);
-  }
-
-  async function playerDroppedCallback() {
-    data = await loadPlayers(tournamentId);
-  }
-
-  async function playerDeletedCallback() {
-    data = await loadPlayers(tournamentId);
+    await loadData();
   }
 
   async function reinstatePlayer(player: Player) {
@@ -38,7 +34,7 @@
       return;
     }
 
-    data = await loadPlayers(tournamentId);
+    await loadData();
   }
 </script>
 
@@ -52,33 +48,24 @@
     <FontAwesomeIcon icon="list-ul" /> Player meeting
   </a>
 
-  <!-- TODO: Register New Player section -->
+  <!-- Register New Player -->
   <div class="alert alert-secondary mt-4">
     <h4>Register New Player</h4>
-    <PlayerForm
-      player={newPlayer}
-      tournament={data.tournament}
-      tournamentPolicies={data.tournamentPolicies}
-      savedCallback={playerSavedCallback}
-    />
+    <PlayerForm player={newPlayer} tournament={data.tournament} tournamentPolicies={data.tournamentPolicies} savedCallback={newPlayerSavedCallback} />
   </div>
 
   <!-- TODO: Self-registration controls -->
 
   <!-- TODO: Deck visibility controls -->
 
-  <!-- Active players -->
+  <!-- TODO: Spreadsheet links -->
+
+  <!-- Players -->
   <h3 class="mt-4">Players</h3>
   <ul class="list-group">
     {#each data.activePlayers as player (player.id)}
       <li class="list-group-item">
-        <PlayerForm
-          {player}
-          tournament={data.tournament}
-          tournamentPolicies={data.tournamentPolicies}
-          droppedCallback={playerDroppedCallback}
-          deletedCallback={playerDeletedCallback}
-        />
+        <PlayerForm {player} tournament={data.tournament} tournamentPolicies={data.tournamentPolicies} savedCallback={loadData} droppedCallback={loadData} deletedCallback={loadData} />
       </li>
     {/each}
   </ul>
