@@ -10,6 +10,7 @@ module TournamentHelper
   def tournament_json(tournament)
     {
       id: tournament.id,
+      name: tournament.name,
       player_meeting: tournament.round_ids.empty?,
       registration_open: tournament.registration_open?,
       registration_unlocked: tournament.registration_unlocked?,

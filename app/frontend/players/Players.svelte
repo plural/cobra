@@ -9,6 +9,7 @@
   } from "./PlayersData";
   import PlayerForm from "./PlayerForm.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
+  import { downloadBlob, quoteCsvValue } from "../utils/files";
 
   let { tournamentId }: { tournamentId: number } = $props();
 
@@ -26,6 +27,16 @@
   async function newPlayerSavedCallback() {
     newPlayer = new Player();
     await loadData();
+  }
+
+  function downloadStreamingSpreadsheet() {
+    if (!data) {
+      return;
+    }
+
+    const contents = 'Player,"Include in video coverage? (players were notified that in the cut it may not be possible to exclude them)"\n'
+      + data.activePlayers.map((player) => `${quoteCsvValue(player.name)},${player.include_in_stream ? "Yes" : "No"}`).join("\n");
+    downloadBlob(`Streaming information for ${data.tournament.name}.csv`, new Blob([`"\ufeff"${contents}`], { type: "text/csv" })); // "\ufeff" lets Excel know it's Unicode encoded
   }
 
   async function reinstatePlayer(player: Player) {
@@ -54,14 +65,27 @@
     <PlayerForm player={newPlayer} tournament={data.tournament} tournamentPolicies={data.tournamentPolicies} savedCallback={newPlayerSavedCallback} />
   </div>
 
-  <!-- TODO: Self-registration controls -->
-
-  <!-- TODO: Deck visibility controls -->
-
-  <!-- TODO: Spreadsheet links -->
-
   <!-- Players -->
-  <h3 class="mt-4">Players</h3>
+  <h3 class="mt-4">
+    Players
+
+    <!-- TODO: Self-registration controls -->
+    
+    <!-- Deck controls -->
+    {#if data.tournament.nrdb_deck_registration}
+      <!-- TODO: Deck visibility dropdown -->
+      
+      <!-- TODO: Decks spreadsheet -->
+    {/if}
+    
+    <!-- Streaming spreadsheet -->
+    {#if data.tournament.allow_streaming_opt_out}
+      <button type="button" class="btn btn-link text-info" onclick={downloadStreamingSpreadsheet}>
+        <FontAwesomeIcon icon="download" />
+        Streaming spreadsheet
+      </button>
+    {/if}
+  </h3>
   <ul class="list-group">
     {#each data.activePlayers as player (player.id)}
       <li class="list-group-item">

@@ -151,18 +151,8 @@
   <!-- Streaming opt-out -->
   {#if tournament.allow_streaming_opt_out}
     <div class="col-auto form-check form-check-inline">
-      <input
-        id="player_include_in_stream_{playerEdit.id}"
-        type="checkbox"
-        class="form-check-input"
-        bind:checked={playerEdit.include_in_stream}
-      />
-      <label
-        for="player_include_in_stream_{playerEdit.id}"
-        class="form-check-label"
-      >
-        Opted out of video coverage
-      </label>
+      <input id="player_include_in_stream_{playerEdit.id}" type="checkbox" class="form-check-input" bind:checked={playerEdit.include_in_stream} />
+      <label for="player_include_in_stream_{playerEdit.id}" class="form-check-label">Video coverage allowed</label>
     </div>
   {/if}
 

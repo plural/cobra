@@ -363,6 +363,7 @@ export class SharingData {
 
 export class Tournament {
   id = 0;
+  name = "";
   player_meeting = false;
   registration_open = false;
   registration_unlocked = false;

@@ -140,7 +140,7 @@ export class Player {
   corp_id = new Identity();
   runner_id = new Identity();
   registration_locked = false;
-  include_in_stream = false;
+  include_in_stream = true;
   active: boolean | null = null;
   first_round_bye = false;
   manual_seed: number | null = null;
