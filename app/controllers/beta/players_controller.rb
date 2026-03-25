@@ -108,6 +108,15 @@ module Beta
       head :ok
     end
 
+    def decks
+      authorize @tournament, :update?
+
+      render json: @tournament.players
+                   .sort_by(&:name)
+                   .flat_map { |p| p.decks.sort_by(&:side_id) }
+                   .map { |d| d.as_view(current_user) }
+    end
+
     private
 
     def set_player

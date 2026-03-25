@@ -123,27 +123,13 @@
   <!-- Corp ID -->
   <div class="col">
     <label for="player_name_{playerEdit.id}">Corp ID</label>
-    <input
-      id="player_name_{playerEdit.id}"
-      type="text"
-      class="form-control corp_identities"
-      placeholder="Example: they/them"
-      readonly={tournament.nrdb_deck_registration}
-      bind:value={playerEdit.corp_id.name}
-    />
+    <input id="player_name_{playerEdit.id}" type="text" class="form-control corp_identities" placeholder="Search for corp ID" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.corp_id.name} />
   </div>
 
   <!-- Runner ID -->
   <div class="col">
     <label for="player_name_{playerEdit.id}">Runner ID</label>
-    <input
-      id="player_name_{playerEdit.id}"
-      type="text"
-      class="form-control runner_identities"
-      placeholder="Example: they/them"
-      readonly={tournament.nrdb_deck_registration}
-      bind:value={playerEdit.runner_id.name}
-    />
+    <input id="player_name_{playerEdit.id}" type="text" class="form-control runner_identities" placeholder="Search for runner ID" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.runner_id.name} />
   </div>
 </div>
 

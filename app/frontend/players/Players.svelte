@@ -1,12 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
-  import {
-    loadPlayers,
-    Player,
-    type PlayersData,
-    reinstatePlayer as reinstatePlayerRequest,
-  } from "./PlayersData";
+  import { loadDecks, loadPlayers, Player, type PlayersData, reinstatePlayer as reinstatePlayerRequest } from "./PlayersData";
   import PlayerForm from "./PlayerForm.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { downloadBlob, quoteCsvValue } from "../utils/files";
@@ -29,14 +24,41 @@
     await loadData();
   }
 
+  async function downloadDecksSpreadsheet() {
+    if (!data) {
+      return;
+    }
+
+    // TODO: Update buttons
+
+    const decks = await loadDecks(tournamentId);
+    const headerCsv = decks.map((deck) => `Player,${quoteCsvValue(deck.details.player_name)},`).join(",,")
+      + "\n" + decks.map((deck) => `Deck,${quoteCsvValue(deck.details.name ?? "")},`).join(",,")
+      + "\n\n" + decks.map(() => "Min,Identity,Max").join(",,")
+      + "\n" + decks.map((deck) => `${deck.details.min_deck_size},${quoteCsvValue(deck.details.identity_title)},${deck.details.max_influence}`).join(",,");
+
+    const maxCards = decks.reduce((max, deck) => Math.max(max, deck.cards.length), 0);
+    let cardCsv = decks.map(() => "Qty,Card Name,Inf").join(",,");
+    for (const i of Array(maxCards).keys()) {
+      cardCsv += "\n" + decks.map((deck) => i < deck.cards.length ? `${deck.cards[i].quantity},${quoteCsvValue(deck.cards[i].title)},${deck.cards[i].influence > 0 ? deck.cards[i].influence : ""}` : ",,").join(",,");
+    }
+    cardCsv += "\n\n" + decks.map((deck) => `${deck.cards.reduce((total, card) => total + card.quantity, 0)},Totals,${deck.cards.reduce((total, card) => total + card.influence, 0)}`).join(",,");
+
+    // TODO: Update buttons
+
+    downloadBlob(`Decks for ${data.tournament.name}.csv`, new Blob([`\ufeff${headerCsv}\n\n${cardCsv}`], { type: "text/csv" })); // "\ufeff" lets Excel know it's Unicode encoded
+  }
+
   function downloadStreamingSpreadsheet() {
     if (!data) {
       return;
     }
 
+    // TODO: Update buttons
     const contents = 'Player,"Include in video coverage? (players were notified that in the cut it may not be possible to exclude them)"\n'
       + data.activePlayers.map((player) => `${quoteCsvValue(player.name)},${player.include_in_stream ? "Yes" : "No"}`).join("\n");
-    downloadBlob(`Streaming information for ${data.tournament.name}.csv`, new Blob([`"\ufeff"${contents}`], { type: "text/csv" })); // "\ufeff" lets Excel know it's Unicode encoded
+    downloadBlob(`Streaming information for ${data.tournament.name}.csv`, new Blob([`\ufeff${contents}`], { type: "text/csv" })); // "\ufeff" lets Excel know it's Unicode encoded
+    // TODO: Update buttons
   }
 
   async function reinstatePlayer(player: Player) {
@@ -75,7 +97,11 @@
     {#if data.tournament.nrdb_deck_registration}
       <!-- TODO: Deck visibility dropdown -->
       
-      <!-- TODO: Decks spreadsheet -->
+      <!-- Decks spreadsheet -->
+      <button type="button" class="btn btn-link text-info" onclick={downloadDecksSpreadsheet}>
+        <FontAwesomeIcon icon="download" />
+        Decks spreadsheet
+      </button>
     {/if}
     
     <!-- Streaming spreadsheet -->
