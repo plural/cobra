@@ -120,17 +120,22 @@
     />
   </div>
 
-  <!-- Corp ID -->
-  <div class="col">
-    <label for="player_name_{playerEdit.id}">Corp ID</label>
-    <input id="player_name_{playerEdit.id}" type="text" class="form-control corp_identities" placeholder="Search for corp ID" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.corp_id.name} />
-  </div>
+  {#if !tournament.nrdb_deck_registration || playerEdit.id !== 0}
+    <!-- Corp ID -->
+    <div class="col">
+      <label for="player_name_{playerEdit.id}">Corp ID</label>
+      <input id="player_name_{playerEdit.id}" type="text" class="form-control corp_identities" placeholder="Search for corp ID" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.corp_id.name} />
+    </div>
 
-  <!-- Runner ID -->
-  <div class="col">
-    <label for="player_name_{playerEdit.id}">Runner ID</label>
-    <input id="player_name_{playerEdit.id}" type="text" class="form-control runner_identities" placeholder="Search for runner ID" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.runner_id.name} />
-  </div>
+    <!-- Runner ID -->
+    <div class="col">
+      <label for="player_name_{playerEdit.id}">Runner ID</label>
+      <input id="player_name_{playerEdit.id}" type="text" class="form-control runner_identities" placeholder="Search for runner ID" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.runner_id.name} />
+    </div>
+  {:else}
+    <div class="col"></div>
+    <div class="col"></div>
+  {/if}
 </div>
 
 <div class="form-row mt-2">
@@ -178,14 +183,7 @@
   <!-- Fixed table number -->
   <div class="col-auto form-inline">
     <label for="table_number_{playerEdit.id}">Fixed table number:</label>
-    <input
-      id="table_number_{playerEdit.id}"
-      type="number"
-      class="form-control ml-1"
-      style="width: 6em"
-      placeholder="Table number"
-      bind:value={playerEdit.fixed_table_number}
-    />
+    <input id="table_number_{playerEdit.id}" type="number" class="form-control ml-1" style="width: 6em" placeholder="Table #" bind:value={playerEdit.fixed_table_number} />
   </div>
 </div>
 

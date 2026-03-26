@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import { loadDecks, loadPlayers, Player, type PlayersData, reinstatePlayer as reinstatePlayerRequest } from "./PlayersData";
+  import { setPlayerRegistrationStatus as setPlayerRegistrationStatusRequest, setRegistrationStatus as setRegistrationStatusRequest } from "../pairings/PairingsData";
   import PlayerForm from "./PlayerForm.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { downloadBlob, quoteCsvValue } from "../utils/files";
@@ -10,6 +11,27 @@
 
   let data: PlayersData | undefined = $state();
   let newPlayer = $state(new Player());
+  let registrationLockDescription = $derived.by(() => {
+    if (!data) {
+      return "";
+    }
+
+    if (data.tournament.registration_open) {
+      if (data.tournament.locked_players === 0) {
+        return "open";
+      } else if (data.tournament.unlocked_players > 0) {
+        return "open, part locked";
+      }
+      return "open, all locked";
+    }
+    
+    if (data.tournament.locked_players === 0) {
+      return "closed, unlocked";
+    } else if (data.tournament.unlocked_players > 0) {
+      return "closed, part unlocked";
+    }
+    return "closed";
+  });
 
   onMount(async () => {
     await loadData();
@@ -24,12 +46,31 @@
     await loadData();
   }
 
+  async function setPlayerRegistrationStatus(locked: boolean) {
+    const success = await setPlayerRegistrationStatusRequest(
+      tournamentId,
+      locked,
+    );
+    if (!success) {
+      return;
+    }
+
+    await loadData();
+  }
+
+  async function setRegistrationStatus(open: boolean) {
+    const success = await setRegistrationStatusRequest(tournamentId, open);
+    if (!success) {
+      return;
+    }
+
+    await loadData();
+  }
+
   async function downloadDecksSpreadsheet() {
     if (!data) {
       return;
     }
-
-    // TODO: Update buttons
 
     const decks = await loadDecks(tournamentId);
     const headerCsv = decks.map((deck) => `Player,${quoteCsvValue(deck.details.player_name)},`).join(",,")
@@ -44,8 +85,6 @@
     }
     cardCsv += "\n\n" + decks.map((deck) => `${deck.cards.reduce((total, card) => total + card.quantity, 0)},Totals,${deck.cards.reduce((total, card) => total + card.influence, 0)}`).join(",,");
 
-    // TODO: Update buttons
-
     downloadBlob(`Decks for ${data.tournament.name}.csv`, new Blob([`\ufeff${headerCsv}\n\n${cardCsv}`], { type: "text/csv" })); // "\ufeff" lets Excel know it's Unicode encoded
   }
 
@@ -54,11 +93,9 @@
       return;
     }
 
-    // TODO: Update buttons
     const contents = 'Player,"Include in video coverage? (players were notified that in the cut it may not be possible to exclude them)"\n'
       + data.activePlayers.map((player) => `${quoteCsvValue(player.name)},${player.include_in_stream ? "Yes" : "No"}`).join("\n");
     downloadBlob(`Streaming information for ${data.tournament.name}.csv`, new Blob([`\ufeff${contents}`], { type: "text/csv" })); // "\ufeff" lets Excel know it's Unicode encoded
-    // TODO: Update buttons
   }
 
   async function reinstatePlayer(player: Player) {
@@ -91,7 +128,21 @@
   <h3 class="mt-4">
     Players
 
-    <!-- TODO: Self-registration controls -->
+    <!-- Registration controls -->
+    {#if data.tournament.self_registration}
+      <span class="dropdown">
+        <button class="btn btn-sm dropdown-toggle btn-light text-muted font-weight-bold" data-toggle="dropdown">
+          Registration: {registrationLockDescription}
+        </button>
+        <div class="dropdown-menu">
+          <button class="dropdown-item {data.tournament.unlocked_players === 0 ? "disabled" : ""}" style="cursor: pointer" onclick={() => setPlayerRegistrationStatus(true)}><FontAwesomeIcon icon="lock" /> Lock all players, prevent editing</button>
+          <button class="dropdown-item {data.tournament.locked_players === 0 ? "disabled" : ""}" style="cursor: pointer" onclick={() => setPlayerRegistrationStatus(false)}><FontAwesomeIcon icon="unlock" /> Unlock all players, allow editing</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item {!data.tournament.registration_open ? "disabled" : ""}" style="cursor: pointer" onclick={() => setRegistrationStatus(false)}><FontAwesomeIcon icon="lock" /> Close registration, prevent new players</button>
+          <button class="dropdown-item {data.tournament.registration_open ? "disabled" : ""}" style="cursor: pointer" onclick={() => setRegistrationStatus(true)}><FontAwesomeIcon icon="unlock" /> Open registration, allow new players</button>
+        </div>
+      </span>
+    {/if}
     
     <!-- Deck controls -->
     {#if data.tournament.nrdb_deck_registration}
