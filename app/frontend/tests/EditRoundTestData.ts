@@ -18,7 +18,8 @@ export const MockPlayerAlice: Player = {
   pronouns: "",
   registration_locked: false,
   first_round_bye: false,
-  manual_seed: null
+  manual_seed: null,
+  fixed_table_number: null,
 };
 
 export const MockPlayerBob: Player = {
@@ -35,7 +36,8 @@ export const MockPlayerBob: Player = {
   pronouns: "",
   registration_locked: false,
   first_round_bye: false,
-  manual_seed: null
+  manual_seed: null,
+  fixed_table_number: null,
 };
 
 export const MockSelfReport1: ScoreReport = {

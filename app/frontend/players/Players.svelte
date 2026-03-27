@@ -1,7 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
-  import { loadPlayers, Player, type PlayersData, reinstatePlayer as reinstatePlayerRequest } from "./PlayersData";
+  import {
+    loadPlayers,
+    Player,
+    type PlayersData,
+    reinstatePlayer as reinstatePlayerRequest,
+  } from "./PlayersData";
   import PlayerForm from "./PlayerForm.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
@@ -13,7 +18,7 @@
   onMount(async () => {
     data = await loadPlayers(tournamentId);
   });
-  
+
   async function playerSavedCallback() {
     newPlayer = new Player();
     data = await loadPlayers(tournamentId);
@@ -50,7 +55,12 @@
   <!-- TODO: Register New Player section -->
   <div class="alert alert-secondary mt-4">
     <h4>Register New Player</h4>
-    <PlayerForm player={newPlayer} tournament={data.tournament} tournamentPolicies={data.tournamentPolicies} savedCallback={playerSavedCallback} />
+    <PlayerForm
+      player={newPlayer}
+      tournament={data.tournament}
+      tournamentPolicies={data.tournamentPolicies}
+      savedCallback={playerSavedCallback}
+    />
   </div>
 
   <!-- TODO: Self-registration controls -->
@@ -62,7 +72,13 @@
   <ul class="list-group">
     {#each data.activePlayers as player (player.id)}
       <li class="list-group-item">
-        <PlayerForm {player} tournament={data.tournament} tournamentPolicies={data.tournamentPolicies} droppedCallback={playerDroppedCallback} deletedCallback={playerDeletedCallback} />
+        <PlayerForm
+          {player}
+          tournament={data.tournament}
+          tournamentPolicies={data.tournamentPolicies}
+          droppedCallback={playerDroppedCallback}
+          deletedCallback={playerDeletedCallback}
+        />
       </li>
     {/each}
   </ul>
@@ -74,9 +90,15 @@
       <tbody>
         {#each data.droppedPlayers as player (player.id)}
           <tr>
-            <td>{player.name} ({player.corp_id.name}, {player.runner_id.name})</td>
             <td>
-              <button type="button" class="btn btn-warning" onclick={() => reinstatePlayer(player)}>
+              {player.name} ({player.corp_id.name}, {player.runner_id.name})
+            </td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-warning"
+                onclick={() => reinstatePlayer(player)}
+              >
                 <FontAwesomeIcon icon="arrow-up" /> Reinstate
               </button>
             </td>

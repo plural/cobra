@@ -4,9 +4,18 @@ import { csrfToken } from "../utils/network";
 
 declare const Routes: {
   players_data_beta_tournament_players_path: (tournamentId: number) => string;
-  beta_tournament_player_path: (tournamentId: number, playerId: number) => string;
-  drop_beta_tournament_player_path: (tournamentId: number, playerId: number) => string;
-  reinstate_beta_tournament_player_path: (tournamentId: number, playerId: number) => string;
+  beta_tournament_player_path: (
+    tournamentId: number,
+    playerId: number,
+  ) => string;
+  drop_beta_tournament_player_path: (
+    tournamentId: number,
+    playerId: number,
+  ) => string;
+  reinstate_beta_tournament_player_path: (
+    tournamentId: number,
+    playerId: number,
+  ) => string;
 };
 
 export async function loadPlayers(tournamentId: number): Promise<PlayersData> {
@@ -21,21 +30,19 @@ export async function loadPlayers(tournamentId: number): Promise<PlayersData> {
 }
 
 export async function savePlayer(tournamentId: number, player: Player) {
-  const route = player.id === 0
-    ? `/beta/tournaments/${tournamentId}/players`
-    : Routes.beta_tournament_player_path(tournamentId, player.id);
-  const response = await fetch(
-    route,
-    {
-      method: player.id === 0 ? "POST" : "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "X-CSRF-Token": csrfToken(),
-      },
-      body: JSON.stringify({ player: playerRequestObject(player) }),
+  const route =
+    player.id === 0
+      ? `/beta/tournaments/${tournamentId}/players`
+      : Routes.beta_tournament_player_path(tournamentId, player.id);
+  const response = await fetch(route, {
+    method: player.id === 0 ? "POST" : "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken(),
     },
-  );
+    body: JSON.stringify({ player: playerRequestObject(player) }),
+  });
 
   return response.status === 200;
 }
