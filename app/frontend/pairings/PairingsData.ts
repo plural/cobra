@@ -28,6 +28,7 @@ declare const Routes: {
     tournamentId: number,
     roundId: number,
   ) => string;
+  beta_tournament_path: (tournamentId: number) => string;
   beta_tournament_rounds_path: (tournamentId: number) => string;
   beta_tournament_round_path: (tournamentId: number, roundId: number) => string;
   beta_tournament_stages_path: (tournamentId: number) => string;
@@ -283,6 +284,26 @@ export async function setPlayerRegistrationStatus(
   return response.status === 200;
 }
 
+export async function saveTournament(tournament: Tournament): Promise<boolean> {
+  const response = await fetch(
+    Routes.beta_tournament_path(tournament.id), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken(),
+    },
+    body: JSON.stringify(tournament),
+  });
+
+  if (response.status !== 200) {
+    const data = (await response.json()) as { errors?: string[] };
+    globalMessages.errors = data.errors ?? [];
+  }
+
+  return response.status === 200;
+}
+
 export async function updateRoundTimer(
   tournamentId: number,
   roundId: number,
@@ -369,10 +390,18 @@ export class Tournament {
   registration_unlocked = false;
   self_registration = false;
   nrdb_deck_registration = false;
+  swiss_deck_visibility = DeckVisibility.Private;
+  cut_deck_visibility = DeckVisibility.Private;
   locked_players = 0;
   unlocked_players = 0;
   allow_streaming_opt_out = false;
   manual_seed = false;
+}
+
+export enum DeckVisibility {
+  Private = 0,
+  Open = 1,
+  Public = 2
 }
 
 export interface Stage {

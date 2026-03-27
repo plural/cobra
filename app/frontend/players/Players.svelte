@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import { loadDecks, loadPlayers, Player, type PlayersData, reinstatePlayer as reinstatePlayerRequest } from "./PlayersData";
-  import { setPlayerRegistrationStatus as setPlayerRegistrationStatusRequest, setRegistrationStatus as setRegistrationStatusRequest } from "../pairings/PairingsData";
+  import { DeckVisibility, saveTournament, setPlayerRegistrationStatus as setPlayerRegistrationStatusRequest, setRegistrationStatus as setRegistrationStatusRequest } from "../pairings/PairingsData";
   import PlayerForm from "./PlayerForm.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { downloadBlob, quoteCsvValue } from "../utils/files";
@@ -32,6 +32,22 @@
     }
     return "closed";
   });
+  let deckVisibilityDescription = $derived.by(() => {
+    if (!data) {
+      return;
+    }
+
+    const visibilityString = (visibility: DeckVisibility) => {
+      if (visibility === DeckVisibility.Open) {
+        return "open";
+      } else if (visibility === DeckVisibility.Public) {
+        return "public";
+      }
+      return "private";
+    };
+
+    return `swiss ${visibilityString(data.tournament.swiss_deck_visibility)}, cut ${visibilityString(data.tournament.cut_deck_visibility)}`;
+  });
 
   onMount(async () => {
     await loadData();
@@ -60,6 +76,47 @@
 
   async function setRegistrationStatus(open: boolean) {
     const success = await setRegistrationStatusRequest(tournamentId, open);
+    if (!success) {
+      return;
+    }
+
+    await loadData();
+  }
+
+  async function setDeckVisibility(swiss: boolean, visibility: DeckVisibility) {
+    if (!data) {
+      return;
+    }
+
+    const tournamentEdit = $state.snapshot(data.tournament);
+
+    if (swiss) {
+      if (visibility === DeckVisibility.Open) {
+        if (!confirm("This will make all decklists visible to all registered players in the tournament. Are you sure?")) {
+          return;
+        }
+      } else if (visibility === DeckVisibility.Public) {
+        if (!confirm("This will make all decklists visible to anyone who views the tournament. Are you sure?")) {
+          return;
+        }
+      }
+
+      tournamentEdit.swiss_deck_visibility = visibility;
+    } else {
+      if (visibility === DeckVisibility.Open) {
+        if (!confirm("This will make decklists of players registered for the cut visible to other players registered for the cut. Are you sure?")) {
+          return;
+        }
+      } else if (visibility === DeckVisibility.Public) {
+        if (!confirm("This will make decklists of players registered for the cut visible to anyone who views the tournament. Are you sure?")) {
+          return;
+        }
+      }
+      
+      tournamentEdit.cut_deck_visibility = visibility;
+    }
+
+    const success = await saveTournament(tournamentEdit);
     if (!success) {
       return;
     }
@@ -146,7 +203,21 @@
     
     <!-- Deck controls -->
     {#if data.tournament.nrdb_deck_registration}
-      <!-- TODO: Deck visibility dropdown -->
+      <!-- Deck visibility dropdown -->
+      <span class="dropdown">
+        <button class="btn btn-sm dropdown-toggle btn-light text-muted font-weight-bold" data-toggle="dropdown">
+          Registration: {deckVisibilityDescription}
+        </button>
+        <div class="dropdown-menu">
+          <button class="dropdown-item {data.tournament.swiss_deck_visibility === DeckVisibility.Private ? "disabled" : ""}" style="cursor: pointer" onclick={() => setDeckVisibility(true, DeckVisibility.Private)}><FontAwesomeIcon icon="eye-slash" /> Make decks in swiss private</button>
+          <button class="dropdown-item {data.tournament.swiss_deck_visibility === DeckVisibility.Open ? "disabled" : ""}" style="cursor: pointer" onclick={() => setDeckVisibility(true, DeckVisibility.Open)}><FontAwesomeIcon icon="eye" /> Make decks in swiss open, visible to participants</button>
+          <button class="dropdown-item {data.tournament.swiss_deck_visibility === DeckVisibility.Public ? "disabled" : ""}" style="cursor: pointer" onclick={() => setDeckVisibility(true, DeckVisibility.Public)}><FontAwesomeIcon icon="eye" /> Make decks in swiss public, visible to anyone</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item {data.tournament.cut_deck_visibility === DeckVisibility.Private ? "disabled" : ""}" style="cursor: pointer" onclick={() => setDeckVisibility(false, DeckVisibility.Private)}><FontAwesomeIcon icon="eye-slash" /> Make decks in cut private</button>
+          <button class="dropdown-item {data.tournament.cut_deck_visibility === DeckVisibility.Open ? "disabled" : ""}" style="cursor: pointer" onclick={() => setDeckVisibility(false, DeckVisibility.Open)}><FontAwesomeIcon icon="eye" /> Make decks in cut open, visible to anants</button>
+          <button class="dropdown-item {data.tournament.cut_deck_visibility === DeckVisibility.Public ? "disabled" : ""}" style="cursor: pointer" onclick={() => setDeckVisibility(false, DeckVisibility.Public)}><FontAwesomeIcon icon="eye" /> Make decks in cut public, visible to anyone</button>
+        </div>
+      </span>
       
       <!-- Decks spreadsheet -->
       <button type="button" class="btn btn-link text-info" onclick={downloadDecksSpreadsheet}>
