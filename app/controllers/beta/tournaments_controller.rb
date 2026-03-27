@@ -132,12 +132,14 @@ module Beta
 
     def tournament_params
       params.require(:tournament).permit(
-        :id, :name, :date, :private, :stream_url, :manual_seed, :self_registration, :allow_streaming_opt_out, :nrdb_deck_registration,
-        :cut_deck_visibility, :swiss_deck_visibility, :swiss_format, :time_zone, :registration_starts, :tournament_starts, :tournament_type_id,
-        :card_set_id, :format_id, :deckbuilding_restriction_id, :decklist_required, :organizer_contact, :event_link, :description, :official_prize_kit_id,
-        :additional_prizes_description, :allow_self_reporting,
+        :id, :name, :date, :private, :stream_url, :manual_seed, :self_registration, :allow_streaming_opt_out,
+        :nrdb_deck_registration, :cut_deck_visibility, :swiss_deck_visibility, :swiss_format, :time_zone,
+        :registration_starts, :tournament_starts, :tournament_type_id, :card_set_id, :format_id,
+        :deckbuilding_restriction_id, :decklist_required, :organizer_contact, :event_link, :description,
+        :official_prize_kit_id, :additional_prizes_description, :allow_self_reporting,
         # Used for demo tournaments
-        :num_players, :num_first_round_byes)
+        :num_players, :num_first_round_byes
+      )
     end
 
     def transform_stats(stats)

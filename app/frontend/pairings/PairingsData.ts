@@ -285,8 +285,7 @@ export async function setPlayerRegistrationStatus(
 }
 
 export async function saveTournament(tournament: Tournament): Promise<boolean> {
-  const response = await fetch(
-    Routes.beta_tournament_path(tournament.id), {
+  const response = await fetch(Routes.beta_tournament_path(tournament.id), {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -401,7 +400,7 @@ export class Tournament {
 export enum DeckVisibility {
   Private = 0,
   Open = 1,
-  Public = 2
+  Public = 2,
 }
 
 export interface Stage {

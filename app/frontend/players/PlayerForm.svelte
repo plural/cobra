@@ -5,7 +5,13 @@
     TournamentPolicies,
   } from "../pairings/PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { Player, savePlayer, deletePlayer as deletePlayerRequest, togglePlayerLock as togglePlayerLockRequest, dropPlayer as dropPlayerRequest } from "./PlayersData";
+  import {
+    Player,
+    savePlayer,
+    deletePlayer as deletePlayerRequest,
+    togglePlayerLock as togglePlayerLockRequest,
+    dropPlayer as dropPlayerRequest,
+  } from "./PlayersData";
 
   const SaveState = Object.freeze({
     NONE: -1,
@@ -76,7 +82,9 @@
   }
 
   async function deletePlayer() {
-    if (!confirm(`Are you sure you want to delete player "${playerEdit.name}"?`)) {
+    if (
+      !confirm(`Are you sure you want to delete player "${playerEdit.name}"?`)
+    ) {
       return;
     }
 
@@ -94,7 +102,9 @@
   <div class="col">
     {#if playerEdit.id !== 0 && tournament.self_registration}
       <span class="text-info float-left mr-2" style="width: 12px">
-        <FontAwesomeIcon icon={playerEdit.registration_locked ? "lock" : "unlock"} />
+        <FontAwesomeIcon
+          icon={playerEdit.registration_locked ? "lock" : "unlock"}
+        />
       </span>
     {/if}
 
@@ -124,13 +134,27 @@
     <!-- Corp ID -->
     <div class="col">
       <label for="player_name_{playerEdit.id}">Corp ID</label>
-      <input id="player_name_{playerEdit.id}" type="text" class="form-control corp_identities" placeholder="Search for corp ID" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.corp_id.name} />
+      <input
+        id="player_name_{playerEdit.id}"
+        type="text"
+        class="form-control corp_identities"
+        placeholder="Search for corp ID"
+        readonly={tournament.nrdb_deck_registration}
+        bind:value={playerEdit.corp_id.name}
+      />
     </div>
 
     <!-- Runner ID -->
     <div class="col">
       <label for="player_name_{playerEdit.id}">Runner ID</label>
-      <input id="player_name_{playerEdit.id}" type="text" class="form-control runner_identities" placeholder="Search for runner ID" readonly={tournament.nrdb_deck_registration} bind:value={playerEdit.runner_id.name} />
+      <input
+        id="player_name_{playerEdit.id}"
+        type="text"
+        class="form-control runner_identities"
+        placeholder="Search for runner ID"
+        readonly={tournament.nrdb_deck_registration}
+        bind:value={playerEdit.runner_id.name}
+      />
     </div>
   {:else}
     <div class="col"></div>
@@ -142,8 +166,18 @@
   <!-- Streaming opt-out -->
   {#if tournament.allow_streaming_opt_out}
     <div class="col-auto form-check form-check-inline">
-      <input id="player_include_in_stream_{playerEdit.id}" type="checkbox" class="form-check-input" bind:checked={playerEdit.include_in_stream} />
-      <label for="player_include_in_stream_{playerEdit.id}" class="form-check-label">Video coverage allowed</label>
+      <input
+        id="player_include_in_stream_{playerEdit.id}"
+        type="checkbox"
+        class="form-check-input"
+        bind:checked={playerEdit.include_in_stream}
+      />
+      <label
+        for="player_include_in_stream_{playerEdit.id}"
+        class="form-check-label"
+      >
+        Video coverage allowed
+      </label>
     </div>
   {/if}
 
@@ -183,7 +217,14 @@
   <!-- Fixed table number -->
   <div class="col-auto form-inline">
     <label for="table_number_{playerEdit.id}">Fixed table number:</label>
-    <input id="table_number_{playerEdit.id}" type="number" class="form-control ml-1" style="width: 6em" placeholder="Table #" bind:value={playerEdit.fixed_table_number} />
+    <input
+      id="table_number_{playerEdit.id}"
+      type="number"
+      class="form-control ml-1"
+      style="width: 6em"
+      placeholder="Table #"
+      bind:value={playerEdit.fixed_table_number}
+    />
   </div>
 </div>
 
@@ -191,7 +232,11 @@
 <div class="text-right">
   <!-- Lock/unlock player -->
   {#if tournament.self_registration}
-    <button type="button" class="btn btn-link text-info" onclick={togglePlayerLock}>
+    <button
+      type="button"
+      class="btn btn-link text-info"
+      onclick={togglePlayerLock}
+    >
       {#if playerEdit.registration_locked}
         <FontAwesomeIcon icon="unlock" />
         Unlock player
@@ -204,12 +249,15 @@
 
   <!-- View decks -->
   {#if tournament.nrdb_deck_registration}
-    <a href={`/tournaments/${tournament.id}/players/${playerEdit.id}/registration`} class="btn btn-link text-info">
+    <a
+      href={`/tournaments/${tournament.id}/players/${playerEdit.id}/registration`}
+      class="btn btn-link text-info"
+    >
       <FontAwesomeIcon icon="eye" />
       View decks
     </a>
   {/if}
-  
+
   <!-- Create/Save -->
   {#if playerEdit.id === 0}
     {#if saveState === SaveState.UNSAVED}
