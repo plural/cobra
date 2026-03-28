@@ -17,7 +17,9 @@ import {
   deletePlayer,
   dropPlayer,
   loadPlayers,
+  Player,
   reinstatePlayer,
+  savePlayer,
   togglePlayerLock,
 } from "../players/PlayersData";
 import {
@@ -41,6 +43,7 @@ vi.mock("../players/PlayersData", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../players/PlayersData")>()),
   loadPlayers: vi.fn(() => MockPlayersData),
   togglePlayerLock: vi.fn(() => true),
+  savePlayer: vi.fn(() => true),
   dropPlayer: vi.fn(() => true),
   deletePlayer: vi.fn(() => true),
   reinstatePlayer: vi.fn(() => true),
@@ -126,6 +129,42 @@ describe("Players", () => {
       bobEdit.registration_locked = false;
 
       expect(togglePlayerLock).toHaveBeenCalledExactlyOnceWith(1, bobEdit);
+      expect(loadPlayers).toHaveBeenCalledTimes(2);
+    });
+
+    it("saves player edits", async () => {
+      const playerItems = screen.getAllByRole("listitem");
+
+      expect(loadPlayers).toHaveBeenCalledOnce();
+
+      await user.clear(getByLabelText(playerItems[0], "Name"));
+      await user.type(getByLabelText(playerItems[0], "Name"), "Alice test");
+      await user.clear(getByLabelText(playerItems[0], "Pronouns"));
+      await user.type(getByLabelText(playerItems[0], "Pronouns"), "te/st");
+      await user.click(
+        getByRole(playerItems[0], "checkbox", {
+          name: "Video coverage allowed",
+        }),
+      );
+      await user.click(
+        getByRole(playerItems[0], "checkbox", { name: "First round bye" }),
+      );
+      await user.clear(getByLabelText(playerItems[0], "Fixed table number"));
+      await user.type(
+        getByLabelText(playerItems[0], "Fixed table number"),
+        "1",
+      );
+
+      await user.click(getByRole(playerItems[0], "button", { name: "Save" }));
+
+      const aliceEdit = structuredClone(MockPlayerAlice);
+      aliceEdit.name = "Alice test";
+      aliceEdit.pronouns = "te/st";
+      aliceEdit.include_in_stream = false;
+      aliceEdit.first_round_bye = true;
+      aliceEdit.fixed_table_number = 1;
+
+      expect(savePlayer).toHaveBeenCalledExactlyOnceWith(1, aliceEdit);
       expect(loadPlayers).toHaveBeenCalledTimes(2);
     });
 
@@ -284,6 +323,48 @@ describe("Players", () => {
         });
       },
     );
+
+    it("saves new player", async () => {
+      const newPlayerSection = screen.getByRole("heading", {
+        name: "Register New Player",
+      }).parentElement;
+      expect(newPlayerSection).not.toBeNull();
+      if (!newPlayerSection) {
+        return;
+      }
+
+      await user.type(getByLabelText(newPlayerSection, "Name"), "Charlie");
+      await user.type(
+        getByLabelText(newPlayerSection, "Pronouns"),
+        "they/them",
+      );
+      await user.click(
+        getByRole(newPlayerSection, "checkbox", {
+          name: "Video coverage allowed",
+        }),
+      );
+      await user.click(
+        getByRole(newPlayerSection, "checkbox", { name: "First round bye" }),
+      );
+      await user.type(
+        getByLabelText(newPlayerSection, "Fixed table number"),
+        "1",
+      );
+
+      await user.click(
+        getByRole(newPlayerSection, "button", { name: "Create" }),
+      );
+
+      const charlieEdit = new Player();
+      charlieEdit.name = "Charlie";
+      charlieEdit.pronouns = "they/them";
+      charlieEdit.include_in_stream = false;
+      charlieEdit.first_round_bye = true;
+      charlieEdit.fixed_table_number = 1;
+
+      expect(savePlayer).toHaveBeenCalledExactlyOnceWith(1, charlieEdit);
+      expect(loadPlayers).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe("when there are dropped players", () => {

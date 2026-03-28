@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
   import type {
     Tournament,
     TournamentPolicies,
@@ -19,7 +18,7 @@
     SAVING: 1,
     SAVED: 2,
   });
-  const FADE_DURATION = 1000;
+  const SUCCESS_DURATION = 1000;
 
   let {
     player,
@@ -65,11 +64,8 @@
     saveState = SaveState.SAVED;
 
     setTimeout(() => {
-      saveState = SaveState.NONE;
-    }, 1);
-    setTimeout(() => {
       saveState = SaveState.UNSAVED;
-    }, FADE_DURATION);
+    }, SUCCESS_DURATION);
   }
 
   async function dropPlayer() {
@@ -270,11 +266,7 @@
         Creating
       </button>
     {:else if saveState === SaveState.SAVED}
-      <button
-        type="button"
-        class="btn btn-success"
-        out:fade={{ duration: FADE_DURATION }}
-      >
+      <button type="button" class="btn btn-success">
         <FontAwesomeIcon icon="check" /> Created
       </button>
     {/if}
@@ -288,11 +280,7 @@
       Saving
     </button>
   {:else if saveState === SaveState.SAVED}
-    <button
-      type="button"
-      class="btn btn-success"
-      out:fade={{ duration: FADE_DURATION }}
-    >
+    <button type="button" class="btn btn-success">
       <FontAwesomeIcon icon="check" /> Saved
     </button>
   {/if}
