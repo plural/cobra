@@ -108,8 +108,8 @@ RSpec.describe RoundsController do
                          'completed' => false,
                          'pairings' => [
                            { 'intentional_draw' => false,
-                             'player1' => player_with_no_ids('Charlie (she/her)'),
-                             'player2' => player_with_no_ids('Bob (he/him)'),
+                             'player1' => player_with_no_ids('Charlie', 'she/her'),
+                             'player2' => player_with_no_ids('Bob', 'he/him'),
                              'policy' => { 'self_report' => false },
                              'ui_metadata' => { 'row_highlighted' => false },
                              'reported' => false,
@@ -118,7 +118,7 @@ RSpec.describe RoundsController do
                              'score_label' => ' - ', 'two_for_one' => false,
                              'table_label' => 'Table 1', 'table_number' => 1, 'self_reports' => nil },
                            { 'intentional_draw' => false,
-                             'player1' => player_with_no_ids('Alice (she/her)'),
+                             'player1' => player_with_no_ids('Alice', 'she/her'),
                              'player2' => bye_player,
                              'policy' => { 'self_report' => false },
                              'ui_metadata' => { 'row_highlighted' => false },
@@ -162,8 +162,8 @@ RSpec.describe RoundsController do
                          'completed' => false,
                          'pairings' => [
                            { 'intentional_draw' => false,
-                             'player1' => player_with_no_ids('Charlie (she/her)'),
-                             'player2' => player_with_no_ids('Bob (he/him)'),
+                             'player1' => player_with_no_ids('Charlie', 'she/her'),
+                             'player2' => player_with_no_ids('Bob', 'he/him'),
                              'policy' => { 'self_report' => false }, # sees player view as a player
                              'ui_metadata' => { 'row_highlighted' => false },
                              'reported' => false,
@@ -172,7 +172,7 @@ RSpec.describe RoundsController do
                              'score_label' => ' - ', 'two_for_one' => false,
                              'table_label' => 'Table 1', 'table_number' => 1, 'self_reports' => nil },
                            { 'intentional_draw' => false,
-                             'player1' => player_with_no_ids('Alice (she/her)'),
+                             'player1' => player_with_no_ids('Alice', 'she/her'),
                              'player2' => bye_player,
                              'policy' => { 'self_report' => false }, # sees player view as a player
                              'ui_metadata' => { 'row_highlighted' => false },
@@ -225,8 +225,8 @@ RSpec.describe RoundsController do
                            'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
-                               'player1' => player_with_no_ids('Charlie (she/her)'),
-                               'player2' => player_with_no_ids('Bob (he/him)'),
+                               'player1' => player_with_no_ids('Charlie', 'she/her'),
+                               'player2' => player_with_no_ids('Bob', 'he/him'),
                                'policy' => { 'self_report' => false },
                                'ui_metadata' => { 'row_highlighted' => false },
                                'reported' => false,
@@ -235,7 +235,7 @@ RSpec.describe RoundsController do
                                'score_label' => ' - ', 'two_for_one' => false,
                                'table_label' => 'Table 1', 'table_number' => 1, 'self_reports' => nil },
                              { 'intentional_draw' => false,
-                               'player1' => player_with_no_ids('Alice (she/her)'),
+                               'player1' => player_with_no_ids('Alice', 'she/her'),
                                'player2' => bye_player,
                                'policy' => { 'self_report' => false },
                                'ui_metadata' => { 'row_highlighted' => false },
@@ -258,8 +258,8 @@ RSpec.describe RoundsController do
                            'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
-                               'player1' => player_with_no_ids('Bob (he/him)'),
-                               'player2' => player_with_no_ids('Charlie (she/her)'),
+                               'player1' => player_with_no_ids('Bob', 'he/him'),
+                               'player2' => player_with_no_ids('Charlie', 'she/her'),
                                'policy' => { 'self_report' => false },
                                'ui_metadata' => { 'row_highlighted' => false },
                                'reported' => false,
@@ -292,8 +292,8 @@ RSpec.describe RoundsController do
                            'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
-                               'player1' => player_with_no_ids('Charlie (she/her)'),
-                               'player2' => player_with_no_ids('Bob (he/him)'),
+                               'player1' => player_with_no_ids('Charlie', 'she/her'),
+                               'player2' => player_with_no_ids('Bob', 'he/him'),
                                'policy' => { 'self_report' => false },
                                'ui_metadata' => { 'row_highlighted' => false },
                                'reported' => false,
@@ -302,7 +302,7 @@ RSpec.describe RoundsController do
                                'score_label' => ' - ', 'two_for_one' => false,
                                'table_label' => 'Table 1', 'table_number' => 1, 'self_reports' => nil },
                              { 'intentional_draw' => false,
-                               'player1' => player_with_no_ids('Alice (she/her)'),
+                               'player1' => player_with_no_ids('Alice', 'she/her'),
                                'player2' => bye_player,
                                'policy' => { 'self_report' => false },
                                'ui_metadata' => { 'row_highlighted' => false },
@@ -325,8 +325,8 @@ RSpec.describe RoundsController do
                            'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
-                               'player1' => player_with_no_ids('Bob (he/him)'),
-                               'player2' => player_with_no_ids('Charlie (she/her)'),
+                               'player1' => player_with_no_ids('Bob', 'he/him'),
+                               'player2' => player_with_no_ids('Charlie', 'she/her'),
                                'policy' => { 'self_report' => false },
                                'ui_metadata' => { 'row_highlighted' => false },
                                'reported' => false,
@@ -388,8 +388,8 @@ RSpec.describe RoundsController do
                          'completed' => false,
                          'pairings' => [
                            { 'intentional_draw' => false,
-                             'player1' => player_with_no_ids('Charlie (she/her)', side: 'corp', side_label: '(Corp)'),
-                             'player2' => player_with_no_ids('Bob (he/him)', side: 'runner', side_label: '(Runner)'),
+                             'player1' => player_with_no_ids('Charlie', 'she/her', side: 'corp', side_label: '(Corp)'),
+                             'player2' => player_with_no_ids('Bob', 'he/him', side: 'runner', side_label: '(Runner)'),
                              'policy' => { 'self_report' => false },
                              'ui_metadata' => { 'row_highlighted' => false },
                              'reported' => true,
@@ -398,7 +398,7 @@ RSpec.describe RoundsController do
                              'score_label' => '3 - 0 (C)', 'two_for_one' => false,
                              'table_label' => 'Table 1', 'table_number' => 1, 'self_reports' => nil },
                            { 'intentional_draw' => false,
-                             'player1' => player_with_no_ids('Alice (she/her)'),
+                             'player1' => player_with_no_ids('Alice', 'she/her'),
                              'player2' => bye_player,
                              'policy' => { 'self_report' => false },
                              'ui_metadata' => { 'row_highlighted' => false },
@@ -454,9 +454,9 @@ RSpec.describe RoundsController do
                          'pairings' => [
                            { 'intentional_draw' => false,
                              'player1' => player_with_no_ids(
-                               'Charlie (she/her)', side: 'runner', side_label: '(Runner)'
+                               'Charlie', 'she/her', side: 'runner', side_label: '(Runner)'
                              ),
-                             'player2' => player_with_no_ids('Bob (he/him)', side: 'corp', side_label: '(Corp)'),
+                             'player2' => player_with_no_ids('Bob', 'he/him', side: 'corp', side_label: '(Corp)'),
                              'policy' => { 'self_report' => false },
                              'ui_metadata' => { 'row_highlighted' => false },
                              'reported' => true,
@@ -465,7 +465,7 @@ RSpec.describe RoundsController do
                              'score_label' => '0 - 3 (R)', 'two_for_one' => false,
                              'table_label' => 'Table 1', 'table_number' => 1, 'self_reports' => nil },
                            { 'intentional_draw' => false,
-                             'player1' => player_with_no_ids('Alice (she/her)'),
+                             'player1' => player_with_no_ids('Alice', 'she/her'),
                              'player2' => bye_player,
                              'policy' => { 'self_report' => false },
                              'ui_metadata' => { 'row_highlighted' => false },
@@ -503,9 +503,10 @@ RSpec.describe RoundsController do
     body
   end
 
-  def player_with_no_ids(name_with_pronouns, side: nil, side_label: nil)
+  def player_with_no_ids(name, pronouns, side: nil, side_label: nil)
     {
-      'name_with_pronouns' => name_with_pronouns,
+      'name' => name,
+      'name_with_pronouns' => "#{name} (#{pronouns})",
       'user_id' => nil,
       'corp_id' => { 'faction' => nil, 'name' => nil },
       'runner_id' => { 'faction' => nil, 'name' => nil },
@@ -515,8 +516,15 @@ RSpec.describe RoundsController do
   end
 
   def bye_player
-    { 'corp_id' => nil, 'name_with_pronouns' => '(Bye)', 'runner_id' => nil, 'side' => nil, 'side_label' => nil,
-      'user_id' => nil }
+    {
+      'name' => nil,
+      'name_with_pronouns' => '(Bye)',
+      'user_id' => nil,
+      'corp_id' => nil,
+      'runner_id' => nil,
+      'side' => nil,
+      'side_label' => nil
+    }
   end
 
   def swiss_stage_with_rounds(rounds)
