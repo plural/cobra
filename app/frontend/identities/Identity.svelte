@@ -10,7 +10,7 @@
     include_name = true,
     gray_out = false,
   }: {
-    identity: Identity | null;
+    identity: Identity;
     name_if_missing?: string;
     icon_if_missing?: string;
     points?: number;
@@ -20,7 +20,7 @@
   } = $props();
 </script>
 
-{#if identity && (identity.name || name_if_missing)}
+{#if identity.name || name_if_missing}
   <div class={gray_out ? "" : identity.faction}>
     {#if include_icon}
       {#if identity.faction}

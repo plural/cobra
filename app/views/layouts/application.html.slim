@@ -98,7 +98,7 @@ html
               => fa_icon 'user'
               | Me
           - if policy(@tournament).edit?
-            li.nav-item= link_to tournament_players_path(@tournament), class: "nav-link #{'active' if controller_name == 'players' && action_name == 'index'}" do
+            li.nav-item= link_to correct_beta_path(tournament_players_path(@tournament)), class: "nav-link #{'active' if controller_name == 'players' && action_name == 'index'}" do
               => fa_icon 'users'
               | Players
           - if policy(@tournament).edit?

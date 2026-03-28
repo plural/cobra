@@ -1,4 +1,5 @@
 import type { Identity } from "../identities/Identity";
+import type { Player } from "../players/PlayersData";
 import { globalMessages } from "../utils/GlobalMessageState.svelte";
 import { csrfToken } from "../utils/network";
 import type { ScoreReport } from "./SelfReport";
@@ -366,9 +367,11 @@ export class Tournament {
   registration_open = false;
   registration_unlocked = false;
   self_registration = false;
+  nrdb_deck_registration = false;
   locked_players = 0;
   unlocked_players = 0;
   allow_streaming_opt_out = false;
+  manual_seed = false;
 }
 
 export interface Stage {
@@ -444,19 +447,6 @@ export interface SelfReport {
 export interface PairingPolicies {
   view_decks?: boolean;
   self_report: boolean;
-}
-
-export class Player {
-  id = 0;
-  name = "";
-  name_with_pronouns = "";
-  side: string | null = null;
-  user_id: number | null = null;
-  side_label: string | null = null;
-  corp_id: Identity | null = null;
-  runner_id: Identity | null = null;
-  include_in_stream = false;
-  active: boolean | null = null;
 }
 
 export interface IdStats {

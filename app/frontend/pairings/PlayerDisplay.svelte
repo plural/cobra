@@ -1,9 +1,10 @@
 <script lang="ts">
-  import type { Pairing, PairingsContext, Player } from "./PairingsData";
+  import type { Pairing, PairingsContext } from "./PairingsData";
   import Identity from "../identities/Identity.svelte";
   import { showIdentities } from "../utils/ShowIdentities";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { getContext } from "svelte";
+  import type { Player } from "../players/PlayersData";
 
   let {
     player,
@@ -14,7 +15,7 @@
     changePlayerSide,
   }: {
     player: Player;
-    pairing: Pairing;
+    pairing?: Pairing;
     left_or_right: string;
     is_single_sided: boolean;
     show_ids?: boolean;
@@ -47,7 +48,7 @@
   {player.name_with_pronouns}
 
   <!-- Side -->
-  {#if is_single_sided && pairing.player1.id && pairing.player2.id}
+  {#if is_single_sided && pairing?.player1.id && pairing.player2.id}
     <br />
     {#if pairingsContext && pairingsContext.showOrganizerView && changePlayerSide}
       <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->

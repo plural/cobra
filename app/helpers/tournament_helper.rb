@@ -7,6 +7,28 @@ module TournamentHelper
     tournament.date.strftime('%-d %b %Y')
   end
 
+  def tournament_json(tournament)
+    {
+      id: tournament.id,
+      player_meeting: tournament.round_ids.empty?,
+      registration_open: tournament.registration_open?,
+      registration_unlocked: tournament.registration_unlocked?,
+      self_registration: tournament.self_registration?,
+      nrdb_deck_registration: tournament.nrdb_deck_registration?,
+      locked_players: tournament.locked_players.count,
+      unlocked_players: tournament.unlocked_players.count,
+      allow_streaming_opt_out: tournament.allow_streaming_opt_out,
+      manual_seed: tournament.manual_seed
+    }
+  end
+
+  def tournament_policies_json(tournament)
+    {
+      update: tournament.user == current_user,
+      custom_table_numbering: Flipper.enabled?(:custom_table_numbering, current_user)
+    }
+  end
+
   def demo_tournament_json
     {
       tournament: {

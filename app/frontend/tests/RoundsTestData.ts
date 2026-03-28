@@ -1,5 +1,5 @@
+import { Identity } from "../identities/Identity";
 import {
-  Player,
   Tournament,
   type Pairing,
   type PairingsData,
@@ -8,31 +8,42 @@ import {
   type Stage,
 } from "../pairings/PairingsData";
 import type { ScoreReport } from "../pairings/SelfReport";
+import type { Player } from "../players/PlayersData";
 
 export const MockPlayerAlice: Player = {
   id: 1,
   name: "Alice",
+  pronouns: "she/her",
   name_with_pronouns: "Alice (she/her)",
   side: null,
-  user_id: null,
+  user_id: 0,
   side_label: null,
-  corp_id: null,
-  runner_id: null,
+  corp_id: new Identity(),
+  runner_id: new Identity(),
+  registration_locked: false,
   include_in_stream: false,
   active: null,
+  first_round_bye: false,
+  manual_seed: null,
+  fixed_table_number: null,
 };
 
 export const MockPlayerBob: Player = {
   id: 2,
   name: "Bob",
+  pronouns: "he/him",
   name_with_pronouns: "Bob (he/him)",
   side: null,
-  user_id: null,
+  user_id: 0,
   side_label: null,
-  corp_id: null,
-  runner_id: null,
+  corp_id: new Identity(),
+  runner_id: new Identity(),
+  registration_locked: false,
   include_in_stream: false,
   active: null,
+  first_round_bye: false,
+  manual_seed: null,
+  fixed_table_number: null,
 };
 
 export const MockPairing1: Pairing = {
@@ -131,9 +142,11 @@ export const MockTournament: Tournament = {
   registration_open: true,
   registration_unlocked: true,
   self_registration: true,
+  nrdb_deck_registration: false,
   locked_players: 0,
   unlocked_players: 2,
   allow_streaming_opt_out: false,
+  manual_seed: false,
 };
 
 export const MockPairingsData: PairingsData = {
