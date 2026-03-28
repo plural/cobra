@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module PlayersHelper
+  # TODO: This and player_hash_json() should be merged
   def player_json(player, side = nil)
     {
       id: player&.id,

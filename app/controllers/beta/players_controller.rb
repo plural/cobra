@@ -12,6 +12,7 @@ module Beta
     def players_data
       authorize @tournament, :update?
 
+      # TODO: Create a single query to fetch all players and then split the active/dropped results in this controller
       players = @tournament.players.active.sort_by { |p| p.name.downcase || '' }
       dropped = @tournament.players.dropped.sort_by { |p| p.name.downcase || '' }
 
