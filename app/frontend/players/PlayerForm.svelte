@@ -120,9 +120,9 @@
 
   <!-- Pronouns -->
   <div class="col-auto">
-    <label for="player_name_{playerEdit.id}">Pronouns</label>
+    <label for="player_pronouns_{playerEdit.id}">Pronouns</label>
     <input
-      id="player_name_{playerEdit.id}"
+      id="player_pronouns_{playerEdit.id}"
       type="text"
       class="form-control"
       placeholder="Example: they/them"
@@ -133,9 +133,9 @@
   {#if !tournament.nrdb_deck_registration || playerEdit.id !== 0}
     <!-- Corp ID -->
     <div class="col">
-      <label for="player_name_{playerEdit.id}">Corp ID</label>
+      <label for="player_corp_id_{playerEdit.id}">Corp ID</label>
       <input
-        id="player_name_{playerEdit.id}"
+        id="player_corp_id_{playerEdit.id}"
         type="text"
         class="form-control corp_identities"
         placeholder="Search for corp ID"
@@ -146,9 +146,9 @@
 
     <!-- Runner ID -->
     <div class="col">
-      <label for="player_name_{playerEdit.id}">Runner ID</label>
+      <label for="player_runner_id_{playerEdit.id}">Runner ID</label>
       <input
-        id="player_name_{playerEdit.id}"
+        id="player_runner_id_{playerEdit.id}"
         type="text"
         class="form-control runner_identities"
         placeholder="Search for runner ID"
@@ -194,7 +194,7 @@
         for="player_first_round_bye_{playerEdit.id}"
         class="form-check-label"
       >
-        First Round Bye
+        First round bye
       </label>
     </div>
 
@@ -216,7 +216,7 @@
 
   <!-- Fixed table number -->
   <div class="col-auto form-inline">
-    <label for="table_number_{playerEdit.id}">Fixed table number:</label>
+    <label for="table_number_{playerEdit.id}">Fixed table number</label>
     <input
       id="table_number_{playerEdit.id}"
       type="number"
@@ -231,7 +231,7 @@
 <!-- Actions -->
 <div class="text-right">
   <!-- Lock/unlock player -->
-  {#if tournament.self_registration}
+  {#if tournament.self_registration && playerEdit.id !== 0}
     <button
       type="button"
       class="btn btn-link text-info"
@@ -248,7 +248,7 @@
   {/if}
 
   <!-- View decks -->
-  {#if tournament.nrdb_deck_registration}
+  {#if tournament.nrdb_deck_registration && playerEdit.id !== 0}
     <a
       href={`/tournaments/${tournament.id}/players/${playerEdit.id}/registration`}
       class="btn btn-link text-info"

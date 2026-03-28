@@ -403,6 +403,15 @@ export enum DeckVisibility {
   Public = 2,
 }
 
+export function deckVisibilityString(visibility: DeckVisibility) {
+  if (visibility === DeckVisibility.Open) {
+    return "open";
+  } else if (visibility === DeckVisibility.Public) {
+    return "public";
+  }
+  return "private";
+}
+
 export interface Stage {
   id: number;
   name: string;

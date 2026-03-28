@@ -10,6 +10,7 @@
   } from "./PlayersData";
   import {
     DeckVisibility,
+    deckVisibilityString,
     saveTournament,
     setPlayerRegistrationStatus as setPlayerRegistrationStatusRequest,
     setRegistrationStatus as setRegistrationStatusRequest,
@@ -48,16 +49,7 @@
       return;
     }
 
-    const visibilityString = (visibility: DeckVisibility) => {
-      if (visibility === DeckVisibility.Open) {
-        return "open";
-      } else if (visibility === DeckVisibility.Public) {
-        return "public";
-      }
-      return "private";
-    };
-
-    return `swiss ${visibilityString(data.tournament.swiss_deck_visibility)}, cut ${visibilityString(data.tournament.cut_deck_visibility)}`;
+    return `swiss ${deckVisibilityString(data.tournament.swiss_deck_visibility)}, cut ${deckVisibilityString(data.tournament.cut_deck_visibility)}`;
   });
 
   onMount(async () => {
@@ -319,7 +311,7 @@
           class="btn btn-sm dropdown-toggle btn-light text-muted font-weight-bold"
           data-toggle="dropdown"
         >
-          Registration: {deckVisibilityDescription}
+          Decks: {deckVisibilityDescription}
         </button>
         <div class="dropdown-menu">
           <button
