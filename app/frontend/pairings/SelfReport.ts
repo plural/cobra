@@ -184,7 +184,7 @@ export function scorePresets(stage: Stage, pairing: Pairing) {
   }
 
   if (!stage.is_elimination && stage.is_single_sided) {
-    return pairing.player1.side == "corp"
+    return pairing.player1.side === "corp"
       ? ([
           {
             score1_corp: 3,
@@ -256,7 +256,7 @@ export function scorePresets(stage: Stage, pairing: Pairing) {
   }
 
   if (stage.is_elimination && (pairing.player1.side || pairing.player2.side)) {
-    return pairing.player1.side == "corp"
+    return pairing.player1.side === "corp"
       ? ([
           {
             score1: 3,

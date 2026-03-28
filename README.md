@@ -91,7 +91,7 @@ If you prefer to install PostgreSQL locally instead, you can set up the database
 $ psql postgres
     # create user cobra with password 'cobra' CREATEDB;
     # \q
-$ rake db:create db:migrate
+$ rails db:create db:migrate
 ```
 
 Start local server in your IDE, or with the Rails CLI (this was installed when you ran `bundle`):
@@ -102,21 +102,21 @@ $ rails server
 ### Important commands
 #### Update IDs from the NRDB API
 ```sh
-$ bundle exec rake ids:update
+$ bundle exec rails ids:update
 ```
-This rake task queries the NRDB API and creates/updates identities as appropriate.
+This task queries the NRDB API and creates/updates identities as appropriate.
 Identities not in the database are stripped out of ABR uploads to avoid errors.
 This is run automatically by `bin/deploy` and `bin/init-db-*`.
 
 #### Update Card Sets from the NRDB API
 ```sh
-$ bundle exec rake card_sets:update
+$ bundle exec rails card_sets:update
 ```
 
 #### Seed Tournament Metadata
 Formats, tournament types, and prize kits are seeded by this task.
 ```sh
-$ bundle exec rake tournament_metadata:seed
+$ bundle exec rails tournament_metadata:seed
 ```
 
 #### Run tests
@@ -138,7 +138,7 @@ You can enable or disable a feature for all development environments by editing
 [development.rb](config/environments/development.rb).
 
 That file can include code similar to the following, which will enable the feature when the app starts up. The rescue
-block handles cases where the database is not fully initialized, eg. in a rake task.
+block handles cases where the database is not fully initialized, eg. in a Rails task.
 
 ```ruby
 Rails.application.configure do
