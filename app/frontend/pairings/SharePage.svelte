@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-
-  const FADE_DURATION = 1000;
+  import ProgressButton from "../widgets/ProgressButton.svelte";
 
   interface Props {
     text: string;
@@ -11,20 +9,11 @@
 
   let { text, page }: Props = $props();
 
-  let showCopy = $state(true);
-  let showCopied = $state(false);
   let error = $state("");
 
   async function copyMarkdown() {
     try {
       await navigator.clipboard.writeText(text);
-
-      showCopy = false;
-      showCopied = true;
-      setTimeout(() => (showCopied = false), 1);
-      setTimeout(() => {
-        showCopy = true;
-      }, FADE_DURATION);
     } catch {
       error = "Unable to copy text.";
     }
@@ -36,22 +25,14 @@
 <textarea readonly={true}>{text}</textarea>
 
 <span>
-  <button
-    type="button"
-    onclick={async () => {
-      await copyMarkdown();
-    }}
-    class="btn btn-info align-top"
+  <ProgressButton
+    css="btn btn-info align-top"
+    inProgressText="Copying"
+    completeText="Copied"
+    onclick={copyMarkdown}
   >
-    {#if showCopy}
-      <div><FontAwesomeIcon icon="copy" /> Copy</div>
-    {/if}
-    {#if showCopied}
-      <div out:fade={{ duration: FADE_DURATION }}>
-        <FontAwesomeIcon icon="check" /> Copied
-      </div>
-    {/if}
-  </button>
+    <FontAwesomeIcon icon="copy" /> Copy
+  </ProgressButton>
   {#if error}
     <div class="alert alert-danger">{error}</div>
   {/if}
