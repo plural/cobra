@@ -1,4 +1,4 @@
-import { DeckVisibility, Tournament } from "../pairings/PairingsData";
+import { Tournament } from "../pairings/PairingsData";
 import type { Player, PlayersData } from "../players/PlayersData";
 
 export const MockPlayerAlice: Player = {
@@ -49,21 +49,15 @@ export const MockPlayerBob: Player = {
   side_label: null,
 };
 
-export const MockTournament: Tournament = {
+export const MockTournament = new Tournament({
   id: 1,
   name: "Mock Tournament",
-  player_meeting: false,
-  registration_open: true,
-  registration_unlocked: true,
   self_registration: true,
   nrdb_deck_registration: true,
-  swiss_deck_visibility: DeckVisibility.Private,
-  cut_deck_visibility: DeckVisibility.Private,
-  locked_players: 0,
-  unlocked_players: 2,
+  all_players_unlocked: true,
+  any_player_unlocked: true,
   allow_streaming_opt_out: true,
-  manual_seed: false,
-};
+});
 
 export const MockPlayersData: PlayersData = {
   tournament: MockTournament,

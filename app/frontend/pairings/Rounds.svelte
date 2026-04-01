@@ -54,7 +54,8 @@
 
   async function pairNewRound() {
     if (
-      data.tournament.registration_unlocked &&
+      data.tournament.self_registration &&
+      (!data.tournament.registration_closed || data.tournament.any_player_unlocked) &&
       !confirm(
         "Registration is still open or some players are unlocked. Pair new round anyway?",
       )
@@ -215,7 +216,7 @@
   {:else}
     <!-- Upper controls -->
     <div>
-      {#if data.tournament.player_meeting}
+      {#if data.stages.every((s) => s.rounds.length === 0)}
         <a
           href={`/tournaments/${tournamentId}/players/meeting?back_to=${ctx.showOrganizerView ? "pairings" : "view_pairings"}`}
           class="btn btn-primary"
@@ -277,7 +278,7 @@
     <!-- Tournament admin controls -->
     {#if ctx.showOrganizerView}
       <div class="mt-3">
-        {#if data.tournament.registration_open}
+        {#if !data.tournament.registration_closed}
           <button
             type="button"
             class="btn btn-info"
@@ -297,7 +298,7 @@
           >
             <FontAwesomeIcon icon="folder-open" /> Open registration
           </button>
-          {#if data.tournament.locked_players > 0}
+          {#if !data.tournament.all_players_unlocked}
             <button
               type="button"
               class="btn btn-secondary"
@@ -308,7 +309,7 @@
               <FontAwesomeIcon icon="unlock" /> Unlock all players
             </button>
           {/if}
-          {#if data.tournament.unlocked_players > 0}
+          {#if data.tournament.any_player_unlocked}
             <button
               type="button"
               class="btn btn-info"
