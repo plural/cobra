@@ -436,10 +436,18 @@ export enum CutDeckVisibility {
   Public = "cut_decks_public",
 }
 
-export function deckVisibilityString(visibility: SwissDeckVisibility | CutDeckVisibility) {
-  if (visibility === SwissDeckVisibility.Open || visibility === CutDeckVisibility.Open) {
+export function deckVisibilityString(
+  visibility: SwissDeckVisibility | CutDeckVisibility,
+) {
+  if (
+    visibility === SwissDeckVisibility.Open ||
+    visibility === CutDeckVisibility.Open
+  ) {
     return "open";
-  } else if (visibility === SwissDeckVisibility.Public || visibility === CutDeckVisibility.Public) {
+  } else if (
+    visibility === SwissDeckVisibility.Public ||
+    visibility === CutDeckVisibility.Public
+  ) {
     return "public";
   }
   return "private";

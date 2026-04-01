@@ -100,8 +100,16 @@ describe("Rounds", () => {
             "registration_closed",
             "get",
           ).mockReturnValue(true);
-          vi.spyOn(MockPairingsData.tournament, "all_players_unlocked", "get").mockReturnValue(false);
-          vi.spyOn(MockPairingsData.tournament, "any_player_unlocked", "get").mockReturnValue(false);
+          vi.spyOn(
+            MockPairingsData.tournament,
+            "all_players_unlocked",
+            "get",
+          ).mockReturnValue(false);
+          vi.spyOn(
+            MockPairingsData.tournament,
+            "any_player_unlocked",
+            "get",
+          ).mockReturnValue(false);
           await user.click(
             screen.getByRole("button", { name: /close registration/i }),
           );
@@ -128,8 +136,16 @@ describe("Rounds", () => {
           });
 
           it("locks player registration", async () => {
-            vi.spyOn(MockPairingsData.tournament, "all_players_unlocked", "get").mockReturnValue(false);
-            vi.spyOn(MockPairingsData.tournament, "any_player_unlocked", "get").mockReturnValue(false);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "all_players_unlocked",
+              "get",
+            ).mockReturnValue(false);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "any_player_unlocked",
+              "get",
+            ).mockReturnValue(false);
             await user.click(
               screen.getByRole("button", { name: /lock all players/i }),
             );
@@ -142,8 +158,16 @@ describe("Rounds", () => {
 
         describe("with all players locked", () => {
           beforeEach(() => {
-            vi.spyOn(MockPairingsData.tournament, "all_players_unlocked", "get").mockReturnValue(false);
-            vi.spyOn(MockPairingsData.tournament, "any_player_unlocked", "get").mockReturnValue(false);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "all_players_unlocked",
+              "get",
+            ).mockReturnValue(false);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "any_player_unlocked",
+              "get",
+            ).mockReturnValue(false);
             render(Rounds, { tournamentId: 1 });
           });
 
@@ -164,8 +188,16 @@ describe("Rounds", () => {
           });
 
           it("unlocks player registration", async () => {
-            vi.spyOn(MockPairingsData.tournament, "all_players_unlocked", "get").mockReturnValue(true);
-            vi.spyOn(MockPairingsData.tournament, "any_player_unlocked", "get").mockReturnValue(true);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "all_players_unlocked",
+              "get",
+            ).mockReturnValue(true);
+            vi.spyOn(
+              MockPairingsData.tournament,
+              "any_player_unlocked",
+              "get",
+            ).mockReturnValue(true);
             await user.click(
               screen.getByRole("button", { name: /unlock all players/i }),
             );

@@ -206,8 +206,16 @@ describe("Players", () => {
           new RegExp(`${unlock ? "Unlock" : "Lock"} all players.*`),
         );
         if (!lockOption.classList.contains("disabled")) {
-          vi.spyOn(MockTournament, "all_players_unlocked", "get").mockReturnValue(unlock);
-          vi.spyOn(MockTournament, "any_player_unlocked", "get").mockReturnValue(unlock);
+          vi.spyOn(
+            MockTournament,
+            "all_players_unlocked",
+            "get",
+          ).mockReturnValue(unlock);
+          vi.spyOn(
+            MockTournament,
+            "any_player_unlocked",
+            "get",
+          ).mockReturnValue(unlock);
           await user.click(lockOption);
           loadCount++;
           expect(setPlayerRegistrationStatus).toHaveBeenCalledExactlyOnceWith(
@@ -220,7 +228,11 @@ describe("Players", () => {
           new RegExp(`${open ? "Open" : "Close"} registration.*`),
         );
         if (!registrationOption.classList.contains("disabled")) {
-          vi.spyOn(MockTournament, "registration_closed", "get").mockReturnValue(!open);
+          vi.spyOn(
+            MockTournament,
+            "registration_closed",
+            "get",
+          ).mockReturnValue(!open);
           await user.click(registrationOption);
           loadCount++;
           expect(setRegistrationStatus).toHaveBeenCalledExactlyOnceWith(
@@ -240,21 +252,41 @@ describe("Players", () => {
         CutDeckVisibility.Private,
         "swiss private, cut private",
       ],
-      [SwissDeckVisibility.Private, CutDeckVisibility.Open, "swiss private, cut open"],
+      [
+        SwissDeckVisibility.Private,
+        CutDeckVisibility.Open,
+        "swiss private, cut open",
+      ],
       [
         SwissDeckVisibility.Private,
         CutDeckVisibility.Public,
         "swiss private, cut public",
       ],
-      [SwissDeckVisibility.Open, CutDeckVisibility.Private, "swiss open, cut private"],
-      [SwissDeckVisibility.Open, CutDeckVisibility.Open, "swiss open, cut open"],
-      [SwissDeckVisibility.Open, CutDeckVisibility.Public, "swiss open, cut public"],
+      [
+        SwissDeckVisibility.Open,
+        CutDeckVisibility.Private,
+        "swiss open, cut private",
+      ],
+      [
+        SwissDeckVisibility.Open,
+        CutDeckVisibility.Open,
+        "swiss open, cut open",
+      ],
+      [
+        SwissDeckVisibility.Open,
+        CutDeckVisibility.Public,
+        "swiss open, cut public",
+      ],
       [
         SwissDeckVisibility.Public,
         CutDeckVisibility.Private,
         "swiss public, cut private",
       ],
-      [SwissDeckVisibility.Public, CutDeckVisibility.Open, "swiss public, cut open"],
+      [
+        SwissDeckVisibility.Public,
+        CutDeckVisibility.Open,
+        "swiss public, cut open",
+      ],
       [
         SwissDeckVisibility.Public,
         CutDeckVisibility.Public,

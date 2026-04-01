@@ -55,7 +55,8 @@
   async function pairNewRound() {
     if (
       data.tournament.self_registration &&
-      (!data.tournament.registration_closed || data.tournament.any_player_unlocked) &&
+      (!data.tournament.registration_closed ||
+        data.tournament.any_player_unlocked) &&
       !confirm(
         "Registration is still open or some players are unlocked. Pair new round anyway?",
       )

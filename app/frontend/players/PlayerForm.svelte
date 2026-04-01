@@ -42,9 +42,11 @@
   }
 
   function confirmSave() {
-    return playerEdit.id !== 0 ||
+    return (
+      playerEdit.id !== 0 ||
       !tournament.registration_closed ||
-      confirm("Tournament is closed, add new player anyway?");
+      confirm("Tournament is closed, add new player anyway?")
+    );
   }
 
   async function save() {
