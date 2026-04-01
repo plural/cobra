@@ -1,5 +1,6 @@
 import type { Identity } from "../identities/Identity";
 import type { Player } from "../players/PlayersData";
+import { Tournament } from "../tournaments/TournamentSettings";
 import { globalMessages } from "../utils/GlobalMessageState.svelte";
 import { csrfToken } from "../utils/network";
 import type { ScoreReport } from "./SelfReport";
@@ -379,78 +380,6 @@ export class SharingData {
   constructor() {
     this.pages = [];
   }
-}
-
-export class Tournament {
-  id = 0;
-  name = "";
-  slug = "";
-  abr_code = "";
-  private = false;
-  user_id = 0;
-  tournament_organizer = "";
-  date = "";
-  time_zone = "";
-  registration_starts = "";
-  tournament_starts = "";
-  organizer_contact = "";
-  event_link = "";
-  stream_url = "";
-  description = "";
-  additional_prizes_description = "";
-  official_prize_kit_id = 0;
-  stage = "";
-  manual_seed = false;
-  self_registration = false;
-  nrdb_deck_registration = false;
-  decklist_required = false;
-  allow_self_reporting = false;
-  allow_streaming_opt_out = false;
-  all_players_unlocked = false;
-  any_player_unlocked = false;
-  registration_closed = false;
-  swiss_deck_visibility = SwissDeckVisibility.Private;
-  cut_deck_visibility = CutDeckVisibility.Private;
-  swiss_format = "";
-  tournament_type_id = 0;
-  format_id = 0;
-  deckbuilding_restriction_id = 0;
-  card_set_id = 0;
-  created_at = "";
-  updated_at = "";
-
-  constructor(init?: Partial<Tournament>) {
-    Object.assign(this, init);
-  }
-}
-
-export enum SwissDeckVisibility {
-  Private = "swiss_decks_private",
-  Open = "swiss_decks_open",
-  Public = "swiss_decks_public",
-}
-
-export enum CutDeckVisibility {
-  Private = "cut_decks_private",
-  Open = "cut_decks_open",
-  Public = "cut_decks_public",
-}
-
-export function deckVisibilityString(
-  visibility: SwissDeckVisibility | CutDeckVisibility,
-) {
-  if (
-    visibility === SwissDeckVisibility.Open ||
-    visibility === CutDeckVisibility.Open
-  ) {
-    return "open";
-  } else if (
-    visibility === SwissDeckVisibility.Public ||
-    visibility === CutDeckVisibility.Public
-  ) {
-    return "public";
-  }
-  return "private";
 }
 
 export interface Stage {

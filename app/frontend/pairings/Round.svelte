@@ -1,16 +1,12 @@
 <script lang="ts">
-  import type {
-    Round,
-    Stage,
-    Tournament,
-    PairingsContext,
-  } from "./PairingsData";
+  import type { Round, Stage, PairingsContext } from "./PairingsData";
   import Pairing from "./Pairing.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { showReportedPairings } from "../utils/ShowReportedPairings";
   import RoundTimerControls from "./RoundTimerControls.svelte";
   import { getContext } from "svelte";
   import type { ScoreReport } from "./SelfReport";
+  import type { Tournament } from "../tournaments/TournamentSettings";
 
   let {
     tournament,

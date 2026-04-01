@@ -1,5 +1,6 @@
 import { Identity } from "../identities/Identity";
-import type { Tournament, TournamentPolicies } from "../pairings/PairingsData";
+import type { TournamentPolicies } from "../pairings/PairingsData";
+import type { Tournament } from "../tournaments/TournamentSettings";
 import { csrfToken } from "../utils/network";
 
 declare const Routes: {

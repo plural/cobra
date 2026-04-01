@@ -9,14 +9,16 @@
     reinstatePlayer as reinstatePlayerRequest,
   } from "./PlayersData";
   import {
-    CutDeckVisibility,
-    SwissDeckVisibility,
-    deckVisibilityString,
     saveTournament,
     setPlayerRegistrationStatus as setPlayerRegistrationStatusRequest,
     setRegistrationStatus as setRegistrationStatusRequest,
   } from "../pairings/PairingsData";
   import PlayerForm from "./PlayerForm.svelte";
+  import {
+    CutDeckVisibility,
+    deckVisibilityString,
+    SwissDeckVisibility,
+  } from "../tournaments/TournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { downloadBlob, quoteCsvValue } from "../utils/files";
 

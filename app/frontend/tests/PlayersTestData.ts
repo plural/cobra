@@ -1,5 +1,5 @@
-import { Tournament } from "../pairings/PairingsData";
 import type { Player, PlayersData } from "../players/PlayersData";
+import { Tournament } from "../tournaments/TournamentSettings";
 
 export const MockPlayerAlice: Player = {
   id: 1,

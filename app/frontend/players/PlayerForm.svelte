@@ -1,8 +1,6 @@
 <script lang="ts">
-  import type {
-    Tournament,
-    TournamentPolicies,
-  } from "../pairings/PairingsData";
+  import type { TournamentPolicies } from "../pairings/PairingsData";
+  import type { Tournament } from "../tournaments/TournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import ProgressButton from "../widgets/ProgressButton.svelte";
   import {

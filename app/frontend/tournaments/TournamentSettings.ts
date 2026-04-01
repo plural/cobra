@@ -6,33 +6,76 @@ declare const Routes: {
   tournaments_path: () => string;
 };
 
-export interface TournamentSettings {
-  id?: number;
-  name?: string;
-  date?: string;
-  private?: boolean;
-  stream_url?: string;
-  manual_seed?: boolean;
-  self_registration?: boolean;
-  allow_streaming_opt_out?: boolean;
-  nrdb_deck_registration?: boolean;
-  cut_deck_visibility?: string;
-  swiss_deck_visibility?: string;
-  swiss_format?: string;
-  time_zone?: string;
-  registration_starts?: string;
-  tournament_starts?: string;
-  tournament_type_id?: number;
-  card_set_id?: number;
-  format_id?: number;
-  deckbuilding_restriction_id?: number;
-  decklist_required?: boolean;
-  organizer_contact?: string;
-  event_link?: string;
-  description?: string;
-  official_prize_kit_id?: number;
-  additional_prizes_description?: string;
-  allow_self_reporting?: boolean;
+export class Tournament {
+  id = 0;
+  name = "";
+  slug = "";
+  abr_code = "";
+  private = false;
+  user_id = 0;
+  tournament_organizer = "";
+  date = "";
+  time_zone = "";
+  registration_starts = "";
+  tournament_starts = "";
+  organizer_contact = "";
+  event_link = "";
+  stream_url = "";
+  description = "";
+  additional_prizes_description = "";
+  official_prize_kit_id = 0;
+  stage = "";
+  manual_seed = false;
+  self_registration = false;
+  nrdb_deck_registration = false;
+  decklist_required = false;
+  allow_self_reporting = false;
+  allow_streaming_opt_out = false;
+  all_players_unlocked = false;
+  any_player_unlocked = false;
+  registration_closed = false;
+  swiss_deck_visibility = SwissDeckVisibility.Private;
+  cut_deck_visibility = CutDeckVisibility.Private;
+  swiss_format = "";
+  tournament_type_id = 0;
+  format_id = 0;
+  deckbuilding_restriction_id = 0;
+  card_set_id = 0;
+  created_at = "";
+  updated_at = "";
+
+  constructor(init?: Partial<Tournament>) {
+    Object.assign(this, init);
+  }
+}
+
+export enum SwissDeckVisibility {
+  Private = "swiss_decks_private",
+  Open = "swiss_decks_open",
+  Public = "swiss_decks_public",
+}
+
+export enum CutDeckVisibility {
+  Private = "cut_decks_private",
+  Open = "cut_decks_open",
+  Public = "cut_decks_public",
+}
+
+export function deckVisibilityString(
+  visibility: SwissDeckVisibility | CutDeckVisibility,
+) {
+  if (
+    visibility === SwissDeckVisibility.Open ||
+    visibility === CutDeckVisibility.Open
+  ) {
+    return "open";
+  } else if (
+    visibility === SwissDeckVisibility.Public ||
+    visibility === CutDeckVisibility.Public
+  ) {
+    return "public";
+  }
+  return "private";
 }
 
 export interface TournamentOptions {
@@ -49,7 +92,7 @@ export interface FeatureFlags {
 }
 
 export interface TournamentSettingsData {
-  tournament: TournamentSettings;
+  tournament: Tournament;
   options: TournamentOptions;
   feature_flags: FeatureFlags;
   csrf_token: string;
@@ -106,7 +149,7 @@ export interface TournamentCreateErrorResponse {
 
 export async function createTournament(
   csrfToken: string,
-  tournament: TournamentSettings,
+  tournament: Tournament,
 ): Promise<TournamentCreateResponse> {
   const response = await fetch(Routes.tournaments_path(), {
     method: "POST",

@@ -23,13 +23,15 @@ import {
   togglePlayerLock,
 } from "../players/PlayersData";
 import {
-  CutDeckVisibility,
-  SwissDeckVisibility,
-  deckVisibilityString,
   saveTournament,
   setPlayerRegistrationStatus,
   setRegistrationStatus,
 } from "../pairings/PairingsData";
+import {
+  CutDeckVisibility,
+  deckVisibilityString,
+  SwissDeckVisibility,
+} from "../tournaments/TournamentSettings";
 
 const user = userEvent.setup();
 

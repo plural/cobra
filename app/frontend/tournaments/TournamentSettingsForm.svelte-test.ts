@@ -1,19 +1,19 @@
 import { render, screen, fireEvent } from "@testing-library/svelte";
 import { describe, it, expect, vi } from "vitest";
 import TournamentSettingsForm from "./TournamentSettingsForm.svelte";
-import type {
-  TournamentSettings,
-  TournamentOptions,
-  FeatureFlags,
+import {
+  Tournament,
+  type TournamentOptions,
+  type FeatureFlags,
 } from "./TournamentSettings";
 
 describe("TournamentSettingsForm", () => {
-  const tournament: TournamentSettings = {
+  const tournament = new Tournament({
     name: "Test Tournament",
     date: "2023-12-25",
     private: false,
     swiss_format: "double_sided",
-  };
+  });
 
   const options: TournamentOptions = {
     tournament_types: [
