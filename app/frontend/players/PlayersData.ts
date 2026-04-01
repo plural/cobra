@@ -16,6 +16,15 @@ declare const Routes: {
     tournamentId: number,
     playerId: number,
   ) => string;
+  lock_registration_beta_tournament_player_path: (
+    tournamentId: number,
+    playerId: number,
+  ) => string;
+  unlock_registration_beta_tournament_player_path: (
+    tournamentId: number,
+    playerId: number,
+  ) => string;
+  decks_beta_tournament_players_path: (tournamentId: number) => string;
 };
 
 export async function loadPlayers(tournamentId: number): Promise<PlayersData> {
@@ -36,6 +45,29 @@ export async function savePlayer(tournamentId: number, player: Player) {
       : Routes.beta_tournament_player_path(tournamentId, player.id);
   const response = await fetch(route, {
     method: player.id === 0 ? "POST" : "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken(),
+    },
+    body: JSON.stringify({ player: playerRequestObject(player) }),
+  });
+
+  return response.status === 200;
+}
+
+export async function togglePlayerLock(tournamentId: number, player: Player) {
+  const route = player.registration_locked
+    ? Routes.unlock_registration_beta_tournament_player_path(
+        tournamentId,
+        player.id,
+      )
+    : Routes.lock_registration_beta_tournament_player_path(
+        tournamentId,
+        player.id,
+      );
+  const response = await fetch(route, {
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -98,6 +130,17 @@ export async function reinstatePlayer(tournamentId: number, player: Player) {
   return response.status === 200;
 }
 
+export async function loadDecks(tournamentId: number) {
+  const response = await fetch(
+    Routes.decks_beta_tournament_players_path(tournamentId),
+    {
+      method: "GET",
+    },
+  );
+
+  return (await response.json()) as Deck[];
+}
+
 function playerRequestObject(player: Player) {
   return {
     name: player.name,
@@ -127,11 +170,48 @@ export class Player {
   corp_id = new Identity();
   runner_id = new Identity();
   registration_locked = false;
-  include_in_stream = false;
+  include_in_stream = true;
   active: boolean | null = null;
   first_round_bye = false;
   manual_seed: number | null = null;
   fixed_table_number: number | null = null;
   side: string | null = null;
   side_label: string | null = null;
+}
+
+export interface Deck {
+  details: {
+    id: number;
+    player_id: number;
+    side_id: string;
+    name: string | null;
+    identity_title: string;
+    min_deck_size: number;
+    max_influence: number;
+    nrdb_uuid: string | null;
+    identity_nrdb_card_id: string;
+    created_at: string;
+    updated_at: string;
+    identity_nrdb_printing_id: number | null;
+    user_id: number;
+    faction_id: string;
+    mine: boolean;
+    player_name: string;
+  };
+  cards: Card[];
+}
+
+export interface Card {
+  id: number;
+  deck_id: number;
+  title: string;
+  quantity: number;
+  influence: number;
+  nrdb_card_id: string;
+  created_at: string;
+  updated_at: string;
+  nrdb_printing_id: number | null;
+  card_type_id: string;
+  faction_id: string;
+  influence_cost: number;
 }

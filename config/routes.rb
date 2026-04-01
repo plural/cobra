@@ -37,8 +37,11 @@ Rails.application.routes.draw do
       end
       resources :players, only: %i[index create update destroy] do
         get :players_data, on: :collection
+        patch :lock_registration, on: :member
+        patch :unlock_registration, on: :member
         patch :drop, on: :member
         patch :reinstate, on: :member
+        get :decks, on: :collection
       end
       resources :stages, only: %i[create destroy]
       patch :open_registration, on: :member

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
   import type {
     Tournament,
     TournamentPolicies,
@@ -9,6 +8,7 @@
     Player,
     savePlayer,
     deletePlayer as deletePlayerRequest,
+    togglePlayerLock as togglePlayerLockRequest,
     dropPlayer as dropPlayerRequest,
   } from "./PlayersData";
 
@@ -18,7 +18,7 @@
     SAVING: 1,
     SAVED: 2,
   });
-  const FADE_DURATION = 1000;
+  const SUCCESS_DURATION = 1000;
 
   let {
     player,
@@ -39,6 +39,16 @@
   let playerEdit = $derived($state.snapshot(player));
   let saveState: number = $state(SaveState.UNSAVED);
 
+  async function togglePlayerLock() {
+    const success = await togglePlayerLockRequest(tournament.id, playerEdit);
+    if (!success) {
+      return;
+    }
+    playerEdit.registration_locked = !playerEdit.registration_locked;
+
+    savedCallback?.(playerEdit);
+  }
+
   async function save() {
     if (
       playerEdit.id === 0 &&
@@ -50,15 +60,12 @@
 
     saveState = SaveState.SAVING;
     await savePlayer(tournament.id, playerEdit);
-    savedCallback?.(player);
+    savedCallback?.(playerEdit);
     saveState = SaveState.SAVED;
 
     setTimeout(() => {
-      saveState = SaveState.NONE;
-    }, 1);
-    setTimeout(() => {
       saveState = SaveState.UNSAVED;
-    }, FADE_DURATION);
+    }, SUCCESS_DURATION);
   }
 
   async function dropPlayer() {
@@ -67,11 +74,13 @@
       return;
     }
 
-    droppedCallback?.(player);
+    droppedCallback?.(playerEdit);
   }
 
   async function deletePlayer() {
-    if (!confirm(`Are you sure you want to delete player "${player.name}"?`)) {
+    if (
+      !confirm(`Are you sure you want to delete player "${playerEdit.name}"?`)
+    ) {
       return;
     }
 
@@ -80,17 +89,17 @@
       return;
     }
 
-    deletedCallback?.(player);
+    deletedCallback?.(playerEdit);
   }
 </script>
 
 <div class="identities_form form-row">
-  <!-- Player name -->
+  <!-- Name -->
   <div class="col">
-    {#if player.id !== 0 && tournament.self_registration}
+    {#if playerEdit.id !== 0 && tournament.self_registration}
       <span class="text-info float-left mr-2" style="width: 12px">
         <FontAwesomeIcon
-          icon={player.registration_locked ? "lock" : "unlock"}
+          icon={playerEdit.registration_locked ? "lock" : "unlock"}
         />
       </span>
     {/if}
@@ -107,9 +116,9 @@
 
   <!-- Pronouns -->
   <div class="col-auto">
-    <label for="player_name_{playerEdit.id}">Pronouns</label>
+    <label for="player_pronouns_{playerEdit.id}">Pronouns</label>
     <input
-      id="player_name_{playerEdit.id}"
+      id="player_pronouns_{playerEdit.id}"
       type="text"
       class="form-control"
       placeholder="Example: they/them"
@@ -117,31 +126,36 @@
     />
   </div>
 
-  <!-- Corp ID -->
-  <div class="col">
-    <label for="player_name_{playerEdit.id}">Corp ID</label>
-    <input
-      id="player_name_{playerEdit.id}"
-      type="text"
-      class="form-control corp_identities"
-      placeholder="Example: they/them"
-      readonly={tournament.nrdb_deck_registration}
-      bind:value={playerEdit.corp_id.name}
-    />
-  </div>
+  {#if !tournament.nrdb_deck_registration || playerEdit.id !== 0}
+    <!-- Corp ID -->
+    <div class="col">
+      <label for="player_corp_id_{playerEdit.id}">Corp ID</label>
+      <input
+        id="player_corp_id_{playerEdit.id}"
+        type="text"
+        class="form-control corp_identities"
+        placeholder="Search for corp ID"
+        readonly={tournament.nrdb_deck_registration}
+        bind:value={playerEdit.corp_id.name}
+      />
+    </div>
 
-  <!-- Runner ID -->
-  <div class="col">
-    <label for="player_name_{playerEdit.id}">Runner ID</label>
-    <input
-      id="player_name_{playerEdit.id}"
-      type="text"
-      class="form-control runner_identities"
-      placeholder="Example: they/them"
-      readonly={tournament.nrdb_deck_registration}
-      bind:value={playerEdit.runner_id.name}
-    />
-  </div>
+    <!-- Runner ID -->
+    <div class="col">
+      <label for="player_runner_id_{playerEdit.id}">Runner ID</label>
+      <input
+        id="player_runner_id_{playerEdit.id}"
+        type="text"
+        class="form-control runner_identities"
+        placeholder="Search for runner ID"
+        readonly={tournament.nrdb_deck_registration}
+        bind:value={playerEdit.runner_id.name}
+      />
+    </div>
+  {:else}
+    <div class="col"></div>
+    <div class="col"></div>
+  {/if}
 </div>
 
 <div class="form-row mt-2">
@@ -158,7 +172,7 @@
         for="player_include_in_stream_{playerEdit.id}"
         class="form-check-label"
       >
-        Opted out of video coverage
+        Video coverage allowed
       </label>
     </div>
   {/if}
@@ -176,7 +190,7 @@
         for="player_first_round_bye_{playerEdit.id}"
         class="form-check-label"
       >
-        First Round Bye
+        First round bye
       </label>
     </div>
 
@@ -198,13 +212,13 @@
 
   <!-- Fixed table number -->
   <div class="col-auto form-inline">
-    <label for="table_number_{playerEdit.id}">Fixed table number:</label>
+    <label for="table_number_{playerEdit.id}">Fixed table number</label>
     <input
       id="table_number_{playerEdit.id}"
       type="number"
       class="form-control ml-1"
       style="width: 6em"
-      placeholder="Table number"
+      placeholder="Table #"
       bind:value={playerEdit.fixed_table_number}
     />
   </div>
@@ -212,10 +226,36 @@
 
 <!-- Actions -->
 <div class="text-right">
-  <!-- TODO: Lock/unlock -->
-  <!-- TODO: View decks -->
+  <!-- Lock/unlock player -->
+  {#if tournament.self_registration && playerEdit.id !== 0}
+    <button
+      type="button"
+      class="btn btn-link text-info"
+      onclick={togglePlayerLock}
+    >
+      {#if playerEdit.registration_locked}
+        <FontAwesomeIcon icon="unlock" />
+        Unlock player
+      {:else}
+        <FontAwesomeIcon icon="lock" />
+        Lock player
+      {/if}
+    </button>
+  {/if}
 
-  {#if player.id === 0}
+  <!-- View decks -->
+  {#if tournament.nrdb_deck_registration && playerEdit.id !== 0}
+    <a
+      href={`/tournaments/${tournament.id}/players/${playerEdit.id}/registration`}
+      class="btn btn-link text-info"
+    >
+      <FontAwesomeIcon icon="eye" />
+      View decks
+    </a>
+  {/if}
+
+  <!-- Create/Save -->
+  {#if playerEdit.id === 0}
     {#if saveState === SaveState.UNSAVED}
       <button type="button" class="btn btn-success" onclick={save}>
         <FontAwesomeIcon icon="plus" /> Create
@@ -226,11 +266,7 @@
         Creating
       </button>
     {:else if saveState === SaveState.SAVED}
-      <button
-        type="button"
-        class="btn btn-success"
-        out:fade={{ duration: FADE_DURATION }}
-      >
+      <button type="button" class="btn btn-success">
         <FontAwesomeIcon icon="check" /> Created
       </button>
     {/if}
@@ -244,20 +280,18 @@
       Saving
     </button>
   {:else if saveState === SaveState.SAVED}
-    <button
-      type="button"
-      class="btn btn-success"
-      out:fade={{ duration: FADE_DURATION }}
-    >
+    <button type="button" class="btn btn-success">
       <FontAwesomeIcon icon="check" /> Saved
     </button>
   {/if}
 
-  {#if player.id !== 0}
+  {#if playerEdit.id !== 0}
+    <!-- Drop -->
     <button type="button" class="btn btn-warning" onclick={dropPlayer}>
       <FontAwesomeIcon icon="arrow-down" /> Drop
     </button>
 
+    <!-- Delete -->
     <button type="button" class="btn btn-danger" onclick={deletePlayer}>
       <FontAwesomeIcon icon="trash" /> Delete
     </button>

@@ -10,11 +10,14 @@ module TournamentHelper
   def tournament_json(tournament)
     {
       id: tournament.id,
+      name: tournament.name,
       player_meeting: tournament.round_ids.empty?,
       registration_open: tournament.registration_open?,
       registration_unlocked: tournament.registration_unlocked?,
       self_registration: tournament.self_registration?,
       nrdb_deck_registration: tournament.nrdb_deck_registration?,
+      swiss_deck_visibility: Tournament.swiss_deck_visibilities[tournament.swiss_deck_visibility],
+      cut_deck_visibility: Tournament.cut_deck_visibilities[tournament.cut_deck_visibility],
       locked_players: tournament.locked_players.count,
       unlocked_players: tournament.unlocked_players.count,
       allow_streaming_opt_out: tournament.allow_streaming_opt_out,
