@@ -27,7 +27,7 @@ class RoundsController < ApplicationController
         update: @tournament.user == current_user,
         custom_table_numbering: Flipper.enabled?(:custom_table_numbering, current_user)
       },
-      tournament: tournament_json(@tournament),
+      tournament: helpers.tournament_json(@tournament),
       stages: pairings_data_stages,
       warnings: ([@tournament.current_stage&.validate_table_count] if policy(@tournament).update?)
     }

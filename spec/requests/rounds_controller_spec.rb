@@ -16,17 +16,7 @@ RSpec.describe RoundsController do
         expect(compare_body(response))
           .to eq(
             'policy' => { 'custom_table_numbering' => false, 'update' => false },
-            'tournament' =>
-            {
-              'id' => tournament.id,
-              'player_meeting' => true,
-              'registration_open' => false,
-              'registration_unlocked' => false,
-              'self_registration' => false,
-              'locked_players' => 0,
-              'unlocked_players' => 3,
-              'allow_streaming_opt_out' => nil
-            },
+            'tournament' => default_tournament,
             'stages' => [swiss_stage_with_rounds([])],
             'warnings' => nil
           )
@@ -39,17 +29,7 @@ RSpec.describe RoundsController do
         expect(compare_body(response))
           .to eq(
             'policy' => { 'custom_table_numbering' => false, 'update' => false },
-            'tournament' =>
-            {
-              'id' => tournament.id,
-              'player_meeting' => true,
-              'registration_open' => false,
-              'registration_unlocked' => false,
-              'self_registration' => false,
-              'locked_players' => 0,
-              'unlocked_players' => 3,
-              'allow_streaming_opt_out' => nil
-            },
+            'tournament' => default_tournament,
             'stages' => [swiss_stage_with_rounds([])],
             'warnings' => nil
           )
@@ -62,17 +42,7 @@ RSpec.describe RoundsController do
         expect(compare_body(response))
           .to eq(
             'policy' => { 'custom_table_numbering' => false, 'update' => true },
-            'tournament' =>
-            {
-              'id' => tournament.id,
-              'player_meeting' => true,
-              'registration_open' => false,
-              'registration_unlocked' => false,
-              'self_registration' => false,
-              'locked_players' => 0,
-              'unlocked_players' => 3,
-              'allow_streaming_opt_out' => nil
-            },
+            'tournament' => default_tournament,
             'stages' => [swiss_stage_with_rounds([])],
             'warnings' => [nil]
           )
@@ -90,17 +60,7 @@ RSpec.describe RoundsController do
         expect(compare_body(response))
           .to eq({
                    'policy' => { 'custom_table_numbering' => false, 'update' => false },
-                   'tournament' =>
-                   {
-                     'id' => tournament.id,
-                     'player_meeting' => false,
-                     'registration_open' => false,
-                     'registration_unlocked' => false,
-                     'self_registration' => false,
-                     'locked_players' => 0,
-                     'unlocked_players' => 3,
-                     'allow_streaming_opt_out' => nil
-                   },
+                   'tournament' => default_tournament,
                    'stages' => [swiss_stage_with_rounds(
                      [
                        {
@@ -144,17 +104,7 @@ RSpec.describe RoundsController do
         expect(compare_body(response))
           .to eq({
                    'policy' => { 'custom_table_numbering' => false, 'update' => true },
-                   'tournament' =>
-                   {
-                     'id' => tournament.id,
-                     'player_meeting' => false,
-                     'registration_open' => false,
-                     'registration_unlocked' => false,
-                     'self_registration' => false,
-                     'locked_players' => 0,
-                     'unlocked_players' => 3,
-                     'allow_streaming_opt_out' => nil
-                   },
+                   'tournament' => default_tournament,
                    'stages' => [swiss_stage_with_rounds(
                      [
                        {
@@ -206,17 +156,7 @@ RSpec.describe RoundsController do
         expect(compare_body(response))
           .to eq({
                    'policy' => { 'custom_table_numbering' => false, 'update' => false },
-                   'tournament' =>
-                   {
-                     'id' => tournament.id,
-                     'player_meeting' => false,
-                     'registration_open' => false,
-                     'registration_unlocked' => false,
-                     'self_registration' => false,
-                     'locked_players' => 0,
-                     'unlocked_players' => 3,
-                     'allow_streaming_opt_out' => nil
-                   },
+                   'tournament' => default_tournament,
                    'stages' => [
                      swiss_stage_with_rounds(
                        [
@@ -370,17 +310,7 @@ RSpec.describe RoundsController do
         expect(compare_body(response))
           .to eq({
                    'policy' => { 'custom_table_numbering' => false, 'update' => false },
-                   'tournament' =>
-                   {
-                     'id' => tournament.id,
-                     'player_meeting' => false,
-                     'registration_open' => false,
-                     'registration_unlocked' => false,
-                     'self_registration' => false,
-                     'locked_players' => 0,
-                     'unlocked_players' => 3,
-                     'allow_streaming_opt_out' => nil
-                   },
+                   'tournament' => default_tournament,
                    'stages' => [swiss_stage_with_rounds(
                      [
                        {
@@ -435,17 +365,7 @@ RSpec.describe RoundsController do
         expect(compare_body(response))
           .to eq({
                    'policy' => { 'custom_table_numbering' => false, 'update' => false },
-                   'tournament' =>
-                   {
-                     'id' => tournament.id,
-                     'player_meeting' => false,
-                     'registration_open' => false,
-                     'registration_unlocked' => false,
-                     'self_registration' => false,
-                     'locked_players' => 0,
-                     'unlocked_players' => 3,
-                     'allow_streaming_opt_out' => nil
-                   },
+                   'tournament' => default_tournament,
                    'stages' => [swiss_stage_with_rounds(
                      [
                        {
@@ -501,6 +421,22 @@ RSpec.describe RoundsController do
       end
     end
     body
+  end
+
+  def default_tournament
+    {
+      'id' => tournament.id,
+      'name' => 'My Tournament',
+      'self_registration' => false,
+      'nrdb_deck_registration' => false,
+      'swiss_deck_visibility' => 'swiss_decks_private',
+      'cut_deck_visibility' => 'cut_decks_private',
+      'registration_closed' => nil,
+      'any_player_unlocked' => true,
+      'all_players_unlocked' => true,
+      'allow_streaming_opt_out' => nil,
+      'manual_seed' => nil
+    }
   end
 
   def player_with_no_ids(name, pronouns, side: nil, side_label: nil)
