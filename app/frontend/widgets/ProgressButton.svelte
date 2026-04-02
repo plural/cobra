@@ -36,7 +36,9 @@
     await onclick();
     state = State.COMPLETE;
 
-    setTimeout(() => { state = State.DEFAULT; }, COMPLETE_DURATION);
+    setTimeout(() => {
+      state = State.DEFAULT;
+    }, COMPLETE_DURATION);
   }
 </script>
 

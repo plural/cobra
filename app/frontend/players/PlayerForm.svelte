@@ -4,7 +4,7 @@
     TournamentPolicies,
   } from "../pairings/PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-    import ProgressButton from "../widgets/ProgressButton.svelte";
+  import ProgressButton from "../widgets/ProgressButton.svelte";
   import {
     Player,
     savePlayer,
@@ -42,9 +42,11 @@
   }
 
   function confirmSave() {
-    return playerEdit.id !== 0 ||
+    return (
+      playerEdit.id !== 0 ||
       tournament.registration_open ||
-      confirm("Tournament is closed, add new player anyway?");
+      confirm("Tournament is closed, add new player anyway?")
+    );
   }
 
   async function save() {
@@ -62,7 +64,9 @@
   }
 
   function confirmDelete() {
-    return confirm(`Are you sure you want to delete player "${playerEdit.name}"?`);
+    return confirm(
+      `Are you sure you want to delete player "${playerEdit.name}"?`,
+    );
   }
 
   async function deletePlayer() {
@@ -212,8 +216,12 @@
   {#if tournament.self_registration && playerEdit.id !== 0}
     <ProgressButton
       css="btn btn-link text-info"
-      inProgressText={playerEdit.registration_locked ? "Unlocking player" : "Locking player"}
-      completeText={playerEdit.registration_locked ? "Locked player" : "Unlocked player"}
+      inProgressText={playerEdit.registration_locked
+        ? "Unlocking player"
+        : "Locking player"}
+      completeText={playerEdit.registration_locked
+        ? "Locked player"
+        : "Unlocked player"}
       onclick={togglePlayerLock}
     >
       {#if playerEdit.registration_locked}
