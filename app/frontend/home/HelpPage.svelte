@@ -4,36 +4,39 @@
 
 <div class="col-3">
   <div class="sticky-top navbar navbar-light" id="help_contents">
-    <a class="nav-link" href="#help_login">Log In</a>
-    <a class="nav-link" href="help_create">Create a Tournament</a>
     <nav class="nav nav-pills flex-column">
-      <a class="nav-link ml-3" href="#help_shortcode">What's a shortcode?</a>
-    </nav>
-    <a class="nav-link" href="#help_register">Register Players</a>
-    <nav class="nav nav-pills flex-column">
-      <a class="nav-link ml-3" href="#help_playermeeting">What is the "Player Meeting"?</a>
-    </nav>
-    <a class="nav-link" href="#help_rounds">Create Rounds and Pairings</a>
-    <a class="nav-link" href="#help_results">Enter Results</a>
-    <nav class="nav nav-pills flex-column">
-      <a class="nav-link ml-3" href="#help_completing">
-        What is "Completing" a round?
+      <a class="nav-link" href="#help_login">Log In</a>
+      <a class="nav-link" href="help_create">Create a Tournament</a>
+      <nav class="nav nav-pills flex-column">
+        <a class="nav-link ml-3" href="#help_shortcode">What's a shortcode?</a>
+      </nav>
+      <a class="nav-link" href="#help_register">Register Players</a>
+      <nav class="nav nav-pills flex-column">
+        <a class="nav-link ml-3" href="#help_otherplayers">Can players see other players when I register them?</a>
+        <a class="nav-link ml-3" href="#help_playermeeting">What is the "Player Meeting"?</a>
+      </nav>
+      <a class="nav-link" href="#help_rounds">Create Rounds and Pairings</a>
+      <a class="nav-link" href="#help_results">Enter Results</a>
+      <nav class="nav nav-pills flex-column">
+        <a class="nav-link ml-3" href="#help_completing">
+          What is "Completing" a round?
+        </a>
+      </nav>
+      <a class="nav-link" href="#help_editround">
+        Something Went Wrong!
       </a>
-    </nav>
-    <a class="nav-link" href="#help_editround">
-      Something Went Wrong!
-    </a>
-    <a class="nav-link" href="#help_standings">
-      Standings
-    </a>
-    <a class="nav-link" href="#help_settings">Settings</a>
-    <nav class="nav nav-pills flex-column">
-      <a class="nav-link ml-3" href="#help_abr">
-        What is "Upload to Always Be Running?"
+      <a class="nav-link" href="#help_standings">
+        Standings
       </a>
-      <a class="nav-link ml-3" href="#help_cut">
-        What is "Cut to Top X"?
-      </a>
+      <a class="nav-link" href="#help_settings">Settings</a>
+      <nav class="nav nav-pills flex-column">
+        <a class="nav-link ml-3" href="#help_abr">
+          What is "Upload to Always Be Running?"
+        </a>
+        <a class="nav-link ml-3" href="#help_cut">
+          What is "Cut to Top X"?
+        </a>
+      </nav>
     </nav>
   </div>
 </div>
@@ -68,16 +71,16 @@
 
   <h2 id="help_register">Register Players</h2>
   <p>On the tournament page is the player management area, visible only to the TO. Enter a name and optional identity info and click "Create". You can also assign players a first-round bye here.</p>
-  .alert.alert-info
+
   <div class="alert alert-info">
     <FontAwesomeIcon icon="magic" /> The identity fields will auto-complete. If you fill these correctly, the data will transfer correctly to Always Be Running.
   </div>
 
   <p>Once you've created players, you can modify them on this page (make sure to click "Save" on the correct row.)</p>
   <p>You can "Drop" players to automatically exclude them from future round pairings, but keep them in the standings and apply SOS from them, etc. You can "Reinstate" players if you dropped them in error, or would like to include them in pairings again for some reason.</p>
-  .alert.alert-danger
+
   <div class="alert alert-danger">
-    <FontAwesomeIcon icon="warning" /> You can "Delete" players, but be careful! This will delete them from the standings, <strong>ALSO DELETE ALL PAIRINGS THEY WERE INVOLVED IN.</strong>
+    <FontAwesomeIcon icon="warning" /> You can "Delete" players, but be careful! This will delete them from the standings, <strong>AND ALSO DELETE ALL PAIRINGS THEY WERE INVOLVED IN.</strong>
     Only use this feature for an incorrect registration. If you need to remove a player from future pairings, "Drop" them instead.
   </div>
 
@@ -144,7 +147,7 @@
   <h2 id="help_settings">Settings</h2>
 
   <p>In the "Settings" tab, which only you can see, you can rename the tournament and change some details, such as the date.</p>
-  .alert.alert-info
+
   <div class="alert alert-info">
     <FontAwesomeIcon icon="calendar" /> The homepage of the site will display all events taking place today to make it easier for your players to find.
   </div>
