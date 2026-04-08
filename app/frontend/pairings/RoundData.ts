@@ -1,10 +1,6 @@
+import type { Tournament } from "../tournaments/TournamentSettings";
 import { globalMessages } from "../utils/GlobalMessageState.svelte";
-import {
-  Tournament,
-  TournamentPolicies,
-  type Round,
-  type Stage,
-} from "./PairingsData";
+import { TournamentPolicies, type Round, type Stage } from "./PairingsData";
 
 declare const Routes: {
   round_data_beta_tournament_round_path: (

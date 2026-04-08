@@ -3,12 +3,12 @@
   import type {
     PairingsContext,
     Stage,
-    Tournament,
     TournamentPolicies,
   } from "./PairingsData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { getContext } from "svelte";
   import type { ScoreReport } from "./SelfReport";
+  import type { Tournament } from "../tournaments/TournamentSettings";
 
   let {
     tournament,

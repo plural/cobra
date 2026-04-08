@@ -1,5 +1,6 @@
 import type { Identity } from "../identities/Identity";
 import type { Player } from "../players/PlayersData";
+import { Tournament } from "../tournaments/TournamentSettings";
 import { globalMessages } from "../utils/GlobalMessageState.svelte";
 import { csrfToken } from "../utils/network";
 import type { ScoreReport } from "./SelfReport";
@@ -379,37 +380,6 @@ export class SharingData {
   constructor() {
     this.pages = [];
   }
-}
-
-export class Tournament {
-  id = 0;
-  name = "";
-  player_meeting = false;
-  registration_open = false;
-  registration_unlocked = false;
-  self_registration = false;
-  nrdb_deck_registration = false;
-  swiss_deck_visibility = DeckVisibility.Private;
-  cut_deck_visibility = DeckVisibility.Private;
-  locked_players = 0;
-  unlocked_players = 0;
-  allow_streaming_opt_out = false;
-  manual_seed = false;
-}
-
-export enum DeckVisibility {
-  Private = 0,
-  Open = 1,
-  Public = 2,
-}
-
-export function deckVisibilityString(visibility: DeckVisibility) {
-  if (visibility === DeckVisibility.Open) {
-    return "open";
-  } else if (visibility === DeckVisibility.Public) {
-    return "public";
-  }
-  return "private";
 }
 
 export interface Stage {

@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/svelte";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import TournamentCreation from "./TournamentCreation.svelte";
-import { ValidationError } from "./TournamentSettings";
+import { Tournament, ValidationError } from "./TournamentSettings";
 
 // Mock the TournamentSettings module
 vi.mock("./TournamentSettings", async (importOriginal) => ({
@@ -12,14 +12,14 @@ vi.mock("./TournamentSettings", async (importOriginal) => ({
 
 describe("TournamentCreation", () => {
   const mockTournamentData = {
-    tournament: {
+    tournament: new Tournament({
       date: "2023-12-25",
       private: false,
       swiss_format: "double_sided",
       allow_self_reporting: false,
       decklist_required: false,
       nrdb_deck_registration: false,
-    },
+    }),
     options: {
       tournament_types: [{ id: 1, name: "Store Championship" }],
       formats: [{ id: 1, name: "Standard" }],

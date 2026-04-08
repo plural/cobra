@@ -1,23 +1,34 @@
 <script lang="ts">
   import {
     emptyTournamentOptions,
+    Tournament,
     type Errors,
     type FeatureFlags,
     type TournamentOptions,
-    type TournamentSettings,
   } from "./TournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  export let tournament: TournamentSettings = {};
-  export let options: TournamentOptions = emptyTournamentOptions();
-  export let featureFlags: FeatureFlags = {};
 
-  export let submitLabel = "Save";
-  export let submitIcon = "floppy-o";
-  export let isSubmitting = false;
-  export let errors: Errors = {};
-  export let onSubmit = () => {
-    isSubmitting = true;
-  };
+  let {
+    tournament,
+    options = emptyTournamentOptions(),
+    featureFlags = {},
+    submitLabel = "Save",
+    submitIcon = "floppy-o",
+    isSubmitting = false,
+    errors = {},
+    onSubmit = () => {
+      isSubmitting = true;
+    },
+  }: {
+    tournament: Tournament;
+    options?: TournamentOptions;
+    featureFlags?: FeatureFlags;
+    submitLabel?: string;
+    submitIcon?: string;
+    isSubmitting?: boolean;
+    errors?: Errors;
+    onSubmit?: () => void;
+  } = $props();
 </script>
 
 <div class="form-group">
@@ -371,7 +382,7 @@
   <button
     type="submit"
     class="btn btn-primary"
-    on:click|preventDefault={onSubmit}
+    onclick={onSubmit}
     disabled={isSubmitting}
   >
     <FontAwesomeIcon icon={submitIcon} />

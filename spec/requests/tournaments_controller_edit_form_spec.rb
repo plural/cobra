@@ -38,19 +38,29 @@ RSpec.describe TournamentsController, type: :request do
         expect(response.content_type).to include('application/json')
 
         data = JSON.parse(response.body)
+        data['tournament']&.delete 'created_at'
+        data['tournament']&.delete 'updated_at'
         expect(data['tournament']).to eq(
           {
-            'id' => tournament.id,
-            'name' => 'Test Tournament',
+            'all_players_unlocked' => true,
+            'allow_self_reporting' => false,
+            'any_player_unlocked' => true,
+            'cut_deck_visibility' => 'cut_decks_private',
             'date' => '2023-05-15',
-            'stream_url' => 'https://twitch.tv/test',
-            'private' => false,
-            'manual_seed' => true,
-            'self_registration' => true,
-            'nrdb_deck_registration' => false,
-            'swiss_format' => 'double_sided',
             'decklist_required' => false,
-            'allow_self_reporting' => false
+            'id' => tournament.id,
+            'manual_seed' => true,
+            'name' => 'Test Tournament',
+            'nrdb_deck_registration' => false,
+            'private' => false,
+            'self_registration' => true,
+            'slug' => tournament.slug,
+            'stage' => 'swiss',
+            'stream_url' => 'https://twitch.tv/test',
+            'swiss_deck_visibility' => 'swiss_decks_private',
+            'swiss_format' => 'double_sided',
+            'tournament_organizer' => 'test_user',
+            'user_id' => tournament.user_id
           }
         )
         expect(data['csrf_token']).not_to be_empty
