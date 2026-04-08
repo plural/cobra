@@ -29,7 +29,7 @@ html
                 li.nav-item.nav-link.text-light = link_to beta_set_beta_path(beta_enabled: true, redirect: CGI.escape(request.path)), method: :post
                   => fa_icon 'flask'
                   | Switch to Beta
-            li.nav-item= link_to help_path, class: 'nav-link text-light' do
+            li.nav-item= link_to correct_beta_path(help_path), class: 'nav-link text-light' do
               => fa_icon 'life-ring'
               | How to
             li.nav-item.dropdown
