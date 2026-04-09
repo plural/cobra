@@ -3,27 +3,29 @@ export type Errors = Record<string, string[]>;
 declare const Routes: {
   new_form_tournaments_path: () => string;
   edit_form_tournament_path: (id: number) => string;
+  api_v1_public_tournament_path: (tournamentId: number) => string;
   tournaments_path: () => string;
+  registration_notice_beta_tournament_path: (tournamentId: number) => string;
 };
 
 export class Tournament {
   id = 0;
   name = "";
-  slug = "";
-  abr_code = "";
+  slug: string | null = null;
+  abr_code: string | null = null;
   private = false;
   user_id = 0;
   tournament_organizer = "";
   date = "";
-  time_zone = "";
-  registration_starts = "";
-  tournament_starts = "";
-  organizer_contact = "";
-  event_link = "";
+  time_zone: string | null = null;
+  registration_starts: string | null = null;
+  tournament_starts: string | null = null;
+  organizer_contact: string | null = null;
+  event_link: string | null = null;
   stream_url = "";
-  description = "";
-  additional_prizes_description = "";
-  official_prize_kit_id = 0;
+  description: string | null = null;
+  additional_prizes_description: string | null = null;
+  official_prize_kit_id: number | null = null;
   stage = "";
   manual_seed = false;
   self_registration = false;
@@ -33,20 +35,46 @@ export class Tournament {
   allow_streaming_opt_out = false;
   all_players_unlocked = false;
   any_player_unlocked = false;
-  registration_closed = false;
+  registration_closed: boolean | null = null;
   swiss_deck_visibility = SwissDeckVisibility.Private;
   cut_deck_visibility = CutDeckVisibility.Private;
   swiss_format = "";
-  tournament_type_id = 0;
-  format_id = 0;
-  deckbuilding_restriction_id = 0;
-  card_set_id = 0;
+  tournament_type_id: number | null = null;
+  format_id: number | null = null;
+  deckbuilding_restriction_id: number | null = null;
+  card_set_id: number | null = null;
+  active_player_count = 0;
+  dropped_player_count = 0;
   created_at = "";
   updated_at = "";
 
   constructor(init?: Partial<Tournament>) {
     Object.assign(this, init);
   }
+}
+
+interface TournamentJsonApi {
+  data: {
+    id: string;
+    type: string;
+    attributes: Tournament;
+    relationships: {
+      tournament_type: {
+        links: {
+          related: string | null;
+        };
+      };
+      user: {
+        links: {
+          related: string | null;
+        };
+      };
+    };
+    links: {
+      self: string;
+    };
+  };
+  meta: object;
 }
 
 export enum SwissDeckVisibility {
@@ -107,6 +135,28 @@ export function emptyTournamentOptions(): TournamentOptions {
     time_zones: [],
     official_prize_kits: [],
   };
+}
+
+export async function loadTournament(tournamentId: number): Promise<Tournament> {
+  const response = await fetch(
+    Routes.api_v1_public_tournament_path(tournamentId),
+    {
+      method: "GET",
+    },
+  );
+
+  return (await response.json() as TournamentJsonApi).data.attributes;
+}
+
+export async function loadTournamentNotice(tournamentId: number): Promise<string> {
+  const response = await fetch(
+    Routes.registration_notice_beta_tournament_path(tournamentId),
+    {
+      method: "GET",
+    },
+  );
+
+  return response.text();
 }
 
 export async function loadNewTournament(): Promise<TournamentSettingsData> {
