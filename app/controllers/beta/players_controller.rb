@@ -39,6 +39,11 @@ module Beta
       params = player_params
       params[:user_id] = current_user.id
 
+      if @tournament.players.any? { |p| p.name == params[:name] }
+        render json: { id: 0, errors: ["A user with the name #{params[:name]} is already registered for this event."] }
+        return
+      end
+
       player = @tournament.players.create(params.except(:corp_deck, :runner_deck))
       @tournament.current_stage.players << player unless @tournament.current_stage.nil?
       @tournament.update(any_player_unlocked: true,

@@ -1,6 +1,7 @@
 import { Identity } from "../identities/Identity";
 import type { TournamentPolicies } from "../pairings/PairingsData";
 import type { Tournament } from "../tournaments/TournamentSettings";
+import { globalMessages } from "../utils/GlobalMessageState.svelte";
 import { csrfToken } from "../utils/network";
 
 declare const Routes: {
@@ -55,7 +56,8 @@ export async function savePlayer(tournamentId: number, player: Player) {
     body: JSON.stringify({ player: playerRequestObject(player) }),
   });
 
-  const result = (await response.json()) as { id: number };
+  const result = (await response.json()) as { id: number, errors: string[] };
+  globalMessages.errors = result.errors;
 
   return result.id;
 }
