@@ -59,9 +59,10 @@ module PlayersHelper
   def id(player, side)
     return { "name": '', "faction": '' } if player.nil?
 
+    id = Identity.find_or_initialize_by(name: player["#{side}_identity"])
     {
-      "name": player["#{side}_identity"],
-      "faction": player["#{side}_faction"]
+      "name": id.name,
+      "faction": id.faction
     }
   end
 end

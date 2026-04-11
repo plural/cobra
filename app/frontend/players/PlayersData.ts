@@ -56,8 +56,8 @@ export async function savePlayer(tournamentId: number, player: Player) {
     body: JSON.stringify({ player: playerRequestObject(player) }),
   });
 
-  const result = (await response.json()) as { id: number, errors: string[] };
-  globalMessages.errors = result.errors;
+  const result = (await response.json()) as { id: number, errors?: string[] };
+  globalMessages.errors = result.errors ?? [];
 
   return result.id;
 }

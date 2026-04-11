@@ -4,7 +4,7 @@
   import { loadPlayer, loadTournament, loadTournamentNotice, Tournament } from "./TournamentSettings";
   import { Player, savePlayer } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import NsgIcon from "../widgets/NsgIcon.svelte";
+  import Identity from "../identities/Identity.svelte";
 
   let { tournamentId, userId }: { tournamentId: number; userId: number; } = $props();
 
@@ -112,9 +112,53 @@
             {#if player.id}
               <!-- User is logged in and registered -->
                {#if player.active}
-                 <!-- TODO: Card -->
-                 <h5>My Registration Information</h5>
-                 <!-- TODO -->
+                 <div class="card">
+                   <div class="card-header d-flex justify-content-between">
+                     <h5 class="mb-0">My Registration Information</h5>
+                     <a href={`/tournaments/${tournamentId}/registration`}>
+                       <FontAwesomeIcon icon="edit" />
+                       Edit
+                     </a>
+                   </div>
+                   <ul class="list-group list-group-flush">
+                     <li class="list-group-item">
+                       <div class="small text-secondary">Name:</div>
+                       {player.name_with_pronouns}
+                     </li>
+                     <li class="list-group-item">
+                       <div class="small text-secondary">Corp ID:</div>
+                       <Identity
+                         identity={player.corp_id}
+                         name_if_missing="Unspecified"
+                         icon_if_missing="interrupt"
+                       />
+                     </li>
+                     <li class="list-group-item">
+                       <div class="small text-secondary">Runner ID:</div>
+                       <Identity
+                         identity={player.runner_id}
+                         name_if_missing="Unspecified"
+                         icon_if_missing="interrupt"
+                       />
+                     </li>
+                     <li class="list-group-item">
+                       <div class="small text-secondary">First Round Bye:</div>
+                       {#if player.first_round_bye}
+                         <div class="badge badge-success">YES</div>
+                       {:else}
+                         <div class="badge badge-secondary">NO</div>
+                       {/if}
+                     </li>
+                     <li class="list-group-item">
+                       <div class="small text-secondary">Stream my games:</div>
+                       {#if player.include_in_stream}
+                         <div class="badge badge-success">YES</div>
+                       {:else}
+                         <div class="badge badge-secondary">NO</div>
+                       {/if}
+                     </li>
+                   </ul>
+                 </div>
                {:else}
                  <h5 class="card-title">Rejoin this Event</h5>
                  {#if userId == tournament.user_id}
@@ -212,7 +256,7 @@
                     Don't have an account? Register with NetrunnerDB, then return to Cobra to log in:
                   </p>
                   <a class="alert-link" href="https://netrunnerdb.com/register/">
-                    <NsgIcon icon="link" /> Create NRDB Account
+                    <i class="icon icon-link"></i> Create NRDB Account
                   </a>
                 </div>
               {/if}

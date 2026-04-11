@@ -58,15 +58,13 @@ module Beta
       update = player_params
       update[:user_id] = current_user.id unless organiser_view?
 
-      head :ok
+      render json: { id: @player.id }
 
       @player.update(update.except(:corp_deck, :runner_deck))
       return unless @tournament.nrdb_deck_registration?
 
       save_deck(update, :corp_deck, 'corp')
       save_deck(update, :runner_deck, 'runner')
-
-      render json: { id: @player.id }
     end
 
     def destroy
