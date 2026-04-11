@@ -192,17 +192,6 @@ export async function loadTournament(tournamentId: number): Promise<Tournament> 
   return (await response.json() as TournamentJsonApi).data.attributes;
 }
 
-export async function loadTournamentNotice(tournamentId: number): Promise<string> {
-  const response = await fetch(
-    Routes.registration_notice_beta_tournament_path(tournamentId),
-    {
-      method: "GET",
-    },
-  );
-
-  return response.text();
-}
-
 export async function loadPlayer(tournamentId: number, userId: number): Promise<Player> {
   const response = await fetch(
     `/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,

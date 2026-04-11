@@ -40,7 +40,8 @@ module Beta
       params[:user_id] = current_user.id
 
       if @tournament.players.any? { |p| p.name == params[:name] }
-        render json: { id: 0, errors: ["A user with the name #{params[:name]} is already registered for this event."] }
+        render json: { player: helpers.player_json(nil),
+                       errors: ["A user with the name #{params[:name]} is already registered for this event."] }
         return
       end
 
@@ -49,7 +50,7 @@ module Beta
       @tournament.update(any_player_unlocked: true,
                          all_players_unlocked: @tournament.locked_players.count.zero?)
 
-      render json: { id: player.id }
+      render json: { player: helpers.player_json(player) }
     end
 
     def update
@@ -58,13 +59,13 @@ module Beta
       update = player_params
       update[:user_id] = current_user.id unless organiser_view?
 
-      render json: { id: @player.id }
-
       @player.update(update.except(:corp_deck, :runner_deck))
-      return unless @tournament.nrdb_deck_registration?
+      if @tournament.nrdb_deck_registration?
+        save_deck(update, :corp_deck, 'corp')
+        save_deck(update, :runner_deck, 'runner')
+      end
 
-      save_deck(update, :corp_deck, 'corp')
-      save_deck(update, :runner_deck, 'runner')
+      render json: { player: helpers.player_json(@player) }
     end
 
     def destroy

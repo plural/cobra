@@ -4,7 +4,7 @@ module Beta
   class TournamentsController < ApplicationController
     before_action :set_tournament, only: %i[
       show update open_registration close_registration lock_player_registrations unlock_player_registrations
-      cut stats id_and_faction_data cut_conversion_rates registration_notice
+      cut stats id_and_faction_data cut_conversion_rates
     ]
     before_action :authorize_beta_testing
 
@@ -126,34 +126,6 @@ module Beta
       authorize @tournament, :show?
 
       render json: transform_cut_stats(@tournament.cut_conversion_rates_data)
-    end
-
-    def registration_notice
-      authorize @tournament, :show?
-
-      unless @tournament.registration_open?
-        head :ok
-        return
-      end
-
-      notice = ''
-      if @tournament.registration_open?
-        notice = 'Registration is open' unless @current_user_player&.registration_locked?
-      elsif @current_user_player
-        if @tournament.all_players_unlocked?
-          notice = 'Registration is editable'
-        elsif !@current_user_player.registration_locked?
-          notice = 'Your registration is unlocked for editing'
-        end
-      elsif @current_user_is_running_tournament
-        if @tournament.all_players_unlocked?
-          notice = 'Registration is editable'
-        elsif @tournament.any_player_unlocked?
-          notice = 'One or more players are unlocked for editing'
-        end
-      end
-
-      render plain: notice
     end
 
     private

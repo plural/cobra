@@ -53,7 +53,6 @@ Rails.application.routes.draw do
       get :stats, on: :member
       get :id_and_faction_data, on: :member
       get :cut_conversion_rates, on: :member
-      get :registration_notice, on: :member
     end
     get :help
   end

@@ -8,8 +8,9 @@ document.addEventListener("turbolinks:load", function () {
       target: anchor,
       props: {
         tournamentId:
-          Number(anchor.getAttribute("data-tournament") ?? "") || -1,
-        userId: Number(anchor.getAttribute("data-user") ?? "") || -1,
+          Number(anchor.getAttribute("data-tournament-id") ?? "") || -1,
+        userId: Number(anchor.getAttribute("data-user-id") ?? "") || -1,
+        userName: anchor.getAttribute("data-user-name") ?? "",
       },
     });
   }

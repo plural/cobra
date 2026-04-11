@@ -56,10 +56,10 @@ export async function savePlayer(tournamentId: number, player: Player) {
     body: JSON.stringify({ player: playerRequestObject(player) }),
   });
 
-  const result = (await response.json()) as { id: number, errors?: string[] };
+  const result = (await response.json()) as { player: Player, errors?: string[] };
   globalMessages.errors = result.errors ?? [];
 
-  return result.id;
+  return result.player;
 }
 
 export async function togglePlayerLock(tournamentId: number, player: Player) {
