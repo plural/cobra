@@ -5,6 +5,7 @@ import { csrfToken } from "../utils/network";
 
 declare const Routes: {
   players_data_beta_tournament_players_path: (tournamentId: number) => string;
+  beta_tournament_players_path: (tournamentId: number) => string;
   beta_tournament_player_path: (
     tournamentId: number,
     playerId: number,
@@ -28,7 +29,7 @@ declare const Routes: {
   decks_beta_tournament_players_path: (tournamentId: number) => string;
 };
 
-export async function loadPlayers(tournamentId: number): Promise<PlayersData> {
+export async function loadPlayers(tournamentId: number) {
   const response = await fetch(
     Routes.players_data_beta_tournament_players_path(tournamentId),
     {
@@ -42,7 +43,7 @@ export async function loadPlayers(tournamentId: number): Promise<PlayersData> {
 export async function savePlayer(tournamentId: number, player: Player) {
   const route =
     player.id === 0
-      ? `/beta/tournaments/${tournamentId}/players`
+      ? Routes.beta_tournament_players_path(tournamentId)
       : Routes.beta_tournament_player_path(tournamentId, player.id);
   const response = await fetch(route, {
     method: player.id === 0 ? "POST" : "PATCH",
@@ -54,7 +55,9 @@ export async function savePlayer(tournamentId: number, player: Player) {
     body: JSON.stringify({ player: playerRequestObject(player) }),
   });
 
-  return response.status === 200;
+  const result = (await response.json()) as { id: number };
+
+  return result.id;
 }
 
 export async function togglePlayerLock(tournamentId: number, player: Player) {

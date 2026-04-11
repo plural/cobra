@@ -9,6 +9,7 @@ document.addEventListener("turbolinks:load", function () {
       props: {
         tournamentId:
           Number(anchor.getAttribute("data-tournament") ?? "") || -1,
+        userId: Number(anchor.getAttribute("data-user") ?? "") || -1,
       },
     });
   }

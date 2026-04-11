@@ -4,7 +4,7 @@ module PlayersHelper
   # TODO: This and player_hash_json() should be merged
   def player_json(player, side = nil)
     {
-      id: player&.id,
+      id: player&.id || 0,
       name: player&.name,
       pronouns: player&.pronouns,
       name_with_pronouns: name_with_pronouns(player),
@@ -57,7 +57,7 @@ module PlayersHelper
   end
 
   def id(player, side)
-    return nil if player.nil?
+    return { "name": '', "faction": '' } if player.nil?
 
     {
       "name": player["#{side}_identity"],

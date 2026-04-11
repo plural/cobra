@@ -37,14 +37,14 @@ module Beta
       end
 
       params = player_params
-      params[:user_id] = current_user.id unless organiser_view?
+      params[:user_id] = current_user.id
 
       player = @tournament.players.create(params.except(:corp_deck, :runner_deck))
       @tournament.current_stage.players << player unless @tournament.current_stage.nil?
       @tournament.update(any_player_unlocked: true,
                          all_players_unlocked: @tournament.locked_players.count.zero?)
 
-      head :ok
+      render json: { id: player.id }
     end
 
     def update
@@ -60,6 +60,8 @@ module Beta
 
       save_deck(update, :corp_deck, 'corp')
       save_deck(update, :runner_deck, 'runner')
+
+      render json: { id: @player.id }
     end
 
     def destroy
@@ -70,6 +72,14 @@ module Beta
                          all_players_unlocked: @tournament.locked_players.count.zero?)
 
       head :ok
+    end
+
+    def by_user_id
+      authorize @tournament, :show?
+
+      render json: helpers.player_json(@tournament.players.find { |p|
+        p.user_id == params[:user_id].to_i
+      })
     end
 
     def lock_registration

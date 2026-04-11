@@ -1,18 +1,31 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
-  import { loadTournament, loadTournamentNotice, Tournament } from "./TournamentSettings";
+  import { loadPlayer, loadTournament, loadTournamentNotice, Tournament } from "./TournamentSettings";
+  import { Player, savePlayer } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
+  import NsgIcon from "../widgets/NsgIcon.svelte";
 
-  let { tournamentId }: { tournamentId: number } = $props();
+  let { tournamentId, userId }: { tournamentId: number; userId: number; } = $props();
 
   let tournament: Tournament | undefined = $state();
   let notice = $state("");
+  let player: Player | undefined = $state();
+  let playerAgreed = $state(false);
 
   onMount(async () => {
     tournament = await loadTournament(tournamentId);
     notice = await loadTournamentNotice(tournamentId);
+    player = await loadPlayer(tournamentId, userId);
   });
+
+  async function register() {
+    if (!player) {
+      return;
+    }
+
+    player.id = await savePlayer(tournamentId, player);
+  }
 </script>
 
 <GlobalMessages />
@@ -45,21 +58,21 @@
             
             <div class="d-flex flex-wrap">
               {#if tournament.registration_starts}
-                <div class="mr-2">
+                <div class="mr-4">
                   <div class="small text-secondary">Registration:</div>
                   {new Date(tournament.registration_starts).toLocaleTimeString(navigator.languages, { hour: "2-digit", minute: "2-digit" })}
                 </div>
               {/if}
 
               {#if tournament.tournament_starts}
-                <div class="mr-2">
+                <div class="mr-4">
                   <div class="small text-secondary">First Round:</div>
                   {new Date(tournament.tournament_starts).toLocaleTimeString(navigator.languages, { hour: "2-digit", minute: "2-digit" })}
                 </div>
               {/if}
 
               {#if tournament.registration_starts ?? tournament.tournament_starts}
-                <div class="mr-2" style="align-self: flex-end">
+                <div style="align-self: flex-end">
                   {Intl.DateTimeFormat().resolvedOptions().timeZone}
                 </div>
               {/if}
@@ -90,6 +103,126 @@
             </div>
           </li>
         </div>
+      </div>
+
+      <!-- Registration -->
+      <div class="col-md-6">
+        {#if !tournament.registration_closed}
+          {#if player}
+            {#if player.id}
+              <!-- User is logged in and registered -->
+               {#if player.active}
+                 <!-- TODO: Card -->
+                 <h5>My Registration Information</h5>
+                 <!-- TODO -->
+               {:else}
+                 <h5 class="card-title">Rejoin this Event</h5>
+                 {#if userId == tournament.user_id}
+                   <p>
+                     You can reinstate yourself on the <a href={`/beta/tournaments/${tournamentId}/players`}>Players</a> tab.
+                   </p>
+                 {:else}
+                   <p>Talk to a Tournament Organiser to rejoin the event.</p>
+                 {/if}
+               {/if}
+            {:else}
+              {#if userId != -1}
+                <!-- User is logged in and not registered -->
+                <div class="card alert alert-secondary">
+                  <h5 class="card-title">Register for this Event</h5>
+
+                  <div class="identities_form d-block">
+                    <div class="form-group">
+                      <label class="d-block" for="name">Name</label>
+                      <input id="name" type="text" placeholder="Enter your name" class="form-control" bind:value={player.name} />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="d-block" for="name">Pronouns</label>
+                      <input id="name" type="text" placeholder="Example: they/them" class="form-control" bind:value={player.pronouns} />
+                    </div>
+
+                    {#if !tournament.nrdb_deck_registration}
+                      <div class="form-group">
+                        <label class="d-block" for="corp_identity">Corp ID</label>
+                        <input id="corp_identity" type="text" placeholder="Search for corp ID" class="form-control corp_identities" bind:value={player.corp_id.name} />
+                      </div>
+
+                      <div class="form-group">
+                        <label class="d-block" for="runner_identity">Runner ID</label>
+                        <input id="runner_identity" type="text" placeholder="Search for runner ID" class="form-control runner_identities" bind:value={player.runner_id.name} />
+                      </div>
+                    {/if}
+
+                    {#if tournament.allow_streaming_opt_out}
+                      <div class="form-group">
+                        <label for="include_in_stream">
+                          Should we include your games in video coverage of this event? Note: During a top cut it may not be possible to exclude you from coverage.
+                        </label>
+                        <input id="include_in_stream" type="checkbox" bind:checked={player.include_in_stream} />
+                        <label for="include_in_stream">
+                          Include my games in video coverage
+                        </label>
+                      </div>
+                    {/if}
+                    
+                    {#if userId === tournament.user_id}
+                      <input id="first_round_bye" type="checkbox" bind:checked={player.first_round_bye} />
+                      <label for="first_round_bye">First Round Bye</label>
+                      
+                      {#if tournament.manual_seed}
+                        <label class="d-block" for="manual_seed">Manual Seed</label>
+                        <input id="manual_seed" type="number" placeholder="Set seed" class="form-control" bind:value={player.manual_seed} />
+                      {/if}
+                    {/if}
+                    
+                    <hr />
+
+                    <div class="form-group">
+                      <label for="consent_data_sharing">
+                        Your name, pronouns and Netrunner deck identities will be publicly visible on this website. If you submit decklists they will be shared with the organiser. If you enter a round with open decklists, they may be shared with participants or made public.
+                      </label>
+                      <input id="consent_data_sharing" type="checkbox" bind:checked={playerAgreed} />
+                      <label for="consent_data_sharing">
+                        I agree to these terms
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="text-right">
+                    <button type="button" class="btn btn-primary" disabled={!playerAgreed} onclick={register}>
+                      <FontAwesomeIcon icon="user-plus" />
+                      {tournament.nrdb_deck_registration ? "Deck Registration" : "Register"}
+                    </button>
+                  </div>
+                </div>
+              {:else}
+                <!-- User is not logged in and not registered -->
+                <div class="card card-body alert alert-warning">
+                  <h5 class="card-title">Register for this Event</h5>
+                  
+                  <p class="mb-1">
+                    You must be logged in to register for this tournament:
+                  </p>
+                  <a class="alert-link" href={`/login?return_to=/beta/tournaments/${tournamentId}`}>
+                    <FontAwesomeIcon icon="sign-in" /> Sign in
+                  </a>
+      
+                  <p class="mt-4 mb-1">
+                    Don't have an account? Register with NetrunnerDB, then return to Cobra to log in:
+                  </p>
+                  <a class="alert-link" href="https://netrunnerdb.com/register/">
+                    <NsgIcon icon="link" /> Create NRDB Account
+                  </a>
+                </div>
+              {/if}
+            {/if}
+          {:else}
+            <div class="d-flex align-items-center m-2">
+              <div class="spinner-border m-auto"></div>
+            </div>
+          {/if}
+        {/if}
       </div>
     </div>
   </div>
