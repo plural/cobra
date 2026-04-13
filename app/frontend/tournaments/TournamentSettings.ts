@@ -181,7 +181,9 @@ export function emptyTournamentOptions(): TournamentOptions {
   };
 }
 
-export async function loadTournament(tournamentId: number): Promise<Tournament> {
+export async function loadTournament(
+  tournamentId: number,
+): Promise<Tournament> {
   const response = await fetch(
     Routes.api_v1_public_tournament_path(tournamentId),
     {
@@ -189,10 +191,13 @@ export async function loadTournament(tournamentId: number): Promise<Tournament> 
     },
   );
 
-  return (await response.json() as TournamentJsonApi).data.attributes;
+  return ((await response.json()) as TournamentJsonApi).data.attributes;
 }
 
-export async function loadPlayer(tournamentId: number, userId: number): Promise<Player> {
+export async function loadPlayer(
+  tournamentId: number,
+  userId: number,
+): Promise<Player> {
   const response = await fetch(
     `/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,
     {

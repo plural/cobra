@@ -1,7 +1,10 @@
 <script lang="ts">
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import Identity from "../identities/Identity.svelte";
-  import type { MyTournamentData, MyTournamentPairing } from "./TournamentSettings";
+  import type {
+    MyTournamentData,
+    MyTournamentPairing,
+  } from "./TournamentSettings";
 
   let { data }: { data: MyTournamentData } = $props();
 

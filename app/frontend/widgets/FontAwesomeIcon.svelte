@@ -2,7 +2,7 @@
   let {
     icon,
     cssClass,
-    dataTestId
+    dataTestId,
   }: {
     icon: string;
     cssClass?: string;
