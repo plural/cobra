@@ -361,7 +361,7 @@
         <tbody>
           <tr>
             <td>Single Elimination</td>
-            {#each [3, 4, 8, 16] as num (num)}
+            {#each [2, 3, 4, 8, 16] as num (num)}
               <td class="pl-2">
                 <button
                   type="button"

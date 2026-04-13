@@ -99,7 +99,8 @@ module Beta
 
       number = params[:number].to_i
       format = params[:elimination_type] == 'single' ? :single_elim : :double_elim
-      return redirect_to standings_tournament_players_path(@tournament) unless [3, 4, 8, 16].include? number
+      return redirect_to standings_tournament_players_path(@tournament) unless (
+        [3, 4, 8, 16].include? number) || (format == :single_elim && number == 2)
 
       @tournament.cut_to!(format, number)
 

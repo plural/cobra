@@ -3,7 +3,8 @@
 module Bracket
   class Factory
     def self.bracket_for(num_players, single_elim: false)
-      raise 'bracket size not supported' unless [3, 4, 8, 16].include? num_players
+      raise 'bracket size not supported' unless (
+        [3, 4, 8, 16].include? num_players) || (single_elim && num_players == 2)
 
       prefix = 'Top'
       prefix = 'SingleElimTop' if single_elim || num_players == 3
