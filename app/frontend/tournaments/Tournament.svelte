@@ -5,6 +5,8 @@
   import { Player, savePlayer } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import Identity from "../identities/Identity.svelte";
+  import { loadIdentityNames, type IdentityName, type IdentityNames } from "../identities/Identity";
+  import Svelecte from "svelecte";
 
   let {
     tournamentId,
@@ -17,13 +19,15 @@
   } = $props();
 
   let tournament: Tournament | undefined = $state();
-  let notices: string[] = $state([]);
   let player: Player | undefined = $state();
+  let identityNames: IdentityNames | undefined = $state();
+  let notices: string[] = $state([]);
   let playerAgreed = $state(false);
 
   onMount(async () => {
     tournament = await loadTournament(tournamentId);
     player = await loadPlayer(tournamentId, userId);
+    identityNames = await loadIdentityNames();
 
     if (player.id === 0) {
       player.name = userName ?? "";
@@ -44,6 +48,18 @@
       }
     }
   });
+
+  function corpIdChanged(selected: IdentityName | null) {
+    if (player && selected) {
+      player.corp_id.name = selected.value;
+    }
+  }
+
+  function runnerIdChanged(selected: IdentityName | null) {
+    if (player && selected) {
+      player.runner_id.name = selected.value;
+    }
+  }
 
   async function register() {
     if (!player) {
@@ -251,26 +267,28 @@
 
                   {#if !tournament.nrdb_deck_registration}
                     <div class="form-group">
-                      <label class="d-block" for="corp_identity">Corp ID</label>
-                      <input
-                        id="corp_identity"
-                        type="text"
+                      <label class="d-block" for="corp-identity">Corp ID</label>
+                      <Svelecte
+                        inputId="corp-identity"
                         placeholder="Search for corp ID"
-                        class="form-control corp_identities"
-                        bind:value={player.corp_id.name}
+                        options={identityNames ? identityNames.corp : []}
+                        labelField="value"
+                        valueField="label"
+                        onChange={corpIdChanged}
                       />
                     </div>
 
                     <div class="form-group">
-                      <label class="d-block" for="runner_identity">
+                      <label class="d-block" for="runner-identity">
                         Runner ID
                       </label>
-                      <input
-                        id="runner_identity"
-                        type="text"
+                      <Svelecte
+                        inputId="runner-identity"
                         placeholder="Search for runner ID"
-                        class="form-control runner_identities"
-                        bind:value={player.runner_id.name}
+                        options={identityNames ? identityNames.runner : []}
+                        labelField="value"
+                        valueField="label"
+                        onChange={runnerIdChanged}
                       />
                     </div>
                   {/if}
