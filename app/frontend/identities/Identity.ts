@@ -1,14 +1,11 @@
 declare const Routes: {
   beta_identities_path: () => string;
-}
+};
 
 export async function loadIdentityNames() {
-  const response = await fetch(
-    Routes.beta_identities_path(),
-    {
-      method: "GET",
-    },
-  );
+  const response = await fetch(Routes.beta_identities_path(), {
+    method: "GET",
+  });
 
   return (await response.json()) as IdentityNames;
 }

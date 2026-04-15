@@ -5,8 +5,11 @@
   import { Player, savePlayer } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import Identity from "../identities/Identity.svelte";
-  import { loadIdentityNames, type IdentityName, type IdentityNames } from "../identities/Identity";
-  import Svelecte from "svelecte";
+  import {
+    loadIdentityNames,
+    type IdentityNames,
+  } from "../identities/Identity";
+  import IdentitySelect from "../widgets/IdentitySelect.svelte";
 
   let {
     tournamentId,
@@ -48,18 +51,6 @@
       }
     }
   });
-
-  function corpIdChanged(selected: IdentityName | null) {
-    if (player && selected) {
-      player.corp_id.name = selected.value;
-    }
-  }
-
-  function runnerIdChanged(selected: IdentityName | null) {
-    if (player && selected) {
-      player.runner_id.name = selected.value;
-    }
-  }
 
   async function register() {
     if (!player) {
@@ -268,13 +259,11 @@
                   {#if !tournament.nrdb_deck_registration}
                     <div class="form-group">
                       <label class="d-block" for="corp-identity">Corp ID</label>
-                      <Svelecte
-                        inputId="corp-identity"
+                      <IdentitySelect
+                        id="corp-identity"
                         placeholder="Search for corp ID"
-                        options={identityNames ? identityNames.corp : []}
-                        labelField="value"
-                        valueField="label"
-                        onChange={corpIdChanged}
+                        identityNames={identityNames ? identityNames.corp : []}
+                        bind:value={player.corp_id.name}
                       />
                     </div>
 
@@ -282,13 +271,13 @@
                       <label class="d-block" for="runner-identity">
                         Runner ID
                       </label>
-                      <Svelecte
-                        inputId="runner-identity"
+                      <IdentitySelect
+                        id="corp-identity"
                         placeholder="Search for runner ID"
-                        options={identityNames ? identityNames.runner : []}
-                        labelField="value"
-                        valueField="label"
-                        onChange={runnerIdChanged}
+                        identityNames={identityNames
+                          ? identityNames.runner
+                          : []}
+                        bind:value={player.runner_id.name}
                       />
                     </div>
                   {/if}
