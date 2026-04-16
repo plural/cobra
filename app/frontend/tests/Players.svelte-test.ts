@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  MockIdentityNames,
   MockPlayerAlice,
   MockPlayerBob,
   MockPlayersData,
@@ -11,6 +12,7 @@ import {
   getByRole,
   render,
   screen,
+  waitFor,
 } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import {
@@ -32,6 +34,7 @@ import {
   deckVisibilityString,
   SwissDeckVisibility,
 } from "../tournaments/TournamentSettings";
+import { loadIdentityNames } from "../identities/Identity";
 
 const user = userEvent.setup();
 
@@ -52,15 +55,37 @@ vi.mock("../players/PlayersData", async (importOriginal) => ({
   reinstatePlayer: vi.fn(() => true),
 }));
 
+vi.mock("../identities/Identity", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../identities/Identity")>()),
+  loadIdentityNames: vi.fn(() => MockIdentityNames),
+}));
+
 describe("Players", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
   });
 
   describe("when there are no dropped players", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       render(Players, { tournamentId: 1 });
-      expect(loadPlayers).toHaveBeenCalledOnce();
+      await waitFor(() => {
+        expect(loadPlayers).toHaveBeenCalledOnce();
+      });
+      await waitFor(() => {
+        expect(loadIdentityNames).toHaveBeenCalledOnce();
+      });
     });
 
     it("displays active players", () => {
@@ -69,12 +94,12 @@ describe("Players", () => {
       expect(playerItems).toHaveLength(2);
       expect(getByLabelText(playerItems[0], "Name")).toHaveValue("Alice");
       expect(getByLabelText(playerItems[0], "Pronouns")).toHaveValue("she/her");
-      expect(getByLabelText(playerItems[0], "Corp ID")).toHaveValue(
-        "A Teia: IP Recovery",
-      );
-      expect(getByLabelText(playerItems[0], "Runner ID")).toHaveValue(
-        "Arissana Rocha Nahu: Street Artist",
-      );
+      expect(
+        playerItems[0].querySelector('select[name="player_corp_id_1"]'),
+      ).toHaveValue("A Teia: IP Recovery");
+      expect(
+        playerItems[0].querySelector('select[name="player_runner_id_1"]'),
+      ).toHaveValue("Arissana Rocha Nahu: Street Artist");
       expect(
         getByRole(playerItems[0], "checkbox", {
           name: "Video coverage allowed",
@@ -88,12 +113,12 @@ describe("Players", () => {
       );
       expect(getByLabelText(playerItems[1], "Name")).toHaveValue("Bob");
       expect(getByLabelText(playerItems[1], "Pronouns")).toHaveValue("he/him");
-      expect(getByLabelText(playerItems[1], "Corp ID")).toHaveValue(
-        "BANGUN: When Disaster Strikes",
-      );
-      expect(getByLabelText(playerItems[1], "Runner ID")).toHaveValue(
-        "Barry “Baz” Wong: Tri-Maf Veteran",
-      );
+      expect(
+        playerItems[1].querySelector('select[name="player_corp_id_2"]'),
+      ).toHaveValue("BANGUN: When Disaster Strikes");
+      expect(
+        playerItems[1].querySelector('select[name="player_runner_id_2"]'),
+      ).toHaveValue("Barry “Baz” Wong: Tri-Maf Veteran");
       expect(
         getByRole(playerItems[1], "checkbox", {
           name: "Video coverage allowed",

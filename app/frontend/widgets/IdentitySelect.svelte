@@ -32,6 +32,7 @@
 </script>
 
 <Svelecte
+  name={id}
   inputId={id}
   controlClass={cssClass}
   disabled={!enabled}
