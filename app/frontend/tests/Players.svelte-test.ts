@@ -4,7 +4,6 @@ import {
   MockPlayerAlice,
   MockPlayerBob,
   MockPlayersData,
-  MockTournament,
 } from "./PlayersTestData";
 import Players from "../players/Players.svelte";
 import {
@@ -35,6 +34,7 @@ import {
   SwissDeckVisibility,
 } from "../tournaments/TournamentSettings";
 import { loadIdentityNames } from "../identities/Identity";
+import { MockTournament } from "./TournamentTestData";
 
 const user = userEvent.setup();
 

@@ -1,6 +1,6 @@
 import type { IdentityNames } from "../identities/Identity";
 import type { Player, PlayersData } from "../players/PlayersData";
-import { Tournament } from "../tournaments/TournamentSettings";
+import { MockTournament } from "./TournamentTestData";
 
 export const MockPlayerAlice: Player = {
   id: 1,
@@ -49,16 +49,6 @@ export const MockPlayerBob: Player = {
   side: "runner",
   side_label: null,
 };
-
-export const MockTournament = new Tournament({
-  id: 1,
-  name: "Mock Tournament",
-  self_registration: true,
-  nrdb_deck_registration: true,
-  all_players_unlocked: true,
-  any_player_unlocked: true,
-  allow_streaming_opt_out: true,
-});
 
 export const MockPlayersData: PlayersData = {
   tournament: MockTournament,

@@ -76,7 +76,7 @@
         <div class="card">
           <!-- Shortcode -->
           {#if tournament.slug}
-            <li class="list-group-item">
+            <li class="list-group-item" aria-label="shortcode">
               <div class="small text-secondary">Shortcode:</div>
               {tournament.slug}
               (
@@ -89,7 +89,7 @@
 
           <!-- Date -->
           <li class="list-group-item">
-            <div>
+            <div aria-label="date">
               <div class="small text-secondary">Date:</div>
               {new Date(tournament.date).toLocaleString(navigator.languages, {
                 weekday: "long",
@@ -102,7 +102,7 @@
 
             <div class="d-flex flex-wrap">
               {#if tournament.registration_starts}
-                <div class="mr-4">
+                <div class="mr-4" aria-label="registration time">
                   <div class="small text-secondary">Registration:</div>
                   {new Date(tournament.registration_starts).toLocaleTimeString(
                     navigator.languages,
@@ -112,7 +112,7 @@
               {/if}
 
               {#if tournament.tournament_starts}
-                <div class="mr-4">
+                <div class="mr-4" aria-label="first round time">
                   <div class="small text-secondary">First Round:</div>
                   {new Date(tournament.tournament_starts).toLocaleTimeString(
                     navigator.languages,
@@ -122,7 +122,7 @@
               {/if}
 
               {#if tournament.registration_starts ?? tournament.tournament_starts}
-                <div style="align-self: flex-end">
+                <div style="align-self: flex-end" aria-label="time zone">
                   {Intl.DateTimeFormat().resolvedOptions().timeZone}
                 </div>
               {/if}
@@ -130,13 +130,13 @@
           </li>
 
           <!-- Organiser -->
-          <li class="list-group-item">
+          <li class="list-group-item" aria-label="tournament organiser">
             <div class="small text-secondary">Organiser:</div>
             {`${tournament.tournament_organizer} ${tournament.organizer_contact ? `- ${tournament.organizer_contact}` : ""}`}
           </li>
 
           <!-- Players -->
-          <li class="list-group-item">
+          <li class="list-group-item" aria-label="player count">
             <div class="small text-secondary">Players:</div>
             {tournament.active_player_count}
             {new Intl.PluralRules(navigator.languages).select(
@@ -150,7 +150,7 @@
           <!-- QR Code -->
           <li class="list-group-item">
             <div class="small text-secondary">QR Code:</div>
-            <div class="row col-sm-6">
+            <div class="row col-sm-6" aria-label="QR Code">
               <a href={`/tournaments/${tournamentId}/qr`} target="_blank">
                 <FontAwesomeIcon icon="qrcode" />
                 Open Printable QR Code
@@ -161,7 +161,7 @@
       </div>
 
       <!-- Registration -->
-      <div class="col-md-6">
+      <div class="col-md-6" aria-label="registration information">
         {#if player}
           {#if player.id !== 0}
             <!-- User is logged in and registered -->

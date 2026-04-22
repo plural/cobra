@@ -8,7 +8,7 @@ import {
 } from "../pairings/PairingsData";
 import type { ScoreReport } from "../pairings/SelfReport";
 import type { Player } from "../players/PlayersData";
-import { Tournament } from "../tournaments/TournamentSettings";
+import { MockTournament } from "./TournamentTestData";
 
 export const MockPlayerAlice: Player = {
   id: 1,
@@ -135,14 +135,6 @@ export const MockDoubleElimCutStage: Stage = {
   view_decks: false,
   rounds: [],
 };
-
-export const MockTournament = new Tournament({
-  id: 1,
-  name: "Mock Tournament",
-  self_registration: true,
-  all_players_unlocked: true,
-  any_player_unlocked: true,
-});
 
 export const MockPairingsData: PairingsData = {
   tournament: MockTournament,
