@@ -1,4 +1,3 @@
-import type { IdentityNames } from "../identities/Identity";
 import type { Player, PlayersData } from "../players/PlayersData";
 import { MockTournament } from "./TournamentTestData";
 
@@ -34,11 +33,11 @@ export const MockPlayerBob: Player = {
   user_id: 2,
   corp_id: {
     name: "BANGUN: When Disaster Strikes",
-    faction: null,
+    faction: "weyland-consortium",
   },
   runner_id: {
     name: "Barry “Baz” Wong: Tri-Maf Veteran",
-    faction: null,
+    faction: "criminal"
   },
   registration_locked: true,
   include_in_stream: false,
@@ -58,27 +57,4 @@ export const MockPlayersData: PlayersData = {
   },
   activePlayers: [MockPlayerAlice, MockPlayerBob],
   droppedPlayers: [],
-};
-
-export const MockIdentityNames: IdentityNames = {
-  corp: [
-    {
-      label: "A Teia: IP Recovery",
-      value: "A Teia: IP Recovery",
-    },
-    {
-      label: "BANGUN: When Disaster Strikes",
-      value: "BANGUN: When Disaster Strikes",
-    },
-  ],
-  runner: [
-    {
-      label: "Arissana Rocha Nahu: Street Artist",
-      value: "Arissana Rocha Nahu: Street Artist",
-    },
-    {
-      label: "Barry “Baz” Wong: Tri-Maf Veteran",
-      value: "Barry “Baz” Wong: Tri-Maf Veteran",
-    },
-  ],
 };

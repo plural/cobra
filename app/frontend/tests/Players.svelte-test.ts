@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  MockIdentityNames,
   MockPlayerAlice,
   MockPlayerBob,
   MockPlayersData,
@@ -34,7 +33,7 @@ import {
   SwissDeckVisibility,
 } from "../tournaments/TournamentSettings";
 import { loadIdentityNames } from "../identities/Identity";
-import { MockTournament } from "./TournamentTestData";
+import { MockIdentityNames, MockTournament } from "./TournamentTestData";
 
 const user = userEvent.setup();
 

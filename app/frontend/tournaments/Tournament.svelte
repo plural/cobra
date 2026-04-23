@@ -150,7 +150,7 @@
           <!-- QR Code -->
           <li class="list-group-item">
             <div class="small text-secondary">QR Code:</div>
-            <div class="row col-sm-6" aria-label="QR Code">
+            <div class="row col-sm-6" aria-label="QR code">
               <a href={`/tournaments/${tournamentId}/qr`} target="_blank">
                 <FontAwesomeIcon icon="qrcode" />
                 Open Printable QR Code
@@ -177,38 +177,44 @@
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
                     <div class="small text-secondary">Name:</div>
-                    {player.name_with_pronouns}
+                    <div aria-label="name">
+                      {player.name_with_pronouns}
+                    </div>
                   </li>
                   <li class="list-group-item">
                     <div class="small text-secondary">Corp ID:</div>
-                    <Identity
-                      identity={player.corp_id}
-                      name_if_missing="Unspecified"
-                      icon_if_missing="interrupt"
-                    />
+                    <div aria-label="corp ID">
+                      <Identity
+                        identity={player.corp_id}
+                        name_if_missing="Unspecified"
+                        icon_if_missing="interrupt"
+                      />
+                    </div>
                   </li>
                   <li class="list-group-item">
                     <div class="small text-secondary">Runner ID:</div>
-                    <Identity
-                      identity={player.runner_id}
-                      name_if_missing="Unspecified"
-                      icon_if_missing="interrupt"
-                    />
+                    <div aria-label="runner ID">
+                      <Identity
+                        identity={player.runner_id}
+                        name_if_missing="Unspecified"
+                        icon_if_missing="interrupt"
+                      />
+                    </div>
                   </li>
                   <li class="list-group-item">
                     <div class="small text-secondary">First Round Bye:</div>
                     {#if player.first_round_bye}
-                      <div class="badge badge-success">YES</div>
+                      <div class="badge badge-success" aria-label="first round bye">YES</div>
                     {:else}
-                      <div class="badge badge-secondary">NO</div>
+                      <div class="badge badge-secondary" aria-label="first round bye">NO</div>
                     {/if}
                   </li>
                   <li class="list-group-item">
                     <div class="small text-secondary">Stream my games:</div>
                     {#if player.include_in_stream}
-                      <div class="badge badge-success">YES</div>
+                      <div class="badge badge-success" aria-label="stream my games">YES</div>
                     {:else}
-                      <div class="badge badge-secondary">NO</div>
+                      <div class="badge badge-secondary" aria-label="stream my games">NO</div>
                     {/if}
                   </li>
                 </ul>
@@ -246,9 +252,9 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="d-block" for="name">Pronouns</label>
+                    <label class="d-block" for="pronouns">Pronouns</label>
                     <input
-                      id="name"
+                      id="pronouns"
                       type="text"
                       placeholder="Example: they/them"
                       class="form-control"
@@ -272,7 +278,7 @@
                         Runner ID
                       </label>
                       <IdentitySelect
-                        id="corp-identity"
+                        id="runner-identity"
                         placeholder="Search for runner ID"
                         identityNames={identityNames
                           ? identityNames.runner

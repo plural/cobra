@@ -36,8 +36,14 @@ export const MockPlayerBob: Player = {
   side: null,
   user_id: 0,
   side_label: null,
-  corp_id: new Identity(),
-  runner_id: new Identity(),
+  corp_id: {
+    name: "BANGUN: When Disaster Strikes",
+    faction: "weyland-consortium",
+  },
+  runner_id: {
+    name: "Barry “Baz” Wong: Tri-Maf Veteran",
+    faction: "criminal"
+  },
   registration_locked: false,
   include_in_stream: false,
   active: null,
