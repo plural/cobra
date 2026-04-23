@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { IdentityNames } from "../identities/Identity";
   import type { TournamentPolicies } from "../pairings/PairingsData";
   import type { Tournament } from "../tournaments/TournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
@@ -10,11 +11,13 @@
     togglePlayerLock as togglePlayerLockRequest,
     dropPlayer as dropPlayerRequest,
   } from "./PlayersData";
+  import IdentitySelect from "../widgets/IdentitySelect.svelte";
 
   let {
     player,
     tournament,
     tournamentPolicies,
+    identityNames,
     savedCallback,
     droppedCallback,
     deletedCallback,
@@ -22,6 +25,7 @@
     player: Player;
     tournament: Tournament;
     tournamentPolicies: TournamentPolicies;
+    identityNames: IdentityNames;
     savedCallback?: (player: Player) => void;
     droppedCallback?: (player: Player) => void;
     deletedCallback?: (player: Player) => void;
@@ -99,7 +103,7 @@
   </div>
 
   <!-- Pronouns -->
-  <div class="col-auto">
+  <div class="col">
     <label for="player_pronouns_{playerEdit.id}">Pronouns</label>
     <input
       id="player_pronouns_{playerEdit.id}"
@@ -112,27 +116,25 @@
 
   {#if !tournament.nrdb_deck_registration || playerEdit.id !== 0}
     <!-- Corp ID -->
-    <div class="col">
+    <div class="col w-25">
       <label for="player_corp_id_{playerEdit.id}">Corp ID</label>
-      <input
+      <IdentitySelect
         id="player_corp_id_{playerEdit.id}"
-        type="text"
-        class="form-control corp_identities"
         placeholder="Search for corp ID"
-        readonly={tournament.nrdb_deck_registration}
+        enabled={!tournament.nrdb_deck_registration}
+        identityNames={identityNames.corp}
         bind:value={playerEdit.corp_id.name}
       />
     </div>
 
     <!-- Runner ID -->
-    <div class="col">
+    <div class="col w-25">
       <label for="player_runner_id_{playerEdit.id}">Runner ID</label>
-      <input
+      <IdentitySelect
         id="player_runner_id_{playerEdit.id}"
-        type="text"
-        class="form-control runner_identities"
         placeholder="Search for runner ID"
-        readonly={tournament.nrdb_deck_registration}
+        enabled={!tournament.nrdb_deck_registration}
+        identityNames={identityNames.runner}
         bind:value={playerEdit.runner_id.name}
       />
     </div>

@@ -5,6 +5,11 @@
   import { Player, savePlayer } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import Identity from "../identities/Identity.svelte";
+  import {
+    loadIdentityNames,
+    type IdentityNames,
+  } from "../identities/Identity";
+  import IdentitySelect from "../widgets/IdentitySelect.svelte";
 
   let {
     tournamentId,
@@ -17,13 +22,15 @@
   } = $props();
 
   let tournament: Tournament | undefined = $state();
-  let notices: string[] = $state([]);
   let player: Player | undefined = $state();
+  let identityNames: IdentityNames | undefined = $state();
+  let notices: string[] = $state([]);
   let playerAgreed = $state(false);
 
   onMount(async () => {
     tournament = await loadTournament(tournamentId);
     player = await loadPlayer(tournamentId, userId);
+    identityNames = await loadIdentityNames();
 
     if (player.id === 0) {
       player.name = userName ?? "";
@@ -251,25 +258,25 @@
 
                   {#if !tournament.nrdb_deck_registration}
                     <div class="form-group">
-                      <label class="d-block" for="corp_identity">Corp ID</label>
-                      <input
-                        id="corp_identity"
-                        type="text"
+                      <label class="d-block" for="corp-identity">Corp ID</label>
+                      <IdentitySelect
+                        id="corp-identity"
                         placeholder="Search for corp ID"
-                        class="form-control corp_identities"
+                        identityNames={identityNames ? identityNames.corp : []}
                         bind:value={player.corp_id.name}
                       />
                     </div>
 
                     <div class="form-group">
-                      <label class="d-block" for="runner_identity">
+                      <label class="d-block" for="runner-identity">
                         Runner ID
                       </label>
-                      <input
-                        id="runner_identity"
-                        type="text"
+                      <IdentitySelect
+                        id="corp-identity"
                         placeholder="Search for runner ID"
-                        class="form-control runner_identities"
+                        identityNames={identityNames
+                          ? identityNames.runner
+                          : []}
                         bind:value={player.runner_id.name}
                       />
                     </div>
