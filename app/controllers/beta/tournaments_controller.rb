@@ -3,10 +3,14 @@
 module Beta
   class TournamentsController < ApplicationController
     before_action :set_tournament, only: %i[
-      update open_registration close_registration lock_player_registrations unlock_player_registrations
+      show update open_registration close_registration lock_player_registrations unlock_player_registrations
       cut stats id_and_faction_data cut_conversion_rates
     ]
     before_action :authorize_beta_testing
+
+    def show
+      authorize @tournament
+    end
 
     def update
       authorize @tournament
