@@ -5,17 +5,14 @@ namespace :ids do
   task update: :environment do
     puts 'Updating identities from NRDB...'
     puts "DB currently has #{Identity.count} identities."
-    Nrdb::Connection.new
-                    .cards
-                    .select { |card| card[:type_code] == 'identity' }
-                    .each do |id|
-                      Identity.find_or_create_by(nrdb_code: id[:code])
-                              .update(
-                                name: id[:title],
-                                side: id[:side_code],
-                                faction: id[:faction_code],
-                                autocomplete: id[:stripped_title]
-                              )
+    Nrdb::Connection.new.cards.select { |card| card[:type_code] == 'identity' }.each do |id|
+      Identity.find_or_create_by(nrdb_code: id[:code])
+              .update(
+                name: id[:title],
+                side: id[:side_code],
+                faction: id[:faction_code],
+                autocomplete: id[:stripped_title]
+              )
     end
 
     puts 'Updating autocomplete text for specific identities...'
