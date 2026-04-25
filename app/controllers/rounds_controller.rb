@@ -396,7 +396,7 @@ class RoundsController < ApplicationController
     return nil unless stage[:is_elimination]
 
     begin
-      bracket = Bracket::Factory.bracket_for(stage[:player_count], single_elim: stage[:format] == :single_elim)
+      bracket = Bracket::Factory.bracket_for(stage[:player_count], single_elim: stage[:format].to_sym == :single_elim)
     rescue RuntimeError
       return nil
     end
