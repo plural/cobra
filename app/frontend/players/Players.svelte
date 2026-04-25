@@ -21,10 +21,15 @@
   } from "../tournaments/TournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { downloadBlob, quoteCsvValue } from "../utils/files";
+  import {
+    loadIdentityNames,
+    type IdentityNames,
+  } from "../identities/Identity";
 
   let { tournamentId }: { tournamentId: number } = $props();
 
   let data: PlayersData | undefined = $state();
+  let identityNames: IdentityNames | undefined = $state();
   let newPlayer = $state(new Player());
   let registrationLockDescription = $derived.by(() => {
     if (!data) {
@@ -57,6 +62,7 @@
 
   onMount(async () => {
     await loadData();
+    identityNames = await loadIdentityNames();
   });
 
   async function loadData() {
@@ -260,6 +266,7 @@
       player={newPlayer}
       tournament={data.tournament}
       tournamentPolicies={data.tournamentPolicies}
+      identityNames={identityNames ?? { corp: [], runner: [] }}
       savedCallback={newPlayerSavedCallback}
     />
   </div>
@@ -425,6 +432,7 @@
           {player}
           tournament={data.tournament}
           tournamentPolicies={data.tournamentPolicies}
+          identityNames={identityNames ?? { corp: [], runner: [] }}
           savedCallback={loadData}
           droppedCallback={loadData}
           deletedCallback={loadData}

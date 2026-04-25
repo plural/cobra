@@ -1,3 +1,4 @@
+import type { IdentityNames } from "../identities/Identity";
 import type { Player, PlayersData } from "../players/PlayersData";
 import { Tournament } from "../tournaments/TournamentSettings";
 
@@ -67,4 +68,27 @@ export const MockPlayersData: PlayersData = {
   },
   activePlayers: [MockPlayerAlice, MockPlayerBob],
   droppedPlayers: [],
+};
+
+export const MockIdentityNames: IdentityNames = {
+  corp: [
+    {
+      label: "A Teia: IP Recovery",
+      value: "A Teia: IP Recovery",
+    },
+    {
+      label: "BANGUN: When Disaster Strikes",
+      value: "BANGUN: When Disaster Strikes",
+    },
+  ],
+  runner: [
+    {
+      label: "Arissana Rocha Nahu: Street Artist",
+      value: "Arissana Rocha Nahu: Street Artist",
+    },
+    {
+      label: "Barry “Baz” Wong: Tri-Maf Veteran",
+      value: "Barry “Baz” Wong: Tri-Maf Veteran",
+    },
+  ],
 };
