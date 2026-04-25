@@ -27,16 +27,7 @@ class RoundsController < ApplicationController
         update: @tournament.user == current_user,
         custom_table_numbering: Flipper.enabled?(:custom_table_numbering, current_user)
       },
-      tournament: {
-        id: @tournament.id,
-        player_meeting: @tournament.round_ids.empty?,
-        registration_open: @tournament.registration_open?,
-        registration_unlocked: @tournament.registration_unlocked?,
-        self_registration: @tournament.self_registration?,
-        locked_players: @tournament.locked_players.count,
-        unlocked_players: @tournament.unlocked_players.count,
-        allow_streaming_opt_out: @tournament.allow_streaming_opt_out
-      },
+      tournament: helpers.tournament_json(@tournament),
       stages: pairings_data_stages,
       warnings: ([@tournament.current_stage&.validate_table_count] if policy(@tournament).update?)
     }
@@ -405,7 +396,7 @@ class RoundsController < ApplicationController
     return nil unless stage[:is_elimination]
 
     begin
-      bracket = Bracket::Factory.bracket_for(stage[:player_count], single_elim: stage[:format] == :single_elim)
+      bracket = Bracket::Factory.bracket_for(stage[:player_count], single_elim: stage[:format].to_sym == :single_elim)
     rescue RuntimeError
       return nil
     end

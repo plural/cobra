@@ -1,17 +1,20 @@
 <script lang="ts">
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import Identity from "../identities/Identity.svelte";
-  import type { MyTournamentData, Pairing } from "../entrypoints/my_tournament";
+  import type {
+    MyTournamentData,
+    MyTournamentPairing,
+  } from "./TournamentSettings";
 
   let { data }: { data: MyTournamentData } = $props();
 
   let showPreviousRounds = $state(false);
 
-  function isBye(pairing: Pairing): boolean {
+  function isBye(pairing: MyTournamentPairing): boolean {
     return !pairing.opponent.name || pairing.opponent.name === "";
   }
 
-  function getMySide(pairing: Pairing): "Corp" | "Runner" | null {
+  function getMySide(pairing: MyTournamentPairing): "Corp" | "Runner" | null {
     if (
       pairing.format !== "single_sided_swiss" &&
       !pairing.format.includes("elim")
@@ -22,7 +25,7 @@
     return null;
   }
 
-  function getRoundLabel(pairing: Pairing): string {
+  function getRoundLabel(pairing: MyTournamentPairing): string {
     const prefix = pairing.format.includes("elim") ? "Cut " : "";
     return `${prefix}${String(pairing.round_number)}`;
   }

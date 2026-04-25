@@ -9,40 +9,48 @@
     reinstatePlayer as reinstatePlayerRequest,
   } from "./PlayersData";
   import {
-    DeckVisibility,
-    deckVisibilityString,
     saveTournament,
     setPlayerRegistrationStatus as setPlayerRegistrationStatusRequest,
     setRegistrationStatus as setRegistrationStatusRequest,
   } from "../pairings/PairingsData";
   import PlayerForm from "./PlayerForm.svelte";
+  import {
+    CutDeckVisibility,
+    deckVisibilityString,
+    SwissDeckVisibility,
+  } from "../tournaments/TournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { downloadBlob, quoteCsvValue } from "../utils/files";
+  import {
+    loadIdentityNames,
+    type IdentityNames,
+  } from "../identities/Identity";
 
   let { tournamentId }: { tournamentId: number } = $props();
 
   let data: PlayersData | undefined = $state();
+  let identityNames: IdentityNames | undefined = $state();
   let newPlayer = $state(new Player());
   let registrationLockDescription = $derived.by(() => {
     if (!data) {
       return "";
     }
 
-    if (data.tournament.registration_open) {
-      if (data.tournament.locked_players === 0) {
-        return "open";
-      } else if (data.tournament.unlocked_players > 0) {
-        return "open, part locked";
+    if (data.tournament.registration_closed) {
+      if (data.tournament.all_players_unlocked) {
+        return "closed, unlocked";
+      } else if (data.tournament.any_player_unlocked) {
+        return "closed, part unlocked";
       }
-      return "open, all locked";
+      return "closed";
     }
 
-    if (data.tournament.locked_players === 0) {
-      return "closed, unlocked";
-    } else if (data.tournament.unlocked_players > 0) {
-      return "closed, part unlocked";
+    if (data.tournament.all_players_unlocked) {
+      return "open";
+    } else if (data.tournament.any_player_unlocked) {
+      return "open, part locked";
     }
-    return "closed";
+    return "open, all locked";
   });
   let deckVisibilityDescription = $derived.by(() => {
     if (!data) {
@@ -54,6 +62,7 @@
 
   onMount(async () => {
     await loadData();
+    identityNames = await loadIdentityNames();
   });
 
   async function loadData() {
@@ -86,54 +95,67 @@
     await loadData();
   }
 
-  async function setDeckVisibility(swiss: boolean, visibility: DeckVisibility) {
+  async function setCutDeckVisibility(visibility: CutDeckVisibility) {
     if (!data) {
       return;
     }
 
     const tournamentEdit = $state.snapshot(data.tournament);
 
-    if (swiss) {
-      if (visibility === DeckVisibility.Open) {
-        if (
-          !confirm(
-            "This will make all decklists visible to all registered players in the tournament. Are you sure?",
-          )
-        ) {
-          return;
-        }
-      } else if (visibility === DeckVisibility.Public) {
-        if (
-          !confirm(
-            "This will make all decklists visible to anyone who views the tournament. Are you sure?",
-          )
-        ) {
-          return;
-        }
+    if (visibility === CutDeckVisibility.Open) {
+      if (
+        !confirm(
+          "This will make decklists of players registered for the cut visible to other players registered for the cut. Are you sure?",
+        )
+      ) {
+        return;
       }
-
-      tournamentEdit.swiss_deck_visibility = visibility;
-    } else {
-      if (visibility === DeckVisibility.Open) {
-        if (
-          !confirm(
-            "This will make decklists of players registered for the cut visible to other players registered for the cut. Are you sure?",
-          )
-        ) {
-          return;
-        }
-      } else if (visibility === DeckVisibility.Public) {
-        if (
-          !confirm(
-            "This will make decklists of players registered for the cut visible to anyone who views the tournament. Are you sure?",
-          )
-        ) {
-          return;
-        }
+    } else if (visibility === CutDeckVisibility.Public) {
+      if (
+        !confirm(
+          "This will make decklists of players registered for the cut visible to anyone who views the tournament. Are you sure?",
+        )
+      ) {
+        return;
       }
-
-      tournamentEdit.cut_deck_visibility = visibility;
     }
+
+    tournamentEdit.cut_deck_visibility = visibility;
+
+    const success = await saveTournament(tournamentEdit);
+    if (!success) {
+      return;
+    }
+
+    await loadData();
+  }
+
+  async function setSwissDeckVisibility(visibility: SwissDeckVisibility) {
+    if (!data) {
+      return;
+    }
+
+    const tournamentEdit = $state.snapshot(data.tournament);
+
+    if (visibility === SwissDeckVisibility.Open) {
+      if (
+        !confirm(
+          "This will make all decklists visible to all registered players in the tournament. Are you sure?",
+        )
+      ) {
+        return;
+      }
+    } else if (visibility === SwissDeckVisibility.Public) {
+      if (
+        !confirm(
+          "This will make all decklists visible to anyone who views the tournament. Are you sure?",
+        )
+      ) {
+        return;
+      }
+    }
+
+    tournamentEdit.swiss_deck_visibility = visibility;
 
     const success = await saveTournament(tournamentEdit);
     if (!success) {
@@ -244,6 +266,7 @@
       player={newPlayer}
       tournament={data.tournament}
       tournamentPolicies={data.tournamentPolicies}
+      identityNames={identityNames ?? { corp: [], runner: [] }}
       savedCallback={newPlayerSavedCallback}
     />
   </div>
@@ -263,7 +286,7 @@
         </button>
         <div class="dropdown-menu">
           <button
-            class="dropdown-item {data.tournament.unlocked_players === 0
+            class="dropdown-item {!data.tournament.any_player_unlocked
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
@@ -272,7 +295,7 @@
             <FontAwesomeIcon icon="lock" /> Lock all players, prevent editing
           </button>
           <button
-            class="dropdown-item {data.tournament.locked_players === 0
+            class="dropdown-item {data.tournament.all_players_unlocked
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
@@ -282,7 +305,7 @@
           </button>
           <div class="dropdown-divider"></div>
           <button
-            class="dropdown-item {!data.tournament.registration_open
+            class="dropdown-item {data.tournament.registration_closed
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
@@ -291,7 +314,7 @@
             <FontAwesomeIcon icon="lock" /> Close registration, prevent new players
           </button>
           <button
-            class="dropdown-item {data.tournament.registration_open
+            class="dropdown-item {!data.tournament.registration_closed
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
@@ -316,31 +339,31 @@
         <div class="dropdown-menu">
           <button
             class="dropdown-item {data.tournament.swiss_deck_visibility ===
-            DeckVisibility.Private
+            SwissDeckVisibility.Private
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
-            onclick={() => setDeckVisibility(true, DeckVisibility.Private)}
+            onclick={() => setSwissDeckVisibility(SwissDeckVisibility.Private)}
           >
             <FontAwesomeIcon icon="eye-slash" /> Make decks in swiss private
           </button>
           <button
             class="dropdown-item {data.tournament.swiss_deck_visibility ===
-            DeckVisibility.Open
+            SwissDeckVisibility.Open
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
-            onclick={() => setDeckVisibility(true, DeckVisibility.Open)}
+            onclick={() => setSwissDeckVisibility(SwissDeckVisibility.Open)}
           >
             <FontAwesomeIcon icon="eye" /> Make decks in swiss open, visible to participants
           </button>
           <button
             class="dropdown-item {data.tournament.swiss_deck_visibility ===
-            DeckVisibility.Public
+            SwissDeckVisibility.Public
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
-            onclick={() => setDeckVisibility(true, DeckVisibility.Public)}
+            onclick={() => setSwissDeckVisibility(SwissDeckVisibility.Public)}
           >
             <FontAwesomeIcon icon="eye" />
             Make decks in swiss public, visible to anyone
@@ -348,31 +371,31 @@
           <div class="dropdown-divider"></div>
           <button
             class="dropdown-item {data.tournament.cut_deck_visibility ===
-            DeckVisibility.Private
+            CutDeckVisibility.Private
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
-            onclick={() => setDeckVisibility(false, DeckVisibility.Private)}
+            onclick={() => setCutDeckVisibility(CutDeckVisibility.Private)}
           >
             <FontAwesomeIcon icon="eye-slash" /> Make decks in cut private
           </button>
           <button
             class="dropdown-item {data.tournament.cut_deck_visibility ===
-            DeckVisibility.Open
+            CutDeckVisibility.Open
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
-            onclick={() => setDeckVisibility(false, DeckVisibility.Open)}
+            onclick={() => setCutDeckVisibility(CutDeckVisibility.Open)}
           >
             <FontAwesomeIcon icon="eye" /> Make decks in cut open, visible to participants
           </button>
           <button
             class="dropdown-item {data.tournament.cut_deck_visibility ===
-            DeckVisibility.Public
+            CutDeckVisibility.Public
               ? 'disabled'
               : ''}"
             style="cursor: pointer"
-            onclick={() => setDeckVisibility(false, DeckVisibility.Public)}
+            onclick={() => setCutDeckVisibility(CutDeckVisibility.Public)}
           >
             <FontAwesomeIcon icon="eye" /> Make decks in cut public, visible to anyone
           </button>
@@ -409,6 +432,7 @@
           {player}
           tournament={data.tournament}
           tournamentPolicies={data.tournamentPolicies}
+          identityNames={identityNames ?? { corp: [], runner: [] }}
           savedCallback={loadData}
           droppedCallback={loadData}
           deletedCallback={loadData}

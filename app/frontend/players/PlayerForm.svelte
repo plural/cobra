@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type {
-    Tournament,
-    TournamentPolicies,
-  } from "../pairings/PairingsData";
+  import type { IdentityNames } from "../identities/Identity";
+  import type { TournamentPolicies } from "../pairings/PairingsData";
+  import type { Tournament } from "../tournaments/TournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
+  import ProgressButton from "../widgets/ProgressButton.svelte";
   import {
     Player,
     savePlayer,
@@ -11,19 +11,13 @@
     togglePlayerLock as togglePlayerLockRequest,
     dropPlayer as dropPlayerRequest,
   } from "./PlayersData";
-
-  const SaveState = Object.freeze({
-    NONE: -1,
-    UNSAVED: 0,
-    SAVING: 1,
-    SAVED: 2,
-  });
-  const SUCCESS_DURATION = 1000;
+  import IdentitySelect from "../widgets/IdentitySelect.svelte";
 
   let {
     player,
     tournament,
     tournamentPolicies,
+    identityNames,
     savedCallback,
     droppedCallback,
     deletedCallback,
@@ -31,13 +25,13 @@
     player: Player;
     tournament: Tournament;
     tournamentPolicies: TournamentPolicies;
+    identityNames: IdentityNames;
     savedCallback?: (player: Player) => void;
     droppedCallback?: (player: Player) => void;
     deletedCallback?: (player: Player) => void;
   } = $props();
 
   let playerEdit = $derived($state.snapshot(player));
-  let saveState: number = $state(SaveState.UNSAVED);
 
   async function togglePlayerLock() {
     const success = await togglePlayerLockRequest(tournament.id, playerEdit);
@@ -49,23 +43,17 @@
     savedCallback?.(playerEdit);
   }
 
-  async function save() {
-    if (
-      playerEdit.id === 0 &&
-      !tournament.registration_open &&
-      !confirm("Tournament is closed, add new player anyway?")
-    ) {
-      return;
-    }
+  function confirmSave() {
+    return (
+      playerEdit.id !== 0 ||
+      !tournament.registration_closed ||
+      confirm("Tournament is closed, add new player anyway?")
+    );
+  }
 
-    saveState = SaveState.SAVING;
+  async function save() {
     await savePlayer(tournament.id, playerEdit);
     savedCallback?.(playerEdit);
-    saveState = SaveState.SAVED;
-
-    setTimeout(() => {
-      saveState = SaveState.UNSAVED;
-    }, SUCCESS_DURATION);
   }
 
   async function dropPlayer() {
@@ -77,13 +65,13 @@
     droppedCallback?.(playerEdit);
   }
 
-  async function deletePlayer() {
-    if (
-      !confirm(`Are you sure you want to delete player "${playerEdit.name}"?`)
-    ) {
-      return;
-    }
+  function confirmDelete() {
+    return confirm(
+      `Are you sure you want to delete player "${playerEdit.name}"?`,
+    );
+  }
 
+  async function deletePlayer() {
     const success = await deletePlayerRequest(tournament.id, playerEdit);
     if (!success) {
       return;
@@ -115,7 +103,7 @@
   </div>
 
   <!-- Pronouns -->
-  <div class="col-auto">
+  <div class="col">
     <label for="player_pronouns_{playerEdit.id}">Pronouns</label>
     <input
       id="player_pronouns_{playerEdit.id}"
@@ -128,27 +116,25 @@
 
   {#if !tournament.nrdb_deck_registration || playerEdit.id !== 0}
     <!-- Corp ID -->
-    <div class="col">
+    <div class="col w-25">
       <label for="player_corp_id_{playerEdit.id}">Corp ID</label>
-      <input
+      <IdentitySelect
         id="player_corp_id_{playerEdit.id}"
-        type="text"
-        class="form-control corp_identities"
         placeholder="Search for corp ID"
-        readonly={tournament.nrdb_deck_registration}
+        enabled={!tournament.nrdb_deck_registration}
+        identityNames={identityNames.corp}
         bind:value={playerEdit.corp_id.name}
       />
     </div>
 
     <!-- Runner ID -->
-    <div class="col">
+    <div class="col w-25">
       <label for="player_runner_id_{playerEdit.id}">Runner ID</label>
-      <input
+      <IdentitySelect
         id="player_runner_id_{playerEdit.id}"
-        type="text"
-        class="form-control runner_identities"
         placeholder="Search for runner ID"
-        readonly={tournament.nrdb_deck_registration}
+        enabled={!tournament.nrdb_deck_registration}
+        identityNames={identityNames.runner}
         bind:value={playerEdit.runner_id.name}
       />
     </div>
@@ -228,19 +214,22 @@
 <div class="text-right">
   <!-- Lock/unlock player -->
   {#if tournament.self_registration && playerEdit.id !== 0}
-    <button
-      type="button"
-      class="btn btn-link text-info"
+    <ProgressButton
+      css="btn btn-link text-info"
+      inProgressText={playerEdit.registration_locked
+        ? "Unlocking player"
+        : "Locking player"}
+      completeText={playerEdit.registration_locked
+        ? "Locked player"
+        : "Unlocked player"}
       onclick={togglePlayerLock}
     >
       {#if playerEdit.registration_locked}
-        <FontAwesomeIcon icon="unlock" />
-        Unlock player
+        <FontAwesomeIcon icon="unlock" /> Unlock player
       {:else}
-        <FontAwesomeIcon icon="lock" />
-        Lock player
+        <FontAwesomeIcon icon="lock" /> Lock player
       {/if}
-    </button>
+    </ProgressButton>
   {/if}
 
   <!-- View decks -->
@@ -255,45 +244,40 @@
   {/if}
 
   <!-- Create/Save -->
-  {#if playerEdit.id === 0}
-    {#if saveState === SaveState.UNSAVED}
-      <button type="button" class="btn btn-success" onclick={save}>
-        <FontAwesomeIcon icon="plus" /> Create
-      </button>
-    {:else if saveState === SaveState.SAVING}
-      <button type="button" class="btn btn-success">
-        <span class="spinner-border spinner-border-sm m-auto"></span>
-        Creating
-      </button>
-    {:else if saveState === SaveState.SAVED}
-      <button type="button" class="btn btn-success">
-        <FontAwesomeIcon icon="check" /> Created
-      </button>
-    {/if}
-  {:else if saveState === SaveState.UNSAVED}
-    <button type="button" class="btn btn-success" onclick={save}>
+  <ProgressButton
+    css="btn btn-success"
+    inProgressText={playerEdit.id === 0 ? "Creating" : "Saving"}
+    completeText={playerEdit.id === 0 ? "Created" : "Saved"}
+    confirm={confirmSave}
+    onclick={save}
+  >
+    {#if playerEdit.id === 0}
+      <FontAwesomeIcon icon="plus" /> Create
+    {:else}
       <FontAwesomeIcon icon="floppy-o" /> Save
-    </button>
-  {:else if saveState === SaveState.SAVING}
-    <button type="button" class="btn btn-success">
-      <span class="spinner-border spinner-border-sm m-auto"></span>
-      Saving
-    </button>
-  {:else if saveState === SaveState.SAVED}
-    <button type="button" class="btn btn-success">
-      <FontAwesomeIcon icon="check" /> Saved
-    </button>
-  {/if}
+    {/if}
+  </ProgressButton>
 
   {#if playerEdit.id !== 0}
     <!-- Drop -->
-    <button type="button" class="btn btn-warning" onclick={dropPlayer}>
+    <ProgressButton
+      css="btn btn-warning"
+      inProgressText="Dropping"
+      completeText="Dropped"
+      onclick={dropPlayer}
+    >
       <FontAwesomeIcon icon="arrow-down" /> Drop
-    </button>
+    </ProgressButton>
 
     <!-- Delete -->
-    <button type="button" class="btn btn-danger" onclick={deletePlayer}>
+    <ProgressButton
+      css="btn btn-danger"
+      inProgressText="Deleting"
+      completeText="Deleted"
+      confirm={confirmDelete}
+      onclick={deletePlayer}
+    >
       <FontAwesomeIcon icon="trash" /> Delete
-    </button>
+    </ProgressButton>
   {/if}
 </div>

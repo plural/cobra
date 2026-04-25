@@ -30,7 +30,14 @@ RSpec.describe TournamentsController, type: :request do
             'swiss_format' => 'double_sided',
             'allow_self_reporting' => false,
             'decklist_required' => false,
-            'nrdb_deck_registration' => false
+            'nrdb_deck_registration' => false,
+            'all_players_unlocked' => true,
+            'any_player_unlocked' => true,
+            'swiss_deck_visibility' => 'swiss_decks_private',
+            'cut_deck_visibility' => 'cut_decks_private',
+            'stage' => 'swiss',
+            'user_id' => user.id,
+            'tournament_organizer' => 'test_user'
           }
         )
         expect(data['options'].except('time_zones')).to eq(

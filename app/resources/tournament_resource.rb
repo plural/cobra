@@ -54,6 +54,14 @@ class TournamentResource < ApplicationResource
   attribute :deckbuilding_restriction_id, :string
   attribute :card_set_id, :string
 
+  attribute :active_player_count, :integer do
+    @object.players.active.count
+  end
+
+  attribute :dropped_player_count, :integer do
+    @object.players.dropped.count
+  end
+
   attribute :created_at, :datetime
   attribute :updated_at, :datetime
 

@@ -47,7 +47,7 @@ group :development, :test do
   gem 'factory_bot_rails', require: false
   gem 'graphiti_spec_helpers'
   gem 'pry'
-  gem 'ruby-lsp', '>= 0.26.9'
+  gem 'ruby-lsp'
   gem 'ruby-lsp-rails', require: false
   gem 'ruby-lsp-rails-factory-bot', require: false
   gem 'ruby-lsp-rspec', require: false

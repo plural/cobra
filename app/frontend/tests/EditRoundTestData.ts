@@ -1,8 +1,9 @@
 import { Identity } from "../identities/Identity";
-import { Tournament, type Pairing } from "../pairings/PairingsData";
+import { type Pairing } from "../pairings/PairingsData";
 import type { RoundData } from "../pairings/RoundData";
 import type { ScoreReport } from "../pairings/SelfReport";
 import type { Player } from "../players/PlayersData";
+import { Tournament } from "../tournaments/TournamentSettings";
 
 export const MockPlayerAlice: Player = {
   id: 1,

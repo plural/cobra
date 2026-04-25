@@ -5,7 +5,6 @@
     type PairingsContext,
     type Round,
     type Stage,
-    Tournament,
   } from "./PairingsData";
   import {
     type ScoreReport,
@@ -18,6 +17,7 @@
   import PlayerDisplay from "./PlayerDisplay.svelte";
   import AdminReportOptions from "./AdminReportOptions.svelte";
   import type { Player } from "../players/PlayersData";
+  import type { Tournament } from "../tournaments/TournamentSettings";
 
   let {
     tournament,

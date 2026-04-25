@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  MockIdentityNames,
   MockPlayerAlice,
   MockPlayerBob,
   MockPlayersData,
@@ -11,6 +12,7 @@ import {
   getByRole,
   render,
   screen,
+  waitFor,
 } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import {
@@ -23,12 +25,16 @@ import {
   togglePlayerLock,
 } from "../players/PlayersData";
 import {
-  DeckVisibility,
-  deckVisibilityString,
   saveTournament,
   setPlayerRegistrationStatus,
   setRegistrationStatus,
 } from "../pairings/PairingsData";
+import {
+  CutDeckVisibility,
+  deckVisibilityString,
+  SwissDeckVisibility,
+} from "../tournaments/TournamentSettings";
+import { loadIdentityNames } from "../identities/Identity";
 
 const user = userEvent.setup();
 
@@ -49,15 +55,37 @@ vi.mock("../players/PlayersData", async (importOriginal) => ({
   reinstatePlayer: vi.fn(() => true),
 }));
 
+vi.mock("../identities/Identity", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../identities/Identity")>()),
+  loadIdentityNames: vi.fn(() => MockIdentityNames),
+}));
+
 describe("Players", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
   });
 
   describe("when there are no dropped players", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       render(Players, { tournamentId: 1 });
-      expect(loadPlayers).toHaveBeenCalledOnce();
+      await waitFor(() => {
+        expect(loadPlayers).toHaveBeenCalledOnce();
+      });
+      await waitFor(() => {
+        expect(loadIdentityNames).toHaveBeenCalledOnce();
+      });
     });
 
     it("displays active players", () => {
@@ -66,12 +94,12 @@ describe("Players", () => {
       expect(playerItems).toHaveLength(2);
       expect(getByLabelText(playerItems[0], "Name")).toHaveValue("Alice");
       expect(getByLabelText(playerItems[0], "Pronouns")).toHaveValue("she/her");
-      expect(getByLabelText(playerItems[0], "Corp ID")).toHaveValue(
-        "A Teia: IP Recovery",
-      );
-      expect(getByLabelText(playerItems[0], "Runner ID")).toHaveValue(
-        "Arissana Rocha Nahu: Street Artist",
-      );
+      expect(
+        playerItems[0].querySelector('select[name="player_corp_id_1"]'),
+      ).toHaveValue("A Teia: IP Recovery");
+      expect(
+        playerItems[0].querySelector('select[name="player_runner_id_1"]'),
+      ).toHaveValue("Arissana Rocha Nahu: Street Artist");
       expect(
         getByRole(playerItems[0], "checkbox", {
           name: "Video coverage allowed",
@@ -85,12 +113,12 @@ describe("Players", () => {
       );
       expect(getByLabelText(playerItems[1], "Name")).toHaveValue("Bob");
       expect(getByLabelText(playerItems[1], "Pronouns")).toHaveValue("he/him");
-      expect(getByLabelText(playerItems[1], "Corp ID")).toHaveValue(
-        "BANGUN: When Disaster Strikes",
-      );
-      expect(getByLabelText(playerItems[1], "Runner ID")).toHaveValue(
-        "Barry “Baz” Wong: Tri-Maf Veteran",
-      );
+      expect(
+        playerItems[1].querySelector('select[name="player_corp_id_2"]'),
+      ).toHaveValue("BANGUN: When Disaster Strikes");
+      expect(
+        playerItems[1].querySelector('select[name="player_runner_id_2"]'),
+      ).toHaveValue("Barry “Baz” Wong: Tri-Maf Veteran");
       expect(
         getByRole(playerItems[1], "checkbox", {
           name: "Video coverage allowed",
@@ -207,13 +235,14 @@ describe("Players", () => {
         if (!lockOption.classList.contains("disabled")) {
           vi.spyOn(
             MockTournament,
-            "registration_unlocked",
+            "all_players_unlocked",
             "get",
           ).mockReturnValue(unlock);
-          vi.spyOn(MockTournament, "locked_players", "get").mockReturnValue(2);
-          vi.spyOn(MockTournament, "unlocked_players", "get").mockReturnValue(
-            0,
-          );
+          vi.spyOn(
+            MockTournament,
+            "any_player_unlocked",
+            "get",
+          ).mockReturnValue(unlock);
           await user.click(lockOption);
           loadCount++;
           expect(setPlayerRegistrationStatus).toHaveBeenCalledExactlyOnceWith(
@@ -226,9 +255,11 @@ describe("Players", () => {
           new RegExp(`${open ? "Open" : "Close"} registration.*`),
         );
         if (!registrationOption.classList.contains("disabled")) {
-          vi.spyOn(MockTournament, "registration_open", "get").mockReturnValue(
-            open,
-          );
+          vi.spyOn(
+            MockTournament,
+            "registration_closed",
+            "get",
+          ).mockReturnValue(!open);
           await user.click(registrationOption);
           loadCount++;
           expect(setRegistrationStatus).toHaveBeenCalledExactlyOnceWith(
@@ -244,28 +275,48 @@ describe("Players", () => {
 
     describe.each([
       [
-        DeckVisibility.Private,
-        DeckVisibility.Private,
+        SwissDeckVisibility.Private,
+        CutDeckVisibility.Private,
         "swiss private, cut private",
       ],
-      [DeckVisibility.Private, DeckVisibility.Open, "swiss private, cut open"],
       [
-        DeckVisibility.Private,
-        DeckVisibility.Public,
+        SwissDeckVisibility.Private,
+        CutDeckVisibility.Open,
+        "swiss private, cut open",
+      ],
+      [
+        SwissDeckVisibility.Private,
+        CutDeckVisibility.Public,
         "swiss private, cut public",
       ],
-      [DeckVisibility.Open, DeckVisibility.Private, "swiss open, cut private"],
-      [DeckVisibility.Open, DeckVisibility.Open, "swiss open, cut open"],
-      [DeckVisibility.Open, DeckVisibility.Public, "swiss open, cut public"],
       [
-        DeckVisibility.Public,
-        DeckVisibility.Private,
+        SwissDeckVisibility.Open,
+        CutDeckVisibility.Private,
+        "swiss open, cut private",
+      ],
+      [
+        SwissDeckVisibility.Open,
+        CutDeckVisibility.Open,
+        "swiss open, cut open",
+      ],
+      [
+        SwissDeckVisibility.Open,
+        CutDeckVisibility.Public,
+        "swiss open, cut public",
+      ],
+      [
+        SwissDeckVisibility.Public,
+        CutDeckVisibility.Private,
         "swiss public, cut private",
       ],
-      [DeckVisibility.Public, DeckVisibility.Open, "swiss public, cut open"],
       [
-        DeckVisibility.Public,
-        DeckVisibility.Public,
+        SwissDeckVisibility.Public,
+        CutDeckVisibility.Open,
+        "swiss public, cut open",
+      ],
+      [
+        SwissDeckVisibility.Public,
+        CutDeckVisibility.Public,
         "swiss public, cut public",
       ],
     ])(

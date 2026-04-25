@@ -6,13 +6,13 @@
     type Errors,
     type FeatureFlags,
     loadNewTournament,
+    Tournament,
     type TournamentOptions,
-    type TournamentSettings,
     ValidationError,
   } from "./TournamentSettings";
   import TournamentSettingsForm from "./TournamentSettingsForm.svelte";
 
-  let tournament: TournamentSettings;
+  let tournament: Tournament;
   let options: TournamentOptions = emptyTournamentOptions();
   let featureFlags: FeatureFlags = {};
   let csrfToken = "";

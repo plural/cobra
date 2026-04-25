@@ -6,6 +6,7 @@ import {
   ValidationError,
   emptyTournamentOptions,
   loadEditTournament,
+  Tournament,
 } from "./TournamentSettings";
 import { server } from "../msw/server";
 import {
@@ -85,11 +86,11 @@ describe("TournamentSettings", () => {
         url: "/tournaments/123",
       };
 
-      const tournament = {
+      const tournament = new Tournament({
         name: "Test Tournament",
         date: "2023-12-25",
         private: false,
-      };
+      });
 
       server.use(
         http.post(tournaments_path(), async ({ request }) => {
@@ -122,7 +123,7 @@ describe("TournamentSettings", () => {
         }),
       );
 
-      const tournament = { name: "", date: "" };
+      const tournament = new Tournament({ name: "", date: "" });
 
       await expect(
         createTournament("mock-csrf-token", tournament),
@@ -139,7 +140,7 @@ describe("TournamentSettings", () => {
         }),
       );
 
-      const tournament = { name: "Test" };
+      const tournament = new Tournament({ name: "Test" });
 
       await expect(
         createTournament("mock-csrf-token", tournament),

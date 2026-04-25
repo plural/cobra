@@ -11,12 +11,14 @@ class ApplicationController < ActionController::Base
   helper_method :current_user, :user_signed_in?, :correct_beta_path
 
   BETA_PATHS = [
+    %r{^/tournaments/[0-9]+$},
     %r{^/tournaments/[0-9]+/players$},
     %r{^/tournaments/[0-9]+/rounds$},
     %r{^/tournaments/[0-9]+/rounds/[0-9]+$},
     %r{^/tournaments/[0-9]+/rounds/[0-9]+/pairings$},
     %r{^/tournaments/[0-9]+/rounds/[0-9]+/pairings/match_slips$},
-    %r{^/tournaments/[0-9]+/stats$}
+    %r{^/tournaments/[0-9]+/stats$},
+    %r{^/help$}
   ].freeze
 
   def current_user

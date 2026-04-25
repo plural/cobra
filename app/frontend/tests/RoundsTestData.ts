@@ -1,7 +1,5 @@
 import { Identity } from "../identities/Identity";
 import {
-  DeckVisibility,
-  Tournament,
   type Pairing,
   type PairingsData,
   type Round,
@@ -10,6 +8,7 @@ import {
 } from "../pairings/PairingsData";
 import type { ScoreReport } from "../pairings/SelfReport";
 import type { Player } from "../players/PlayersData";
+import { Tournament } from "../tournaments/TournamentSettings";
 
 export const MockPlayerAlice: Player = {
   id: 1,
@@ -137,21 +136,13 @@ export const MockDoubleElimCutStage: Stage = {
   rounds: [],
 };
 
-export const MockTournament: Tournament = {
+export const MockTournament = new Tournament({
   id: 1,
   name: "Mock Tournament",
-  player_meeting: false,
-  registration_open: true,
-  registration_unlocked: true,
   self_registration: true,
-  nrdb_deck_registration: false,
-  swiss_deck_visibility: DeckVisibility.Private,
-  cut_deck_visibility: DeckVisibility.Private,
-  locked_players: 0,
-  unlocked_players: 2,
-  allow_streaming_opt_out: false,
-  manual_seed: false,
-};
+  all_players_unlocked: true,
+  any_player_unlocked: true,
+});
 
 export const MockPairingsData: PairingsData = {
   tournament: MockTournament,
