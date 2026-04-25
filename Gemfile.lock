@@ -572,7 +572,7 @@ DEPENDENCIES
   rubocop-rails
   rubocop-rspec
   rubocop-rspec_rails
-  ruby-lsp (>= 0.26.9)
+  ruby-lsp
   ruby-lsp-rails
   ruby-lsp-rails-factory-bot
   ruby-lsp-rspec
