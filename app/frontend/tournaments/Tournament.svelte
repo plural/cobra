@@ -204,17 +204,37 @@
                   <li class="list-group-item">
                     <div class="small text-secondary">First Round Bye:</div>
                     {#if player.first_round_bye}
-                      <div class="badge badge-success" aria-label="first round bye">YES</div>
+                      <div
+                        class="badge badge-success"
+                        aria-label="first round bye"
+                      >
+                        YES
+                      </div>
                     {:else}
-                      <div class="badge badge-secondary" aria-label="first round bye">NO</div>
+                      <div
+                        class="badge badge-secondary"
+                        aria-label="first round bye"
+                      >
+                        NO
+                      </div>
                     {/if}
                   </li>
                   <li class="list-group-item">
                     <div class="small text-secondary">Stream my games:</div>
                     {#if player.include_in_stream}
-                      <div class="badge badge-success" aria-label="stream my games">YES</div>
+                      <div
+                        class="badge badge-success"
+                        aria-label="stream my games"
+                      >
+                        YES
+                      </div>
                     {:else}
-                      <div class="badge badge-secondary" aria-label="stream my games">NO</div>
+                      <div
+                        class="badge badge-secondary"
+                        aria-label="stream my games"
+                      >
+                        NO
+                      </div>
                     {/if}
                   </li>
                 </ul>

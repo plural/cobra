@@ -16,7 +16,7 @@ export const MockTournament = new Tournament({
   allow_streaming_opt_out: true,
   registration_closed: false,
   active_player_count: 17,
-  dropped_player_count: 1
+  dropped_player_count: 1,
 });
 
 export const MockIdentityNames: IdentityNames = {

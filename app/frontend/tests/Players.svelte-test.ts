@@ -78,6 +78,9 @@ describe("Players", () => {
 
   describe("when there are no dropped players", () => {
     beforeEach(async () => {
+      vi.spyOn(MockTournament, "nrdb_deck_registration", "get").mockReturnValue(
+        true,
+      );
       render(Players, { tournamentId: 1 });
       await waitFor(() => {
         expect(loadPlayers).toHaveBeenCalledOnce();
@@ -408,7 +411,9 @@ describe("Players", () => {
       const charlieEdit = new Player();
       charlieEdit.name = "Charlie";
       charlieEdit.pronouns = "they/them";
-      charlieEdit.include_in_stream = false;
+      charlieEdit.corp_id = { faction: null, name: "" };
+      charlieEdit.runner_id = { faction: null, name: "" };
+      charlieEdit.include_in_stream = true;
       charlieEdit.first_round_bye = true;
       charlieEdit.fixed_table_number = 1;
 

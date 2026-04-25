@@ -42,7 +42,7 @@ export const MockPlayerBob: Player = {
   },
   runner_id: {
     name: "Barry “Baz” Wong: Tri-Maf Veteran",
-    faction: "criminal"
+    faction: "criminal",
   },
   registration_locked: false,
   include_in_stream: false,
