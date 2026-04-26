@@ -8,7 +8,7 @@ import {
 } from "../pairings/PairingsData";
 import type { ScoreReport } from "../pairings/SelfReport";
 import type { Player } from "../players/PlayersData";
-import { Tournament } from "../tournaments/TournamentSettings";
+import { MockTournament } from "./TournamentTestData";
 
 export const MockPlayerAlice: Player = {
   id: 1,
@@ -36,8 +36,14 @@ export const MockPlayerBob: Player = {
   side: null,
   user_id: 0,
   side_label: null,
-  corp_id: new Identity(),
-  runner_id: new Identity(),
+  corp_id: {
+    name: "BANGUN: When Disaster Strikes",
+    faction: "weyland-consortium",
+  },
+  runner_id: {
+    name: "Barry “Baz” Wong: Tri-Maf Veteran",
+    faction: "criminal",
+  },
   registration_locked: false,
   include_in_stream: false,
   active: null,
@@ -135,14 +141,6 @@ export const MockDoubleElimCutStage: Stage = {
   view_decks: false,
   rounds: [],
 };
-
-export const MockTournament = new Tournament({
-  id: 1,
-  name: "Mock Tournament",
-  self_registration: true,
-  all_players_unlocked: true,
-  any_player_unlocked: true,
-});
 
 export const MockPairingsData: PairingsData = {
   tournament: MockTournament,
