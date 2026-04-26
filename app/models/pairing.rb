@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Pairing < ApplicationRecord
+class Pairing < ApplicationRecord # rubocop:disable Metrics/ClassLength,Style/Documentation
   belongs_to :round, touch: true
   belongs_to :player1, class_name: 'Player', optional: true
   belongs_to :player2, class_name: 'Player', optional: true
@@ -81,10 +81,10 @@ class Pairing < ApplicationRecord
     player1_is_corp? ? :runner : :corp
   end
 
-  def decks_visible_to(user)
+  def decks_visible_to?(user)
     return false if !stage.single_sided? || side.nil?
 
-    stage.decks_visible_to(user)
+    stage.decks_visible_to?(user)
   end
 
   def player1_deck
