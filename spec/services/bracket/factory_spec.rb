@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Bracket::Factory do
   describe '.valid_bracket?' do
     it 'returns true for valid brackets' do
