@@ -14,6 +14,9 @@ Rails.application.configure do
   # Full error reports are disabled.
   config.consider_all_requests_local = false
 
+  # Compress JavaScripts and CSS.  TODO(plural): remove this if Vite is handling this for us.
+  config.assets.js_compressor = Uglifier.new(harmony: true, mangle: false, compress: false)
+
   # Turn on fragment caching in view templates.
   config.action_controller.perform_caching = true
 
