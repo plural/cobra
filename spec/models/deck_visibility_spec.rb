@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe 'deck visibility' do
+RSpec.describe 'deck visibility', type: :feature do
   let(:tournament) { create(:tournament) }
   let(:unregistered_user) { create(:user) }
 

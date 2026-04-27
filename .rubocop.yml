@@ -37,6 +37,7 @@ FactoryBot/ConsistentParenthesesStyle: # new in 2.14
   Enabled: true
 FactoryBot/ExcessiveCreateList: # new in 2.25
   Enabled: true
+  MaxAmount: 200
 FactoryBot/FactoryAssociationWithStrategy: # new in 2.23
   Enabled: true
 FactoryBot/FactoryNameStyle: # new in 2.16
@@ -183,17 +184,27 @@ Naming/BlockForwarding: # new in 1.24
   Enabled: true
 Naming/PredicateMethod: # new in 1.76
   Enabled: true
+RSpec/ContextWording:
+  Enabled: false
 RSpec/ExampleLength:
   Enabled: false
 RSpec/ExampleWording:
   Enabled: false
 RSpec/IncludeExamples: # new in 3.6
   Enabled: true
+RSpec/IndexedLet: # new in 3.7
+  Enabled: false
 RSpec/LeakyLocalVariable: # new in 3.8
   Enabled: true
 RSpec/MultipleExpectations:
   Enabled: false
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+RSpec/NestedGroups:
+  Enabled: false
 RSpec/NoExpectationExample:
+  Enabled: false
+RSpec/SpecFilePathSuffix:
   Enabled: false
 RSpecRails/AvoidSetupHook: # new in 2.4
   Enabled: true
