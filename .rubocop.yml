@@ -8,7 +8,7 @@ plugins:
 AllCops:
   Exclude:
     - 'bin/*'
-    - 'db/schema.rb'
+    - 'db/**/*'
     - 'vendor/**/*'
 
 Capybara/FindAllFirst: # new in 2.22
