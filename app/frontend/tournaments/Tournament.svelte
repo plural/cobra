@@ -167,7 +167,7 @@
                 <p>Talk to a Tournament Organiser to rejoin the event.</p>
               {/if}
             {/if}
-          {:else if !tournament.registration_closed}
+          {:else if !tournament.registration_closed && tournament.self_registration}
             {#if userId != -1}
               <!-- User is logged in and not registered -->
               <Registration {userId} {tournament} {player} />
