@@ -1,26 +1,37 @@
 services:
   # service configuration for our dockerized Rails app
   app:
-
-    # use the Dockerfile next to this file
+    # Will use the latest image by default, but can be overridden with the API_SERVER_VERSION env var.
+    image: registry.digitalocean.com/nsgcr/cobra:${COBRA_SERVER_VERSION:-latest}
+    # build the Dockerfile next to this file, tag the built image with above image name
     build: .
 
     # sources environment variable configuration for our app
     env_file: .env
 
-    depends_on: 
+    depends_on:
       - db
 
-    restart: always
+    restart: unless-stopped
 
     # rely on the RAILS_ENV value of the host machine
-    environment:
-      - POSTGRES_PASSWORD
-      - RAILS_ENV
+    #    environment:
+    #  - POSTGRES_PASSWORD
+    #  - RAILS_ENV
+
+    ports:
+      - "3000:3000"
+
+#    networks:
+#      - backend
+#      - null_signal
+
+    expose:
+      - "3000"
 
     volumes:
       - ./config/database.yml:/var/www/cobra/config/database.yml
-      - cobra-logs:/var/www/cobra/log
+      - ./log:/var/www/cobra/log
       - cobra-tmp:/var/www/cobra/tmp
 
   # service configuration for our database
@@ -31,8 +42,16 @@ services:
 
     env_file: .env
 
-    environment:
-      - POSTGRES_PASSWORD
+    restart: unless-stopped
+
+    # environment:
+    #  - POSTGRES_PASSWORD
+
+    ports:
+      - "5432:5432"
+
+#    networks:
+#      - backend
 
     # persist the database between containers by storing it in a volume
     volumes:
@@ -40,6 +59,10 @@ services:
       - ./postgres-docker-init.sql:/docker-entrypoint-initdb.d/postgres-docker-init.sql
 
 volumes:
-  cobra-logs:
   cobra-postgres:
   cobra-tmp:
+
+#networks:
+#  backend:
+#  null_signal:
+#    external: true
