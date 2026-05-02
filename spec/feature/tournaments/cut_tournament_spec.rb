@@ -42,7 +42,7 @@ RSpec.describe 'cutting tournament', type: :feature do
       it 'creates double elim stage' do
         expect(tournament.stages.size).to eq(1)
 
-        click_link 'Double-Elimination Top 8'
+        find("a[id='double_elim_top_8']").click
 
         expect(tournament.stages.size).to eq(2)
         expect(tournament.stages.last.format).to eq('double_elim')
@@ -51,7 +51,7 @@ RSpec.describe 'cutting tournament', type: :feature do
       it 'creates single elim stage' do
         expect(tournament.stages.size).to eq(1)
 
-        click_link 'Single-Elimination Top 4'
+        find("a[id='single_elim_top_4']").click
 
         expect(tournament.stages.size).to eq(2)
         expect(tournament.stages.last.format).to eq('single_elim')

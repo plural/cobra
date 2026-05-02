@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Bracket
-  class SingleElimTop2 < Base
+  class SingleElimTop2 < Base # rubocop:disable Style/Documentation
     game 1, seed(1), seed(2), round: 1, bracket_type: :upper
 
     STANDINGS = [
