@@ -22,9 +22,9 @@ services:
     ports:
       - "3000:3000"
 
-    networks:
-      - backend
-      - null_signal
+#    networks:
+#      - backend
+#      - null_signal
 
     expose:
       - "3000"
@@ -50,8 +50,9 @@ services:
     ports:
       - "5432:5432"
 
-    networks:
-      - backend
+#    networks:
+#      - backend
+
     # persist the database between containers by storing it in a volume
     volumes:
       - cobra-postgres:/var/lib/postgresql/data
@@ -61,7 +62,7 @@ volumes:
   cobra-postgres:
   cobra-tmp:
 
-networks:
-  backend:
-  null_signal:
-    external: true
+#networks:
+#  backend:
+#  null_signal:
+#    external: true
