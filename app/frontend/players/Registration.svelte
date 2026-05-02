@@ -13,11 +13,11 @@
   let {
     userId,
     tournament,
-    player = new Player(),
+    player,
   }: {
     userId: number;
     tournament: Tournament;
-    player?: Player;
+    player: Player;
   } = $props();
 
   let identityNames: IdentityNames | undefined = $state();
