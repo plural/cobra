@@ -22,8 +22,6 @@
 
   onMount(async () => {
     tournament = await loadTournament(tournamentId);
-    tournament.id = tournamentId;
-
     player = await loadPlayer(tournamentId, userId);
 
     if (player.id === 0) {
@@ -150,10 +148,11 @@
       <div class="col-md-6" aria-label="registration information">
         {#if player}
           {#if player.id !== 0}
-            <!-- User is logged in and registered -->
             {#if player.active}
+              <!-- User is logged in and registered -->
               <Registration {userId} {tournament} {player} />
             {:else}
+              <!-- User is logged in and registered but dropped -->
               <h5 class="card-title">Rejoin this Event</h5>
               {#if userId == tournament.user_id}
                 <p>

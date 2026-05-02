@@ -191,7 +191,11 @@ export async function loadTournament(
     },
   );
 
-  return ((await response.json()) as TournamentJsonApi).data.attributes;
+  const apiTournament = ((await response.json()) as TournamentJsonApi);
+  const tournament = apiTournament.data.attributes;
+  tournament.id = parseInt(apiTournament.data.id);
+
+  return tournament;
 }
 
 export async function loadPlayer(

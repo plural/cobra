@@ -200,22 +200,26 @@
       {/if}
 
       {#if userId === tournament.user_id}
-        <input
-          id="first_round_bye"
-          type="checkbox"
-          bind:checked={player.first_round_bye}
-        />
-        <label for="first_round_bye">First Round Bye</label>
+        <div class="form-group">
+          <input
+            id="first_round_bye"
+            type="checkbox"
+            bind:checked={player.first_round_bye}
+          />
+          <label for="first_round_bye">First Round Bye</label>
+        </div>
 
         {#if tournament.manual_seed}
-          <label class="d-block" for="manual_seed">Manual Seed</label>
-          <input
-            id="manual_seed"
-            type="number"
-            placeholder="Set seed"
-            class="form-control"
-            bind:value={player.manual_seed}
-          />
+          <div class="form-group">
+            <label class="d-block" for="manual_seed">Manual Seed</label>
+            <input
+              id="manual_seed"
+              type="number"
+              placeholder="Set seed"
+              class="form-control"
+              bind:value={player.manual_seed}
+            />
+          </div>
         {/if}
       {/if}
 
