@@ -1,9 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.  They are
-# provided by a third-party and are governed by separate terms of service,
-# privacy policy, and support documentation.
-#
-# This workflow will install a prebuilt Ruby version, install dependencies, and
-# run tests and linters.
 name: "CI"
 permissions:
   contents: read
@@ -74,13 +68,6 @@ jobs:
       - name: Run CI
         run: bundle exec bin/ci
 
-      - name: Plan deployment
-        id: plan-deployment
-        run: deploy/bin/github-actions-plan-deployment
-
-    outputs:
-      deploy-stack: ${{ steps.plan-deployment.outputs.deploy-stack }}
-
   build_and_push:
     name: Build docker image
     if: (github.ref == 'refs/heads/main') || (github.event_name == 'release')
@@ -117,48 +104,3 @@ jobs:
         env:
           IMAGETAG: ${{ github.ref == 'refs/heads/main' && 'latest' || github.ref_name }}
         run: docker push -a $IMAGENAME
-
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: [ ci ]
-    if: needs.ci.outputs.deploy-stack != ''
-    defaults:
-      run:
-        working-directory: deploy
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Pulumi up
-        id: pulumi
-        uses: pulumi/actions@v5
-        with:
-          command: up
-          stack-name: ${{ needs.ci.outputs.deploy-stack }}
-          work-dir: deploy
-          refresh: true
-        env:
-          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
-      - name: Wait for cloud-init
-        run: |
-          bin/scan-droplet-ssh
-          bin/wait-for-cloud-init
-      - name: Set droplet environment variables
-        run: bin/github-actions-set-droplet-env
-      - name: Update Git repositories
-        run: bin/github-actions-redirect-to-droplet bin/in-droplet/update-git
-      - name: Deploy NGINX
-        run: bin/github-actions-redirect-to-droplet bin/in-droplet/deploy-nginx
-      - name: Configure Cobra
-        run: bin/github-actions-redirect-to-droplet bin/in-droplet/configure-cobra
-      - name: Build Cobra
-        run: bin/github-actions-ssh cobra/bin/build
-      - name: Deploy Cobra
-        run: bin/github-actions-ssh cobra/bin/deploy
