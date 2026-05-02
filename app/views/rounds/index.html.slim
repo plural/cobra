@@ -70,29 +70,44 @@
 
     - if policy(@tournament).update?
         - unless @stages.last.elimination?
-          p
-            => link_to cut_tournament_path(@tournament, number: 2, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
-              => fa_icon 'scissors'
-              | Single-Elimination Top 2
-            => link_to cut_tournament_path(@tournament, number: 3, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
-              => fa_icon 'scissors'
-              | Single-Elimination Top 3
-            => link_to cut_tournament_path(@tournament, number: 4, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
-              => fa_icon 'scissors'
-              | Single-Elimination Top 4
-            => link_to cut_tournament_path(@tournament, number: 8, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
-              => fa_icon 'scissors'
-              | Single-Elimination Top 8
-            => link_to cut_tournament_path(@tournament, number: 16, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
-              => fa_icon 'scissors'
-              | Single-Elimination Top 16
-          p
-            => link_to cut_tournament_path(@tournament, number: 4), method: :post, class: 'btn btn-success' do
-              => fa_icon 'scissors'
-              | Double-Elimination Top 4
-            => link_to cut_tournament_path(@tournament, number: 8), method: :post, class: 'btn btn-success' do
-              => fa_icon 'scissors'
-              | Double-Elimination Top 8
-            => link_to cut_tournament_path(@tournament, number: 16), method: :post, class: 'btn btn-success' do
-              => fa_icon 'scissors'
-              | Double-Elimination Top 16
+          h4 Cut to...
+          table
+            tbody
+              tr
+                td Single Elimination
+                td
+                  => link_to cut_tournament_path(@tournament, number: 2, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
+                    => fa_icon 'scissors'
+                    | Top 2
+                td
+                  => link_to cut_tournament_path(@tournament, number: 3, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
+                    => fa_icon 'scissors'
+                    | Top 3
+                td
+                  => link_to cut_tournament_path(@tournament, number: 4, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
+                    => fa_icon 'scissors'
+                    | Top 4
+                td
+                  => link_to cut_tournament_path(@tournament, number: 8, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
+                    => fa_icon 'scissors'
+                    | Top 8
+                td
+                  => link_to cut_tournament_path(@tournament, number: 16, elimination_type: 'single'), method: :post, class: 'btn btn-success' do
+                    => fa_icon 'scissors'
+                    | Top 16
+              tr
+                td Double Elimination
+                td
+                td
+                td
+                  => link_to cut_tournament_path(@tournament, number: 4), method: :post, class: 'btn btn-success' do
+                    => fa_icon 'scissors'
+                    | Top 4
+                td
+                  => link_to cut_tournament_path(@tournament, number: 8), method: :post, class: 'btn btn-success' do
+                    => fa_icon 'scissors'
+                    | Top 8
+                td
+                  => link_to cut_tournament_path(@tournament, number: 16), method: :post, class: 'btn btn-success' do
+                    => fa_icon 'scissors'
+                    | Top 16

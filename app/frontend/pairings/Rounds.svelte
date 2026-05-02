@@ -381,6 +381,8 @@
           </tr>
           <tr>
             <td>Double Elimination</td>
+            <td class="pl-2"></td>
+            <td class="pl-2"></td>
             {#each [4, 8, 16] as num (num)}
               <td class="pl-2">
                 <button
@@ -396,8 +398,6 @@
                 </button>
               </td>
             {/each}
-            <td class="pl-2"></td>
-            <td class="pl-2"></td>
           </tr>
         </tbody>
       </table>
