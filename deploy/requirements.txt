@@ -1,4 +1,0 @@
-pulumi>=3.117.0
-pulumi_digitalocean>=4.29.0
-pulumi_random>=4.16.2
-pulumi_tls>=5.0.3
