@@ -38,6 +38,8 @@ module Beta
 
       params = player_params
       params[:user_id] = current_user.id
+      params[:first_round_bye] = nil unless policy(@tournament).update?
+      params[:manual_seed] = nil unless policy(@tournament).update?
 
       if @tournament.players.any? { |p| p.name == params[:name] }
         render json: { player: helpers.player_json(nil),

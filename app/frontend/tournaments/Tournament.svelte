@@ -4,7 +4,7 @@
   import { loadPlayer, loadTournament, Tournament } from "./TournamentSettings";
   import { Player } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-    import Registration from "../players/Registration.svelte";
+  import Registration from "../players/Registration.svelte";
 
   let {
     tournamentId,

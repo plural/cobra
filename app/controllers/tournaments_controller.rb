@@ -300,13 +300,15 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
     respond_to do |format|
       format.html do
         unless current_user
-          redirect_to tournament_path(@tournament), alert: 'Please log in to view your tournament information.'
+          redirect_to correct_beta_path(tournament_path(@tournament)),
+                      alert: 'Please log in to view your tournament information.'
           return
         end
 
         player = @tournament.players.find_by(user_id: current_user.id)
         unless player
-          redirect_to tournament_path(@tournament), alert: 'You are not registered in this tournament.'
+          redirect_to correct_beta_path(tournament_path(@tournament)),
+                      alert: 'You are not registered in this tournament.'
           return
         end
 

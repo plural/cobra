@@ -4,20 +4,20 @@
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import IdentitySelect from "../widgets/IdentitySelect.svelte";
   import { Player, savePlayer as savePlayerRequest } from "./PlayersData";
-    import {
+  import {
     loadIdentityNames,
     type IdentityNames,
   } from "../identities/Identity";
-    import { onMount } from "svelte";
+  import { onMount } from "svelte";
 
   let {
     userId,
     tournament,
     player = new Player(),
   }: {
-    userId: number,
-    tournament: Tournament,
-    player?: Player,
+    userId: number;
+    tournament: Tournament;
+    player?: Player;
   } = $props();
 
   let identityNames: IdentityNames | undefined = $state();
@@ -25,7 +25,7 @@
   // svelte-ignore state_referenced_locally
   let readOnly = $state(player.id !== 0);
 
-  onMount(async() => {
+  onMount(async () => {
     identityNames = await loadIdentityNames();
   });
 
@@ -39,16 +39,20 @@
   <div class="card">
     <div class="card-header d-flex justify-content-between">
       <h5 class="mb-0">My Registration Information</h5>
-      <!-- TODO: If deck registration is enabled, then this should go to the deck registration page -->
-        <!-- TODO: Can players change their non-deck info if deck registration is enabled? -->
-      
+
       {#if tournament.nrdb_deck_registration}
         <a href={`/tournaments/${tournament.id}/registration`}>
           <FontAwesomeIcon icon="edit" />
           Edit
         </a>
       {:else}
-        <button type="button" class="btn btn-link text-info p-0" onclick={() => { readOnly = false; }}>
+        <button
+          type="button"
+          class="btn btn-link text-info p-0"
+          onclick={() => {
+            readOnly = false;
+          }}
+        >
           <FontAwesomeIcon icon="edit" />
           Edit
         </button>
@@ -84,17 +88,11 @@
       <li class="list-group-item">
         <div class="small text-secondary">First Round Bye:</div>
         {#if player.first_round_bye}
-          <div
-            class="badge badge-success"
-            aria-label="first round bye"
-          >
+          <div class="badge badge-success" aria-label="first round bye">
             YES
           </div>
         {:else}
-          <div
-            class="badge badge-secondary"
-            aria-label="first round bye"
-          >
+          <div class="badge badge-secondary" aria-label="first round bye">
             NO
           </div>
         {/if}
@@ -102,17 +100,11 @@
       <li class="list-group-item">
         <div class="small text-secondary">Stream my games:</div>
         {#if player.include_in_stream}
-          <div
-            class="badge badge-success"
-            aria-label="stream my games"
-          >
+          <div class="badge badge-success" aria-label="stream my games">
             YES
           </div>
         {:else}
-          <div
-            class="badge badge-secondary"
-            aria-label="stream my games"
-          >
+          <div class="badge badge-secondary" aria-label="stream my games">
             NO
           </div>
         {/if}
@@ -129,9 +121,15 @@
           My Registration Information
         {/if}
       </h5>
-      
+
       {#if player.id !== 0}
-        <button type="button" class="btn btn-link text-info p-0" onclick={() => { readOnly = true; }}>
+        <button
+          type="button"
+          class="btn btn-link text-info p-0"
+          onclick={() => {
+            readOnly = true;
+          }}
+        >
           <FontAwesomeIcon icon="undo" />
           Cancel
         </button>
@@ -173,15 +171,11 @@
         </div>
 
         <div class="form-group">
-          <label class="d-block" for="runner-identity">
-            Runner ID
-          </label>
+          <label class="d-block" for="runner-identity">Runner ID</label>
           <IdentitySelect
             id="runner-identity"
             placeholder="Search for runner ID"
-            identityNames={identityNames
-              ? identityNames.runner
-              : []}
+            identityNames={identityNames ? identityNames.runner : []}
             bind:value={player.runner_id.name}
           />
         </div>
@@ -190,9 +184,9 @@
       {#if tournament.allow_streaming_opt_out}
         <div class="form-group">
           <label for="include_in_stream">
-            Should we include your games in video coverage of this
-            event? Note: During a top cut it may not be possible to
-            exclude you from coverage.
+            Should we include your games in video coverage of this event? Note:
+            During a top cut it may not be possible to exclude you from
+            coverage.
           </label>
           <input
             id="include_in_stream"
@@ -214,9 +208,7 @@
         <label for="first_round_bye">First Round Bye</label>
 
         {#if tournament.manual_seed}
-          <label class="d-block" for="manual_seed">
-            Manual Seed
-          </label>
+          <label class="d-block" for="manual_seed">Manual Seed</label>
           <input
             id="manual_seed"
             type="number"
@@ -232,20 +224,17 @@
 
         <div class="form-group">
           <label for="consent_data_sharing">
-            Your name, pronouns and Netrunner deck identities will be
-            publicly visible on this website. If you submit decklists
-            they will be shared with the organiser. If you enter a
-            round with open decklists, they may be shared with
-            participants or made public.
+            Your name, pronouns and Netrunner deck identities will be publicly
+            visible on this website. If you submit decklists they will be shared
+            with the organiser. If you enter a round with open decklists, they
+            may be shared with participants or made public.
           </label>
           <input
             id="consent_data_sharing"
             type="checkbox"
             bind:checked={playerAgreed}
           />
-          <label for="consent_data_sharing">
-            I agree to these terms
-          </label>
+          <label for="consent_data_sharing">I agree to these terms</label>
         </div>
       {/if}
     </div>
