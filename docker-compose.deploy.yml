@@ -1,0 +1,13 @@
+services:
+  app:
+    networks:
+      - backend
+      - null_signal
+  db:
+    networks:
+      - backend
+
+networks:
+  backend:
+  null_signal:
+    external: true
