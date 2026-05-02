@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Bracket
-  class Factory
+  class Factory # rubocop:disable Style/Documentation
     # 2 and 3 player brackets are only valid for Single-Elimination, but there are both
     # Single and Double Elimination versions of 4, 8, and 16 player brackets.
     def self.valid_bracket?(num_players, single_elim: false)

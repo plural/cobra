@@ -2,8 +2,8 @@
 
 require 'redcarpet'
 
-module ApplicationHelper
-  class ResponsiveImgRenderer < Redcarpet::Render::HTML
+module ApplicationHelper # rubocop:disable Style/Documentation
+  class ResponsiveImgRenderer < Redcarpet::Render::HTML # rubocop:disable Style/Documentation
     def image(link, _title, alt_text)
       %(<img class="img-fluid" src=#{link} alt=#{alt_text}>)
     end
@@ -26,5 +26,12 @@ module ApplicationHelper
 
   def tournament_types
     TournamentType.order(nsg_format: :desc, position: :asc)
+  end
+
+  def url_if_valid(potential_url)
+    uri = URI.parse(potential_url)
+    %w[https http].include?(uri.scheme) ? potential_url : nil
+  rescue URI::InvalidURIError
+    nil
   end
 end
