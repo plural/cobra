@@ -27,4 +27,11 @@ module ApplicationHelper # rubocop:disable Style/Documentation
   def tournament_types
     TournamentType.order(nsg_format: :desc, position: :asc)
   end
+
+  def url_if_valid(potential_url)
+    uri = URI.parse(potential_url)
+    %w[https http].include?(uri.scheme) ? potential_url : nil
+  rescue URI::InvalidURIError
+    nil
+  end
 end
