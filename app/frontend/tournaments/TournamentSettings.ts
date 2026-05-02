@@ -191,7 +191,7 @@ export async function loadTournament(
     },
   );
 
-  const apiTournament = ((await response.json()) as TournamentJsonApi);
+  const apiTournament = (await response.json()) as TournamentJsonApi;
   const tournament = apiTournament.data.attributes;
   tournament.id = parseInt(apiTournament.data.id);
 
