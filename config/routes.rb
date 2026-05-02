@@ -44,6 +44,7 @@ Rails.application.routes.draw do
         patch :reinstate, on: :member
         get :decks, on: :collection
       end
+      get :qr, on: :member
       resources :stages, only: %i[create destroy]
       patch :open_registration, on: :member
       patch :close_registration, on: :member

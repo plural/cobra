@@ -3,7 +3,7 @@
 module Beta
   class TournamentsController < ApplicationController # rubocop:disable Metrics/ClassLength,Style/Documentation
     before_action :set_tournament, only: %i[
-      show update open_registration close_registration lock_player_registrations unlock_player_registrations
+      show update qr open_registration close_registration lock_player_registrations unlock_player_registrations
       cut stats id_and_faction_data cut_conversion_rates
     ]
     before_action :authorize_beta_testing
@@ -64,6 +64,15 @@ module Beta
           end
         end
       end
+    end
+
+    def qr
+      authorize @tournament, :show?
+
+      send_data(RQRCode::QRCode.new(tournament_url(@tournament.slug, request), level: :h)
+                               .as_svg(offset: 0, color: '000', shape_rendering: 'crispEdges', module_size: 25),
+                type: 'image/svg+xml',
+                disposition: 'inline')
     end
 
     def open_registration
@@ -144,6 +153,12 @@ module Beta
         # Used for demo tournaments
         :num_players, :num_first_round_byes
       )
+    end
+
+    def tournament_url(slug, request)
+      server = "#{request.protocol}#{request.host}"
+      server += ":#{request.port}" if !request.port.nil? && (request.port != 80) && (request.port != 443)
+      "#{server}/#{slug.downcase}"
     end
 
     def transform_stats(stats)
