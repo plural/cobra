@@ -77,9 +77,9 @@ html
         .row.dontprint
           .col-md
             h1= @tournament.name
-          - if @tournament.stream_url.present?
+          - if @tournament.stream_url.present? && url_if_valid(@tournament.stream_url)
             .col-auto
-              = link_to @tournament.stream_url, class: 'stream-link', target: '_blank' do
+              = link_to url_if_valid(@tournament.stream_url), class: 'stream-link', target: '_blank' do
                 => fa_icon 'video-camera'
           .col.col-md-auto.mb-md-0.mb-2
             = link_to timer_tournament_path(@tournament)
