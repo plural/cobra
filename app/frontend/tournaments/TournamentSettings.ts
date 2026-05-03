@@ -9,6 +9,7 @@ declare const Routes: {
   api_v1_public_tournament_path: (tournamentId: number) => string;
   tournaments_path: () => string;
   registration_notice_beta_tournament_path: (tournamentId: number) => string;
+  qr_beta_tournament_path: (tournamentId: number) => string;
 };
 
 export class Tournament {
@@ -283,4 +284,12 @@ export class ValidationError extends Error {
     super("Validation failed");
     this.name = "ValidationError";
   }
+}
+
+export async function loadQRCode(tournamentId: number) {
+  const response = await fetch(Routes.qr_beta_tournament_path(tournamentId), {
+    method: "GET",
+  });
+
+  return await response.blob();
 }

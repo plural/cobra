@@ -1,10 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
-  import { loadPlayer, loadTournament, Tournament } from "./TournamentSettings";
+  import {
+    loadPlayer,
+    loadQRCode,
+    loadTournament,
+    Tournament,
+  } from "./TournamentSettings";
   import { Player } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import Registration from "../players/Registration.svelte";
+  import ModalDialog from "../widgets/ModalDialog.svelte";
 
   let {
     tournamentId,
@@ -20,9 +26,13 @@
   let player: Player | undefined = $state();
   let notices: string[] = $state([]);
 
+  let qrCodeImageData = $state("");
+
   onMount(async () => {
     tournament = await loadTournament(tournamentId);
     player = await loadPlayer(tournamentId, userId);
+
+    qrCodeImageData = URL.createObjectURL(await loadQRCode(tournamentId));
 
     if (player.id === 0) {
       player.name = userName ?? "";
@@ -43,6 +53,21 @@
       }
     }
   });
+
+  function printQRCode() {
+    const qrCodeDiv = document.getElementById("qrCode");
+    if (!qrCodeDiv) {
+      return;
+    }
+
+    const printWindow = window.open();
+    if (!printWindow) {
+      return;
+    }
+    printWindow.document.body.append(qrCodeDiv.cloneNode(true));
+    printWindow.print();
+    printWindow.close();
+  }
 </script>
 
 <GlobalMessages />
@@ -63,11 +88,9 @@
             <li class="list-group-item" aria-label="shortcode">
               <div class="small text-secondary">Shortcode:</div>
               {tournament.slug}
-              (
-              <a href={`/${tournament.slug}`}>
+              (<a href={`/${tournament.slug}`}>
                 {window.location.origin}/{tournament.slug}
-              </a>
-              )
+              </a>)
             </li>
           {/if}
 
@@ -135,10 +158,37 @@
           <li class="list-group-item">
             <div class="small text-secondary">QR Code:</div>
             <div class="row col-sm-6" aria-label="QR code">
-              <a href={`/tournaments/${tournamentId}/qr`} target="_blank">
+              <button
+                type="button"
+                class="btn btn-link p-0"
+                data-toggle="modal"
+                data-target="#qrCodeDialog"
+              >
                 <FontAwesomeIcon icon="qrcode" />
-                Open Printable QR Code
-              </a>
+                Open QR Code
+              </button>
+
+              <ModalDialog id="qrCodeDialog" headerText="QR Code">
+                <div class="text-center">
+                  <button
+                    type="button"
+                    class="btn btn-primary mb-3"
+                    onclick={printQRCode}
+                  >
+                    <FontAwesomeIcon icon="print" /> Print
+                  </button>
+                  <div id="qrCode">
+                    <h4 class="mb-3">
+                      {window.location.origin}/{tournament.slug}
+                    </h4>
+                    <img
+                      src={qrCodeImageData}
+                      class="w-100 h-100"
+                      alt="QR code of the tournament's URL"
+                    />
+                  </div>
+                </div>
+              </ModalDialog>
             </div>
           </li>
         </div>

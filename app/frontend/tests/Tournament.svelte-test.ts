@@ -9,7 +9,11 @@ import {
 import Tournament from "../tournaments/Tournament.svelte";
 import { MockIdentityNames, MockTournament } from "./TournamentTestData";
 import { MockPlayerBob } from "./RoundsTestData";
-import { loadPlayer, loadTournament } from "../tournaments/TournamentSettings";
+import {
+  loadPlayer,
+  loadQRCode,
+  loadTournament,
+} from "../tournaments/TournamentSettings";
 import { loadIdentityNames } from "../identities/Identity";
 import userEvent from "@testing-library/user-event";
 import { Player, savePlayer } from "../players/PlayersData";
@@ -18,6 +22,7 @@ vi.mock("../tournaments/TournamentSettings", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/PairingsData")>()),
   loadTournament: vi.fn(() => MockTournament),
   loadPlayer: vi.fn(() => MockPlayerBob),
+  loadQRCode: vi.fn(() => null),
 }));
 
 vi.mock("../identities/Identity", async (importOriginal) => ({
@@ -42,6 +47,9 @@ describe("Tournament", () => {
     await waitFor(() => {
       expect(loadPlayer).toHaveBeenCalledOnce();
     });
+    await waitFor(() => {
+      expect(loadQRCode).toHaveBeenCalledOnce();
+    });
   }
 
   beforeEach(() => {
@@ -57,6 +65,11 @@ describe("Tournament", () => {
         removeEventListener: vi.fn(),
         dispatchEvent: vi.fn(),
       })),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    window.URL.createObjectURL = vi.fn().mockImplementation((data: Blob) => {
+      return "";
     });
   });
 
@@ -75,7 +88,7 @@ describe("Tournament", () => {
       it("displays tournament info and log in prompt", () => {
         // Tournament card
         expect(screen.getByLabelText("shortcode")).toHaveTextContent(
-          "ABC1 ( http://localhost:3000/ABC1 )",
+          "ABC1 (http://localhost:3000/ABC1)",
         );
         expect(screen.getByLabelText("date")).toHaveTextContent(
           "Tuesday, April 21, 2026",
@@ -94,7 +107,7 @@ describe("Tournament", () => {
           "17 active players (1 dropped)",
         );
         expect(screen.getByLabelText("QR code")).toHaveTextContent(
-          "Open Printable QR Code",
+          "Open QR Code",
         );
 
         // Registration card
