@@ -158,7 +158,7 @@ module Beta
     def tournament_url(slug, request)
       server = "#{request.protocol}#{request.host}"
       server += ":#{request.port}" if !request.port.nil? && (request.port != 80) && (request.port != 443)
-      "#{server}/#{slug.downcase}"
+      "#{server}/#{slug}"
     end
 
     def transform_stats(stats)

@@ -53,6 +53,21 @@
       }
     }
   });
+
+  function printQRCode() {
+    const qrCodeDiv = document.getElementById("qrCode");
+    if (!qrCodeDiv) {
+      return;
+    }
+
+    const printWindow = window.open();
+    if (!printWindow) {
+      return;
+    }
+    printWindow.document.children[0].append(qrCodeDiv.cloneNode(true));
+    printWindow.print();
+    printWindow.close();
+  }
 </script>
 
 <GlobalMessages />
@@ -149,22 +164,27 @@
                 type="button"
                 class="btn btn-link p-0"
                 data-toggle="modal"
-                data-target="#qrCode"
+                data-target="#qrCodeDialog"
               >
                 <FontAwesomeIcon icon="qrcode" />
-                Open Printable QR Code
+                Open QR Code
               </button>
 
-              <ModalDialog id="qrCode" headerText="QR Code">
+              <ModalDialog id="qrCodeDialog" headerText="QR Code">
                 <div class="text-center">
-                  <h4 class="mb-3">
-                    {window.location.origin}/{tournament.slug}
-                  </h4>
-                  <img
-                    src={qrTest}
-                    class="w-100 h-100"
-                    alt="QR code of the tournament's URL"
-                  />
+                  <button type="button" class="btn btn-primary mb-3" onclick={printQRCode}>
+                    <FontAwesomeIcon icon="print" /> Print
+                  </button>
+                  <div id="qrCode">
+                    <h4 class="mb-3">
+                      {window.location.origin}/{tournament.slug}
+                    </h4>
+                    <img
+                      src={qrTest}
+                      class="w-100 h-100"
+                      alt="QR code of the tournament's URL"
+                    />
+                  </div>
                 </div>
               </ModalDialog>
             </div>
