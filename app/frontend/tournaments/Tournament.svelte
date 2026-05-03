@@ -26,13 +26,13 @@
   let player: Player | undefined = $state();
   let notices: string[] = $state([]);
 
-  let qrTest = $state("");
+  let qrCodeImageData = $state("");
 
   onMount(async () => {
     tournament = await loadTournament(tournamentId);
     player = await loadPlayer(tournamentId, userId);
 
-    qrTest = URL.createObjectURL(await loadQRCode(tournamentId));
+    qrCodeImageData = URL.createObjectURL(await loadQRCode(tournamentId));
 
     if (player.id === 0) {
       player.name = userName ?? "";
@@ -88,11 +88,9 @@
             <li class="list-group-item" aria-label="shortcode">
               <div class="small text-secondary">Shortcode:</div>
               {tournament.slug}
-              (
-              <a href={`/${tournament.slug}`}>
+              (<a href={`/${tournament.slug}`}>
                 {window.location.origin}/{tournament.slug}
-              </a>
-              )
+              </a>)
             </li>
           {/if}
 
@@ -172,7 +170,11 @@
 
               <ModalDialog id="qrCodeDialog" headerText="QR Code">
                 <div class="text-center">
-                  <button type="button" class="btn btn-primary mb-3" onclick={printQRCode}>
+                  <button
+                    type="button"
+                    class="btn btn-primary mb-3"
+                    onclick={printQRCode}
+                  >
                     <FontAwesomeIcon icon="print" /> Print
                   </button>
                   <div id="qrCode">
@@ -180,7 +182,7 @@
                       {window.location.origin}/{tournament.slug}
                     </h4>
                     <img
-                      src={qrTest}
+                      src={qrCodeImageData}
                       class="w-100 h-100"
                       alt="QR code of the tournament's URL"
                     />
