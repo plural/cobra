@@ -2,14 +2,9 @@
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import { loadPlayer, loadTournament, Tournament } from "./TournamentSettings";
-  import { Player, savePlayer } from "../players/PlayersData";
+  import { Player } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import Identity from "../identities/Identity.svelte";
-  import {
-    loadIdentityNames,
-    type IdentityNames,
-  } from "../identities/Identity";
-  import IdentitySelect from "../widgets/IdentitySelect.svelte";
+  import Registration from "../players/Registration.svelte";
 
   let {
     tournamentId,
@@ -23,14 +18,11 @@
 
   let tournament: Tournament | undefined = $state();
   let player: Player | undefined = $state();
-  let identityNames: IdentityNames | undefined = $state();
   let notices: string[] = $state([]);
-  let playerAgreed = $state(false);
 
   onMount(async () => {
     tournament = await loadTournament(tournamentId);
     player = await loadPlayer(tournamentId, userId);
-    identityNames = await loadIdentityNames();
 
     if (player.id === 0) {
       player.name = userName ?? "";
@@ -51,14 +43,6 @@
       }
     }
   });
-
-  async function register() {
-    if (!player) {
-      return;
-    }
-
-    player = await savePlayer(tournamentId, player);
-  }
 </script>
 
 <GlobalMessages />
@@ -164,82 +148,11 @@
       <div class="col-md-6" aria-label="registration information">
         {#if player}
           {#if player.id !== 0}
-            <!-- User is logged in and registered -->
             {#if player.active}
-              <div class="card">
-                <div class="card-header d-flex justify-content-between">
-                  <h5 class="mb-0">My Registration Information</h5>
-                  <a href={`/tournaments/${tournamentId}/registration`}>
-                    <FontAwesomeIcon icon="edit" />
-                    Edit
-                  </a>
-                </div>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">
-                    <div class="small text-secondary">Name:</div>
-                    <div aria-label="name">
-                      {player.name_with_pronouns}
-                    </div>
-                  </li>
-                  <li class="list-group-item">
-                    <div class="small text-secondary">Corp ID:</div>
-                    <div aria-label="corp ID">
-                      <Identity
-                        identity={player.corp_id}
-                        name_if_missing="Unspecified"
-                        icon_if_missing="interrupt"
-                      />
-                    </div>
-                  </li>
-                  <li class="list-group-item">
-                    <div class="small text-secondary">Runner ID:</div>
-                    <div aria-label="runner ID">
-                      <Identity
-                        identity={player.runner_id}
-                        name_if_missing="Unspecified"
-                        icon_if_missing="interrupt"
-                      />
-                    </div>
-                  </li>
-                  <li class="list-group-item">
-                    <div class="small text-secondary">First Round Bye:</div>
-                    {#if player.first_round_bye}
-                      <div
-                        class="badge badge-success"
-                        aria-label="first round bye"
-                      >
-                        YES
-                      </div>
-                    {:else}
-                      <div
-                        class="badge badge-secondary"
-                        aria-label="first round bye"
-                      >
-                        NO
-                      </div>
-                    {/if}
-                  </li>
-                  <li class="list-group-item">
-                    <div class="small text-secondary">Stream my games:</div>
-                    {#if player.include_in_stream}
-                      <div
-                        class="badge badge-success"
-                        aria-label="stream my games"
-                      >
-                        YES
-                      </div>
-                    {:else}
-                      <div
-                        class="badge badge-secondary"
-                        aria-label="stream my games"
-                      >
-                        NO
-                      </div>
-                    {/if}
-                  </li>
-                </ul>
-              </div>
+              <!-- User is logged in and registered -->
+              <Registration {userId} {tournament} {player} />
             {:else}
+              <!-- User is logged in and registered but dropped -->
               <h5 class="card-title">Rejoin this Event</h5>
               {#if userId == tournament.user_id}
                 <p>
@@ -253,136 +166,10 @@
                 <p>Talk to a Tournament Organiser to rejoin the event.</p>
               {/if}
             {/if}
-          {:else if !tournament.registration_closed}
+          {:else if !tournament.registration_closed && tournament.self_registration}
             {#if userId != -1}
               <!-- User is logged in and not registered -->
-              <div class="card alert alert-secondary">
-                <h5 class="card-title">Register for this Event</h5>
-
-                <div class="identities_form d-block">
-                  <div class="form-group">
-                    <label class="d-block" for="name">Name</label>
-                    <input
-                      id="name"
-                      type="text"
-                      placeholder="Enter your name"
-                      class="form-control"
-                      bind:value={player.name}
-                    />
-                  </div>
-
-                  <div class="form-group">
-                    <label class="d-block" for="pronouns">Pronouns</label>
-                    <input
-                      id="pronouns"
-                      type="text"
-                      placeholder="Example: they/them"
-                      class="form-control"
-                      bind:value={player.pronouns}
-                    />
-                  </div>
-
-                  {#if !tournament.nrdb_deck_registration}
-                    <div class="form-group">
-                      <label class="d-block" for="corp-identity">Corp ID</label>
-                      <IdentitySelect
-                        id="corp-identity"
-                        placeholder="Search for corp ID"
-                        identityNames={identityNames ? identityNames.corp : []}
-                        bind:value={player.corp_id.name}
-                      />
-                    </div>
-
-                    <div class="form-group">
-                      <label class="d-block" for="runner-identity">
-                        Runner ID
-                      </label>
-                      <IdentitySelect
-                        id="runner-identity"
-                        placeholder="Search for runner ID"
-                        identityNames={identityNames
-                          ? identityNames.runner
-                          : []}
-                        bind:value={player.runner_id.name}
-                      />
-                    </div>
-                  {/if}
-
-                  {#if tournament.allow_streaming_opt_out}
-                    <div class="form-group">
-                      <label for="include_in_stream">
-                        Should we include your games in video coverage of this
-                        event? Note: During a top cut it may not be possible to
-                        exclude you from coverage.
-                      </label>
-                      <input
-                        id="include_in_stream"
-                        type="checkbox"
-                        bind:checked={player.include_in_stream}
-                      />
-                      <label for="include_in_stream">
-                        Include my games in video coverage
-                      </label>
-                    </div>
-                  {/if}
-
-                  {#if userId === tournament.user_id}
-                    <input
-                      id="first_round_bye"
-                      type="checkbox"
-                      bind:checked={player.first_round_bye}
-                    />
-                    <label for="first_round_bye">First Round Bye</label>
-
-                    {#if tournament.manual_seed}
-                      <label class="d-block" for="manual_seed">
-                        Manual Seed
-                      </label>
-                      <input
-                        id="manual_seed"
-                        type="number"
-                        placeholder="Set seed"
-                        class="form-control"
-                        bind:value={player.manual_seed}
-                      />
-                    {/if}
-                  {/if}
-
-                  <hr />
-
-                  <div class="form-group">
-                    <label for="consent_data_sharing">
-                      Your name, pronouns and Netrunner deck identities will be
-                      publicly visible on this website. If you submit decklists
-                      they will be shared with the organiser. If you enter a
-                      round with open decklists, they may be shared with
-                      participants or made public.
-                    </label>
-                    <input
-                      id="consent_data_sharing"
-                      type="checkbox"
-                      bind:checked={playerAgreed}
-                    />
-                    <label for="consent_data_sharing">
-                      I agree to these terms
-                    </label>
-                  </div>
-                </div>
-
-                <div class="text-right">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    disabled={!playerAgreed}
-                    onclick={register}
-                  >
-                    <FontAwesomeIcon icon="user-plus" />
-                    {tournament.nrdb_deck_registration
-                      ? "Deck Registration"
-                      : "Register"}
-                  </button>
-                </div>
-              </div>
+              <Registration {userId} {tournament} {player} />
             {:else}
               <!-- User is not logged in and not registered -->
               <div class="card card-body alert alert-warning">

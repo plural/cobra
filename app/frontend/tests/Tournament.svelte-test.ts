@@ -42,9 +42,6 @@ describe("Tournament", () => {
     await waitFor(() => {
       expect(loadPlayer).toHaveBeenCalledOnce();
     });
-    await waitFor(() => {
-      expect(loadIdentityNames).toHaveBeenCalledOnce();
-    });
   }
 
   beforeEach(() => {
@@ -137,6 +134,9 @@ describe("Tournament", () => {
           Promise.resolve(new Player()),
         );
         await renderTournament(2);
+        await waitFor(() => {
+          expect(loadIdentityNames).toHaveBeenCalledOnce();
+        });
       });
 
       it("allows registration", async () => {
@@ -189,6 +189,9 @@ describe("Tournament", () => {
         beforeEach(async () => {
           vi.spyOn(MockPlayerBob, "active", "get").mockReturnValue(true);
           await renderTournament(2);
+          await waitFor(() => {
+            expect(loadIdentityNames).toHaveBeenCalledOnce();
+          });
         });
 
         it("displays player information", () => {
