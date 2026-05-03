@@ -88,7 +88,7 @@ describe("Tournament", () => {
       it("displays tournament info and log in prompt", () => {
         // Tournament card
         expect(screen.getByLabelText("shortcode")).toHaveTextContent(
-          "ABC1 ( http://localhost:3000/ABC1 )",
+          "ABC1 (http://localhost:3000/ABC1)",
         );
         expect(screen.getByLabelText("date")).toHaveTextContent(
           "Tuesday, April 21, 2026",
@@ -107,7 +107,7 @@ describe("Tournament", () => {
           "17 active players (1 dropped)",
         );
         expect(screen.getByLabelText("QR code")).toHaveTextContent(
-          "Open Printable QR Code",
+          "Open QR Code",
         );
 
         // Registration card
