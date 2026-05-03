@@ -64,7 +64,7 @@
     if (!printWindow) {
       return;
     }
-    printWindow.document.children[0].append(qrCodeDiv.cloneNode(true));
+    printWindow.document.body.append(qrCodeDiv.cloneNode(true));
     printWindow.print();
     printWindow.close();
   }
