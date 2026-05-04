@@ -12,6 +12,7 @@
   export let match: BracketPairing;
   export let allMatches: BracketPairing[];
   export let predecessorMap: PredecessorMap;
+  export let isSingleElim: boolean = false;
   export let x: number;
   export let y: number;
   export let width: number;
@@ -108,10 +109,17 @@
 
 <g transform={`translate(${x}, ${y})`}>
   <rect {width} {height} rx="6" ry="6" fill="#fff" stroke="#ccc" />
-  <text x="8" y={height / 2} class="game-label" dominant-baseline="middle"
-    >{match.table_number}</text
+  {#if !isSingleElim}
+    <text x="8" y={height / 2} class="game-label" dominant-baseline="middle"
+      >{match.table_number}</text
+    >
+  {/if}
+  <foreignObject
+    x={isSingleElim ? 8 : 28}
+    y="2"
+    width={isSingleElim ? width - 20 : width - 40}
+    height={height - 4}
   >
-  <foreignObject x="28" y="2" width={width - 40} height={height - 4}>
     <div xmlns="http://www.w3.org/1999/xhtml" class="small content">
       <div class="player-line d-flex" class:mb-1={$showIdentities}>
         <div
@@ -126,6 +134,9 @@
           {#if topPlayer}
             {@const identity = getIdentity(topPlayer)}
             <div class="player-info">
+              {#if isSingleElim && topPlayer.seed != null}
+                <span class="seed-label">{topPlayer.seed}</span>
+              {/if}
               {#if identity}
                 <IdentityComponent
                   {identity}
@@ -148,6 +159,10 @@
                 </div>
               {/if}
             {/if}
+          {:else if match.player1_seed != null}
+            <span class="truncate placeholder-text"
+              >New {match.player1_seed} seed</span
+            >
           {:else if topPlayerName ?? topFallback}
             <span
               class="truncate"
@@ -173,6 +188,9 @@
           {#if bottomPlayer}
             {@const identity = getIdentity(bottomPlayer)}
             <div class="player-info">
+              {#if isSingleElim && bottomPlayer.seed != null}
+                <span class="seed-label">{bottomPlayer.seed}</span>
+              {/if}
               {#if identity}
                 <IdentityComponent
                   {identity}
@@ -195,6 +213,10 @@
                 </div>
               {/if}
             {/if}
+          {:else if match.player2_seed != null}
+            <span class="truncate placeholder-text"
+              >New {match.player2_seed} seed</span
+            >
           {:else if bottomPlayerName ?? bottomFallback}
             <span
               class="truncate"
@@ -249,6 +271,14 @@
     font-size: 0.75rem;
     fill: #6c757d;
     font-weight: 500;
+  }
+  .seed-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: 500;
+    min-width: 1.2em;
+    text-align: right;
+    flex-shrink: 0;
   }
   .ids {
     font-size: 0.7rem;

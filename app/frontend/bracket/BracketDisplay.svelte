@@ -37,18 +37,37 @@
   const predecessorMap: PredecessorMap = $derived.by(() => {
     const map: PredecessorMap = {};
 
-    for (const pairing of allPairings) {
-      if (pairing.winner_game) {
-        map[pairing.winner_game] = [
-          ...(map[pairing.winner_game] ?? []),
-          { method: "winner", game: pairing.table_number },
-        ];
+    if (isDoubleElim) {
+      for (const pairing of allPairings) {
+        if (pairing.winner_game) {
+          map[pairing.winner_game] = [
+            ...(map[pairing.winner_game] ?? []),
+            { method: "winner", game: pairing.table_number },
+          ];
+        }
+        if (pairing.loser_game) {
+          map[pairing.loser_game] = [
+            ...(map[pairing.loser_game] ?? []),
+            { method: "loser", game: pairing.table_number },
+          ];
+        }
       }
-      if (pairing.loser_game) {
-        map[pairing.loser_game] = [
-          ...(map[pairing.loser_game] ?? []),
-          { method: "loser", game: pairing.table_number },
-        ];
+    } else {
+      for (let c = 1; c < upperCols.length; c++) {
+        for (const game of upperCols[c]) {
+          for (const player of [game.player1, game.player2]) {
+            if (!player) continue;
+            const prevGame = upperCols[c - 1].find(
+              (g) => g.player1?.id === player.id || g.player2?.id === player.id,
+            );
+            if (prevGame) {
+              map[game.table_number] = [
+                ...(map[game.table_number] ?? []),
+                { method: "winner", game: prevGame.table_number },
+              ];
+            }
+          }
+        }
       }
     }
 
@@ -136,7 +155,11 @@
   const svgHeightLower = $derived(
     padding * 2 + Math.max(1, numLowerRows) * (matchHeight + matchGap),
   );
-  const svgHeightTotal = $derived(svgHeightUpper + bracketGap + svgHeightLower);
+  const svgHeightTotal = $derived(
+    lowerRounds.length > 0
+      ? svgHeightUpper + bracketGap + svgHeightLower
+      : svgHeightUpper,
+  );
 
   // For connectors: map winner_game within same bracket
   const connectorPath = $derived(
@@ -246,28 +269,30 @@
   <svg width={svgWidth} height={svgHeightTotal} role="img" aria-label="Bracket">
     {#if upperRounds.length > 0}
       <g>
-        <g>
-          <!-- Connectors -->
-          {#each upperCols as col, cIdx (cIdx)}
-            {#each col as m, rIdx (m.table_number)}
-              {#if m.winner_game != null}
-                {#if upperIndex.has(String(m.winner_game))}
-                  <path
-                    d={connectorPathTo(
-                      upperIndex,
-                      cIdx,
-                      rIdx,
-                      m.winner_game,
-                      upperY,
-                    )}
-                    stroke="#999"
-                    fill="none"
-                  />
+        {#if isDoubleElim}
+          <g>
+            <!-- Connectors (double elim only) -->
+            {#each upperCols as col, cIdx (cIdx)}
+              {#each col as m, rIdx (m.table_number)}
+                {#if m.winner_game != null}
+                  {#if upperIndex.has(String(m.winner_game))}
+                    <path
+                      d={connectorPathTo(
+                        upperIndex,
+                        cIdx,
+                        rIdx,
+                        m.winner_game,
+                        upperY,
+                      )}
+                      stroke="#999"
+                      fill="none"
+                    />
+                  {/if}
                 {/if}
-              {/if}
+              {/each}
             {/each}
-          {/each}
-        </g>
+          </g>
+        {/if}
 
         <!-- Matches -->
         {#each upperCols as col, cIdx (cIdx)}
@@ -276,6 +301,7 @@
               {match}
               allMatches={allPairings}
               {predecessorMap}
+              isSingleElim={!isDoubleElim}
               x={columnX(cIdx)}
               y={upperY[cIdx]?.[rIdx] ?? baseMatchY(rIdx)}
               width={columnWidth}
@@ -318,6 +344,7 @@
               {match}
               allMatches={allPairings}
               {predecessorMap}
+              isSingleElim={false}
               x={columnX(cIdx + lowerColOffset)}
               y={lowerY[cIdx]?.[rIdx] ?? baseMatchY(rIdx)}
               width={columnWidth}

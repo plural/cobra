@@ -44,11 +44,14 @@ export interface BracketPairing {
   player1?: Player;
   player2?: Player;
   score_label?: string;
+  player1_seed?: number;
+  player2_seed?: number;
 }
 
 export interface Player {
   id: number;
   name_with_pronouns: string;
+  seed?: number;
   side: string | null;
   user_id: string | null;
   side_label: string | null;
