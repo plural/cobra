@@ -31,7 +31,8 @@
     deletedCallback?: (player: Player) => void;
   } = $props();
 
-  let playerEdit = $derived($state.snapshot(player));
+  // svelte-ignore state_referenced_locally
+  let playerEdit = $state($state.snapshot(player));
 
   async function togglePlayerLock() {
     const success = await togglePlayerLockRequest(tournament.id, playerEdit);
