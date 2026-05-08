@@ -201,8 +201,8 @@ RSpec.describe RoundsController do
                            'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
-                               'player1' => player_with_no_ids('Bob', 'he/him'),
-                               'player2' => player_with_no_ids('Charlie', 'she/her'),
+                               'player1' => player_with_no_ids('Bob', 'he/him', seed: 2),
+                               'player2' => player_with_no_ids('Charlie', 'she/her', seed: 3),
                                'policy' => { 'self_report' => false },
                                'ui_metadata' => { 'row_highlighted' => false },
                                'reported' => false,
@@ -268,8 +268,8 @@ RSpec.describe RoundsController do
                            'completed' => false,
                            'pairings' => [
                              { 'intentional_draw' => false,
-                               'player1' => player_with_no_ids('Bob', 'he/him'),
-                               'player2' => player_with_no_ids('Charlie', 'she/her'),
+                               'player1' => player_with_no_ids('Bob', 'he/him', seed: 2),
+                               'player2' => player_with_no_ids('Charlie', 'she/her', seed: 3),
                                'policy' => { 'self_report' => false },
                                'ui_metadata' => { 'row_highlighted' => false },
                                'reported' => false,
@@ -277,7 +277,8 @@ RSpec.describe RoundsController do
                                'score2' => nil,
                                'score_label' => ' - ', 'two_for_one' => false,
                                'table_label' => 'Game 1', 'table_number' => 1, 'self_reports' => nil,
-                               'round' => 1, 'bracket_type' => 'upper', 'winner_game' => 2, 'loser_game' => nil }
+                               'round' => 1, 'bracket_type' => 'upper', 'winner_game' => 2, 'loser_game' => nil,
+                               'player1_seed' => 2, 'player2_seed' => 3 }
                            ],
                            'pairings_reported' => 0,
                            'length_minutes' => 40,
@@ -291,7 +292,9 @@ RSpec.describe RoundsController do
                                'round' => 2,
                                'bracket_type' => 'upper',
                                'winner_game' => nil,
-                               'loser_game' => nil
+                               'loser_game' => nil,
+                               'player1_seed' => 1,
+                               'player2_seed' => nil
                              }
                            ]
                          }
@@ -476,13 +479,14 @@ RSpec.describe RoundsController do
     }
   end
 
-  def player_with_no_ids(name, pronouns, side: nil, side_label: nil)
+  def player_with_no_ids(name, pronouns, side: nil, side_label: nil, seed: nil)
     {
       'name' => name,
       'name_with_pronouns' => "#{name} (#{pronouns})",
       'user_id' => nil,
       'corp_id' => { 'faction' => nil, 'name' => nil },
       'runner_id' => { 'faction' => nil, 'name' => nil },
+      'seed' => seed,
       'side' => side,
       'side_label' => side_label
     }
@@ -495,6 +499,7 @@ RSpec.describe RoundsController do
       'user_id' => nil,
       'corp_id' => nil,
       'runner_id' => nil,
+      'seed' => nil,
       'side' => nil,
       'side_label' => nil
     }
