@@ -14,6 +14,21 @@ module Api
           params['stats'] = {} unless params.include?('stats')
           params['stats']['total'] = 'count'
         end
+
+        def current_user
+          @current_user ||= load_current_user
+        end
+
+        def user_signed_in?
+          !!current_user
+        end
+
+        def load_current_user
+          id = session[:user_id]
+          return nil unless id
+
+          User.find_by(id:)
+        end
       end
     end
   end
