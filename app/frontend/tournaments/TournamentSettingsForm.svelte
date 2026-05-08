@@ -7,6 +7,7 @@
     type TournamentOptions,
   } from "./TournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
+  import ProgressButton from "../widgets/ProgressButton.svelte";
 
   let {
     tournament,
@@ -14,21 +15,20 @@
     featureFlags = {},
     submitLabel = "Save",
     submitIcon = "floppy-o",
-    isSubmitting = false,
     errors = {},
-    onSubmit = () => {
-      isSubmitting = true;
-    },
+    onSubmitCallback,
   }: {
     tournament: Tournament;
     options?: TournamentOptions;
     featureFlags?: FeatureFlags;
     submitLabel?: string;
     submitIcon?: string;
-    isSubmitting?: boolean;
     errors?: Errors;
-    onSubmit?: () => void;
+    onSubmitCallback?: (tournament: Tournament) => void;
   } = $props();
+
+  // svelte-ignore state_referenced_locally
+  let tournamentEdit = $state($state.snapshot(tournament));
 </script>
 
 <div class="form-group">
@@ -37,7 +37,7 @@
     type="text"
     id="name"
     class="form-control"
-    bind:value={tournament.name}
+    bind:value={tournamentEdit.name}
   />
   {#if errors.name}
     <div class="invalid-feedback d-block">{errors.name}</div>
@@ -52,7 +52,7 @@
         type="date"
         id="date"
         class="form-control"
-        bind:value={tournament.date}
+        bind:value={tournamentEdit.date}
       />
       {#if errors.date}
         <div class="invalid-feedback d-block">{errors.date}</div>
@@ -65,7 +65,7 @@
       <select
         id="time_zone"
         class="form-control"
-        bind:value={tournament.time_zone}
+        bind:value={tournamentEdit.time_zone}
       >
         {#each options.time_zones as time_zone (time_zone.id)}
           <option value={time_zone.id}>{time_zone.name}</option>
@@ -86,7 +86,7 @@
         type="time"
         id="registration_starts"
         class="form-control"
-        bind:value={tournament.registration_starts}
+        bind:value={tournamentEdit.registration_starts}
       />
       {#if errors.registration_starts}
         <div class="invalid-feedback d-block">{errors.registration_starts}</div>
@@ -100,7 +100,7 @@
         type="time"
         id="tournament_starts"
         class="form-control"
-        bind:value={tournament.tournament_starts}
+        bind:value={tournamentEdit.tournament_starts}
       />
       {#if errors.tournament_starts}
         <div class="invalid-feedback d-block">{errors.tournament_starts}</div>
@@ -114,7 +114,7 @@
   <select
     id="swiss_format"
     class="form-control"
-    bind:value={tournament.swiss_format}
+    bind:value={tournamentEdit.swiss_format}
   >
     <option value="double_sided">Double-sided</option>
     <option value="single_sided">Single-sided</option>
@@ -131,7 +131,7 @@
       <select
         id="tournament_type_id"
         class="form-control"
-        bind:value={tournament.tournament_type_id}
+        bind:value={tournamentEdit.tournament_type_id}
       >
         <option value=""></option>
         {#each options.tournament_types as tournament_type (tournament_type.id)}
@@ -149,7 +149,7 @@
       <select
         id="card_set_id"
         class="form-control"
-        bind:value={tournament.card_set_id}
+        bind:value={tournamentEdit.card_set_id}
       >
         <option value=""></option>
         {#each options.card_sets as card_set (card_set.id)}
@@ -170,7 +170,7 @@
       <select
         id="format_id"
         class="form-control"
-        bind:value={tournament.format_id}
+        bind:value={tournamentEdit.format_id}
       >
         <option value=""></option>
         {#each options.formats as format (format.id)}
@@ -188,7 +188,7 @@
       <select
         id="deckbuilding_restriction_id"
         class="form-control"
-        bind:value={tournament.deckbuilding_restriction_id}
+        bind:value={tournamentEdit.deckbuilding_restriction_id}
       >
         <option value=""></option>
         {#each options.deckbuilding_restrictions as restriction (restriction.id)}
@@ -209,7 +209,7 @@
     type="checkbox"
     id="decklist_required"
     class="form-check-input"
-    bind:checked={tournament.decklist_required}
+    bind:checked={tournamentEdit.decklist_required}
   />
   <label for="decklist_required" class="form-check-label">
     Decklist required for event
@@ -222,7 +222,7 @@
     type="text"
     id="organizer_contact"
     class="form-control"
-    bind:value={tournament.organizer_contact}
+    bind:value={tournamentEdit.organizer_contact}
   />
   {#if errors.organizer_contact}
     <div class="invalid-feedback d-block">{errors.organizer_contact}</div>
@@ -235,7 +235,7 @@
     type="url"
     id="event_link"
     class="form-control"
-    bind:value={tournament.event_link}
+    bind:value={tournamentEdit.event_link}
   />
   {#if errors.event_link}
     <div class="invalid-feedback d-block">{errors.event_link}</div>
@@ -247,7 +247,7 @@
   <textarea
     id="description"
     class="form-control"
-    bind:value={tournament.description}
+    bind:value={tournamentEdit.description}
   ></textarea>
   {#if errors.description}
     <div class="invalid-feedback d-block">{errors.description}</div>
@@ -259,7 +259,7 @@
   <select
     id="official_prize_kit_id"
     class="form-control"
-    bind:value={tournament.official_prize_kit_id}
+    bind:value={tournamentEdit.official_prize_kit_id}
   >
     <option value=""></option>
     {#each options.official_prize_kits as prize_kit (prize_kit.id)}
@@ -278,7 +278,7 @@
   <textarea
     id="additional_prizes_description"
     class="form-control"
-    bind:value={tournament.additional_prizes_description}
+    bind:value={tournamentEdit.additional_prizes_description}
   ></textarea>
   {#if errors.additional_prizes_description}
     <div class="invalid-feedback d-block">
@@ -293,7 +293,7 @@
     type="url"
     id="stream_url"
     class="form-control"
-    bind:value={tournament.stream_url}
+    bind:value={tournamentEdit.stream_url}
   />
   {#if errors.stream_url}
     <div class="invalid-feedback d-block">{errors.stream_url}</div>
@@ -305,7 +305,7 @@
     type="checkbox"
     id="self_registration"
     class="form-check-input"
-    bind:checked={tournament.self_registration}
+    bind:checked={tournamentEdit.self_registration}
   />
   <label for="self_registration" class="form-check-label">
     Self-Registration: Allow players to use a link to register themselves
@@ -317,7 +317,7 @@
     type="checkbox"
     id="nrdb_deck_registration"
     class="form-check-input"
-    bind:checked={tournament.nrdb_deck_registration}
+    bind:checked={tournamentEdit.nrdb_deck_registration}
   />
   <label for="nrdb_deck_registration" class="form-check-label">
     Deck registration: Upload decks from NetrunnerDB
@@ -329,7 +329,7 @@
     type="checkbox"
     id="private"
     class="form-check-input"
-    bind:checked={tournament.private}
+    bind:checked={tournamentEdit.private}
   />
   <label for="private" class="form-check-label">
     Private: Only I will be able to view this tournament
@@ -341,7 +341,7 @@
     type="checkbox"
     id="manual_seed"
     class="form-check-input"
-    bind:checked={tournament.manual_seed}
+    bind:checked={tournamentEdit.manual_seed}
   />
   <label for="manual_seed" class="form-check-label">
     Use manual seeding for tiebreakers: Players can be assigned a "seed" value
@@ -355,7 +355,7 @@
     type="checkbox"
     id="allow_streaming_opt_out"
     class="form-check-input"
-    bind:checked={tournament.allow_streaming_opt_out}
+    bind:checked={tournamentEdit.allow_streaming_opt_out}
   />
   <label for="allow_streaming_opt_out" class="form-check-label">
     Streaming opt out: Allow players to choose whether their games should be
@@ -370,7 +370,7 @@
       type="checkbox"
       id="allow_self_reporting"
       class="form-check-input"
-      bind:checked={tournament.allow_self_reporting}
+      bind:checked={tournamentEdit.allow_self_reporting}
     />
     <label for="allow_self_reporting" class="form-check-label">
       Allow logged-in players to report their own match results
@@ -379,22 +379,15 @@
 {/if}
 
 <div class="form-group">
-  <button
-    type="submit"
-    class="btn btn-primary"
-    onclick={onSubmit}
-    disabled={isSubmitting}
+  <ProgressButton
+    css="btn btn-primary"
+    inProgressText="Saving"
+    completeText="Saved"
+    onclick={() => {
+      onSubmitCallback?.(tournamentEdit);
+    }}
   >
     <FontAwesomeIcon icon={submitIcon} />
-    {#if isSubmitting}
-      <span
-        class="spinner-border spinner-border-sm"
-        role="status"
-        aria-hidden="true"
-      ></span>
-      Saving...
-    {:else}
-      {submitLabel}
-    {/if}
-  </button>
+    {submitLabel}
+  </ProgressButton>
 </div>

@@ -22,7 +22,7 @@
     inProgressText: string;
     completeText: string;
     confirm?: () => boolean;
-    onclick: () => Promise<void>;
+    onclick: () => void | Promise<void>;
   } = $props();
 
   let state: number = $state(State.DEFAULT);
@@ -42,7 +42,12 @@
   }
 </script>
 
-<button type="button" class={css} onclick={clicked}>
+<button
+  type="button"
+  class={css}
+  onclick={clicked}
+  disabled={state !== State.DEFAULT}
+>
   {#if state === State.IN_PROGRESS}
     <span class="spinner-border spinner-border-sm m-auto"></span>
     {inProgressText}
