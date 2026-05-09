@@ -54,6 +54,8 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
           pairing[:winner_game] = bracket_game ? bracket_game[:winner_game] : nil
           pairing[:loser_game] = bracket_game ? bracket_game[:loser_game] : nil
           pairing[:bracket_type] = bracket_game ? bracket_game[:bracket_type] : nil
+          pairing[:player1_seed] = bracket_game ? bracket_game[:player1_seed] : nil
+          pairing[:player2_seed] = bracket_game ? bracket_game[:player2_seed] : nil
         end
       end
 
@@ -155,7 +157,8 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
 
   def pairings_data_stages
     players = pairings_data_players
-    @tournament.stages.includes(:rounds).map do |stage|
+    @tournament.stages.includes(:rounds, :registrations).map do |stage|
+      stage_players = pairings_data_players_with_seeds(players, stage)
       {
         id: stage.id,
         name: stage.format.titleize,
@@ -163,9 +166,17 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
         is_single_sided: stage.single_sided?,
         is_elimination: stage.elimination?,
         view_decks: stage.decks_visible_to?(current_user),
-        rounds: pairings_data_rounds(stage, players),
+        rounds: pairings_data_rounds(stage, stage_players),
         player_count: stage.players.count
       }
+    end
+  end
+
+  def pairings_data_players_with_seeds(players, stage)
+    seeds = stage.registrations.to_h { |r| [r.player_id, r.seed] }
+    players.transform_values do |p|
+      seed = seeds[p['id']]
+      seed ? p.merge('seed' => seed) : p
     end
   end
 
@@ -306,6 +317,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
       id: (player['id'] if player),
       name: (player['name'] if player),
       name_with_pronouns: name_with_pronouns(player),
+      seed: (player['seed'] if player),
       side:,
       user_id: (player['user_id'] if player),
       side_label: side_label(side),
@@ -409,7 +421,9 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
         round: game[:round],
         winner_game: game[:winner_game],
         loser_game: game[:loser_game],
-        bracket_type: game[:bracket_type].to_s
+        bracket_type: game[:bracket_type].to_s,
+        player1_seed: game[:player1_seed],
+        player2_seed: game[:player2_seed]
       }
     end
   end
