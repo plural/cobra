@@ -41,7 +41,7 @@ export async function loadPlayers(tournamentId: number) {
   return (await response.json()) as PlayersData;
 }
 
-export async function savePlayer(tournamentId: number, player: Player) {
+export async function savePlayer(tournamentId: number, player: Player, organizerView = false) {
   const route =
     player.id === 0
       ? Routes.beta_tournament_players_path(tournamentId)
@@ -53,7 +53,7 @@ export async function savePlayer(tournamentId: number, player: Player) {
       Accept: "application/json",
       "X-CSRF-Token": csrfToken(),
     },
-    body: JSON.stringify({ player: playerRequestObject(player) }),
+    body: JSON.stringify({ player: playerRequestObject(player), organiser_view: organizerView }),
   });
 
   const result = (await response.json()) as {

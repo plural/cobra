@@ -18,6 +18,7 @@
     tournament,
     tournamentPolicies,
     identityNames,
+    organizerView = false,
     savedCallback,
     droppedCallback,
     deletedCallback,
@@ -26,6 +27,7 @@
     tournament: Tournament;
     tournamentPolicies: TournamentPolicies;
     identityNames: IdentityNames;
+    organizerView?: boolean;
     savedCallback?: (player: Player) => void;
     droppedCallback?: (player: Player) => void;
     deletedCallback?: (player: Player) => void;
@@ -53,7 +55,7 @@
   }
 
   async function save() {
-    await savePlayer(tournament.id, playerEdit);
+    await savePlayer(tournament.id, playerEdit, organizerView);
     savedCallback?.(playerEdit);
   }
 

@@ -268,6 +268,7 @@
       tournamentPolicies={data.tournamentPolicies}
       identityNames={identityNames ?? { corp: [], runner: [] }}
       savedCallback={newPlayerSavedCallback}
+      organizerView={true}
     />
   </div>
 
