@@ -11,8 +11,6 @@
 
   let tournament: DemoTournamentSettings;
   let csrfToken = "";
-
-  let isSubmitting = false;
   let errors: Errors = {};
 
   onMount(async () => {
@@ -22,7 +20,6 @@
   });
 
   async function submitNewTournament() {
-    isSubmitting = true;
     errors = {};
 
     try {
@@ -34,8 +31,6 @@
       } else {
         errors = { base: ["An unexpected error occurred. Please try again."] };
       }
-    } finally {
-      isSubmitting = false;
     }
   }
 </script>
@@ -57,7 +52,6 @@
           onSubmit={submitNewTournament}
           submitLabel="Create"
           submitIcon="plus"
-          {isSubmitting}
           {errors}
         />
       </form>

@@ -114,7 +114,7 @@ describe("TournamentSettingsForm", () => {
         tournament: tournament,
         options: options,
         featureFlags: featureFlags,
-        onSubmit: mockOnSubmit,
+        onSubmitCallback: mockOnSubmit,
       },
     });
 
@@ -141,20 +141,5 @@ describe("TournamentSettingsForm", () => {
 
     expect(screen.getByText("Name is required")).toBeInTheDocument();
     expect(screen.getByText("Date must be in the future")).toBeInTheDocument();
-  });
-
-  it("shows loading state when submitting", () => {
-    render(TournamentSettingsForm, {
-      props: {
-        tournament: tournament,
-        options: options,
-        featureFlags: featureFlags,
-        isSubmitting: true,
-        submitLabel: "Saving...",
-      },
-    });
-
-    const submitButton = screen.getByRole("button", { name: /saving/i });
-    expect(submitButton).toBeDisabled();
   });
 });

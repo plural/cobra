@@ -16,8 +16,6 @@
   let options: TournamentOptions = emptyTournamentOptions();
   let featureFlags: FeatureFlags = {};
   let csrfToken = "";
-
-  let isSubmitting = false;
   let errors: Errors = {};
 
   onMount(async () => {
@@ -29,8 +27,7 @@
     csrfToken = data.csrf_token;
   });
 
-  async function submitNewTournament() {
-    isSubmitting = true;
+  async function submitNewTournament(tournament: Tournament) {
     errors = {};
 
     try {
@@ -42,8 +39,6 @@
       } else {
         errors = { base: ["An unexpected error occurred. Please try again."] };
       }
-    } finally {
-      isSubmitting = false;
     }
   }
 </script>
@@ -55,18 +50,15 @@
     {#if errors.base}
       <div class="alert alert-danger">{errors.base}</div>
     {:else if tournament}
-      <form on:submit|preventDefault={submitNewTournament}>
-        <TournamentSettingsForm
-          {tournament}
-          {options}
-          {featureFlags}
-          onSubmit={submitNewTournament}
-          submitLabel="Create"
-          submitIcon="plus"
-          {isSubmitting}
-          {errors}
-        />
-      </form>
+      <TournamentSettingsForm
+        {tournament}
+        {options}
+        {featureFlags}
+        onSubmitCallback={submitNewTournament}
+        submitLabel="Create"
+        submitIcon="plus"
+        {errors}
+      />
     {:else}
       <div class="d-flex align-items-center m-2" data-testid="loading-spinner">
         <div class="spinner-border m-auto"></div>

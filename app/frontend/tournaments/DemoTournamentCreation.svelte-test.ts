@@ -200,31 +200,4 @@ describe("DemoTournamentCreation", () => {
       ).toBeInTheDocument();
     });
   });
-
-  it("disables submit button while submitting", async () => {
-    const { createDemoTournament } = await import("./DemoTournamentSettings");
-    // Make createDemoTournament hang to test loading state
-    vi.mocked(createDemoTournament).mockImplementation(
-      () =>
-        new Promise(() => {
-          // This promise intentionally never resolves to test loading state
-        }),
-    );
-
-    render(DemoTournamentCreation);
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/tournament name/i)).toBeInTheDocument();
-    });
-
-    const submitButton = screen.getByRole("button", {
-      name: /create/i,
-    });
-    await fireEvent.click(submitButton);
-
-    // Button should be disabled while submitting
-    await waitFor(() => {
-      expect(submitButton).toBeDisabled();
-    });
-  });
 });

@@ -21,16 +21,18 @@
   } = $props();
 
   let identityNames: IdentityNames | undefined = $state();
-  let playerAgreed = $state(false);
   // svelte-ignore state_referenced_locally
-  let readOnly = $state(player.id !== 0);
+  let playerEdit = $state($state.snapshot(player));
+  let playerAgreed = $state(false);
+  let readOnly = $derived(playerEdit.id !== 0);
 
   onMount(async () => {
     identityNames = await loadIdentityNames();
+    playerEdit.name = player.name;
   });
 
   async function savePlayer() {
-    player = await savePlayerRequest(tournament.id, player);
+    playerEdit = await savePlayerRequest(tournament.id, playerEdit);
     readOnly = true;
   }
 </script>
@@ -62,14 +64,14 @@
       <li class="list-group-item">
         <div class="small text-secondary">Name:</div>
         <div aria-label="name">
-          {player.name_with_pronouns}
+          {playerEdit.name_with_pronouns}
         </div>
       </li>
       <li class="list-group-item">
         <div class="small text-secondary">Corp ID:</div>
         <div aria-label="corp ID">
           <Identity
-            identity={player.corp_id}
+            identity={playerEdit.corp_id}
             name_if_missing="Unspecified"
             icon_if_missing="interrupt"
           />
@@ -79,7 +81,7 @@
         <div class="small text-secondary">Runner ID:</div>
         <div aria-label="runner ID">
           <Identity
-            identity={player.runner_id}
+            identity={playerEdit.runner_id}
             name_if_missing="Unspecified"
             icon_if_missing="interrupt"
           />
@@ -87,7 +89,7 @@
       </li>
       <li class="list-group-item">
         <div class="small text-secondary">First Round Bye:</div>
-        {#if player.first_round_bye}
+        {#if playerEdit.first_round_bye}
           <div class="badge badge-success" aria-label="first round bye">
             YES
           </div>
@@ -99,7 +101,7 @@
       </li>
       <li class="list-group-item">
         <div class="small text-secondary">Stream my games:</div>
-        {#if player.include_in_stream}
+        {#if playerEdit.include_in_stream}
           <div class="badge badge-success" aria-label="stream my games">
             YES
           </div>
@@ -115,14 +117,14 @@
   <div class="card alert alert-secondary">
     <div class="card-header d-flex justify-content-between">
       <h5 class="mb-0">
-        {#if player.id === 0}
+        {#if playerEdit.id === 0}
           Register for this Event
         {:else}
           My Registration Information
         {/if}
       </h5>
 
-      {#if player.id !== 0}
+      {#if playerEdit.id !== 0}
         <button
           type="button"
           class="btn btn-link text-info p-0"
@@ -144,7 +146,7 @@
           type="text"
           placeholder="Enter your name"
           class="form-control"
-          bind:value={player.name}
+          bind:value={playerEdit.name}
         />
       </div>
 
@@ -155,7 +157,7 @@
           type="text"
           placeholder="Example: they/them"
           class="form-control"
-          bind:value={player.pronouns}
+          bind:value={playerEdit.pronouns}
         />
       </div>
 
@@ -166,7 +168,7 @@
             id="corp-identity"
             placeholder="Search for corp ID"
             identityNames={identityNames ? identityNames.corp : []}
-            bind:value={player.corp_id.name}
+            bind:value={playerEdit.corp_id.name}
           />
         </div>
 
@@ -176,7 +178,7 @@
             id="runner-identity"
             placeholder="Search for runner ID"
             identityNames={identityNames ? identityNames.runner : []}
-            bind:value={player.runner_id.name}
+            bind:value={playerEdit.runner_id.name}
           />
         </div>
       {/if}
@@ -191,7 +193,7 @@
           <input
             id="include_in_stream"
             type="checkbox"
-            bind:checked={player.include_in_stream}
+            bind:checked={playerEdit.include_in_stream}
           />
           <label for="include_in_stream">
             Include my games in video coverage
@@ -204,7 +206,7 @@
           <input
             id="first_round_bye"
             type="checkbox"
-            bind:checked={player.first_round_bye}
+            bind:checked={playerEdit.first_round_bye}
           />
           <label for="first_round_bye">First Round Bye</label>
         </div>
@@ -217,13 +219,13 @@
               type="number"
               placeholder="Set seed"
               class="form-control"
-              bind:value={player.manual_seed}
+              bind:value={playerEdit.manual_seed}
             />
           </div>
         {/if}
       {/if}
 
-      {#if player.id === 0}
+      {#if playerEdit.id === 0}
         <hr />
 
         <div class="form-group">
@@ -247,11 +249,11 @@
       <button
         type="button"
         class="btn btn-primary"
-        disabled={player.id === 0 && !playerAgreed}
+        disabled={playerEdit.id === 0 && !playerAgreed}
         onclick={savePlayer}
       >
         <FontAwesomeIcon icon="user-plus" />
-        {#if player.id !== 0}
+        {#if playerEdit.id !== 0}
           Submit
         {:else if tournament.nrdb_deck_registration}
           Deck Registration
