@@ -90,7 +90,7 @@ module Beta
           update: @tournament.user == current_user,
           custom_table_numbering: Flipper.enabled?(:custom_table_numbering, current_user)
         },
-        tournament: tournament_json(@tournament),
+        tournament: helpers.tournament_json(@tournament),
         stage: {
           id: stage.id,
           name: stage.format.titleize,
