@@ -12,6 +12,7 @@
     dropPlayer as dropPlayerRequest,
   } from "./PlayersData";
   import IdentitySelect from "../widgets/IdentitySelect.svelte";
+  import { Identity } from "../identities/Identity";
 
   let {
     player,
@@ -54,8 +55,19 @@
 
   async function save() {
     await savePlayer(tournament.id, playerEdit, organizerView);
-    playerEdit = new Player();
+    
     savedCallback?.(playerEdit);
+
+    if (playerEdit.id === 0) {
+      playerEdit.name = "";
+      playerEdit.pronouns = "";
+      playerEdit.corp_id = new Identity();
+      playerEdit.runner_id = new Identity();
+      playerEdit.include_in_stream = false;
+      playerEdit.first_round_bye = false;
+      playerEdit.manual_seed = null;
+      playerEdit.fixed_table_number = null;
+    }
   }
 
   async function dropPlayer() {

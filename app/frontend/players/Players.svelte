@@ -267,8 +267,8 @@
       tournament={data.tournament}
       tournamentPolicies={data.tournamentPolicies}
       identityNames={identityNames ?? { corp: [], runner: [] }}
-      savedCallback={newPlayerSavedCallback}
       organizerView={true}
+      savedCallback={newPlayerSavedCallback}
     />
   </div>
 
@@ -434,6 +434,7 @@
           tournament={data.tournament}
           tournamentPolicies={data.tournamentPolicies}
           identityNames={identityNames ?? { corp: [], runner: [] }}
+          organizerView={true}
           savedCallback={loadData}
           droppedCallback={loadData}
           deletedCallback={loadData}
