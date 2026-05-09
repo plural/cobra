@@ -194,7 +194,7 @@ describe("Players", () => {
       aliceEdit.first_round_bye = true;
       aliceEdit.fixed_table_number = 1;
 
-      expect(savePlayer).toHaveBeenCalledExactlyOnceWith(1, aliceEdit);
+      expect(savePlayer).toHaveBeenCalledExactlyOnceWith(1, aliceEdit, false);
       expect(loadPlayers).toHaveBeenCalledTimes(2);
     });
 
@@ -417,7 +417,7 @@ describe("Players", () => {
       charlieEdit.first_round_bye = true;
       charlieEdit.fixed_table_number = 1;
 
-      expect(savePlayer).toHaveBeenCalledExactlyOnceWith(1, charlieEdit);
+      expect(savePlayer).toHaveBeenCalledExactlyOnceWith(1, charlieEdit, true);
       expect(loadPlayers).toHaveBeenCalledTimes(2);
     });
   });
