@@ -14,7 +14,7 @@
   import IdentitySelect from "../widgets/IdentitySelect.svelte";
 
   let {
-    player,
+    player = new Player(),
     tournament,
     tournamentPolicies,
     identityNames,
@@ -23,7 +23,7 @@
     droppedCallback,
     deletedCallback,
   }: {
-    player: Player;
+    player?: Player;
     tournament: Tournament;
     tournamentPolicies: TournamentPolicies;
     identityNames: IdentityNames;
@@ -47,15 +47,14 @@
   }
 
   function confirmSave() {
-    return (
-      playerEdit.id !== 0 ||
+    return playerEdit.id !== 0 ||
       !tournament.registration_closed ||
-      confirm("Tournament is closed, add new player anyway?")
-    );
+      confirm("Tournament is closed, add new player anyway?");
   }
 
   async function save() {
     await savePlayer(tournament.id, playerEdit, organizerView);
+    playerEdit = new Player();
     savedCallback?.(playerEdit);
   }
 

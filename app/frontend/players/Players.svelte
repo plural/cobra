@@ -30,7 +30,6 @@
 
   let data: PlayersData | undefined = $state();
   let identityNames: IdentityNames | undefined = $state();
-  let newPlayer = $state(new Player());
   let registrationLockDescription = $derived.by(() => {
     if (!data) {
       return "";
@@ -70,7 +69,6 @@
   }
 
   async function newPlayerSavedCallback() {
-    newPlayer = new Player();
     await loadData();
   }
 
@@ -263,7 +261,6 @@
   <div class="alert alert-secondary mt-4">
     <h4>Register New Player</h4>
     <PlayerForm
-      player={newPlayer}
       tournament={data.tournament}
       tournamentPolicies={data.tournamentPolicies}
       identityNames={identityNames ?? { corp: [], runner: [] }}
