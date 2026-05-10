@@ -12,7 +12,7 @@
   export let match: BracketPairing;
   export let allMatches: BracketPairing[];
   export let predecessorMap: PredecessorMap;
-  export let isSingleElim: boolean = false;
+  export let isSingleElim = false;
   export let x: number;
   export let y: number;
   export let width: number;

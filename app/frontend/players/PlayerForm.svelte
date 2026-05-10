@@ -12,7 +12,7 @@
     dropPlayer as dropPlayerRequest,
   } from "./PlayersData";
   import IdentitySelect from "../widgets/IdentitySelect.svelte";
-    import { globalMessages } from "../utils/GlobalMessageState.svelte";
+  import { globalMessages } from "../utils/GlobalMessageState.svelte";
 
   let {
     player,
@@ -50,9 +50,11 @@
   }
 
   function confirmSave() {
-    return playerEdit.id !== 0 ||
+    return (
+      playerEdit.id !== 0 ||
       !tournament.registration_closed ||
-      confirm("Tournament is closed, add new player anyway?");
+      confirm("Tournament is closed, add new player anyway?")
+    );
   }
 
   async function save() {
