@@ -6,23 +6,26 @@
     DEFAULT: 0,
     IN_PROGRESS: 1,
     COMPLETE: 2,
+    ERROR: 3,
   });
   const COMPLETE_DURATION = 1000;
 
   let {
     css = "btn btn-info",
     children,
-    inProgressText,
-    completeText,
+    inProgressText = "In progress",
+    completeText = "Complete",
+    errorText = "Error",
     confirm,
     onclick,
   }: {
     css?: string;
     children: Snippet;
-    inProgressText: string;
-    completeText: string;
+    inProgressText?: string;
+    completeText?: string;
+    errorText?: string;
     confirm?: () => boolean;
-    onclick: () => void | Promise<void>;
+    onclick: () => boolean | Promise<boolean>;
   } = $props();
 
   let state: number = $state(State.DEFAULT);
@@ -33,8 +36,7 @@
     }
 
     state = State.IN_PROGRESS;
-    await onclick();
-    state = State.COMPLETE;
+    state = (await onclick()) ? State.COMPLETE : State.ERROR;
 
     setTimeout(() => {
       state = State.DEFAULT;
@@ -53,6 +55,8 @@
     {inProgressText}
   {:else if state === State.COMPLETE}
     <FontAwesomeIcon icon="check" /> {completeText}
+  {:else if state === State.ERROR}
+    <FontAwesomeIcon icon="warning" /> {errorText}
   {:else}
     {@render children()}
   {/if}
