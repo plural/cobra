@@ -70,8 +70,8 @@
   }
 
   async function newPlayerSavedCallback() {
-    newPlayer = new Player();
     await loadData();
+    newPlayer = new Player();
   }
 
   async function setPlayerRegistrationStatus(locked: boolean) {
@@ -262,14 +262,16 @@
   <!-- Register New Player -->
   <div class="alert alert-secondary mt-4">
     <h4>Register New Player</h4>
-    <PlayerForm
-      player={newPlayer}
-      tournament={data.tournament}
-      tournamentPolicies={data.tournamentPolicies}
-      identityNames={identityNames ?? { corp: [], runner: [] }}
-      organizerView={true}
-      savedCallback={newPlayerSavedCallback}
-    />
+    {#key newPlayer}
+      <PlayerForm
+        player={newPlayer}
+        tournament={data.tournament}
+        tournamentPolicies={data.tournamentPolicies}
+        identityNames={identityNames ?? { corp: [], runner: [] }}
+        organizerView={true}
+        savedCallback={newPlayerSavedCallback}
+      />
+    {/key}
   </div>
 
   <!-- Players -->
