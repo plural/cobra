@@ -19,7 +19,7 @@
     csrfToken = data.csrf_token;
   });
 
-  async function submitNewTournament() {
+  async function submitNewTournament(tournament: DemoTournamentSettings) {
     errors = {};
 
     try {
@@ -31,7 +31,11 @@
       } else {
         errors = { base: ["An unexpected error occurred. Please try again."] };
       }
+
+      return false;
     }
+
+    return true;
   }
 </script>
 
@@ -46,15 +50,13 @@
     {#if errors.base}
       <div class="alert alert-danger">{errors.base}</div>
     {:else if tournament}
-      <form on:submit|preventDefault={submitNewTournament}>
-        <DemoTournamentSettingsForm
-          {tournament}
-          onSubmit={submitNewTournament}
-          submitLabel="Create"
-          submitIcon="plus"
-          {errors}
-        />
-      </form>
+      <DemoTournamentSettingsForm
+        {tournament}
+        onSubmitCallback={submitNewTournament}
+        submitLabel="Create"
+        submitIcon="plus"
+        {errors}
+      />
     {:else}
       <div class="d-flex align-items-center m-2" data-testid="loading-spinner">
         <div class="spinner-border m-auto"></div>

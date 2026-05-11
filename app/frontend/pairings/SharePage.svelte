@@ -16,7 +16,10 @@
       await navigator.clipboard.writeText(text);
     } catch {
       error = "Unable to copy text.";
+      return false;
     }
+
+    return true;
   }
 </script>
 

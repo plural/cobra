@@ -24,7 +24,7 @@
     submitLabel?: string;
     submitIcon?: string;
     errors?: Errors;
-    onSubmitCallback?: (tournament: Tournament) => void;
+    onSubmitCallback?: (tournament: Tournament) => Promise<boolean>;
   } = $props();
 
   // svelte-ignore state_referenced_locally
@@ -378,16 +378,14 @@
   </div>
 {/if}
 
-<div class="form-group">
-  <ProgressButton
-    css="btn btn-primary"
-    inProgressText="Saving"
-    completeText="Saved"
-    onclick={() => {
-      onSubmitCallback?.(tournamentEdit);
-    }}
-  >
-    <FontAwesomeIcon icon={submitIcon} />
-    {submitLabel}
-  </ProgressButton>
-</div>
+<ProgressButton
+  css="btn btn-primary"
+  inProgressText="Saving"
+  completeText="Saved"
+  onclick={() => {
+    return onSubmitCallback ? onSubmitCallback(tournamentEdit) : false;
+  }}
+>
+  <FontAwesomeIcon icon={submitIcon} />
+  {submitLabel}
+</ProgressButton>

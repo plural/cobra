@@ -1,18 +1,27 @@
 <script lang="ts">
   import {
-    type Errors,
     type DemoTournamentSettings,
+    type Errors,
   } from "./DemoTournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  export let tournament: DemoTournamentSettings = {};
+  import ProgressButton from "../widgets/ProgressButton.svelte";
 
-  export let submitLabel = "Save";
-  export let submitIcon = "floppy-o";
-  export let isSubmitting = false;
-  export let errors: Errors = {};
-  export let onSubmit = () => {
-    isSubmitting = true;
-  };
+  let {
+    tournament,
+    submitLabel = "Save",
+    submitIcon = "floppy-o",
+    errors = {},
+    onSubmitCallback,
+  }: {
+    tournament: DemoTournamentSettings;
+    submitLabel?: string;
+    submitIcon?: string;
+    errors?: Errors;
+    onSubmitCallback?: (tournament: DemoTournamentSettings) => Promise<boolean>;
+  } = $props();
+
+  // svelte-ignore state_referenced_locally
+  let tournamentEdit = $state($state.snapshot(tournament));
 </script>
 
 <div class="form-group">
@@ -21,7 +30,7 @@
     type="text"
     id="name"
     class="form-control"
-    bind:value={tournament.name}
+    bind:value={tournamentEdit.name}
   />
   {#if errors.name}
     <div class="invalid-feedback d-block">{errors.name}</div>
@@ -33,7 +42,7 @@
   <select
     id="swiss_format"
     class="form-control"
-    bind:value={tournament.swiss_format}
+    bind:value={tournamentEdit.swiss_format}
   >
     <option value="double_sided">Double-sided</option>
     <option value="single_sided">Single-sided</option>
@@ -51,7 +60,7 @@
         type="text"
         id="num_players"
         class="form-control"
-        bind:value={tournament.num_players}
+        bind:value={tournamentEdit.num_players}
       />
       {#if errors.num_players}
         <div class="invalid-feedback d-block">{errors.num_players}</div>
@@ -65,7 +74,7 @@
         type="text"
         id="num_first_round_byes"
         class="form-control"
-        bind:value={tournament.num_first_round_byes}
+        bind:value={tournamentEdit.num_first_round_byes}
       />
       {#if errors.num_first_round_byes}
         <div class="invalid-feedback d-block">
@@ -81,30 +90,21 @@
     type="checkbox"
     id="assign_ids"
     class="form-check-input"
-    bind:checked={tournament.assign_ids}
+    bind:checked={tournamentEdit.assign_ids}
   />
   <label for="assign_ids" class="form-check-label">
     Assign random IDs for players?
   </label>
 </div>
 
-<div class="form-group">
-  <button
-    type="submit"
-    class="btn btn-primary"
-    on:click|preventDefault={onSubmit}
-    disabled={isSubmitting}
-  >
-    <FontAwesomeIcon icon={submitIcon} />
-    {#if isSubmitting}
-      <span
-        class="spinner-border spinner-border-sm"
-        role="status"
-        aria-hidden="true"
-      ></span>
-      Saving...
-    {:else}
-      {submitLabel}
-    {/if}
-  </button>
-</div>
+<ProgressButton
+  css="btn btn-primary"
+  inProgressText="Saving"
+  completeText="Saved"
+  onclick={() => {
+    return onSubmitCallback ? onSubmitCallback(tournamentEdit) : false;
+  }}
+>
+  <FontAwesomeIcon icon={submitIcon} />
+  {submitLabel}
+</ProgressButton>

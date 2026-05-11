@@ -12,12 +12,14 @@
     dropPlayer as dropPlayerRequest,
   } from "./PlayersData";
   import IdentitySelect from "../widgets/IdentitySelect.svelte";
+  import { globalMessages } from "../utils/GlobalMessageState.svelte";
 
   let {
     player,
     tournament,
     tournamentPolicies,
     identityNames,
+    organizerView = false,
     savedCallback,
     droppedCallback,
     deletedCallback,
@@ -26,6 +28,7 @@
     tournament: Tournament;
     tournamentPolicies: TournamentPolicies;
     identityNames: IdentityNames;
+    organizerView?: boolean;
     savedCallback?: (player: Player) => void;
     droppedCallback?: (player: Player) => void;
     deletedCallback?: (player: Player) => void;
@@ -37,11 +40,13 @@
   async function togglePlayerLock() {
     const success = await togglePlayerLockRequest(tournament.id, playerEdit);
     if (!success) {
-      return;
+      return false;
     }
     playerEdit.registration_locked = !playerEdit.registration_locked;
 
     savedCallback?.(playerEdit);
+
+    return true;
   }
 
   function confirmSave() {
@@ -53,17 +58,21 @@
   }
 
   async function save() {
-    await savePlayer(tournament.id, playerEdit);
+    await savePlayer(tournament.id, playerEdit, organizerView);
     savedCallback?.(playerEdit);
+
+    return globalMessages.errors.length === 0;
   }
 
   async function dropPlayer() {
     const success = await dropPlayerRequest(tournament.id, playerEdit);
     if (!success) {
-      return;
+      return false;
     }
 
     droppedCallback?.(playerEdit);
+
+    return true;
   }
 
   function confirmDelete() {
@@ -75,10 +84,12 @@
   async function deletePlayer() {
     const success = await deletePlayerRequest(tournament.id, playerEdit);
     if (!success) {
-      return;
+      return false;
     }
 
     deletedCallback?.(playerEdit);
+
+    return true;
   }
 </script>
 

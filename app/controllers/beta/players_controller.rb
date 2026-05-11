@@ -37,7 +37,8 @@ module Beta
       end
 
       params = player_params
-      params[:user_id] = current_user.id
+
+      params[:user_id] = current_user.id unless organiser_view?
       params[:first_round_bye] = nil unless policy(@tournament).update?
       params[:manual_seed] = nil unless policy(@tournament).update?
 
@@ -146,7 +147,7 @@ module Beta
     end
 
     def organiser_view?
-      @tournament.user_id == current_user.id
+      params.require(:organiser_view) && params[:organiser_view] && @tournament.user_id == current_user.id
     end
 
     def save_deck(params, param, side)
