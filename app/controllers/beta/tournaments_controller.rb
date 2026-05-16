@@ -3,7 +3,7 @@
 module Beta
   class TournamentsController < ApplicationController # rubocop:disable Metrics/ClassLength,Style/Documentation
     before_action :set_tournament, only: %i[
-      show update qr open_registration close_registration lock_player_registrations unlock_player_registrations
+      show update qr registration open_registration close_registration lock_player_registrations unlock_player_registrations
       cut stats id_and_faction_data cut_conversion_rates
     ]
     before_action :authorize_beta_testing
@@ -83,6 +83,32 @@ module Beta
                                .as_svg(offset: 0, color: '000', shape_rendering: 'crispEdges', module_size: 25),
                 type: 'image/svg+xml',
                 disposition: 'inline')
+    end
+
+    def registration
+      authorize @tournament, :register?
+
+      # TODO: How should all of this be handled?
+      # set_tournament_view_data
+      # unless @current_user_player
+      #   redirect_to tournament_path(@tournament)
+      #   return
+      # end
+
+      # return unless @tournament.nrdb_deck_registration?
+
+      return if @tournament.nrdb_deck_registration?
+
+      redirect_to correct_beta_path(tournament_path(@tournament))
+
+      # return if @current_user_player.registration_locked?
+
+      # TODO: Move this to the DeckRegistration component?
+      # begin
+      #   @decks = Nrdb::Connection.new(current_user).decks
+      # rescue StandardError
+      #   redirect_to login_path(return_to: request.path)
+      # end
     end
 
     def open_registration

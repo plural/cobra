@@ -9,7 +9,7 @@
   } from "./TournamentSettings";
   import { Player } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import Registration from "../players/Registration.svelte";
+  import RegistrationCard from "../players/RegistrationCard.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";
 
   let {
@@ -200,7 +200,7 @@
           {#if player.id !== 0}
             {#if player.active}
               <!-- User is logged in and registered -->
-              <Registration {userId} {tournament} {player} />
+              <RegistrationCard {userId} {tournament} {player} />
             {:else}
               <!-- User is logged in and registered but dropped -->
               <h5 class="card-title">Rejoin this Event</h5>
@@ -219,7 +219,7 @@
           {:else if !tournament.registration_closed && tournament.self_registration}
             {#if userId != -1}
               <!-- User is logged in and not registered -->
-              <Registration {userId} {tournament} {player} />
+              <RegistrationCard {userId} {tournament} {player} />
             {:else}
               <!-- User is not logged in and not registered -->
               <div class="card card-body alert alert-warning">

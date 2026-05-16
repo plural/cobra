@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { IdentityNames } from "../identities/Identity";
-  import type { TournamentPolicies } from "../pairings/PairingsData";
   import type { Tournament } from "../tournaments/TournamentSettings";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import ProgressButton from "../widgets/ProgressButton.svelte";
@@ -17,8 +16,8 @@
   let {
     player,
     tournament,
-    tournamentPolicies,
-    identityNames,
+    showIdentities = true,
+    identityNames = { corp: [], runner: [] },
     organizerView = false,
     savedCallback,
     droppedCallback,
@@ -26,8 +25,8 @@
   }: {
     player: Player;
     tournament: Tournament;
-    tournamentPolicies: TournamentPolicies;
-    identityNames: IdentityNames;
+    showIdentities?: boolean;
+    identityNames?: IdentityNames;
     organizerView?: boolean;
     savedCallback?: (player: Player) => void;
     droppedCallback?: (player: Player) => void;
@@ -126,7 +125,7 @@
     />
   </div>
 
-  {#if !tournament.nrdb_deck_registration || playerEdit.id !== 0}
+  {#if showIdentities && (!tournament.nrdb_deck_registration || playerEdit.id !== 0)}
     <!-- Corp ID -->
     <div class="col w-25">
       <label for="player_corp_id_{playerEdit.id}">Corp ID</label>
@@ -175,7 +174,7 @@
     </div>
   {/if}
 
-  {#if tournamentPolicies.update}
+  {#if organizerView}
     <!-- First round bye -->
     <div class="col-auto form-check form-check-inline">
       <input
