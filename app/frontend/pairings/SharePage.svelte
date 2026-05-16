@@ -2,12 +2,7 @@
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import ProgressButton from "../widgets/ProgressButton.svelte";
 
-  interface Props {
-    text: string;
-    page: number;
-  }
-
-  let { text, page }: Props = $props();
+  let { text, page }: { text: string; page: number } = $props();
 
   let error = $state("");
 
