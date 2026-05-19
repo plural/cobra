@@ -59,97 +59,90 @@
             <FontAwesomeIcon
               icon={showPreviousRounds ? "chevron-down" : "chevron-right"}
             />
-            <span class="ml-2"
-              >{showPreviousRounds ? "Hide" : "Show"} previous rounds</span
-            >
+            <span class="ml-2">
+              {showPreviousRounds ? "Hide" : "Show"} previous rounds
+            </span>
           </button>
         </div>
       </div>
     {/if}
 
-    <div class="row">
-      <div class="col-12">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
+    <div class="row col-12 table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Round</th>
+            <th>Table</th>
+            {#if hasSideCol}
+              <th>Side</th>
+            {/if}
+            <th>Opponent</th>
+            <th class="text-center">Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each data.pairings as pairing, idx (pairing.pairing_id)}
+            {#if showPreviousRounds || idx === data.pairings.length - 1}
+              {@const mySide = getMySide(pairing)}
               <tr>
-                <th>Round</th>
-                <th>Table</th>
+                <td>{getRoundLabel(pairing)}</td>
+                <td>{isBye(pairing) ? "" : (pairing.table_number ?? "")}</td>
                 {#if hasSideCol}
-                  <th>Side</th>
+                  <td>{isBye(pairing) ? "" : (mySide ?? "")}</td>
                 {/if}
-                <th>Opponent</th>
-                <th class="text-center">Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              {#each data.pairings as pairing, idx (pairing.pairing_id)}
-                {#if showPreviousRounds || idx === data.pairings.length - 1}
-                  {@const mySide = getMySide(pairing)}
-                  <tr>
-                    <td>{getRoundLabel(pairing)}</td>
-                    <td>{isBye(pairing) ? "" : (pairing.table_number ?? "")}</td
-                    >
-                    {#if hasSideCol}
-                      <td>{isBye(pairing) ? "" : (mySide ?? "")}</td>
-                    {/if}
-                    <td>
-                      {#if isBye(pairing)}
-                        (Bye)
-                      {:else}
-                        <div>{pairing.opponent.name_with_pronouns}</div>
-                        <div class="ids small text-muted">
-                          {#if mySide}
-                            {#if mySide === "Corp" && pairing.opponent.runner_identity}
-                              <Identity
-                                identity={{
-                                  name: pairing.opponent.runner_identity,
-                                  faction:
-                                    pairing.opponent.runner_faction ?? "",
-                                }}
-                              />
-                            {:else if mySide === "Runner" && pairing.opponent.corp_identity}
-                              <Identity
-                                identity={{
-                                  name: pairing.opponent.corp_identity,
-                                  faction: pairing.opponent.corp_faction ?? "",
-                                }}
-                              />
-                            {/if}
-                          {:else if pairing.opponent.corp_identity && pairing.opponent.runner_identity}
-                            <Identity
-                              identity={{
-                                name: pairing.opponent.corp_identity,
-                                faction: pairing.opponent.corp_faction ?? "",
-                              }}
-                            />
-                            <Identity
-                              identity={{
-                                name: pairing.opponent.runner_identity,
-                                faction: pairing.opponent.runner_faction ?? "",
-                              }}
-                            />
-                          {/if}
-                        </div>
-                      {/if}
-                    </td>
-                    <td class="text-center">
-                      {#if isBye(pairing)}
-                        {#if pairing.player_score !== null}
-                          {pairing.player_score}
+                <td>
+                  {#if isBye(pairing)}
+                    (Bye)
+                  {:else}
+                    <div>{pairing.opponent.name_with_pronouns}</div>
+                    <div class="ids small text-muted">
+                      {#if mySide}
+                        {#if mySide === "Corp" && pairing.opponent.runner_identity}
+                          <Identity
+                            identity={{
+                              name: pairing.opponent.runner_identity,
+                              faction: pairing.opponent.runner_faction ?? "",
+                            }}
+                          />
+                        {:else if mySide === "Runner" && pairing.opponent.corp_identity}
+                          <Identity
+                            identity={{
+                              name: pairing.opponent.corp_identity,
+                              faction: pairing.opponent.corp_faction ?? "",
+                            }}
+                          />
                         {/if}
-                      {:else if pairing.player_score !== null || pairing.opponent_score !== null}
-                        {pairing.player_score ?? 0} - {pairing.opponent_score ??
-                          0}
+                      {:else if pairing.opponent.corp_identity && pairing.opponent.runner_identity}
+                        <Identity
+                          identity={{
+                            name: pairing.opponent.corp_identity,
+                            faction: pairing.opponent.corp_faction ?? "",
+                          }}
+                        />
+                        <Identity
+                          identity={{
+                            name: pairing.opponent.runner_identity,
+                            faction: pairing.opponent.runner_faction ?? "",
+                          }}
+                        />
                       {/if}
-                    </td>
-                  </tr>
-                {/if}
-              {/each}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                    </div>
+                  {/if}
+                </td>
+                <td class="text-center">
+                  {#if isBye(pairing)}
+                    {#if pairing.player_score !== null}
+                      {pairing.player_score}
+                    {/if}
+                  {:else if pairing.player_score !== null || pairing.opponent_score !== null}
+                    {pairing.player_score ?? 0} - {pairing.opponent_score ?? 0}
+                  {/if}
+                </td>
+              </tr>
+            {/if}
+          {/each}
+        </tbody>
+      </table>
     </div>
   {/if}
 </div>
