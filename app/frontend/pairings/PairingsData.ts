@@ -56,19 +56,17 @@ export async function loadPairings(tournamentId: number, userId = 0) {
 
   let url = "";
   if (userId === 0) {
-    url = betaEnabledCookie?.value === "true"
-      ? Routes.pairings_data_beta_tournament_rounds_path(tournamentId)
-      : Routes.pairings_data_tournament_rounds_path(tournamentId);
+    url =
+      betaEnabledCookie?.value === "true"
+        ? Routes.pairings_data_beta_tournament_rounds_path(tournamentId)
+        : Routes.pairings_data_tournament_rounds_path(tournamentId);
   } else {
     url = `/tournaments/${tournamentId}/rounds/pairings_data/${userId}`;
   }
 
-  const response = await fetch(
-    url,
-    {
-      method: "GET",
-    },
-  );
+  const response = await fetch(url, {
+    method: "GET",
+  });
 
   const data = (await response.json()) as PairingsData;
   globalMessages.warnings = data.warnings ?? [];

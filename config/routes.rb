@@ -87,6 +87,7 @@ Rails.application.routes.draw do
       patch :complete, on: :member
       patch :update_timer, on: :member
       get :view_pairings, on: :collection
+      get :pairings_data, on: :collection
       get 'pairings_data(/:user_id)', on: :collection, action: 'pairings_data'
       get :brackets, on: :collection
     end

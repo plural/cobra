@@ -1,17 +1,33 @@
 <script lang="ts">
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import { onMount } from "svelte";
-  import { loadPairings, PairingsData, type Pairing } from "../pairings/PairingsData";
+  import {
+    loadPairings,
+    PairingsData,
+    type Pairing,
+  } from "../pairings/PairingsData";
   import PlayerDisplay from "../pairings/PlayerDisplay.svelte";
   import SelfReportOptions from "../pairings/SelfReportOptions.svelte";
   import { reportScore, type ScoreReport } from "../pairings/SelfReport";
 
-  let { tournamentId, userId }: { tournamentId: number, userId: number } = $props();
+  let {
+    tournamentId,
+    userId,
+  }: {
+    tournamentId: number;
+    userId: number;
+  } = $props();
 
   let data: PairingsData | undefined = $state();
   let showPreviousRounds = $state(false);
   let pairingCount = $derived(
-    data ? data.stages.reduce((acc, s) => acc + s.rounds.reduce((acc, r) => acc + r.pairings.length, 0), 0) : 0
+    data
+      ? data.stages.reduce(
+          (acc, s) =>
+            acc + s.rounds.reduce((acc, r) => acc + r.pairings.length, 0),
+          0,
+        )
+      : 0,
   );
 
   onMount(async () => {
@@ -23,11 +39,19 @@
   }
 
   function getMySide(pairing: Pairing) {
-    const side = pairing.player1.user_id === userId ? pairing.player1.side : pairing.player2.side;
-    return side ? (side.charAt(0).toUpperCase() + side.slice(1)) : "";
+    const side =
+      pairing.player1.user_id === userId
+        ? pairing.player1.side
+        : pairing.player2.side;
+    return side ? side.charAt(0).toUpperCase() + side.slice(1) : "";
   }
 
-  async function reportScoreCallback(roundId: number, pairingId: number, report: ScoreReport, selfReport: boolean) {
+  async function reportScoreCallback(
+    roundId: number,
+    pairingId: number,
+    report: ScoreReport,
+    selfReport: boolean,
+  ) {
     const success = await reportScore(
       tournamentId,
       roundId,
@@ -74,7 +98,7 @@
           </div>
         </div>
       {/if}
-  
+
       <div class="row col-12 table-responsive">
         <table class="table">
           <thead>
@@ -94,7 +118,9 @@
                 {#each round.pairings as pairing, idx (pairing.id)}
                   {#if showPreviousRounds || idx === pairingCount - 1}
                     <tr>
-                      <td>{stage.is_elimination ? "Cut " : ""}{round.number}</td>
+                      <td>
+                        {stage.is_elimination ? "Cut " : ""}{round.number}
+                      </td>
                       <td>{isBye(pairing) ? "" : pairing.table_number}</td>
                       {#if stage.is_single_sided}
                         <td>{isBye(pairing) ? "" : getMySide(pairing)}</td>
@@ -104,7 +130,9 @@
                           (Bye)
                         {:else}
                           <PlayerDisplay
-                            player={pairing.player1.user_id === userId ? pairing.player2 : pairing.player1}
+                            player={pairing.player1.user_id === userId
+                              ? pairing.player2
+                              : pairing.player1}
                             {pairing}
                             left_or_right="left"
                             is_single_sided={stage.is_single_sided}
@@ -115,11 +143,18 @@
                         {#if pairing.score_label.trim() !== "-"}
                           {pairing.score_label}
                           {#if pairing.intentional_draw}
-                            <span class="badge badge-pill badge-secondary score-badge">ID</span>
+                            <span
+                              class="badge badge-pill badge-secondary score-badge"
+                            >
+                              ID
+                            </span>
                           {/if}
                           {#if pairing.two_for_one}
-                            <span class="badge badge-pill badge-secondary score-badge">2 for 1</span
+                            <span
+                              class="badge badge-pill badge-secondary score-badge"
                             >
+                              2 for 1
+                            </span>
                           {/if}
                         {:else}
                           {#if pairing.policy.self_report}
@@ -131,7 +166,12 @@
                                 report: ScoreReport,
                                 selfReport: boolean,
                               ) => {
-                                await reportScoreCallback(round.id, pairingId, report, selfReport);
+                                await reportScoreCallback(
+                                  round.id,
+                                  pairingId,
+                                  report,
+                                  selfReport,
+                                );
                               }}
                             />
                           {/if}

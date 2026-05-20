@@ -313,6 +313,20 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
           return
         end
       end
+      format.json do
+        if current_user.nil?
+          render json: { error: 'Not authorized' }, status: :unauthorized
+          return
+        end
+
+        player = @tournament.players.find_by(user_id: current_user.id)
+        unless player
+          render json: { error: 'You are not registered in this tournament.' }, status: :unauthorized
+          return
+        end
+
+        render json: SummarizedPairings.for_user_in_tournament(current_user.id, @tournament.id)
+      end
     end
   end
 
