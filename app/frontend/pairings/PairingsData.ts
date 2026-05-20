@@ -51,14 +51,20 @@ declare const Routes: {
   cut_conversion_rates_beta_tournament_path: (tournamentId: number) => string;
 };
 
-export async function loadPairings(
-  tournamentId: number,
-): Promise<PairingsData> {
+export async function loadPairings(tournamentId: number, userId = 0) {
   const betaEnabledCookie = await cookieStore.get("beta_enabled");
-  const response = await fetch(
-    betaEnabledCookie?.value === "true"
+
+  let url = "";
+  if (userId === 0) {
+    url = betaEnabledCookie?.value === "true"
       ? Routes.pairings_data_beta_tournament_rounds_path(tournamentId)
-      : Routes.pairings_data_tournament_rounds_path(tournamentId),
+      : Routes.pairings_data_tournament_rounds_path(tournamentId);
+  } else {
+    url = `/tournaments/${tournamentId}/rounds/pairings_data/${userId}`;
+  }
+
+  const response = await fetch(
+    url,
     {
       method: "GET",
     },

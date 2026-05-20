@@ -1,148 +1,157 @@
 <script lang="ts">
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import Identity from "../identities/Identity.svelte";
-  import type {
-    MyTournamentData,
-    MyTournamentPairing,
-  } from "./TournamentSettings";
+  import { onMount } from "svelte";
+  import { loadPairings, PairingsData, type Pairing } from "../pairings/PairingsData";
+  import PlayerDisplay from "../pairings/PlayerDisplay.svelte";
+  import SelfReportOptions from "../pairings/SelfReportOptions.svelte";
+  import { reportScore, type ScoreReport } from "../pairings/SelfReport";
 
-  let { data }: { data: MyTournamentData } = $props();
+  let { tournamentId, userId }: { tournamentId: number, userId: number } = $props();
 
+  let data: PairingsData | undefined = $state();
   let showPreviousRounds = $state(false);
-
-  function isBye(pairing: MyTournamentPairing): boolean {
-    return !pairing.opponent.name || pairing.opponent.name === "";
-  }
-
-  function getMySide(pairing: MyTournamentPairing): "Corp" | "Runner" | null {
-    if (
-      pairing.format !== "single_sided_swiss" &&
-      !pairing.format.includes("elim")
-    )
-      return null;
-    if (pairing.side === 1) return "Corp";
-    if (pairing.side === 2) return "Runner";
-    return null;
-  }
-
-  function getRoundLabel(pairing: MyTournamentPairing): string {
-    const prefix = pairing.format.includes("elim") ? "Cut " : "";
-    return `${prefix}${String(pairing.round_number)}`;
-  }
-
-  const hasSideCol = $derived(
-    (data.pairings ?? []).some(
-      (p) => p.format === "single_sided_swiss" || p.format.includes("elim"),
-    ),
+  let pairingCount = $derived(
+    data ? data.stages.reduce((acc, s) => acc + s.rounds.reduce((acc, r) => acc + r.pairings.length, 0), 0) : 0
   );
+
+  onMount(async () => {
+    data = await loadPairings(tournamentId, userId);
+  });
+
+  function isBye(pairing: Pairing): boolean {
+    return pairing.player1.id === 0 || pairing.player2.id === 0;
+  }
+
+  function getMySide(pairing: Pairing) {
+    const side = pairing.player1.user_id === userId ? pairing.player1.side : pairing.player2.side;
+    return side ? (side.charAt(0).toUpperCase() + side.slice(1)) : "";
+  }
+
+  async function reportScoreCallback(roundId: number, pairingId: number, report: ScoreReport, selfReport: boolean) {
+    const success = await reportScore(
+      tournamentId,
+      roundId,
+      pairingId,
+      report,
+      selfReport,
+    );
+    if (!success) {
+      return;
+    }
+
+    data = await loadPairings(tournamentId, userId);
+  }
 </script>
 
-<div class="container">
-  <h2>Me</h2>
-  {#if !data.pairings || data.pairings.length === 0}
-    <div class="row">
-      <div class="col-12">
-        <div class="alert alert-info">
-          <FontAwesomeIcon icon="info-circle" />
-          You don't have any pairings in this tournament yet.
-        </div>
-      </div>
-    </div>
-  {:else}
-    {#if data.pairings.length > 1}
+{#if data}
+  <div class="container">
+    <h2>Me</h2>
+
+    {#if pairingCount === 0}
       <div class="row">
         <div class="col-12">
-          <button
-            class="btn btn-link btn-sm p-0 mb-2 d-flex align-items-center small"
-            onclick={() => (showPreviousRounds = !showPreviousRounds)}
-          >
-            <FontAwesomeIcon
-              icon={showPreviousRounds ? "chevron-down" : "chevron-right"}
-            />
-            <span class="ml-2">
-              {showPreviousRounds ? "Hide" : "Show"} previous rounds
-            </span>
-          </button>
+          <div class="alert alert-info">
+            <FontAwesomeIcon icon="info-circle" />
+            You don't have any pairings in this tournament yet.
+          </div>
         </div>
       </div>
-    {/if}
-
-    <div class="row col-12 table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Round</th>
-            <th>Table</th>
-            {#if hasSideCol}
-              <th>Side</th>
-            {/if}
-            <th>Opponent</th>
-            <th class="text-center">Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each data.pairings as pairing, idx (pairing.pairing_id)}
-            {#if showPreviousRounds || idx === data.pairings.length - 1}
-              {@const mySide = getMySide(pairing)}
-              <tr>
-                <td>{getRoundLabel(pairing)}</td>
-                <td>{isBye(pairing) ? "" : (pairing.table_number ?? "")}</td>
-                {#if hasSideCol}
-                  <td>{isBye(pairing) ? "" : (mySide ?? "")}</td>
-                {/if}
-                <td>
-                  {#if isBye(pairing)}
-                    (Bye)
-                  {:else}
-                    <div>{pairing.opponent.name_with_pronouns}</div>
-                    <div class="ids small text-muted">
-                      {#if mySide}
-                        {#if mySide === "Corp" && pairing.opponent.runner_identity}
-                          <Identity
-                            identity={{
-                              name: pairing.opponent.runner_identity,
-                              faction: pairing.opponent.runner_faction ?? "",
-                            }}
-                          />
-                        {:else if mySide === "Runner" && pairing.opponent.corp_identity}
-                          <Identity
-                            identity={{
-                              name: pairing.opponent.corp_identity,
-                              faction: pairing.opponent.corp_faction ?? "",
-                            }}
+    {:else}
+      {#if pairingCount > 1}
+        <div class="row">
+          <div class="col-12">
+            <button
+              class="btn btn-link btn-sm p-0 mb-2 d-flex align-items-center small"
+              onclick={() => (showPreviousRounds = !showPreviousRounds)}
+            >
+              <FontAwesomeIcon
+                icon={showPreviousRounds ? "chevron-down" : "chevron-right"}
+              />
+              <span class="ml-2">
+                {showPreviousRounds ? "Hide" : "Show"} previous rounds
+              </span>
+            </button>
+          </div>
+        </div>
+      {/if}
+  
+      <div class="row col-12 table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Round</th>
+              <th>Table</th>
+              {#if data.tournament.swiss_format === "single_sided"}
+                <th>Side</th>
+              {/if}
+              <th>Opponent</th>
+              <th class="text-center">Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each data.stages as stage (stage.id)}
+              {#each stage.rounds as round (round.id)}
+                {#each round.pairings as pairing, idx (pairing.id)}
+                  {#if showPreviousRounds || idx === pairingCount - 1}
+                    <tr>
+                      <td>{stage.is_elimination ? "Cut " : ""}{round.number}</td>
+                      <td>{isBye(pairing) ? "" : pairing.table_number}</td>
+                      {#if stage.is_single_sided}
+                        <td>{isBye(pairing) ? "" : getMySide(pairing)}</td>
+                      {/if}
+                      <td>
+                        {#if isBye(pairing)}
+                          (Bye)
+                        {:else}
+                          <PlayerDisplay
+                            player={pairing.player1.user_id === userId ? pairing.player2 : pairing.player1}
+                            {pairing}
+                            left_or_right="left"
+                            is_single_sided={stage.is_single_sided}
                           />
                         {/if}
-                      {:else if pairing.opponent.corp_identity && pairing.opponent.runner_identity}
-                        <Identity
-                          identity={{
-                            name: pairing.opponent.corp_identity,
-                            faction: pairing.opponent.corp_faction ?? "",
-                          }}
-                        />
-                        <Identity
-                          identity={{
-                            name: pairing.opponent.runner_identity,
-                            faction: pairing.opponent.runner_faction ?? "",
-                          }}
-                        />
-                      {/if}
-                    </div>
+                      </td>
+                      <td class="text-center">
+                        {#if pairing.score_label.trim() !== "-"}
+                          {pairing.score_label}
+                          {#if pairing.intentional_draw}
+                            <span class="badge badge-pill badge-secondary score-badge">ID</span>
+                          {/if}
+                          {#if pairing.two_for_one}
+                            <span class="badge badge-pill badge-secondary score-badge">2 for 1</span
+                            >
+                          {/if}
+                        {:else}
+                          {#if pairing.policy.self_report}
+                            <SelfReportOptions
+                              {stage}
+                              {pairing}
+                              reportScoreCallback={async (
+                                pairingId: number,
+                                report: ScoreReport,
+                                selfReport: boolean,
+                              ) => {
+                                await reportScoreCallback(round.id, pairingId, report, selfReport);
+                              }}
+                            />
+                          {/if}
+                          {#if pairing.self_reports && pairing.self_reports.length !== 0}
+                            Report: {pairing.self_reports[0].label}
+                          {/if}
+                        {/if}
+                      </td>
+                    </tr>
                   {/if}
-                </td>
-                <td class="text-center">
-                  {#if isBye(pairing)}
-                    {#if pairing.player_score !== null}
-                      {pairing.player_score}
-                    {/if}
-                  {:else if pairing.player_score !== null || pairing.opponent_score !== null}
-                    {pairing.player_score ?? 0} - {pairing.opponent_score ?? 0}
-                  {/if}
-                </td>
-              </tr>
-            {/if}
-          {/each}
-        </tbody>
-      </table>
-    </div>
-  {/if}
-</div>
+                {/each}
+              {/each}
+            {/each}
+          </tbody>
+        </table>
+      </div>
+    {/if}
+  </div>
+{:else}
+  <div class="d-flex align-items-center m-2">
+    <div class="spinner-border m-auto"></div>
+  </div>
+{/if}
