@@ -241,7 +241,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
       end
 
       # TODO: Move label logic and score_label() to FE
-      if self_reports&.any? && @tournament.user != current_user
+      if self_reports&.any?
         if stage.single_sided? && side == 'player1_is_corp'
           self_reports.each do |r|
             r[:label] = score_label(@tournament.swiss_format,
