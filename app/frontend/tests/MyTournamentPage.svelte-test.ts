@@ -1,6 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MockPairing1, MockPairingsData, MockSelfReport } from "./RoundsTestData";
-import { getByRole, getByText, queryByRole, render } from "@testing-library/svelte";
+import {
+  MockPairing1,
+  MockPairingsData,
+  MockSelfReport,
+} from "./RoundsTestData";
+import {
+  getByRole,
+  getByText,
+  queryByRole,
+  render,
+} from "@testing-library/svelte";
 import MyTournamentPage from "../tournaments/MyTournamentPage.svelte";
 import userEvent from "@testing-library/user-event";
 import { loadPairings } from "../pairings/PairingsData";
@@ -26,9 +35,9 @@ describe("MyTournamentPage", () => {
 
     vi.spyOn(MockPairingsData.policy, "update", "get").mockReturnValue(false);
   });
-  
+
   describe("self-reporting disabled", () => {
-    beforeEach(() => {  
+    beforeEach(() => {
       render(MyTournamentPage, componentProps);
     });
 
@@ -40,12 +49,10 @@ describe("MyTournamentPage", () => {
       ).toBeNull();
     });
   });
-  
+
   describe("self-reporting enabled", () => {
     beforeEach(() => {
-      vi.spyOn(MockPairing1.policy, "self_report", "get").mockReturnValue(
-        true,
-      );
+      vi.spyOn(MockPairing1.policy, "self_report", "get").mockReturnValue(true);
 
       render(MyTournamentPage, componentProps);
     });
@@ -66,20 +73,22 @@ describe("MyTournamentPage", () => {
         vi.spyOn(MockSelfReport, "score1", "get").mockReturnValue(score1);
         vi.spyOn(MockSelfReport, "score2", "get").mockReturnValue(score2);
         vi.spyOn(MockSelfReport, "label", "get").mockReturnValue(scoreText);
-        
-        const table = document.getElementById("rounds_table") as HTMLTableElement;
+
+        const table = document.getElementById(
+          "rounds_table",
+        ) as HTMLTableElement;
         const currentRow = table.rows[table.rows.length - 1];
         await user.click(
           getByRole(currentRow, "button", { name: /report pairing/i }),
         );
-        
+
         const reportDialog = document.getElementById("reportModal");
         expect(reportDialog).not.toBeNull();
         if (!reportDialog) {
           return;
         }
         await user.click(getByText(reportDialog, buttonText));
-        
+
         expect(reportScore).toHaveBeenCalledOnce();
         expect(loadPairings).toHaveBeenCalledTimes(2);
         expect(
