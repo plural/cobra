@@ -100,7 +100,7 @@
       {/if}
 
       <div class="row col-12 table-responsive">
-        <table class="table">
+        <table id="rounds_table" class="table">
           <thead>
             <tr>
               <th>Round</th>
@@ -140,7 +140,7 @@
                         {/if}
                       </td>
                       <td class="text-center">
-                        {#if pairing.score_label.trim() !== "-"}
+                        {#if pairing.score_label.trim() !== "" && pairing.score_label.trim() !== "-"}
                           {pairing.score_label}
                           {#if pairing.intentional_draw}
                             <span

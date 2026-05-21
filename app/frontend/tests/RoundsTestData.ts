@@ -16,7 +16,7 @@ export const MockPlayerAlice: Player = {
   pronouns: "she/her",
   name_with_pronouns: "Alice (she/her)",
   side: null,
-  user_id: 0,
+  user_id: 1,
   side_label: null,
   corp_id: new Identity(),
   runner_id: new Identity(),
@@ -34,7 +34,7 @@ export const MockPlayerBob: Player = {
   pronouns: "he/him",
   name_with_pronouns: "Bob (he/him)",
   side: null,
-  user_id: 0,
+  user_id: 2,
   side_label: null,
   corp_id: {
     name: "BANGUN: When Disaster Strikes",
