@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   namespace :beta do
     post :set_beta
     resources :tournaments do
+      get 'type/:type_id', to: 'tournaments#type', on: :collection
       resources :rounds, only: %i[index show create destroy] do
         resources :pairings, only: %i[index create destroy] do
           get :match_slips, on: :collection

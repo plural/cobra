@@ -12,6 +12,11 @@ module Beta
       authorize @tournament
     end
 
+    def type
+      skip_authorization
+      @type_id = params[:type_id]
+    end
+
     def update
       authorize @tournament
 
