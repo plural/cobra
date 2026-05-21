@@ -114,9 +114,9 @@
           </thead>
           <tbody>
             {#each data.stages as stage (stage.id)}
-              {#each stage.rounds as round (round.id)}
-                {#each round.pairings as pairing, idx (pairing.id)}
-                  {#if showPreviousRounds || idx === pairingCount - 1}
+              {#each stage.rounds as round, idx (round.id)}
+                {#if showPreviousRounds || idx === stage.rounds.length - 1}
+                  {#each round.pairings as pairing (pairing.id)}
                     <tr>
                       <td>
                         {stage.is_elimination ? "Cut " : ""}{round.number}
@@ -181,8 +181,8 @@
                         {/if}
                       </td>
                     </tr>
-                  {/if}
-                {/each}
+                  {/each}
+                {/if}
               {/each}
             {/each}
           </tbody>
