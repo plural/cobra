@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
+  import PagingRow from "../widgets/PagingRow.svelte";
   import { globalMessages } from "../utils/GlobalMessageState.svelte";
 
   export let typeId = "";
@@ -116,29 +117,13 @@
   <h1>Beta Tournaments By Type</h1>
 
   <div>
-    <div class="row m-3">
-      <div class="col-12 d-flex justify-content-between align-items-center">
-        <button
-          class="btn btn-primary"
-          disabled={!prevLink || loading}
-          on:click={goToPreviousPage}
-        >
-          <i class="fa fa-arrow-left"></i> Back
-        </button>
-        <div class="text">
-          {#if loading}
-            <i class="fa fa-spinner fa-spin"></i> Loading...
-          {/if}
-        </div>
-        <button
-          class="btn btn-primary"
-          disabled={!nextLink || loading}
-          on:click={goToNextPage}
-        >
-          Next <i class="fa fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
+    <PagingRow
+      {loading}
+      canGoBack={!!prevLink}
+      canGoNext={!!nextLink}
+      onBack={goToPreviousPage}
+      onNext={goToNextPage}
+    />
 
     {#if tournaments.length === 0 && !loading}
       <div class="m-3">No tournaments found for this type.</div>
@@ -190,28 +175,12 @@
       {/each}
     {/if}
 
-    <div class="row m-3">
-      <div class="col-12 d-flex justify-content-between align-items-center">
-        <button
-          class="btn btn-primary"
-          disabled={!prevLink || loading}
-          on:click={goToPreviousPage}
-        >
-          <i class="fa fa-arrow-left"></i> Back
-        </button>
-        <div class="text-muted">
-          {#if loading}
-            <i class="fa fa-spinner fa-spin"></i> Loading...
-          {/if}
-        </div>
-        <button
-          class="btn btn-primary"
-          disabled={!nextLink || loading}
-          on:click={goToNextPage}
-        >
-          Next <i class="fa fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
+    <PagingRow
+      {loading}
+      canGoBack={!!prevLink}
+      canGoNext={!!nextLink}
+      onBack={goToPreviousPage}
+      onNext={goToNextPage}
+    />
   </div>
 </div>
