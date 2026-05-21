@@ -51,7 +51,10 @@ declare const Routes: {
   cut_conversion_rates_beta_tournament_path: (tournamentId: number) => string;
 };
 
-export async function loadPairings(tournamentId: number, userId: number | null = null) {
+export async function loadPairings(
+  tournamentId: number,
+  userId: number | null = null,
+) {
   const betaEnabledCookie = await cookieStore.get("beta_enabled");
 
   let url = "";

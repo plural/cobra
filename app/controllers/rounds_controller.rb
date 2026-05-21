@@ -224,13 +224,17 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
     pairings_reported = 0
     pairings_fields = %i[id table_number player1_id player2_id side intentional_draw
                          two_for_one score1 score1_corp score1_runner score2 score2_corp score2_runner]
-    round.pairings.order(:table_number).pluck(pairings_fields).each do | # rubocop:disable Metrics/ParameterLists
+    filtered_pairings = round.pairings.order(:table_number)
+    unless user_id.nil?
+      filtered_pairings = filtered_pairings
+                          .joins(:player1, :player2)
+                          .where('players.user_id = ? or player2s_pairings.user_id = ?', user_id, user_id)
+    end
+    filtered_pairings.pluck(pairings_fields).each do | # rubocop:disable Metrics/ParameterLists
     id, table_number, player1_id, player2_id, side, intentional_draw,
       two_for_one, score1, score1_corp, score1_runner, score2, score2_corp, score2_runner|
       player_1_user_id = players[player1_id]&.dig('user_id')
       player_2_user_id = players[player2_id]&.dig('user_id')
-
-      next unless user_id.zero? || user_id == player_1_user_id || user_id == player_2_user_id
 
       pairings_reported += score1.nil? && score2.nil? ? 0 : 1
       self_reports = current_user ? self_reports_by_pairing_id[id] : nil
