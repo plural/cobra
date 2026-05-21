@@ -44,10 +44,14 @@
   let prevLink: string | null = null;
   let nextLink: string | null = null;
 
-  const defaultUrl =
-    `/api/v1/public/tournaments?page[size]=10` +
-    `&filter[tournament_type_id]=${typeId}` +
-    `&sort=-date,name&include=tournament_type`;
+  const defaultUrl = [
+    "/api/v1/public/tournaments?page[size]=10",
+    "sort=-date,name",
+    "include=tournament_type",
+    typeId ? `filter[tournament_type_id]=${typeId}` : null,
+  ]
+    .filter((part): part is string => part !== null)
+    .join("&");
 
   async function loadTournaments(url: string): Promise<void> {
     loading = true;

@@ -62,7 +62,7 @@ describe("TournamentType", () => {
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        "/api/v1/public/tournaments?page[size]=10&filter[tournament_type_id]=&sort=-date,name&include=tournament_type",
+        "/api/v1/public/tournaments?page[size]=10&sort=-date,name&include=tournament_type",
         expect.any(Object)
       );
       expect(getByText("First Tournament")).toBeTruthy();
