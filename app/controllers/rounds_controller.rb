@@ -28,7 +28,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
         custom_table_numbering: Flipper.enabled?(:custom_table_numbering, current_user)
       },
       tournament: helpers.tournament_json(@tournament),
-      stages: pairings_data_stages(params[:user_id] ? params[:user_id].to_i : 0),
+      stages: pairings_data_stages(params[:user_id]&.to_i),
       warnings: ([@tournament.current_stage&.validate_table_count] if policy(@tournament).update?)
     }
   end
@@ -155,7 +155,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
     params.require(:round).permit(:weight)
   end
 
-  def pairings_data_stages(user_id = 0)
+  def pairings_data_stages(user_id = nil)
     players = pairings_data_players
     @tournament.stages.includes(:rounds, :registrations).map do |stage|
       stage_players = pairings_data_players_with_seeds(players, stage)
@@ -204,7 +204,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
     players
   end
 
-  def pairings_data_rounds(stage, players, user_id = 0)
+  def pairings_data_rounds(stage, players, user_id = nil)
     self_reports_by_pairing_id = SelfReport.joins(pairing: :round)
                                            .where(rounds: { stage_id: stage.id })
                                            .group_by(&:pairing_id)
@@ -219,7 +219,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
     end
   end
 
-  def pairings_data_round(stage, players, round, self_reports_by_pairing_id, user_id = 0)
+  def pairings_data_round(stage, players, round, self_reports_by_pairing_id, user_id = nil)
     pairings = []
     pairings_reported = 0
     pairings_fields = %i[id table_number player1_id player2_id side intentional_draw

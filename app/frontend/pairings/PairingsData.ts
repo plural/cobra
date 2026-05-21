@@ -51,17 +51,17 @@ declare const Routes: {
   cut_conversion_rates_beta_tournament_path: (tournamentId: number) => string;
 };
 
-export async function loadPairings(tournamentId: number, userId = 0) {
+export async function loadPairings(tournamentId: number, userId: number | null = null) {
   const betaEnabledCookie = await cookieStore.get("beta_enabled");
 
   let url = "";
-  if (userId === 0) {
+  if (userId) {
+    url = `/tournaments/${tournamentId}/rounds/pairings_data/${userId}`;
+  } else {
     url =
       betaEnabledCookie?.value === "true"
         ? Routes.pairings_data_beta_tournament_rounds_path(tournamentId)
         : Routes.pairings_data_tournament_rounds_path(tournamentId);
-  } else {
-    url = `/tournaments/${tournamentId}/rounds/pairings_data/${userId}`;
   }
 
   const response = await fetch(url, {
