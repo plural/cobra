@@ -31,42 +31,72 @@
   interface TournamentsResponse {
     data: TournamentInfo[];
     included?: TournamentTypeInfo[];
+    links?: {
+      next?: string | null;
+      prev?: string | null;
+    };
   }
 
   let tournaments: TournamentInfo[] = [];
   let tournamentTypes: Record<string, string> = {};
   let loading = true;
+  let prevLink: string | null = null;
+  let nextLink: string | null = null;
 
-  onMount(async () => {
+  const defaultUrl =
+    `/api/v1/public/tournaments?page[size]=10` +
+    `&filter[tournament_type_id]=${typeId}` +
+    `&sort=-date,name&include=tournament_type`;
+
+  async function loadTournaments(url: string): Promise<void> {
+    loading = true;
+
     try {
-      const response = await fetch(
-        `/api/v1/public/tournaments?filter[tournament_type_id]=${typeId}&sort=-date,name&include=tournament_type`,
-        {
-          headers: {
-            Accept: "application/vnd.api+json",
-            "Content-Type": "application/vnd.api+json",
-          },
-        }
-      );
+      const response = await fetch(url, {
+        headers: {
+          Accept: "application/vnd.api+json",
+          "Content-Type": "application/vnd.api+json",
+        },
+      });
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const data = (await response.json()) as TournamentsResponse;
       tournaments = data.data;
+      prevLink = data.links?.prev ?? null;
+      nextLink = data.links?.next ?? null;
 
+      const types: Record<string, string> = {};
       if (data.included) {
         data.included.forEach((inc) => {
           if (inc.type === "tournament_types") {
-            tournamentTypes[inc.id] = inc.attributes.name;
+            types[inc.id] = inc.attributes.name;
           }
         });
       }
+      tournamentTypes = types;
     } catch (e) {
       const err = e as Error;
       globalMessages.errors.push(`Failed to load tournaments: ${err.message}`);
     } finally {
       loading = false;
     }
+  }
+
+  async function goToPreviousPage(): Promise<void> {
+    if (!prevLink || loading) return;
+
+    await loadTournaments(prevLink);
+  }
+
+  async function goToNextPage(): Promise<void> {
+    if (!nextLink || loading) return;
+
+    await loadTournaments(nextLink);
+  }
+
+  onMount(async () => {
+    await loadTournaments(defaultUrl);
   });
 
   function formatDate(dateStr: string): string {
@@ -84,17 +114,35 @@
   <GlobalMessages />
 
   <h1>Beta Tournaments By Type</h1>
-  <p>Type ID: {typeId}</p>
-  {#if userId !== null}
-    <p>User: {userName} ({userId})</p>
-  {/if}
 
-  {#if loading}
-    <p>Loading...</p>
-  {:else if tournaments.length === 0}
-    <p>No tournaments found for this type.</p>
-  {:else}
-    <div>
+  <div>
+    <div class="row m-3">
+      <div class="col-12 d-flex justify-content-between align-items-center">
+        <button
+          class="btn btn-primary"
+          disabled={!prevLink || loading}
+          on:click={goToPreviousPage}
+        >
+          <i class="fa fa-arrow-left"></i> Back
+        </button>
+        <div class="text">
+          {#if loading}
+            <i class="fa fa-spinner fa-spin"></i> Loading...
+          {/if}
+        </div>
+        <button
+          class="btn btn-primary"
+          disabled={!nextLink || loading}
+          on:click={goToNextPage}
+        >
+          Next <i class="fa fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    {#if tournaments.length === 0 && !loading}
+      <div class="m-3">No tournaments found for this type.</div>
+    {:else}
       {#each tournaments as tournament (tournament.id)}
         <div class="tournament card m-3">
           <div class="card-body">
@@ -140,6 +188,30 @@
           </div>
         </div>
       {/each}
+    {/if}
+
+    <div class="row m-3">
+      <div class="col-12 d-flex justify-content-between align-items-center">
+        <button
+          class="btn btn-primary"
+          disabled={!prevLink || loading}
+          on:click={goToPreviousPage}
+        >
+          <i class="fa fa-arrow-left"></i> Back
+        </button>
+        <div class="text-muted">
+          {#if loading}
+            <i class="fa fa-spinner fa-spin"></i> Loading...
+          {/if}
+        </div>
+        <button
+          class="btn btn-primary"
+          disabled={!nextLink || loading}
+          on:click={goToNextPage}
+        >
+          Next <i class="fa fa-arrow-right"></i>
+        </button>
+      </div>
     </div>
-  {/if}
+  </div>
 </div>
