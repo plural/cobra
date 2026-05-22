@@ -7,6 +7,7 @@
   export let typeId: string | null = null;
   export let userId: number | null = null;
 
+  // TODO(plural): Extract API types to separate file.
   interface TournamentInfo {
     id: string;
     attributes: {
@@ -20,20 +21,20 @@
     };
   }
 
-  interface TournamentTypeInfo {
-    id: string | number;
-    type: string;
-    attributes: {
-      name: string;
-    };
-  }
-
   interface TournamentsResponse {
     data: TournamentInfo[];
     included?: TournamentTypeInfo[];
     links?: {
       next?: string | null;
       prev?: string | null;
+    };
+  }
+
+  interface TournamentTypeInfo {
+    id: string | number;
+    type: string;
+    attributes: {
+      name: string;
     };
   }
 
@@ -49,11 +50,10 @@
   let tournamentTypeName: string | null = null;
   let heading = "Recent Tournaments";
 
-  function buildDefaultUrl(tournamentTypeId: string | null | undefined): string {
+  function tournamentsApiUrl(tournamentTypeId: string | null | undefined): string {
     const query = [
       "/api/v1/public/tournaments?page[size]=10",
       "sort=-date,name",
-      "include=tournament_type",
     ];
 
     if (tournamentTypeId && tournamentTypeId.length > 0) {
@@ -63,7 +63,7 @@
     return query.join("&");
   }
 
-  const defaultUrl = buildDefaultUrl(typeId);
+  const fetchTournamentsUrl = tournamentsApiUrl(typeId);
 
   async function loadTournaments(url: string): Promise<void> {
     loading = true;
@@ -82,16 +82,6 @@
       tournaments = data.data;
       prevLink = data.links?.prev ?? null;
       nextLink = data.links?.next ?? null;
-
-      const types: Record<string, string> = {};
-      if (data.included) {
-        data.included.forEach((inc) => {
-          if (inc.type === "tournament_types") {
-            types[inc.id] = inc.attributes.name;
-          }
-        });
-      }
-      tournamentTypes = types;
     } catch (e) {
       const err = e as Error;
       globalMessages.errors.push(`Failed to load tournaments: ${err.message}`);
@@ -141,11 +131,11 @@
 
   onMount(async () => {
     if (typeId) {
-      await Promise.all([loadTournaments(defaultUrl), loadTournamentTypeName()]);
+      await Promise.all([loadTournaments(fetchTournamentsUrl), loadTournamentTypeName()]);
       return;
     }
 
-    await loadTournaments(defaultUrl);
+    await loadTournaments(fetchTournamentsUrl);
   });
 
   $: heading = !typeId
@@ -153,16 +143,6 @@
     : tournamentTypeName
       ? `Tournaments: ${tournamentTypeName}`
       : "Tournaments";
-
-  function formatDate(dateStr: string): string {
-    if (!dateStr) return "";
-    const [year, month, day] = dateStr.split('-');
-    const date = new Date(Number(year), Number(month) - 1, Number(day));
-    const dayStr = date.getDate();
-    const monthStr = date.toLocaleString('default', { month: 'short' });
-    const yearStr = date.getFullYear();
-    return `${dayStr} ${monthStr} ${yearStr}`;
-  }
 </script>
 
 <div>
@@ -201,7 +181,13 @@
 
             <h6 class="card-subtitle mb-2 text-muted">
               {#if tournament.attributes.date}
-                {formatDate(tournament.attributes.date)} -
+              {new Date(tournament.attributes.date).toLocaleString(navigator.languages, {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+                timeZone: "UTC",
+              })} -
               {/if}
               {tournament.attributes.active_player_count == 1 ? "1 player" : `${tournament.attributes.active_player_count} players`}
               {#if tournament.attributes.tournament_organizer}

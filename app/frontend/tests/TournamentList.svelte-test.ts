@@ -61,15 +61,6 @@ describe("TournamentList", () => {
                 },
               },
             ],
-            included: [
-              {
-                id: "11",
-                type: "tournament_types",
-                attributes: {
-                  name: "Standard",
-                },
-              },
-            ],
             links: {
               prev: null,
               next: "/api/v1/public/tournaments?page[number]=2",
@@ -79,7 +70,7 @@ describe("TournamentList", () => {
     }) as unknown as typeof fetch;
   });
 
-  it("renders correctly with default props and fetches tournaments", async () => {
+  it("renders correctly for recent tournaments", async () => {
     const { getAllByText, getByText, queryByText } = render(TournamentList);
 
     expect(getByText("Recent Tournaments")).toBeTruthy();
@@ -88,14 +79,14 @@ describe("TournamentList", () => {
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        "/api/v1/public/tournaments?page[size]=10&sort=-date,name&include=tournament_type",
+        "/api/v1/public/tournaments?page[size]=10&sort=-date,name",
         expect.any(Object)
       );
       expect(getByText("First Tournament")).toBeTruthy();
       expect(getByText("Second Tournament")).toBeTruthy();
     });
 
-    // userId defaults to -1, so no delete options should render
+    // userId is null, so no delete options should render
     expect(queryByText("Delete")).toBeNull();
   });
 
@@ -109,7 +100,7 @@ describe("TournamentList", () => {
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        "/api/v1/public/tournaments?page[size]=10&sort=-date,name&include=tournament_type&filter[tournament_type_id]=11",
+        "/api/v1/public/tournaments?page[size]=10&sort=-date,name&filter[tournament_type_id]=11",
         expect.any(Object)
       );
         expect(global.fetch).toHaveBeenCalledWith(
@@ -168,15 +159,6 @@ describe("TournamentList", () => {
                     },
                   },
                 ],
-                included: [
-                  {
-                    id: "11",
-                    type: "tournament_types",
-                    attributes: {
-                      name: "Standard",
-                    },
-                  },
-                ],
                 links: {
                   prev: "/api/v1/public/tournaments?page[number]=1",
                   next: null,
@@ -200,15 +182,6 @@ describe("TournamentList", () => {
                     stream_url: "",
                     tournament_type_id: 11,
                     user_id: 10,
-                  },
-                },
-              ],
-              included: [
-                {
-                  id: "11",
-                  type: "tournament_types",
-                  attributes: {
-                    name: "Standard",
                   },
                 },
               ],
@@ -270,7 +243,6 @@ describe("TournamentList", () => {
         json: () =>
           Promise.resolve({
             data: [],
-            included: [],
             links: {
               prev: null,
               next: null,
@@ -345,15 +317,6 @@ describe("TournamentList", () => {
                 },
               },
             ],
-            included: [
-              {
-                id: "11",
-                type: "tournament_types",
-                attributes: {
-                  name: "Standard",
-                },
-              },
-            ],
             links: {
               prev: null,
               next: "/api/v1/public/tournaments?page[number]=2",
@@ -372,12 +335,14 @@ describe("TournamentList", () => {
       expect(getByText("First Tournament")).toBeTruthy();
     });
 
+    const backButtons = getAllByRole("button", { name: /Back/i });
     const nextButtons = getAllByRole("button", { name: /Next/i });
     await fireEvent.click(nextButtons[0]);
 
     await waitFor(() => {
       expect(getByText("First Tournament")).toBeTruthy();
       expect(getAllByText("Loading...").length).toBeGreaterThan(0);
+      expect(backButtons[0]).toBeDisabled();
       expect(nextButtons[0]).toBeDisabled();
     });
 
@@ -399,15 +364,6 @@ describe("TournamentList", () => {
               },
             },
           ],
-          included: [
-            {
-              id: "11",
-              type: "tournament_types",
-              attributes: {
-                name: "Standard",
-              },
-            },
-          ],
           links: {
             prev: "/api/v1/public/tournaments?page[number]=1",
             next: null,
@@ -417,6 +373,8 @@ describe("TournamentList", () => {
 
     await waitFor(() => {
       expect(getByText("Third Tournament")).toBeTruthy();
+      expect(backButtons[0]).toBeEnabled();
+      expect(nextButtons[0]).toBeDisabled();
     });
   });
 });

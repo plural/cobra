@@ -11,8 +11,7 @@ document.addEventListener("turbolinks:load", function () {
       props: {
         typeId: anchor.getAttribute("data-type-id") ?? "",
         userId:
-          userIdAttr && userIdAttr.length > 0 ? Number(userIdAttr) : null,
-        userName: anchor.getAttribute("data-user-name") ?? "",
+          userIdAttr && userIdAttr.length > 0 ? Number(userIdAttr) : null
       },
     });
   }
