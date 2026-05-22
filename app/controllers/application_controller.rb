@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base # rubocop:disable Style/Doc
   helper_method :current_user, :user_signed_in?, :correct_beta_path
 
   BETA_PATHS = [
+    %r{^/tournaments$},
     %r{^/tournaments/[0-9]+$},
     %r{^/tournaments/[0-9]+/players$},
     %r{^/tournaments/[0-9]+/rounds$},
@@ -19,6 +20,7 @@ class ApplicationController < ActionController::Base # rubocop:disable Style/Doc
     %r{^/tournaments/[0-9]+/rounds/[0-9]+/pairings$},
     %r{^/tournaments/[0-9]+/rounds/[0-9]+/pairings/match_slips$},
     %r{^/tournaments/[0-9]+/stats$},
+    %r{^/tournaments/type/[0-9]+$},
     %r{^/help$}
   ].freeze
 

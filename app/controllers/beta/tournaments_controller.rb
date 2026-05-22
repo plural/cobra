@@ -8,8 +8,18 @@ module Beta
     ]
     before_action :authorize_beta_testing
 
+    def index
+      skip_authorization
+      @type_id = nil
+    end
+
     def show
       authorize @tournament
+    end
+
+    def type
+      skip_authorization
+      @type_id = params[:type_id]
     end
 
     def update
