@@ -3,8 +3,8 @@
 module Beta
   class TournamentsController < ApplicationController # rubocop:disable Metrics/ClassLength,Style/Documentation
     before_action :set_tournament, only: %i[
-      show update qr registration open_registration close_registration lock_player_registrations unlock_player_registrations
-      cut stats id_and_faction_data cut_conversion_rates
+      show update qr registration open_registration close_registration lock_player_registrations
+      unlock_player_registrations cut stats id_and_faction_data cut_conversion_rates
     ]
     before_action :authorize_beta_testing
 
@@ -88,27 +88,37 @@ module Beta
     def registration
       authorize @tournament, :register?
 
-      # TODO: How should all of this be handled?
-      # set_tournament_view_data
-      # unless @current_user_player
-      #   redirect_to tournament_path(@tournament)
-      #   return
-      # end
+      players = @tournament.players.includes(%i[corp_identity_ref runner_identity_ref]).active.sort_by do |p|
+        p.name || ''
+      end
+      current_user_player = players.find do |p|
+        p.user_id == current_user.id
+      end
+      unless current_user_player
+        redirect_to tournament_path(@tournament)
+        return
+      end
 
-      # return unless @tournament.nrdb_deck_registration?
+      return unless @tournament.nrdb_deck_registration?
+      return if current_user_player.registration_locked?
 
-      return if @tournament.nrdb_deck_registration?
-
-      redirect_to correct_beta_path(tournament_path(@tournament))
-
-      # return if @current_user_player.registration_locked?
-
-      # TODO: Move this to the DeckRegistration component?
-      # begin
-      #   @decks = Nrdb::Connection.new(current_user).decks
-      # rescue StandardError
-      #   redirect_to login_path(return_to: request.path)
-      # end
+      begin
+        @decks = Nrdb::Connection.new(current_user).decks.map do |deck|
+          {
+            id: deck[:id],
+            uuid: deck[:uuid],
+            date_creation: deck[:date_creation],
+            date_update: deck[:date_update],
+            name: deck[:name],
+            description: deck[:description],
+            mwl_code: deck[:mwl_code],
+            tags: deck[:tags],
+            cards: deck[:cards].map { |id, count| { id:, count: } }
+          }
+        end
+      rescue StandardError
+        redirect_to login_path(return_to: request.path)
+      end
     end
 
     def open_registration

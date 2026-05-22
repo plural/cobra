@@ -43,7 +43,7 @@
       <h5 class="mb-0">My Registration Information</h5>
 
       {#if tournament.nrdb_deck_registration}
-        <a href={`/tournaments/${tournament.id}/registration`}>
+        <a href={`/beta/tournaments/${tournament.id}/registration`}>
           <FontAwesomeIcon icon="edit" />
           Edit
         </a>

@@ -5,33 +5,58 @@
   import { Player } from "./PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import ProgressButton from "../widgets/ProgressButton.svelte";
+  import { type Card, type Deck, loadPrintings, type Printing } from "../utils/cards";
+  import { savePlayer } from "../players/PlayersData";
 
   let {
     tournamentId,
     userId,
+    decks,
   }: {
     tournamentId: number;
     userId: number;
+    decks: Deck[];
   } = $props();
 
+  const THE_CATALYST_NRDB_CODE = '30076'
+  const THE_SYNDICATE_NRDB_CODE = '30077'
+
   let tournament: Tournament | undefined = $state();
-  let player: Player | undefined = $state();
+  let player: Player = $state(new Player());
+  let printings: Map<string, Printing> | null = $state(new Map<string, Printing>());
 
   onMount(async () => {
-    tournament = await loadTournament(tournamentId);
-    player = await loadPlayer(tournamentId, userId);
-    // TODO: Load decks
+    // Load printings and hydrate decks
+    const printingsResponse = await loadPrintings();
+    if (printingsResponse) {
+      printingsResponse.data.forEach((p) => printings.set(p.id, p.attributes));
+      decks.forEach((deck: Deck) => {
+        deck.cards.forEach((card: Card) => {
+          card.printing = printings.get(card.id);
+          if (card.printing?.card_type_id.endsWith("identity")) {
+            deck.side_id = card.printing.side_id;
+            deck.identity_printing_id = card.id;
+            deck.identity_title = card.printing.title;
+          }
+        });
+      });
+    }
+
+    [tournament, player] = await Promise.all([
+      loadTournament(tournamentId),
+      loadPlayer(tournamentId, userId)
+    ]);
   });
 
   async function save() {
-    // TODO
+    player = await savePlayer(tournamentId, player);
     return true;
   }
 </script>
 
 <GlobalMessages />
 
-{#if player && tournament}
+{#if player.id !== 0 && tournament}
   <div class="card mb-3">
     <div class="card-header">
       <h5>My Registration Information</h5>
@@ -103,10 +128,50 @@
     Please select from your decks below. <a href="https://netrunnerdb.com/en/decks" target="_blank">See your decks in NetrunnerDB</a>. Refresh the page to reload from NetrunnerDB.
   </div>
 
-  <div class="dontprint">
-    <!-- TODO: Corp deck selection -->
+  <div class="row dontprint">
+    <!-- Corp deck selection -->
+    <div class="col-md-6">
+      <div class="card">
+        <ul class="list-group list-group-flush" style="border-bottom: 0;">
+          <li class="list-group-item selected-deck">
+            <div class="selected-deck-buttons"></div>
+            <div class="selected-deck-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${THE_SYNDICATE_NRDB_CODE}.jpg)`}></div>
+            <p class="mb-1">No corp selected</p>
+          </li>
+        </ul>
+        <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
+          {#each decks.filter((d) => d.side_id === "corp") as deck (deck.id)}
+            <li class="list-group-item">
+              <div class="deck-list-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${deck.identity_printing_id}.jpg)`}></div>
+              <p class="mb-1">{deck.name}</p>
+              <small>{deck.identity_title}</small>
+            </li>
+          {/each}
+        </ul>
+      </div>
+    </div>
 
-    <!-- TODO: Runner deck selection -->
+    <!-- Runner deck selection -->
+    <div class="col-md-6">
+      <div class="card">
+        <ul class="list-group list-group-flush" style="border-bottom: 0;">
+          <li class="list-group-item selected-deck">
+            <div class="selected-deck-buttons"></div>
+            <div class="selected-deck-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${THE_CATALYST_NRDB_CODE}.jpg)`}></div>
+            <p class="mb-1">No runner selected</p>
+          </li>
+        </ul>
+        <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
+          {#each decks.filter((d) => d.side_id === "runner") as deck (deck.id)}
+            <li class="list-group-item">
+              <div class="deck-list-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${deck.identity_printing_id}.jpg)`}></div>
+              <p class="mb-1">{deck.name}</p>
+              <small>{deck.identity_title}</small>
+            </li>
+          {/each}
+        </ul>
+      </div>
+    </div>
   </div>
 
   <div>
