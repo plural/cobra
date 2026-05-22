@@ -1,4 +1,3 @@
-import type { Identity } from "../identities/Identity";
 import type { Player } from "../players/PlayersData";
 
 export type Errors = Record<string, string[]>;
@@ -128,47 +127,6 @@ export interface TournamentSettingsData {
   options: TournamentOptions;
   feature_flags: FeatureFlags;
   csrf_token: string;
-}
-
-export interface MyTournamentPlayer {
-  user_id: number | null;
-  name: string | null;
-  pronouns: string | null;
-  name_with_pronouns: string;
-  corp_identity: string | null;
-  corp_faction: string | null;
-  runner_identity: string | null;
-  runner_faction: string | null;
-}
-
-export interface MyTournamentPairing {
-  stage_id: number;
-  stage_number: number;
-  format: string;
-  round_number: number;
-  round_completed: boolean;
-  pairing_id: number;
-  table_number: number | null;
-  side: string | number | null;
-  opponent: MyTournamentPlayer;
-  player_score: number | null;
-  opponent_score: number | null;
-  player_score_corp: number | null;
-  player_score_runner: number | null;
-  opponent_score_corp: number | null;
-  opponent_score_runner: number | null;
-  intentional_draw: boolean;
-  two_for_one: boolean;
-}
-
-export interface MyTournamentData {
-  tournament_id: number;
-  user_id: number;
-  identities?: {
-    corp: Identity;
-    runner: Identity;
-  };
-  pairings?: MyTournamentPairing[];
 }
 
 export function emptyTournamentOptions(): TournamentOptions {

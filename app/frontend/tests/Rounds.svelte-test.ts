@@ -670,7 +670,7 @@ describe("Rounds", () => {
         )[0] as HTMLElement;
         expect(
           queryByRole(table1Row, "button", { name: /report pairing/i }),
-        ).not.toBeTruthy();
+        ).toBeNull();
       });
     });
 
@@ -718,8 +718,8 @@ describe("Rounds", () => {
           expect(loadPairings).toHaveBeenCalledTimes(2);
           expect(
             queryByRole(table1Row, "button", { name: /report pairing/i }),
-          ).not.toBeTruthy();
-          expect(getByText(table1Row, `Report: ${scoreText}`)).toBeTruthy();
+          ).toBeNull();
+          expect(getByText(table1Row, `Report: ${scoreText}`)).not.toBeNull();
         });
       });
     });
