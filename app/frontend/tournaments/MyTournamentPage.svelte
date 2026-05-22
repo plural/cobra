@@ -113,77 +113,79 @@
             </tr>
           </thead>
           <tbody>
-            {#each data.stages as stage (stage.id)}
-              {#each stage.rounds as round, idx (round.id)}
-                {#if showPreviousRounds || idx === stage.rounds.length - 1}
-                  {#each round.pairings as pairing (pairing.id)}
-                    <tr>
-                      <td>
-                        {stage.is_elimination ? "Cut " : ""}{round.number}
-                      </td>
-                      <td>{isBye(pairing) ? "" : pairing.table_number}</td>
-                      {#if stage.is_single_sided}
-                        <td>{isBye(pairing) ? "" : getMySide(pairing)}</td>
-                      {/if}
-                      <td>
-                        {#if isBye(pairing)}
-                          (Bye)
-                        {:else}
-                          <PlayerDisplay
-                            player={pairing.player1.user_id === userId
-                              ? pairing.player2
-                              : pairing.player1}
-                            {pairing}
-                            left_or_right="left"
-                            is_single_sided={stage.is_single_sided}
-                          />
+            {#each data.stages as stage, stageIdx (stage.id)}
+              {#if showPreviousRounds || stageIdx == data.stages.length - 1}
+                {#each stage.rounds as round, roundIdx (round.id)}
+                  {#if showPreviousRounds || roundIdx === stage.rounds.length - 1}
+                    {#each round.pairings as pairing (pairing.id)}
+                      <tr>
+                        <td>
+                          {stage.is_elimination ? "Cut " : ""}{round.number}
+                        </td>
+                        <td>{isBye(pairing) ? "" : pairing.table_number}</td>
+                        {#if stage.is_single_sided}
+                          <td>{isBye(pairing) ? "" : getMySide(pairing)}</td>
                         {/if}
-                      </td>
-                      <td class="text-center">
-                        {#if pairing.score_label.trim() !== "" && pairing.score_label.trim() !== "-"}
-                          {pairing.score_label}
-                          {#if pairing.intentional_draw}
-                            <span
-                              class="badge badge-pill badge-secondary score-badge"
-                            >
-                              ID
-                            </span>
-                          {/if}
-                          {#if pairing.two_for_one}
-                            <span
-                              class="badge badge-pill badge-secondary score-badge"
-                            >
-                              2 for 1
-                            </span>
-                          {/if}
-                        {:else}
-                          {#if pairing.policy.self_report}
-                            <SelfReportOptions
-                              {stage}
+                        <td>
+                          {#if isBye(pairing)}
+                            (Bye)
+                          {:else}
+                            <PlayerDisplay
+                              player={pairing.player1.user_id === userId
+                                ? pairing.player2
+                                : pairing.player1}
                               {pairing}
-                              reportScoreCallback={async (
-                                pairingId: number,
-                                report: ScoreReport,
-                                selfReport: boolean,
-                              ) => {
-                                await reportScoreCallback(
-                                  round.id,
-                                  pairingId,
-                                  report,
-                                  selfReport,
-                                );
-                              }}
+                              left_or_right="left"
+                              is_single_sided={stage.is_single_sided}
                             />
                           {/if}
-                          {#if pairing.self_reports && pairing.self_reports.length !== 0}
-                            Report: {pairing.self_reports[0].label}
+                        </td>
+                        <td class="text-center">
+                          {#if pairing.score_label.trim() !== "" && pairing.score_label.trim() !== "-"}
+                            {pairing.score_label}
+                            {#if pairing.intentional_draw}
+                              <span
+                                class="badge badge-pill badge-secondary score-badge"
+                              >
+                                ID
+                              </span>
+                            {/if}
+                            {#if pairing.two_for_one}
+                              <span
+                                class="badge badge-pill badge-secondary score-badge"
+                              >
+                                2 for 1
+                              </span>
+                            {/if}
+                          {:else}
+                            {#if pairing.policy.self_report}
+                              <SelfReportOptions
+                                {stage}
+                                {pairing}
+                                reportScoreCallback={async (
+                                  pairingId: number,
+                                  report: ScoreReport,
+                                  selfReport: boolean,
+                                ) => {
+                                  await reportScoreCallback(
+                                    round.id,
+                                    pairingId,
+                                    report,
+                                    selfReport,
+                                  );
+                                }}
+                              />
+                            {/if}
+                            {#if pairing.self_reports && pairing.self_reports.length !== 0}
+                              Report: {pairing.self_reports[0].label}
+                            {/if}
                           {/if}
-                        {/if}
-                      </td>
-                    </tr>
-                  {/each}
-                {/if}
-              {/each}
+                        </td>
+                      </tr>
+                    {/each}
+                  {/if}
+                {/each}
+              {/if}
             {/each}
           </tbody>
         </table>
