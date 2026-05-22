@@ -1,9 +1,17 @@
 <script lang="ts">
-  export let loading = false;
-  export let canGoBack = false;
-  export let canGoNext = false;
-  export let onBack: (() => void | Promise<void>) | undefined;
-  export let onNext: (() => void | Promise<void>) | undefined;
+  let {
+    loading = false,
+    canGoBack = false,
+    canGoNext = false,
+    onBack,
+    onNext,
+  }: {
+    loading?: boolean;
+    canGoBack?: boolean;
+    canGoNext?: boolean;
+    onBack?: () => void | Promise<void>;
+    onNext?: () => void | Promise<void>;
+  } = $props();
 </script>
 
 <div class="row m-3">
@@ -11,7 +19,7 @@
     <button
       class="btn btn-primary"
       disabled={!canGoBack || loading}
-      on:click={() => onBack?.()}
+      onclick={() => onBack?.()}
     >
       <i class="fa fa-arrow-left"></i> Back
     </button>
@@ -23,7 +31,7 @@
     <button
       class="btn btn-primary"
       disabled={!canGoNext || loading}
-      on:click={() => onNext?.()}
+      onclick={() => onNext?.()}
     >
       Next <i class="fa fa-arrow-right"></i>
     </button>

@@ -196,6 +196,7 @@ describe("TournamentList", () => {
     const { getAllByRole, getByText, queryByText } = render(TournamentList, {
       props: {
         typeId: "11",
+        userId: null
       },
     });
 
@@ -254,6 +255,7 @@ describe("TournamentList", () => {
     const { getByText } = render(TournamentList, {
       props: {
         typeId: "11",
+        userId: null
       },
     });
 
@@ -328,6 +330,7 @@ describe("TournamentList", () => {
     const { getAllByRole, getAllByText, getByText } = render(TournamentList, {
       props: {
         typeId: "11",
+        userId: null
       },
     });
 

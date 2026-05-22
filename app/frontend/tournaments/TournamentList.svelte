@@ -4,8 +4,8 @@
   import PagingRow from "../widgets/PagingRow.svelte";
   import { globalMessages } from "../utils/GlobalMessageState.svelte";
 
-  export let typeId: string | null = null;
-  export let userId: number | null = null;
+  let { typeId, userId }: { typeId: string | null; userId: number | null } =
+    $props();
 
   // TODO(plural): Extract API types to separate file.
   interface TournamentInfo {
@@ -42,15 +42,23 @@
     data: TournamentTypeInfo[];
   }
 
-  let tournaments: TournamentInfo[] = [];
-  let tournamentTypes: Record<string, string> = {};
-  let loading = true;
-  let prevLink: string | null = null;
-  let nextLink: string | null = null;
-  let tournamentTypeName: string | null = null;
-  let heading = "Recent Tournaments";
+  let tournaments: TournamentInfo[] = $state([]);
+  let tournamentTypes: Record<string, string> = $state({});
+  let loading = $state(true);
+  let prevLink: string | null = $state(null);
+  let nextLink: string | null = $state(null);
+  let tournamentTypeName: string | null = $state(null);
+  let heading = $derived(
+    !typeId
+      ? "Recent Tournaments"
+      : tournamentTypeName
+        ? `Tournaments: ${tournamentTypeName}`
+        : "Tournaments",
+  );
 
-  function tournamentsApiUrl(tournamentTypeId: string | null | undefined): string {
+  function tournamentsApiUrl(
+    tournamentTypeId: string | null | undefined,
+  ): string {
     const query = [
       "/api/v1/public/tournaments?page[size]=10",
       "sort=-date,name",
@@ -63,7 +71,7 @@
     return query.join("&");
   }
 
-  const fetchTournamentsUrl = tournamentsApiUrl(typeId);
+  const fetchTournamentsUrl = $derived(tournamentsApiUrl(typeId));
 
   async function loadTournaments(url: string): Promise<void> {
     loading = true;
@@ -109,7 +117,7 @@
 
       const data = (await response.json()) as TournamentTypesResponse;
       const matchingType = data.data.find(
-        (tournamentType) => String(tournamentType.id) === String(typeId)
+        (tournamentType) => String(tournamentType.id) === typeId,
       );
       tournamentTypeName = matchingType?.attributes.name ?? null;
     } catch {
@@ -131,18 +139,15 @@
 
   onMount(async () => {
     if (typeId) {
-      await Promise.all([loadTournaments(fetchTournamentsUrl), loadTournamentTypeName()]);
+      await Promise.all([
+        loadTournaments(fetchTournamentsUrl),
+        loadTournamentTypeName(),
+      ]);
       return;
     }
 
     await loadTournaments(fetchTournamentsUrl);
   });
-
-  $: heading = !typeId
-    ? "Recent Tournaments"
-    : tournamentTypeName
-      ? `Tournaments: ${tournamentTypeName}`
-      : "Tournaments";
 </script>
 
 <div>
@@ -174,22 +179,32 @@
                   style="font-size: .7em; position: relative; top: -.1em;"
                   class="badge badge-pill badge-secondary"
                 >
-                  {tournamentTypes[tournament.attributes.tournament_type_id.toString()]}
+                  {tournamentTypes[
+                    tournament.attributes.tournament_type_id.toString()
+                  ]}
                 </span>
               {/if}
             </h4>
 
             <h6 class="card-subtitle mb-2 text-muted">
               {#if tournament.attributes.date}
-              {new Date(tournament.attributes.date).toLocaleString(navigator.languages, {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                timeZone: "UTC",
-              })} -
+                {new Date(tournament.attributes.date).toLocaleString(
+                  navigator.languages,
+                  {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    timeZone: "UTC",
+                  },
+                )} -
               {/if}
-              {tournament.attributes.active_player_count == 1 ? "1 player" : `${tournament.attributes.active_player_count} players`}
+              {tournament.attributes.active_player_count}
+              {new Intl.PluralRules(navigator.languages).select(
+                tournament.attributes.active_player_count,
+              ) == "one"
+                ? "active player"
+                : "active players"}
               {#if tournament.attributes.tournament_organizer}
                 - {tournament.attributes.tournament_organizer}
               {/if}
