@@ -4,9 +4,8 @@
   import PagingRow from "../widgets/PagingRow.svelte";
   import { globalMessages } from "../utils/GlobalMessageState.svelte";
 
-  export let typeId = "";
+  export let typeId: string | null = null;
   export let userId: number | null = null;
-  export let userName = "";
 
   interface TournamentInfo {
     id: string;
@@ -22,7 +21,7 @@
   }
 
   interface TournamentTypeInfo {
-    id: string;
+    id: string | number;
     type: string;
     attributes: {
       name: string;
@@ -38,20 +37,33 @@
     };
   }
 
+  interface TournamentTypesResponse {
+    data: TournamentTypeInfo[];
+  }
+
   let tournaments: TournamentInfo[] = [];
   let tournamentTypes: Record<string, string> = {};
   let loading = true;
   let prevLink: string | null = null;
   let nextLink: string | null = null;
+  let tournamentTypeName: string | null = null;
+  let heading = "Recent Tournaments";
 
-  const defaultUrl = [
-    "/api/v1/public/tournaments?page[size]=10",
-    "sort=-date,name",
-    "include=tournament_type",
-    typeId ? `filter[tournament_type_id]=${typeId}` : null,
-  ]
-    .filter((part): part is string => part !== null)
-    .join("&");
+  function buildDefaultUrl(tournamentTypeId: string | null | undefined): string {
+    const query = [
+      "/api/v1/public/tournaments?page[size]=10",
+      "sort=-date,name",
+      "include=tournament_type",
+    ];
+
+    if (tournamentTypeId && tournamentTypeId.length > 0) {
+      query.push(`filter[tournament_type_id]=${tournamentTypeId}`);
+    }
+
+    return query.join("&");
+  }
+
+  const defaultUrl = buildDefaultUrl(typeId);
 
   async function loadTournaments(url: string): Promise<void> {
     loading = true;
@@ -88,6 +100,33 @@
     }
   }
 
+  async function loadTournamentTypeName(): Promise<void> {
+    if (!typeId) {
+      tournamentTypeName = null;
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/v1/public/tournament_types", {
+        headers: {
+          Accept: "application/vnd.api+json",
+          "Content-Type": "application/vnd.api+json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = (await response.json()) as TournamentTypesResponse;
+      const matchingType = data.data.find(
+        (tournamentType) => String(tournamentType.id) === String(typeId)
+      );
+      tournamentTypeName = matchingType?.attributes.name ?? null;
+    } catch {
+      tournamentTypeName = null;
+    }
+  }
+
   async function goToPreviousPage(): Promise<void> {
     if (!prevLink || loading) return;
 
@@ -101,8 +140,19 @@
   }
 
   onMount(async () => {
+    if (typeId) {
+      await Promise.all([loadTournaments(defaultUrl), loadTournamentTypeName()]);
+      return;
+    }
+
     await loadTournaments(defaultUrl);
   });
+
+  $: heading = !typeId
+    ? "Recent Tournaments"
+    : tournamentTypeName
+      ? `Tournaments: ${tournamentTypeName}`
+      : "Tournaments";
 
   function formatDate(dateStr: string): string {
     if (!dateStr) return "";
@@ -118,7 +168,7 @@
 <div>
   <GlobalMessages />
 
-  <h1>Beta Tournaments By Type</h1>
+  <h1>{heading}</h1>
 
   <div>
     <PagingRow

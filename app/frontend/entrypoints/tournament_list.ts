@@ -1,12 +1,12 @@
 import { mount } from "svelte";
-import TournamentType from "../tournaments/TournamentType.svelte";
+import TournamentList from "../tournaments/TournamentList.svelte";
 
 document.addEventListener("turbolinks:load", function () {
-  const anchor = document.getElementById("tournament_type_anchor");
+  const anchor = document.getElementById("tournament_list_anchor");
   if (anchor?.childNodes.length == 0) {
     const userIdAttr = anchor.getAttribute("data-user-id");
 
-    mount(TournamentType, {
+    mount(TournamentList, {
       target: anchor,
       props: {
         typeId: anchor.getAttribute("data-type-id") ?? "",
