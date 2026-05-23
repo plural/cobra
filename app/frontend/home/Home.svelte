@@ -32,15 +32,3 @@
     </a>
   </p>
 </div>
-
-<div class="text-center">
-  <img
-    src="/scoop.png"
-    alt=""
-    onerror={(e) => {
-      if (e.currentTarget instanceof HTMLElement) {
-        e.currentTarget.style.display = 'none';
-      }
-    }}
-  />
-</div>
