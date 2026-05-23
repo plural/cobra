@@ -4,8 +4,13 @@
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import Tooltip from "./Tooltip.svelte";
 
-  export let stage: SwissStage;
-  export let manual_seed: boolean;
+  let {
+    stage,
+    manual_seed,
+  }: {
+    stage: SwissStage;
+    manual_seed: boolean;
+  } = $props();
 
   function printSideBias(sideBias: number | null) {
     if (sideBias == null || sideBias === 0) {
