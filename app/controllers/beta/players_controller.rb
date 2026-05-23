@@ -129,9 +129,9 @@ module Beta
       authorize @tournament, :update?
 
       render json: @tournament.players
-                   .sort_by(&:name)
-                   .flat_map { |p| p.decks.sort_by(&:side_id) }
-                   .map { |d| d.as_view(current_user) }
+                              .sort_by(&:name)
+                              .flat_map { |p| p.decks.sort_by(&:side_id) }
+                              .map { |d| d.as_view(current_user) }
     end
 
     private
