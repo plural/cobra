@@ -7,6 +7,7 @@
   import ProgressButton from "../widgets/ProgressButton.svelte";
   import { type Card, type Deck, loadPrintings, type Printing } from "../utils/cards";
   import { savePlayer } from "../players/PlayersData";
+  import DeckDisplay from "./DeckDisplay.svelte";
 
   let {
     tournamentId,
@@ -24,6 +25,8 @@
   let tournament: Tournament | undefined = $state();
   let player: Player = $state(new Player());
   let printings: Map<string, Printing> | null = $state(new Map<string, Printing>());
+  let selectedCorpDeck: Deck | null = $state(null);
+  let selectedRunnerDeck: Deck | null = $state(null);
 
   onMount(async () => {
     // Load printings and hydrate decks
@@ -35,9 +38,23 @@
           card.printing = printings.get(card.id);
           if (card.printing?.card_type_id.endsWith("identity")) {
             deck.side_id = card.printing.side_id;
-            deck.identity_printing_id = card.id;
-            deck.identity_title = card.printing.title;
+            deck.identity = card;
           }
+        });
+        deck.cards.sort((a, b) => {
+          const aCardTypeId = a.printing ? a.printing.card_type_id : "";
+          const bCardTypeId = b.printing ? b.printing.card_type_id : "";
+          if (aCardTypeId != bCardTypeId) {
+            return aCardTypeId < bCardTypeId ? -1 : 1;
+          }
+
+          const aTitle = a.printing ? a.printing.title : "";
+          const bTitle = b.printing ? b.printing.title : "";
+          if (aTitle !== bTitle) {
+            return aTitle < bTitle ? -1 : 1;
+          }
+
+          return 0;
         });
       });
     }
@@ -52,9 +69,25 @@
     player = await savePlayer(tournamentId, player);
     return true;
   }
+
+  function selectDeck(deck: Deck, isCorp: boolean) {
+    if (isCorp) {
+      selectedCorpDeck = deck.uuid === selectedCorpDeck?.uuid ? null : deck;
+    } else {
+      selectedRunnerDeck = deck.uuid === selectedRunnerDeck?.uuid ? null : deck;
+    }
+  }
 </script>
 
 <GlobalMessages />
+
+{#snippet deckListItem(deck: Deck, isCorp: boolean)}
+  <button class="list-group-item list-group-item-action {deck.uuid === (isCorp ? selectedCorpDeck?.uuid : selectedRunnerDeck?.uuid) ? "active" : ""}" onclick={() => { selectDeck(deck, isCorp); }}>
+    <div class="deck-list-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${deck.identity?.id}.jpg)`}></div>
+    <p class="mb-1">{deck.name}</p>
+    <small>{deck.identity?.printing?.title}</small>
+  </button>
+{/snippet}
 
 {#if player.id !== 0 && tournament}
   <div class="card mb-3">
@@ -128,7 +161,7 @@
     Please select from your decks below. <a href="https://netrunnerdb.com/en/decks" target="_blank">See your decks in NetrunnerDB</a>. Refresh the page to reload from NetrunnerDB.
   </div>
 
-  <div class="row dontprint">
+  <div class="row mb-3 dontprint">
     <!-- Corp deck selection -->
     <div class="col-md-6">
       <div class="card">
@@ -141,11 +174,8 @@
         </ul>
         <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
           {#each decks.filter((d) => d.side_id === "corp") as deck (deck.id)}
-            <li class="list-group-item">
-              <div class="deck-list-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${deck.identity_printing_id}.jpg)`}></div>
-              <p class="mb-1">{deck.name}</p>
-              <small>{deck.identity_title}</small>
-            </li>
+            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+            {@render deckListItem(deck, true)}
           {/each}
         </ul>
       </div>
@@ -163,21 +193,22 @@
         </ul>
         <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
           {#each decks.filter((d) => d.side_id === "runner") as deck (deck.id)}
-            <li class="list-group-item">
-              <div class="deck-list-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${deck.identity_printing_id}.jpg)`}></div>
-              <p class="mb-1">{deck.name}</p>
-              <small>{deck.identity_title}</small>
-            </li>
+            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+            {@render deckListItem(deck, false)}
           {/each}
         </ul>
       </div>
     </div>
   </div>
 
-  <div>
-    <!-- TODO: Corp deck display -->
+  <div class="row">
+    <div class="col-md-6">
+      <DeckDisplay deck={selectedCorpDeck} isCorp={true} />
+    </div>
 
-    <!-- TODO: Runner deck display -->
+    <div class="col-md-6">
+      <DeckDisplay deck={selectedRunnerDeck} isCorp={false} />
+    </div>
   </div>
 {:else}
   <div class="d-flex align-items-center m-2">

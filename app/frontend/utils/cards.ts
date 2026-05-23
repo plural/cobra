@@ -17,8 +17,7 @@ export interface Deck {
   tags: string;
   cards: Card[];
   side_id?: string;
-  identity_printing_id?: string;
-  identity_title?: string;
+  identity?: Card;
 }
 
 export interface Printing {
