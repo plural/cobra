@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base # rubocop:disable Style/Doc
   helper_method :current_user, :user_signed_in?, :correct_beta_path
 
   BETA_PATHS = [
+    %r{^/$},
     %r{^/tournaments$},
     %r{^/tournaments/[0-9]+$},
     %r{^/tournaments/[0-9]+/players$},

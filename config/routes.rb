@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   end
 
   namespace :beta do
+    get '/', to: '/beta#index'
+    get :help
     post :set_beta
     resources :tournaments do
       get 'type/:type_id', to: 'tournaments#type', on: :collection
@@ -57,7 +59,6 @@ Rails.application.routes.draw do
       get :cut_conversion_rates, on: :member
     end
     resources :identities, only: [:index]
-    get :help
   end
 
   resources :tournaments do
