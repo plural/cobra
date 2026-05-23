@@ -1,7 +1,7 @@
 <!-- TODO: Replace with library or move when used more often. Currently no need for a lib-->
 
 <script lang="ts">
-  export let text = "";
+  let { text = "" }: { text?: string } = $props();
 
   let isHovered = false;
 </script>

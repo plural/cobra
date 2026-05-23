@@ -3,7 +3,7 @@
   import Identity from "../identities/Identity.svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
-  export let stage: CutStage;
+  let { stage }: { stage: CutStage } = $props();
 </script>
 
 <table class="table table-striped standings">
