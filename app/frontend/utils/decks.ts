@@ -1,4 +1,5 @@
 import { quoteCsvValue } from "./files";
+import { globalMessages } from "./GlobalMessageState.svelte";
 import type { ApiResponse } from "./network";
 
 export interface NrdbCard {
@@ -90,8 +91,8 @@ export function convertNrdbDeck(nrdbDeck: NrdbDeck, printings: Map<string, Print
       quantity: card.count,
       influence: printing.influence_cost * card.count,
       nrdb_card_id: printing.card_id,
-      created_at: "", // TODO: Should this be optional?
-      updated_at: "", // TODO: Should this be optional?
+      created_at: "",
+      updated_at: "",
       nrdb_printing_id: parseInt(card.id),
       card_type_id: printing.card_type_id,
       faction_id: printing.faction_id,
@@ -102,7 +103,7 @@ export function convertNrdbDeck(nrdbDeck: NrdbDeck, printings: Map<string, Print
   return {
     details: {
       id: nrdbDeck.id,
-      player_id: 0, // TODO: What should this be?
+      player_id: 0,
       side_id: identity.side_id,
       name: nrdbDeck.name,
       identity_title: identity.title,
@@ -113,10 +114,10 @@ export function convertNrdbDeck(nrdbDeck: NrdbDeck, printings: Map<string, Print
       created_at: nrdbDeck.date_creation,
       updated_at: nrdbDeck.date_upate,
       identity_nrdb_printing_id: identityNrdbId,
-      user_id: 0, // TODO: What should this be?
+      user_id: 0,
       faction_id: identity.faction_id,
-      mine: false, // TODO: What should this be?
-      player_name: "" // TODO: What should this be?
+      mine: true,
+      player_name: ""
     },
     cards: cards
   };
@@ -174,16 +175,23 @@ export function deckCsv(decks: Deck[]) {
 }
 
 export async function loadPrintings() {
-  const response = await fetch(
-    "https://api.netrunnerdb.com/api/v3/public/printings?page[size]=10000&fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost",
-    { method: "GET" },
-  );
-
   let data: ApiResponse<Printing> | null = null;
-  if (response.status === 200) {
-    data = (await response.json()) as ApiResponse<Printing>;
+
+  try {
+    const response = await fetch(
+      "https://api.netrunnerdb.com/api/v3/public/printings?page[size]=10000&fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost",
+      { method: "GET" },
+    );
+  
+    if (response.status === 200) {
+      data = (await response.json()) as ApiResponse<Printing>;
+    } else {
+      globalMessages.errors.push(`Failed to load printings: ${response.statusText}`);  
+    }
+  } catch (e) {
+    const err = e as Error;
+    globalMessages.errors.push(`Failed to load printings: ${err.message}`);
   }
-  // TODO: Handle error
 
   return data;
 }

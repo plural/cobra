@@ -2,6 +2,7 @@
   import Identity from "../identities/Identity.svelte";
   import { deckCsv, type Card, type Deck } from "../utils/decks";
   import { downloadBlob } from "../utils/files";
+  import { getCardTypeImage } from "../utils/images";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
   let { deck, isCorp }: { deck: Deck | null; isCorp: boolean; } = $props();
@@ -65,7 +66,7 @@
             {deck.details.name}
             <div class="float-right dontprint">
               <span class="dropdown">
-                <button type="button" title="Export deck" class="btn btn-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" title="Export deck" class="btn btn-link p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <FontAwesomeIcon icon="download" />
                 </button>
                 <div class="dropdown-menu">
@@ -73,7 +74,11 @@
                   <button type="button" class="dropdown-item" onclick={downloadCsv}>Download as a CSV spreadsheet</button>
                 </div>
               </span>
-              <!-- TODO: Edit deck link -->
+              {#if deck.details.mine}
+                <a href="https://netrunnerdb.com/en/deck/edit/{deck.details.nrdb_uuid}" target="_blank" title="Edit Deck">
+                  <FontAwesomeIcon icon="external-link" />
+                </a>
+              {/if}
             </div>
           {:else}
             Unnamed deck
@@ -83,7 +88,6 @@
         {/if}
       </td>
     </tr>
-    <!-- TODO: Changes row -->
   </tbody>
 </table>
 
@@ -123,8 +127,7 @@
         <tr>
           <td class="text-center align-middle">{card.quantity}</td>
           <td>
-            <!-- TODO: Fix asset path -->
-            <img src="/assets/images/types/{card.card_type_id}.jpg" alt={card.card_type_id} />
+            <img src={getCardTypeImage(card.card_type_id)} alt={card.card_type_id} />
             <i class="fa icon icon-{adjustFactionId(card.faction_id)} {adjustFactionId(card.faction_id)}"></i>
             {card.title}
           </td>
