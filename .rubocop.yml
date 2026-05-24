@@ -152,6 +152,9 @@ Lint/SymbolConversion: # new in 1.9
   Enabled: true
 Lint/ToEnumArguments: # new in 1.1
   Enabled: true
+Layout/TrailingEmptyLines:
+  Enabled: true
+  EnforcedStyle: final_newline
 Lint/TripleQuotes: # new in 1.9
   Enabled: true
 Lint/UnescapedBracketInRegexp: # new in 1.68
