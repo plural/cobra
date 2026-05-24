@@ -1,6 +1,7 @@
 <script lang="ts">
   import Identity from "../identities/Identity.svelte";
-  import type { Card, Deck } from "../utils/decks";
+  import { deckCsv, type Card, type Deck } from "../utils/decks";
+  import { downloadBlob } from "../utils/files";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
   let { deck, isCorp }: { deck: Deck | null; isCorp: boolean; } = $props();
@@ -38,7 +39,14 @@
   }
 
   function downloadCsv() {
-    // TODO
+    if (!deck) {
+      return;
+    }
+    
+    downloadBlob(
+      `${deck.details.player_name} - ${deck.details.name}.csv`,
+      new Blob([deckCsv([deck])], { type: "text/csv" }),
+    );
   }
 </script>
 
@@ -55,24 +63,24 @@
         {#if deck}
           {#if deck.details.name}
             {deck.details.name}
+            <div class="float-right dontprint">
+              <span class="dropdown">
+                <button type="button" title="Export deck" class="btn btn-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <FontAwesomeIcon icon="download" />
+                </button>
+                <div class="dropdown-menu">
+                  <button type="button" class="dropdown-item" onclick={copyToClipboard}>Copy to clipboard in NetrunnerDB format</button>
+                  <button type="button" class="dropdown-item" onclick={downloadCsv}>Download as a CSV spreadsheet</button>
+                </div>
+              </span>
+              <!-- TODO: Edit deck link -->
+            </div>
           {:else}
             Unnamed deck
           {/if}
         {:else}
           No deck selected
         {/if}
-        <div class="float-right dontprint">
-          <span class="dropdown">
-            <button type="button" title="Export deck" class="btn btn-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <FontAwesomeIcon icon="download" />
-            </button>
-            <div class="dropdown-menu">
-              <button type="button" class="dropdown-item" onclick={copyToClipboard}>Copy to clipboard in NetrunnerDB format</button>
-              <button type="button" class="dropdown-item" onclick={downloadCsv}>Download as a CSV spreadsheet</button>
-            </div>
-          </span>
-          <!-- TODO: Edit deck link -->
-        </div>
       </td>
     </tr>
     <!-- TODO: Changes row -->

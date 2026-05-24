@@ -1,3 +1,4 @@
+import { quoteCsvValue } from "./files";
 import type { ApiResponse } from "./network";
 
 export interface NrdbCard {
@@ -119,6 +120,57 @@ export function convertNrdbDeck(nrdbDeck: NrdbDeck, printings: Map<string, Print
     },
     cards: cards
   };
+}
+
+export function deckCsv(decks: Deck[]) {
+  const headerCsv =
+    decks
+      .map((deck) => `Player,${quoteCsvValue(deck.details.player_name)},`)
+      .join(",,") +
+    "\n" +
+    decks
+      .map((deck) => `Deck,${quoteCsvValue(deck.details.name ?? "")},`)
+      .join(",,") +
+    "\n\n" +
+    decks.map(() => "Min,Identity,Max").join(",,") +
+    "\n" +
+    decks.map((deck) =>
+      `${deck.details.min_deck_size},${quoteCsvValue(deck.details.identity_title)},${deck.details.max_influence}`,
+    )
+    .join(",,");
+
+  const maxCards = decks.reduce(
+    (max, deck) => Math.max(max, deck.cards.length),
+    0,
+  );
+  let cardCsv = decks.map(() => "Qty,Card Name,Inf").join(",,");
+  for (const i of Array(maxCards).keys()) {
+    cardCsv +=
+      "\n" +
+      decks.map((deck: Deck) => {
+        const influence = deck.cards[i].influence > 0 && deck.cards[i].faction_id !== deck.details.faction_id
+          ? deck.cards[i].influence
+          : "";
+        return i < deck.cards.length
+          ? `${deck.cards[i].quantity},${quoteCsvValue(deck.cards[i].title)},${influence}`
+          : ",,";
+      })
+      .join(",,");
+  }
+
+  cardCsv +=
+    "\n\n" +
+    decks.map((deck) => {
+      const totalQuantity = deck.cards.reduce((total: number, card: Card) => total + card.quantity, 0);
+      const totalInfluence = deck.cards
+        .filter((card: Card) => card.faction_id !== deck.details.faction_id)
+        .reduce((total: number, card: Card) => total + card.influence, 0);
+      return `${totalQuantity},Totals,${totalInfluence}`;
+    })
+    .join(",,");
+  
+  // "\ufeff" lets Excel know it's Unicode encoded
+  return `\ufeff${headerCsv}\n\n${cardCsv}`;
 }
 
 export async function loadPrintings() {
