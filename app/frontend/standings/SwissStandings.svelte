@@ -76,12 +76,12 @@
         {/if}
         <td class="ids">
           <Identity
-            identity={standing.player.corp_id}
+            identity={standing.player.corp_id ?? undefined}
             points={standing.corp_points}
             name_if_missing="Corp"
           />
           <Identity
-            identity={standing.player.runner_id}
+            identity={standing.player.runner_id ?? undefined}
             points={standing.runner_points}
             name_if_missing="Runner"
           />
