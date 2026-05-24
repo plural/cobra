@@ -122,6 +122,35 @@
     return side ? side.charAt(0).toUpperCase() + side.slice(1) : "";
   }
 
+  function iWon(pairing: Pairing): boolean {
+    if (isBye(pairing) || !pairing.reported) return false;
+    const isMe1 = pairing.player1.user_id === userId;
+    const myScore = isMe1 ? pairing.score1 : pairing.score2;
+    const oppScore = isMe1 ? pairing.score2 : pairing.score1;
+    return myScore > oppScore;
+  }
+
+  function opponentWon(pairing: Pairing): boolean {
+    if (isBye(pairing) || !pairing.reported) return false;
+    const isMe1 = pairing.player1.user_id === userId;
+    const myScore = isMe1 ? pairing.score1 : pairing.score2;
+    const oppScore = isMe1 ? pairing.score2 : pairing.score1;
+    return oppScore > myScore;
+  }
+
+  function getScoreResultStyle(pairing: Pairing): string {
+    if (pairing.score_label.trim() === "" || pairing.score_label.trim() === "-") {
+      return "";
+    }
+    if (isBye(pairing) || iWon(pairing)) {
+      return "background-color: limegreen; color: black;";
+    }
+    if (opponentWon(pairing)) {
+      return "background-color: orangered; color: black;";
+    }
+    return "background-color: lightgrey; color: black;";
+  }
+
   async function reportScoreCallback(
     roundId: number,
     pairingId: number,
@@ -145,46 +174,28 @@
 
 {#if data}
   <div class="container">
-    <h2>My Results</h2>
-
     {#if pairingCount > 0}
-      <div class="row mb-3">
-        <div class="col-12 col-md-6">
-        <h3>Total Points: {summary.totalPoints} ({summary.overallWins} - {summary.overallLosses} - {summary.overallTies})</h3>
-          <table class="table table-sm table-bordered">
-            <thead>
-              <tr>
-                <th></th>
-                <th class="text-center">W</th>
-                <th class="text-center">L</th>
-                <th class="text-center">T</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">
-                  Corp
-                  {#if summary.corpDeck}
-                    <div class="small font-weight-normal text-muted"><Identity identity={summary.corpDeck} /></div>
-                  {/if}
-                </th>
-                <td class="text-center">{summary.corpWins}</td>
-                <td class="text-center">{summary.corpLosses}</td>
-                <td class="text-center">{summary.corpTies}</td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  Runner
-                  {#if summary.runnerDeck}
-                    <div class="small font-weight-normal text-muted"><Identity identity={summary.runnerDeck} /></div>
-                  {/if}
-                </th>
-                <td class="text-center">{summary.runnerWins}</td>
-                <td class="text-center">{summary.runnerLosses}</td>
-                <td class="text-center">{summary.runnerTies}</td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="row mb-3 align-items-center">
+        <div class="col-12 col-md-4 d-flex flex-column justify-content-center text-center mt-3 mt-md-0">
+          <h2>Corp</h2>
+          {#if summary.corpDeck}
+            <div class="text-muted mb-2"><Identity identity={summary.corpDeck} /></div>
+          {/if}
+          <h4 class="text-bold">{summary.corpWins} - {summary.corpLosses} - {summary.corpTies}</h4>
+        </div>
+
+        <div class="col-12 col-md-4 d-flex flex-column justify-content-center text-center mt-3 mt-md-0">
+          <h4>Total Points</h4>
+          <h1>{summary.totalPoints}</h1>
+          <h4 class="text-bold">{summary.overallWins} - {summary.overallLosses} - {summary.overallTies}</h4>
+        </div>
+
+        <div class="col-12 col-md-4 d-flex flex-column justify-content-center text-center mt-3 mt-md-0">
+          <h2>Runner</h2>
+          {#if summary.runnerDeck}
+            <div class="text-muted mb-2"><Identity identity={summary.runnerDeck} /></div>
+          {/if}
+          <h4 class="text-bold">{summary.runnerWins} - {summary.runnerLosses} - {summary.runnerTies}</h4>
         </div>
       </div>
     {/if}
@@ -227,7 +238,7 @@
                 <th>Side</th>
               {/if}
               <th>Opponent</th>
-              <th class="text-center">Score</th>
+              <th class="text-center">Result</th>
             </tr>
           </thead>
           <tbody>
@@ -242,9 +253,20 @@
                         </td>
                         <td>{isBye(pairing) ? "" : pairing.table_number}</td>
                         {#if stage.is_single_sided}
-                          <td>{isBye(pairing) ? "" : getMySide(pairing)}</td>
+                          <td style="background-color: #eeeeee" class={iWon(pairing) ? "font-weight-bold" : ""}>
+                            {#if !isBye(pairing)}
+                              <PlayerDisplay
+                                player={pairing.player1.user_id === userId
+                                  ? pairing.player1
+                                  : pairing.player2}
+                                {pairing}
+                                left_or_right="left"
+                                is_single_sided={stage.is_single_sided}
+                              />
+                            {/if}
+                          </td>
                         {/if}
-                        <td>
+                        <td class={opponentWon(pairing) ? "font-weight-bold" : ""}>
                           {#if isBye(pairing)}
                             (Bye)
                           {:else}
@@ -258,9 +280,17 @@
                             />
                           {/if}
                         </td>
-                        <td class="text-center">
+                        <td class="text-center align-middle" style={getScoreResultStyle(pairing)}>
                           {#if pairing.score_label.trim() !== "" && pairing.score_label.trim() !== "-"}
-                            {pairing.score_label}
+                            <div class="h4 mb-0 font-weight-bold">
+                              {#if isBye(pairing) || iWon(pairing)}
+                                W
+                              {:else if opponentWon(pairing)}
+                                L
+                              {:else}
+                                T
+                              {/if}
+                            </div>
                             {#if pairing.intentional_draw}
                               <span
                                 class="badge badge-pill badge-secondary score-badge"
