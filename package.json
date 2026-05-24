@@ -2,6 +2,7 @@
   "type": "module",
   "scripts": {
     "lint": "eslint app",
+    "svelte-check": "svelte-check",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",

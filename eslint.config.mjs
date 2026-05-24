@@ -20,6 +20,7 @@ export default ts.config(
         "error",
         { allowNumber: true },
       ],
+      "eol-last": ["error", "always"]
     },
   },
   {
