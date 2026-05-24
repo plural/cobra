@@ -1,35 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { TournamentInfo, TournamentsResponse } from "../lib/api_types";
   import TournamentRow from "../widgets/TournamentRow.svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import { globalMessages } from "../utils/GlobalMessageState.svelte";
-
-  // TODO(plural): Extract API types to separate file.
-  interface TournamentInfo {
-    id: string;
-    attributes: {
-      name: string;
-      date: string;
-      active_player_count: number;
-      tournament_organizer: string;
-      stream_url: string;
-      tournament_type_id: number;
-      user_id: number | null;
-    };
-  }
-
-  interface TournamentsResponse {
-    data: TournamentInfo[];
-    included?: TournamentTypeInfo[];
-  }
-
-  interface TournamentTypeInfo {
-    id: string | number;
-    type: string;
-    attributes: {
-      name: string;
-    };
-  }
 
   let tournaments: TournamentInfo[] = $state([]);
   let tournamentTypes: Record<string, string> = $state({});

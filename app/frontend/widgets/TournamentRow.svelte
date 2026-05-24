@@ -1,16 +1,5 @@
 <script lang="ts">
-  // TODO(plural): Extract API types to separate file.
-  interface TournamentInfo {
-    id: string;
-    attributes: {
-      name: string;
-      date: string;
-      active_player_count: number;
-      tournament_organizer: string;
-      stream_url: string;
-      user_id: number | null;
-    };
-  }
+  import type { TournamentInfo } from "../lib/api_types";
 
   let {
     showDelete,

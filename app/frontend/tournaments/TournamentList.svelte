@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { TournamentInfo, TournamentsResponse, TournamentTypesResponse } from "../lib/api_types";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import PagingRow from "../widgets/PagingRow.svelte";
   import TournamentRow from "../widgets/TournamentRow.svelte";
@@ -7,41 +8,6 @@
 
   let { typeId, userId }: { typeId: string | null; userId: number | null } =
     $props();
-
-  // TODO(plural): Extract API types to separate file.
-  interface TournamentInfo {
-    id: string;
-    attributes: {
-      name: string;
-      date: string;
-      active_player_count: number;
-      tournament_organizer: string;
-      stream_url: string;
-      tournament_type_id: number;
-      user_id: number | null;
-    };
-  }
-
-  interface TournamentsResponse {
-    data: TournamentInfo[];
-    included?: TournamentTypeInfo[];
-    links?: {
-      next?: string | null;
-      prev?: string | null;
-    };
-  }
-
-  interface TournamentTypeInfo {
-    id: string | number;
-    type: string;
-    attributes: {
-      name: string;
-    };
-  }
-
-  interface TournamentTypesResponse {
-    data: TournamentTypeInfo[];
-  }
 
   let tournaments: TournamentInfo[] = $state([]);
   let tournamentTypes: Record<string, string> = $state({});
