@@ -15,8 +15,8 @@ export interface ApiResponse<T> {
     stats: {
       total: {
         count: number;
-      }
-    }
+      };
+    };
   };
 }
 

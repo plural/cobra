@@ -1,11 +1,21 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
-  import { loadPlayer, loadTournament, Tournament } from "../tournaments/TournamentSettings";
+  import {
+    loadPlayer,
+    loadTournament,
+    Tournament,
+  } from "../tournaments/TournamentSettings";
   import { Player } from "./PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import ProgressButton from "../widgets/ProgressButton.svelte";
-  import { type NrdbDeck, loadPrintings, type Printing, type Deck, convertNrdbDeck } from "../utils/decks";
+  import {
+    type NrdbDeck,
+    loadPrintings,
+    type Printing,
+    type Deck,
+    convertNrdbDeck,
+  } from "../utils/decks";
   import { savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
 
@@ -19,8 +29,8 @@
     nrdbDecks: NrdbDeck[];
   } = $props();
 
-  const THE_CATALYST_NRDB_CODE = '30076'
-  const THE_SYNDICATE_NRDB_CODE = '30077'
+  const THE_CATALYST_NRDB_CODE = "30076";
+  const THE_SYNDICATE_NRDB_CODE = "30077";
 
   let tournament = $state<Tournament | undefined>();
   let player = $state(new Player());
@@ -55,7 +65,7 @@
 
     [tournament, player] = await Promise.all([
       loadTournament(tournamentId),
-      loadPlayer(tournamentId, userId)
+      loadPlayer(tournamentId, userId),
     ]);
   });
 
@@ -66,9 +76,15 @@
 
   function selectDeck(deck: Deck | null, isCorp: boolean) {
     if (isCorp) {
-      selectedCorpDeck = deck && deck.details.nrdb_uuid === selectedCorpDeck?.details.nrdb_uuid ? null : deck;
+      selectedCorpDeck =
+        deck && deck.details.nrdb_uuid === selectedCorpDeck?.details.nrdb_uuid
+          ? null
+          : deck;
     } else {
-      selectedRunnerDeck = deck && deck.details.nrdb_uuid === selectedRunnerDeck?.details.nrdb_uuid ? null : deck;
+      selectedRunnerDeck =
+        deck && deck.details.nrdb_uuid === selectedRunnerDeck?.details.nrdb_uuid
+          ? null
+          : deck;
     }
   }
 </script>
@@ -76,8 +92,21 @@
 <GlobalMessages />
 
 {#snippet deckListItem(deck: Deck, isCorp: boolean)}
-  <button class="list-group-item list-group-item-action {deck.details.nrdb_uuid === (isCorp ? selectedCorpDeck?.details.nrdb_uuid : selectedRunnerDeck?.details.nrdb_uuid) ? "active" : ""}" onclick={() => { selectDeck(deck, isCorp); }}>
-    <div class="deck-list-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${deck.details.identity_nrdb_printing_id}.jpg)`}></div>
+  <button
+    class="list-group-item list-group-item-action {deck.details.nrdb_uuid ===
+    (isCorp
+      ? selectedCorpDeck?.details.nrdb_uuid
+      : selectedRunnerDeck?.details.nrdb_uuid)
+      ? 'active'
+      : ''}"
+    onclick={() => {
+      selectDeck(deck, isCorp);
+    }}
+  >
+    <div
+      class="deck-list-identity"
+      style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${deck.details.identity_nrdb_printing_id}.jpg)`}
+    ></div>
     <p class="mb-1">{deck.details.name}</p>
     <small>{deck.details.identity_title}</small>
   </button>
@@ -89,17 +118,30 @@
       <div class="selected-deck-buttons">
         <!-- TODO: Undo -->
         {#if selectedDeck}
-          <button type="button" title="Deselect" class="btn btn-link p-0" onclick={() => { selectDeck(null, isCorp); }}>
+          <button
+            type="button"
+            title="Deselect"
+            class="btn btn-link p-0"
+            onclick={() => {
+              selectDeck(null, isCorp);
+            }}
+          >
             <FontAwesomeIcon icon="close" />
           </button>
         {/if}
       </div>
       {#if selectedDeck}
-        <div class="selected-deck-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${selectedDeck.details.identity_nrdb_printing_id}.jpg)`}></div>
+        <div
+          class="selected-deck-identity"
+          style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${selectedDeck.details.identity_nrdb_printing_id}.jpg)`}
+        ></div>
         <p class="mb-1">{selectedDeck.details.name}</p>
       {:else}
-      <div class="selected-deck-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${isCorp ? THE_SYNDICATE_NRDB_CODE : THE_CATALYST_NRDB_CODE}.jpg)`}></div>
-      <p class="mb-1">{isCorp ? "No corp selected" : "No runner selected"}</p>
+        <div
+          class="selected-deck-identity"
+          style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${isCorp ? THE_SYNDICATE_NRDB_CODE : THE_CATALYST_NRDB_CODE}.jpg)`}
+        ></div>
+        <p class="mb-1">{isCorp ? "No corp selected" : "No runner selected"}</p>
       {/if}
     </li>
   </ul>
@@ -130,7 +172,7 @@
             bind:value={player.name}
           />
         </div>
-      
+
         <!-- Pronouns -->
         <div class="col-4">
           <label for="pronouns">Pronouns</label>
@@ -176,11 +218,15 @@
   </div>
 
   <div class="alert alert-danger dontprint">
-    <FontAwesomeIcon icon="exclamation-triangle" /> Deck legality is not yet checked. Please ensure your decks are legal.
+    <FontAwesomeIcon icon="exclamation-triangle" /> Deck legality is not yet checked.
+    Please ensure your decks are legal.
   </div>
 
   <div class="alert alert-secondary dontprint">
-    Please select from your decks below. <a href="https://netrunnerdb.com/en/decks" target="_blank">See your decks in NetrunnerDB</a>. Refresh the page to reload from NetrunnerDB.
+    Please select from your decks below. <a
+      href="https://netrunnerdb.com/en/decks"
+      target="_blank">See your decks in NetrunnerDB</a
+    >. Refresh the page to reload from NetrunnerDB.
   </div>
 
   <div class="row mb-3 dontprint">

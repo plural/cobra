@@ -25,7 +25,7 @@
     loadIdentityNames,
     type IdentityNames,
   } from "../identities/Identity";
-    import { deckCsv } from "../utils/decks";
+  import { deckCsv } from "../utils/decks";
 
   let { tournamentId }: { tournamentId: number } = $props();
 

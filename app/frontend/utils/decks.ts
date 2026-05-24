@@ -68,7 +68,10 @@ export interface Deck {
   cards: Card[];
 }
 
-export function convertNrdbDeck(nrdbDeck: NrdbDeck, printings: Map<string, Printing>): Deck {
+export function convertNrdbDeck(
+  nrdbDeck: NrdbDeck,
+  printings: Map<string, Printing>,
+): Deck {
   let identityNrdbId = 0;
   let identity = new Printing();
   const cards: Card[] = [];
@@ -96,7 +99,7 @@ export function convertNrdbDeck(nrdbDeck: NrdbDeck, printings: Map<string, Print
       nrdb_printing_id: parseInt(card.id),
       card_type_id: printing.card_type_id,
       faction_id: printing.faction_id,
-      influence_cost: printing.influence_cost
+      influence_cost: printing.influence_cost,
     });
   });
 
@@ -117,9 +120,9 @@ export function convertNrdbDeck(nrdbDeck: NrdbDeck, printings: Map<string, Print
       user_id: 0,
       faction_id: identity.faction_id,
       mine: true,
-      player_name: ""
+      player_name: "",
     },
-    cards: cards
+    cards: cards,
   };
 }
 
@@ -135,10 +138,12 @@ export function deckCsv(decks: Deck[]) {
     "\n\n" +
     decks.map(() => "Min,Identity,Max").join(",,") +
     "\n" +
-    decks.map((deck) =>
-      `${deck.details.min_deck_size},${quoteCsvValue(deck.details.identity_title)},${deck.details.max_influence}`,
-    )
-    .join(",,");
+    decks
+      .map(
+        (deck) =>
+          `${deck.details.min_deck_size},${quoteCsvValue(deck.details.identity_title)},${deck.details.max_influence}`,
+      )
+      .join(",,");
 
   const maxCards = decks.reduce(
     (max, deck) => Math.max(max, deck.cards.length),
@@ -148,28 +153,35 @@ export function deckCsv(decks: Deck[]) {
   for (const i of Array(maxCards).keys()) {
     cardCsv +=
       "\n" +
-      decks.map((deck: Deck) => {
-        const influence = deck.cards[i].influence > 0 && deck.cards[i].faction_id !== deck.details.faction_id
-          ? deck.cards[i].influence
-          : "";
-        return i < deck.cards.length
-          ? `${deck.cards[i].quantity},${quoteCsvValue(deck.cards[i].title)},${influence}`
-          : ",,";
-      })
-      .join(",,");
+      decks
+        .map((deck: Deck) => {
+          const influence =
+            deck.cards[i].influence > 0 &&
+            deck.cards[i].faction_id !== deck.details.faction_id
+              ? deck.cards[i].influence
+              : "";
+          return i < deck.cards.length
+            ? `${deck.cards[i].quantity},${quoteCsvValue(deck.cards[i].title)},${influence}`
+            : ",,";
+        })
+        .join(",,");
   }
 
   cardCsv +=
     "\n\n" +
-    decks.map((deck) => {
-      const totalQuantity = deck.cards.reduce((total: number, card: Card) => total + card.quantity, 0);
-      const totalInfluence = deck.cards
-        .filter((card: Card) => card.faction_id !== deck.details.faction_id)
-        .reduce((total: number, card: Card) => total + card.influence, 0);
-      return `${totalQuantity},Totals,${totalInfluence}`;
-    })
-    .join(",,");
-  
+    decks
+      .map((deck) => {
+        const totalQuantity = deck.cards.reduce(
+          (total: number, card: Card) => total + card.quantity,
+          0,
+        );
+        const totalInfluence = deck.cards
+          .filter((card: Card) => card.faction_id !== deck.details.faction_id)
+          .reduce((total: number, card: Card) => total + card.influence, 0);
+        return `${totalQuantity},Totals,${totalInfluence}`;
+      })
+      .join(",,");
+
   // "\ufeff" lets Excel know it's Unicode encoded
   return `\ufeff${headerCsv}\n\n${cardCsv}`;
 }
@@ -182,11 +194,13 @@ export async function loadPrintings() {
       "https://api.netrunnerdb.com/api/v3/public/printings?page[size]=10000&fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost",
       { method: "GET" },
     );
-  
+
     if (response.status === 200) {
       data = (await response.json()) as ApiResponse<Printing>;
     } else {
-      globalMessages.errors.push(`Failed to load printings: ${response.statusText}`);  
+      globalMessages.errors.push(
+        `Failed to load printings: ${response.statusText}`,
+      );
     }
   } catch (e) {
     const err = e as Error;

@@ -5,8 +5,8 @@
   import { getCardTypeImage } from "../utils/images";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
-  let { deck, isCorp }: { deck: Deck | null; isCorp: boolean; } = $props();
-  
+  let { deck, isCorp }: { deck: Deck | null; isCorp: boolean } = $props();
+
   let cardTotal = $derived.by(() => {
     if (!deck) {
       return 0;
@@ -35,7 +35,12 @@
       return;
     }
 
-    await navigator.clipboard.writeText(deck.cards.reduce((text: string, card: Card) => `${text}${card.quantity} ${card.title}\n`, ""));
+    await navigator.clipboard.writeText(
+      deck.cards.reduce(
+        (text: string, card: Card) => `${text}${card.quantity} ${card.title}\n`,
+        "",
+      ),
+    );
     alert("Copied to clipboard");
   }
 
@@ -43,7 +48,7 @@
     if (!deck) {
       return;
     }
-    
+
     downloadBlob(
       `${deck.details.player_name} - ${deck.details.name}.csv`,
       new Blob([deckCsv([deck])], { type: "text/csv" }),
@@ -55,7 +60,9 @@
 <table class="table table-bordered table-striped">
   <thead class="thead-dark">
     <tr>
-      <th class="text-center deck-name-header">{isCorp ? "Corp Deck" : "Runner Deck"}</th>
+      <th class="text-center deck-name-header">
+        {isCorp ? "Corp Deck" : "Runner Deck"}
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -66,16 +73,41 @@
             {deck.details.name}
             <div class="float-right dontprint">
               <span class="dropdown">
-                <button type="button" title="Export deck" class="btn btn-link p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button
+                  type="button"
+                  title="Export deck"
+                  class="btn btn-link p-0"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
                   <FontAwesomeIcon icon="download" />
                 </button>
                 <div class="dropdown-menu">
-                  <button type="button" class="dropdown-item" onclick={copyToClipboard}>Copy to clipboard in NetrunnerDB format</button>
-                  <button type="button" class="dropdown-item" onclick={downloadCsv}>Download as a CSV spreadsheet</button>
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    onclick={copyToClipboard}
+                  >
+                    Copy to clipboard in NetrunnerDB format
+                  </button>
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    onclick={downloadCsv}
+                  >
+                    Download as a CSV spreadsheet
+                  </button>
                 </div>
               </span>
               {#if deck.details.mine}
-                <a href="https://netrunnerdb.com/en/deck/edit/{deck.details.nrdb_uuid}" target="_blank" title="Edit Deck" class="ml-2">
+                <a
+                  href="https://netrunnerdb.com/en/deck/edit/{deck.details
+                    .nrdb_uuid}"
+                  target="_blank"
+                  title="Edit Deck"
+                  class="ml-2"
+                >
                   <FontAwesomeIcon icon="external-link" />
                 </a>
               {/if}
@@ -105,13 +137,18 @@
       <tr>
         <td class="text-center align-middle">{deck.details.min_deck_size}</td>
         <td>
-          <Identity identity={{ name: deck.details.identity_title, faction: adjustFactionId(deck.details.faction_id) }} />
+          <Identity
+            identity={{
+              name: deck.details.identity_title,
+              faction: adjustFactionId(deck.details.faction_id),
+            }}
+          />
         </td>
         <td class="text-center align-middle">{deck.details.max_influence}</td>
       </tr>
     </tbody>
   </table>
-  
+
   <!-- Deck list -->
   <table class="table table-bordered table-striped">
     <thead class="thead-dark">
@@ -127,8 +164,15 @@
         <tr>
           <td class="text-center align-middle">{card.quantity}</td>
           <td>
-            <img src={getCardTypeImage(card.card_type_id)} alt={card.card_type_id} />
-            <i class="fa icon icon-{adjustFactionId(card.faction_id)} {adjustFactionId(card.faction_id)}"></i>
+            <img
+              src={getCardTypeImage(card.card_type_id)}
+              alt={card.card_type_id}
+            />
+            <i
+              class="fa icon icon-{adjustFactionId(
+                card.faction_id,
+              )} {adjustFactionId(card.faction_id)}"
+            ></i>
             {card.title}
           </td>
           <td class="text-center align-middle">
@@ -142,7 +186,12 @@
       <!-- Totals -->
       <tr>
         <td class="text-center deck-side-column">{cardTotal}</td>
-        <td class="text-center" style="color: #FFFFFF; background-color: #343A40;">Totals</td>
+        <td
+          class="text-center"
+          style="color: #FFFFFF; background-color: #343A40;"
+        >
+          Totals
+        </td>
         <td class="text-center deck-side-column">{influenceTotal}</td>
       </tr>
     </tbody>

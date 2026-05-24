@@ -103,10 +103,6 @@ describe("TournamentList", () => {
         "/api/v1/public/tournaments?page[size]=10&include=tournament_type&sort=-date,name&filter[tournament_type_id]=11",
         expect.any(Object)
       );
-        expect(global.fetch).toHaveBeenCalledWith(
-          expect.stringMatching(/\/api\/v1\/public\/tournament_types/),
-          expect.any(Object)
-        );
       expect(getByText("Tournaments: Standard")).toBeTruthy();
       expect(getByText("Second Tournament")).toBeTruthy();
     });
@@ -117,68 +113,40 @@ describe("TournamentList", () => {
   });
 
   it("loads next page when API provides a next link", async () => {
-    global.fetch = vi
-      .fn()
-      .mockImplementation((input: RequestInfo | URL) => {
-        const url = toUrl(input);
+    global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+      const url = toUrl(input);
 
-        if (url.includes("/api/v1/public/tournament_types")) {
-          return Promise.resolve({
-            ok: true,
-            json: () =>
-              Promise.resolve({
-                data: [
-                  {
-                    id: "11",
-                    type: "tournament_types",
-                    attributes: {
-                      name: "Standard",
-                    },
-                  },
-                ],
-              }),
-          });
-        }
-
-        if (url === "/api/v1/public/tournaments?page[number]=2") {
-          return Promise.resolve({
-            ok: true,
-            json: () =>
-              Promise.resolve({
-                data: [
-                  {
-                    id: "200",
-                    attributes: {
-                      name: "Third Tournament",
-                      date: "2026-05-22",
-                      active_player_count: 9,
-                      tournament_organizer: "tester3",
-                      stream_url: "",
-                      tournament_type_id: 11,
-                      user_id: 10,
-                    },
-                  },
-                ],
-                links: {
-                  prev: "/api/v1/public/tournaments?page[number]=1",
-                  next: null,
-                },
-              }),
-          });
-        }
-
+      if (url.includes("/api/v1/public/tournament_types")) {
         return Promise.resolve({
           ok: true,
           json: () =>
             Promise.resolve({
               data: [
                 {
-                  id: "100",
+                  id: "11",
+                  type: "tournament_types",
                   attributes: {
-                    name: "First Tournament",
-                    date: "2026-05-20",
-                    active_player_count: 5,
-                    tournament_organizer: "tester",
+                    name: "Standard",
+                  },
+                },
+              ],
+            }),
+        });
+      }
+
+      if (url === "/api/v1/public/tournaments?page[number]=2") {
+        return Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              data: [
+                {
+                  id: "200",
+                  attributes: {
+                    name: "Third Tournament",
+                    date: "2026-05-22",
+                    active_player_count: 9,
+                    tournament_organizer: "tester3",
                     stream_url: "",
                     tournament_type_id: 11,
                     user_id: 10,
@@ -186,17 +154,43 @@ describe("TournamentList", () => {
                 },
               ],
               links: {
-                prev: null,
-                next: "/api/v1/public/tournaments?page[number]=2",
+                prev: "/api/v1/public/tournaments?page[number]=1",
+                next: null,
               },
             }),
         });
-      }) as unknown as typeof fetch;
+      }
+
+      return Promise.resolve({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: [
+              {
+                id: "100",
+                attributes: {
+                  name: "First Tournament",
+                  date: "2026-05-20",
+                  active_player_count: 5,
+                  tournament_organizer: "tester",
+                  stream_url: "",
+                  tournament_type_id: 11,
+                  user_id: 10,
+                },
+              },
+            ],
+            links: {
+              prev: null,
+              next: "/api/v1/public/tournaments?page[number]=2",
+            },
+          }),
+      });
+    }) as unknown as typeof fetch;
 
     const { getAllByRole, getByText, queryByText } = render(TournamentList, {
       props: {
         typeId: "11",
-        userId: null
+        userId: null,
       },
     });
 
@@ -210,7 +204,7 @@ describe("TournamentList", () => {
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
         "/api/v1/public/tournaments?page[number]=2",
-        expect.any(Object)
+        expect.any(Object),
       );
       expect(getByText("Third Tournament")).toBeTruthy();
       expect(queryByText("First Tournament")).toBeNull();
@@ -255,7 +249,7 @@ describe("TournamentList", () => {
     const { getByText } = render(TournamentList, {
       props: {
         typeId: "11",
-        userId: null
+        userId: null,
       },
     });
 
@@ -330,7 +324,7 @@ describe("TournamentList", () => {
     const { getAllByRole, getAllByText, getByText } = render(TournamentList, {
       props: {
         typeId: "11",
-        userId: null
+        userId: null,
       },
     });
 

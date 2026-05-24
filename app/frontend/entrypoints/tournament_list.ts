@@ -10,8 +10,7 @@ document.addEventListener("turbolinks:load", function () {
       target: anchor,
       props: {
         typeId: anchor.getAttribute("data-type-id") ?? "",
-        userId:
-          userIdAttr && userIdAttr.length > 0 ? Number(userIdAttr) : null
+        userId: userIdAttr && userIdAttr.length > 0 ? Number(userIdAttr) : null,
       },
     });
   }
