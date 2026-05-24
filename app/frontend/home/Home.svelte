@@ -1,6 +1,99 @@
+<script lang="ts">
+  import { onMount } from "svelte";
+  import TournamentRow from "../widgets/TournamentRow.svelte";
+  import GlobalMessages from "../widgets/GlobalMessages.svelte";
+  import { globalMessages } from "../utils/GlobalMessageState.svelte";
+
+  // TODO(plural): Extract API types to separate file.
+  interface TournamentInfo {
+    id: string;
+    attributes: {
+      name: string;
+      date: string;
+      active_player_count: number;
+      tournament_organizer: string;
+      stream_url: string;
+      tournament_type_id: number;
+      user_id: number | null;
+    };
+  }
+
+  interface TournamentsResponse {
+    data: TournamentInfo[];
+    included?: TournamentTypeInfo[];
+  }
+
+  interface TournamentTypeInfo {
+    id: string | number;
+    type: string;
+    attributes: {
+      name: string;
+    };
+  }
+
+  let tournaments: TournamentInfo[] = $state([]);
+  let tournamentTypes: Record<string, string> = $state({});
+  let loading = $state(true);
+
+  async function loadTournaments(): Promise<void> {
+    loading = true;
+    const today = new Date();
+    const dateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const url = `/api/v1/public/tournaments?page[size]=100&include=tournament_type&filter[date]=${dateString}&sort=name`;
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Accept: "application/vnd.api+json",
+          "Content-Type": "application/vnd.api+json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = (await response.json()) as TournamentsResponse;
+      tournaments = data.data;
+
+      if (data.included) {
+        let newTypes: Record<string, string> = {};
+        for (const included of data.included) {
+          if (included.type === "tournament_types") {
+            newTypes[included.id.toString()] = included.attributes.name;
+          }
+        }
+        tournamentTypes = newTypes;
+      }
+    } catch (e) {
+      const err = e as Error;
+      globalMessages.errors.push(`Failed to load tournaments: ${err.message}`);
+    } finally {
+      loading = false;
+    }
+  }
+
+  onMount(() => {
+    void loadTournaments();
+  });
+</script>
+
 <div>
+  <GlobalMessages />
+
   <h4>Today's tournaments</h4>
-  Tournaments go here
+  {#if loading}
+    <div>Loading...</div>
+  {:else if tournaments.length === 0}
+    <i>None</i>
+  {:else}
+    {#each tournaments as tournament (tournament.id)}
+      <TournamentRow
+        showDelete={false}
+        {tournament}
+        userId={null}
+        tournamentTypeName={tournament.attributes.tournament_type_id ? tournamentTypes[tournament.attributes.tournament_type_id.toString()] : null}
+      />
+    {/each}
+  {/if}
 </div>
 
 <div class="mt-2">
