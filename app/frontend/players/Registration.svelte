@@ -64,11 +64,11 @@
     return true;
   }
 
-  function selectDeck(deck: Deck, isCorp: boolean) {
+  function selectDeck(deck: Deck | null, isCorp: boolean) {
     if (isCorp) {
-      selectedCorpDeck = deck.details.nrdb_uuid === selectedCorpDeck?.details.nrdb_uuid ? null : deck;
+      selectedCorpDeck = deck && deck.details.nrdb_uuid === selectedCorpDeck?.details.nrdb_uuid ? null : deck;
     } else {
-      selectedRunnerDeck = deck.details.nrdb_uuid === selectedRunnerDeck?.details.nrdb_uuid ? null : deck;
+      selectedRunnerDeck = deck && deck.details.nrdb_uuid === selectedRunnerDeck?.details.nrdb_uuid ? null : deck;
     }
   }
 </script>
@@ -81,6 +81,34 @@
     <p class="mb-1">{deck.details.name}</p>
     <small>{deck.details.identity_title}</small>
   </button>
+{/snippet}
+
+{#snippet decksList(isCorp: boolean, selectedDeck: Deck | null)}
+  <ul class="list-group list-group-flush" style="border-bottom: 0;">
+    <li class="list-group-item selected-deck">
+      <div class="selected-deck-buttons">
+        <!-- TODO: Undo -->
+        {#if selectedDeck}
+          <button type="button" title="Deselect" class="btn btn-link p-0" onclick={() => { selectDeck(null, isCorp); }}>
+            <FontAwesomeIcon icon="close" />
+          </button>
+        {/if}
+      </div>
+      {#if selectedDeck}
+        <div class="selected-deck-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${selectedDeck.details.identity_nrdb_printing_id}.jpg)`}></div>
+        <p class="mb-1">{selectedDeck.details.name}</p>
+      {:else}
+      <div class="selected-deck-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${isCorp ? THE_SYNDICATE_NRDB_CODE : THE_CATALYST_NRDB_CODE}.jpg)`}></div>
+      <p class="mb-1">{isCorp ? "No corp selected" : "No runner selected"}</p>
+      {/if}
+    </li>
+  </ul>
+  <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
+    {#each decks.filter((d) => d.details.side_id === (isCorp ? "corp" : "runner")) as deck (deck.details.id)}
+      <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+      {@render deckListItem(deck, isCorp)}
+    {/each}
+  </ul>
 {/snippet}
 
 {#if player.id !== 0 && tournament}
@@ -159,38 +187,16 @@
     <!-- Corp deck selection -->
     <div class="col-md-6">
       <div class="card">
-        <ul class="list-group list-group-flush" style="border-bottom: 0;">
-          <li class="list-group-item selected-deck">
-            <div class="selected-deck-buttons"></div>
-            <div class="selected-deck-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${THE_SYNDICATE_NRDB_CODE}.jpg)`}></div>
-            <p class="mb-1">No corp selected</p>
-          </li>
-        </ul>
-        <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
-          {#each decks.filter((d) => d.details.side_id === "corp") as deck (deck.details.id)}
-            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render deckListItem(deck, true)}
-          {/each}
-        </ul>
+        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+        {@render decksList(true, selectedCorpDeck)}
       </div>
     </div>
 
     <!-- Runner deck selection -->
     <div class="col-md-6">
       <div class="card">
-        <ul class="list-group list-group-flush" style="border-bottom: 0;">
-          <li class="list-group-item selected-deck">
-            <div class="selected-deck-buttons"></div>
-            <div class="selected-deck-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${THE_CATALYST_NRDB_CODE}.jpg)`}></div>
-            <p class="mb-1">No runner selected</p>
-          </li>
-        </ul>
-        <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
-          {#each decks.filter((d) => d.details.side_id === "runner") as deck (deck.details.id)}
-            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render deckListItem(deck, false)}
-          {/each}
-        </ul>
+        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+        {@render decksList(false, selectedRunnerDeck)}
       </div>
     </div>
   </div>

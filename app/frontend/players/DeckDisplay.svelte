@@ -75,7 +75,7 @@
                 </div>
               </span>
               {#if deck.details.mine}
-                <a href="https://netrunnerdb.com/en/deck/edit/{deck.details.nrdb_uuid}" target="_blank" title="Edit Deck">
+                <a href="https://netrunnerdb.com/en/deck/edit/{deck.details.nrdb_uuid}" target="_blank" title="Edit Deck" class="ml-2">
                   <FontAwesomeIcon icon="external-link" />
                 </a>
               {/if}
