@@ -1,46 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { TournamentInfo, TournamentsResponse, TournamentTypesResponse } from "../lib/api_types";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import PagingRow from "../widgets/PagingRow.svelte";
+  import TournamentRow from "../widgets/TournamentRow.svelte";
   import { globalMessages } from "../utils/GlobalMessageState.svelte";
 
   let { typeId, userId }: { typeId: string | null; userId: number | null } =
     $props();
-
-  // TODO(plural): Extract API types to separate file.
-  interface TournamentInfo {
-    id: string;
-    attributes: {
-      name: string;
-      date: string;
-      active_player_count: number;
-      tournament_organizer: string;
-      stream_url: string;
-      tournament_type_id: number;
-      user_id: number | null;
-    };
-  }
-
-  interface TournamentsResponse {
-    data: TournamentInfo[];
-    included?: TournamentTypeInfo[];
-    links?: {
-      next?: string | null;
-      prev?: string | null;
-    };
-  }
-
-  interface TournamentTypeInfo {
-    id: string | number;
-    type: string;
-    attributes: {
-      name: string;
-    };
-  }
-
-  interface TournamentTypesResponse {
-    data: TournamentTypeInfo[];
-  }
 
   let tournaments: TournamentInfo[] = $state([]);
   let tournamentTypes: Record<string, string> = $state({});
@@ -61,6 +28,7 @@
   ): string {
     const query = [
       "/api/v1/public/tournaments?page[size]=10",
+      "include=tournament_type",
       "sort=-date,name",
     ];
 
@@ -88,6 +56,17 @@
       }
       const data = (await response.json()) as TournamentsResponse;
       tournaments = data.data;
+
+      if (data.included) {
+        let newTypes: Record<string, string> = {};
+        for (const included of data.included) {
+          if (included.type === "tournament_types") {
+            newTypes[included.id.toString()] = included.attributes.name;
+          }
+        }
+        tournamentTypes = newTypes;
+      }
+
       prevLink = data.links?.prev ?? null;
       nextLink = data.links?.next ?? null;
     } catch (e) {
@@ -168,65 +147,12 @@
       <div class="m-3">No tournaments found for this type.</div>
     {:else}
       {#each tournaments as tournament (tournament.id)}
-        <div class="tournament card m-3">
-          <div class="card-body">
-            <h4 class="card-title">
-              <a href={`/beta/tournaments/${tournament.id}`}>
-                {tournament.attributes.name}
-              </a>
-              {#if tournament.attributes.tournament_type_id && tournamentTypes[tournament.attributes.tournament_type_id.toString()]}
-                <span
-                  style="font-size: .7em; position: relative; top: -.1em;"
-                  class="badge badge-pill badge-secondary"
-                >
-                  {tournamentTypes[
-                    tournament.attributes.tournament_type_id.toString()
-                  ]}
-                </span>
-              {/if}
-            </h4>
-
-            <h6 class="card-subtitle mb-2 text-muted">
-              {#if tournament.attributes.date}
-                {new Date(tournament.attributes.date).toLocaleString(
-                  navigator.languages,
-                  {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                    timeZone: "UTC",
-                  },
-                )} -
-              {/if}
-              {tournament.attributes.active_player_count}
-              {new Intl.PluralRules(navigator.languages).select(
-                tournament.attributes.active_player_count,
-              ) == "one"
-                ? "active player"
-                : "active players"}
-              {#if tournament.attributes.tournament_organizer}
-                - {tournament.attributes.tournament_organizer}
-              {/if}
-              {#if tournament.attributes.stream_url}
-                - <i class="fa fa-video-camera"></i>
-              {/if}
-            </h6>
-
-            {#if userId !== null && tournament.attributes.user_id === userId}
-              <div class="delete_action">
-                <a
-                  href={`/tournaments/${tournament.id}`}
-                  data-method="delete"
-                  class="btn btn-danger"
-                  data-confirm="Are you sure? This cannot be reversed."
-                >
-                  <i class="fa fa-trash-o"></i> Delete
-                </a>
-              </div>
-            {/if}
-          </div>
-        </div>
+        <TournamentRow
+          showDelete={true}
+          {tournament}
+          {userId}
+          tournamentTypeName={tournament.attributes.tournament_type_id ? tournamentTypes[tournament.attributes.tournament_type_id.toString()] : null}
+        />
       {/each}
     {/if}
 
