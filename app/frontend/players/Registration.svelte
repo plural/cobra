@@ -5,57 +5,51 @@
   import { Player } from "./PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import ProgressButton from "../widgets/ProgressButton.svelte";
-  import { type Card, type Deck, loadPrintings, type Printing } from "../utils/cards";
+  import { type NrdbDeck, loadPrintings, type Printing, type Deck, convertNrdbDeck } from "../utils/decks";
   import { savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
 
   let {
     tournamentId,
     userId,
-    decks,
+    nrdbDecks,
   }: {
     tournamentId: number;
     userId: number;
-    decks: Deck[];
+    nrdbDecks: NrdbDeck[];
   } = $props();
 
   const THE_CATALYST_NRDB_CODE = '30076'
   const THE_SYNDICATE_NRDB_CODE = '30077'
 
-  let tournament: Tournament | undefined = $state();
-  let player: Player = $state(new Player());
-  let printings: Map<string, Printing> | null = $state(new Map<string, Printing>());
-  let selectedCorpDeck: Deck | null = $state(null);
-  let selectedRunnerDeck: Deck | null = $state(null);
+  let tournament = $state<Tournament | undefined>();
+  let player = $state(new Player());
+  let decks = $state<Deck[]>([]);
+  let printings = $state(new Map<string, Printing>());
+  let selectedCorpDeck = $state<Deck | null>(null);
+  let selectedRunnerDeck = $state<Deck | null>(null);
 
   onMount(async () => {
     // Load printings and hydrate decks
     const printingsResponse = await loadPrintings();
     if (printingsResponse) {
       printingsResponse.data.forEach((p) => printings.set(p.id, p.attributes));
-      decks.forEach((deck: Deck) => {
-        deck.cards.forEach((card: Card) => {
-          card.printing = printings.get(card.id);
-          if (card.printing?.card_type_id.endsWith("identity")) {
-            deck.side_id = card.printing.side_id;
-            deck.identity = card;
-          }
-        });
+
+      nrdbDecks.forEach((nrdbDeck: NrdbDeck) => {
+        const deck = convertNrdbDeck(nrdbDeck, printings);
         deck.cards.sort((a, b) => {
-          const aCardTypeId = a.printing ? a.printing.card_type_id : "";
-          const bCardTypeId = b.printing ? b.printing.card_type_id : "";
-          if (aCardTypeId != bCardTypeId) {
-            return aCardTypeId < bCardTypeId ? -1 : 1;
+          if (a.card_type_id != b.card_type_id) {
+            return a.card_type_id < b.card_type_id ? -1 : 1;
           }
 
-          const aTitle = a.printing ? a.printing.title : "";
-          const bTitle = b.printing ? b.printing.title : "";
-          if (aTitle !== bTitle) {
-            return aTitle < bTitle ? -1 : 1;
+          if (a.title !== b.title) {
+            return a.title < b.title ? -1 : 1;
           }
 
           return 0;
         });
+
+        decks.push(deck);
       });
     }
 
@@ -72,9 +66,9 @@
 
   function selectDeck(deck: Deck, isCorp: boolean) {
     if (isCorp) {
-      selectedCorpDeck = deck.uuid === selectedCorpDeck?.uuid ? null : deck;
+      selectedCorpDeck = deck.details.nrdb_uuid === selectedCorpDeck?.details.nrdb_uuid ? null : deck;
     } else {
-      selectedRunnerDeck = deck.uuid === selectedRunnerDeck?.uuid ? null : deck;
+      selectedRunnerDeck = deck.details.nrdb_uuid === selectedRunnerDeck?.details.nrdb_uuid ? null : deck;
     }
   }
 </script>
@@ -82,10 +76,10 @@
 <GlobalMessages />
 
 {#snippet deckListItem(deck: Deck, isCorp: boolean)}
-  <button class="list-group-item list-group-item-action {deck.uuid === (isCorp ? selectedCorpDeck?.uuid : selectedRunnerDeck?.uuid) ? "active" : ""}" onclick={() => { selectDeck(deck, isCorp); }}>
-    <div class="deck-list-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${deck.identity?.id}.jpg)`}></div>
-    <p class="mb-1">{deck.name}</p>
-    <small>{deck.identity?.printing?.title}</small>
+  <button class="list-group-item list-group-item-action {deck.details.nrdb_uuid === (isCorp ? selectedCorpDeck?.details.nrdb_uuid : selectedRunnerDeck?.details.nrdb_uuid) ? "active" : ""}" onclick={() => { selectDeck(deck, isCorp); }}>
+    <div class="deck-list-identity" style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${deck.details.identity_nrdb_printing_id}.jpg)`}></div>
+    <p class="mb-1">{deck.details.name}</p>
+    <small>{deck.details.identity_title}</small>
   </button>
 {/snippet}
 
@@ -173,7 +167,7 @@
           </li>
         </ul>
         <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
-          {#each decks.filter((d) => d.side_id === "corp") as deck (deck.id)}
+          {#each decks.filter((d) => d.details.side_id === "corp") as deck (deck.details.id)}
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
             {@render deckListItem(deck, true)}
           {/each}
@@ -192,7 +186,7 @@
           </li>
         </ul>
         <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
-          {#each decks.filter((d) => d.side_id === "runner") as deck (deck.id)}
+          {#each decks.filter((d) => d.details.side_id === "runner") as deck (deck.details.id)}
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
             {@render deckListItem(deck, false)}
           {/each}

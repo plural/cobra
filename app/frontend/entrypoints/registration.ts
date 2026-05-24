@@ -1,6 +1,6 @@
 import { mount } from "svelte";
 import Registration from "../players/Registration.svelte";
-import { type Deck } from "../utils/cards";
+import { type NrdbDeck } from "../utils/decks";
 
 document.addEventListener("turbolinks:load", function () {
   const anchor = document.getElementById("registration_anchor");
@@ -13,7 +13,7 @@ document.addEventListener("turbolinks:load", function () {
           Number(anchor.getAttribute("data-tournament-id") ?? "") || -1,
         userId:
           Number(anchor.getAttribute("data-user-id") ?? "") || -1,
-        decks: decksString ? JSON.parse(decksString) as Deck[] : [],
+        nrdbDecks: decksString ? JSON.parse(decksString) as NrdbDeck[] : [],
       },
     });
   }

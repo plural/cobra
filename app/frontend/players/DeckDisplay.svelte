@@ -1,6 +1,6 @@
 <script lang="ts">
   import Identity from "../identities/Identity.svelte";
-  import type { Card, Deck } from "../utils/cards";
+  import type { Card, Deck } from "../utils/decks";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
   let { deck, isCorp }: { deck: Deck | null; isCorp: boolean; } = $props();
@@ -10,28 +10,22 @@
       return 0;
     }
 
-    return deck.cards.reduce(
-      (total, card) =>
-        card.printing && !card.printing.card_type_id.endsWith("identity")
-          ? total + card.count
-          : total,
-      0);
+    return deck.cards
+      .filter((card: Card) => !card.card_type_id.endsWith("identity"))
+      .reduce((total: number, card: Card) => total + card.quantity, 0);
   });
   let influenceTotal = $derived.by(() => {
     if (!deck) {
       return 0;
     }
 
-    return deck.cards.reduce(
-      (total, card) =>
-        card.printing?.influence_cost && card.printing.faction_id !== deck.identity?.printing?.faction_id
-          ? total + (card.printing.influence_cost * card.count)
-          : total,
-      0);
+    return deck.cards
+      .filter((card: Card) => card.faction_id !== deck.details.faction_id)
+      .reduce((total: number, card: Card) => total + card.influence, 0);
   });
 
-  function factionName(card: Card) {
-    return card.printing ? card.printing.faction_id.replace("_", "-") : "";
+  function adjustFactionId(factionId: string) {
+    return factionId.replace("_", "-");
   }
 
   async function copyToClipboard() {
@@ -39,7 +33,7 @@
       return;
     }
 
-    await navigator.clipboard.writeText(deck.cards.reduce((text: string, card: Card) => card.printing ? `${text}${card.count} ${card.printing.title}\n` : text, ""));
+    await navigator.clipboard.writeText(deck.cards.reduce((text: string, card: Card) => `${text}${card.quantity} ${card.title}\n`, ""));
     alert("Copied to clipboard");
   }
 
@@ -59,8 +53,8 @@
     <tr>
       <td>
         {#if deck}
-          {#if deck.name}
-            {deck.name}
+          {#if deck.details.name}
+            {deck.details.name}
           {:else}
             Unnamed deck
           {/if}
@@ -87,26 +81,24 @@
 
 {#if deck}
   <!-- Identity -->
-  {#if deck.identity?.printing}
-    <table class="table table-bordered table-striped">
-      <thead class="thead-dark">
-        <tr>
-          <th class="text-center deck-side-column">Min</th>
-          <th class="text-center">Identity</th>
-          <th class="text-center deck-side-column">Max</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="text-center align-middle">{deck.identity.printing.minimum_deck_size}</td>
-          <td>
-            <Identity identity={{ name: deck.identity.printing.title, faction: factionName(deck.identity) }} />
-          </td>
-          <td class="text-center align-middle">{deck.identity.printing.influence_limit}</td>
-        </tr>
-      </tbody>
-    </table>
-  {/if}
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th class="text-center deck-side-column">Min</th>
+        <th class="text-center">Identity</th>
+        <th class="text-center deck-side-column">Max</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-center align-middle">{deck.details.min_deck_size}</td>
+        <td>
+          <Identity identity={{ name: deck.details.identity_title, faction: adjustFactionId(deck.details.faction_id) }} />
+        </td>
+        <td class="text-center align-middle">{deck.details.max_influence}</td>
+      </tr>
+    </tbody>
+  </table>
   
   <!-- Deck list -->
   <table class="table table-bordered table-striped">
@@ -120,22 +112,20 @@
     <tbody>
       <!-- Cards -->
       {#each deck.cards as card (card.id)}
-        {#if !card.printing?.card_type_id.endsWith("identity")}
-          <tr>
-            <td class="text-center align-middle">{card.count}</td>
-            <td>
-              <!-- TODO: Fix asset path -->
-              <img src="/assets/images/types/{card.printing?.card_type_id}.jpg" alt={card.printing?.card_type_id} />
-              <i class="fa icon icon-{factionName(card)} {factionName(card)}"></i>
-              {card.printing?.title}
-            </td>
-            <td class="text-center align-middle">
-              {#if card.printing?.influence_cost && card.printing.faction_id != deck.identity?.printing?.faction_id}
-                {card.printing.influence_cost * card.count}
-              {/if}
-            </td>
-          </tr>
-        {/if}
+        <tr>
+          <td class="text-center align-middle">{card.quantity}</td>
+          <td>
+            <!-- TODO: Fix asset path -->
+            <img src="/assets/images/types/{card.card_type_id}.jpg" alt={card.card_type_id} />
+            <i class="fa icon icon-{adjustFactionId(card.faction_id)} {adjustFactionId(card.faction_id)}"></i>
+            {card.title}
+          </td>
+          <td class="text-center align-middle">
+            {#if card.influence_cost && card.faction_id != deck.details.faction_id}
+              {card.influence_cost * card.quantity}
+            {/if}
+          </td>
+        </tr>
       {/each}
 
       <!-- Totals -->
