@@ -224,6 +224,7 @@
       <PlayerForm
         player={newPlayer}
         tournament={data.tournament}
+        tournamentPolicies={data.tournamentPolicies}
         identityNames={identityNames ?? { corp: [], runner: [] }}
         organizerView={true}
         savedCallback={newPlayerSavedCallback}
@@ -391,6 +392,7 @@
         <PlayerForm
           {player}
           tournament={data.tournament}
+          tournamentPolicies={data.tournamentPolicies}
           identityNames={identityNames ?? { corp: [], runner: [] }}
           organizerView={true}
           savedCallback={loadData}
