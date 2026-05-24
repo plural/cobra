@@ -1,6 +1,7 @@
 <script lang="ts">
   import Identity from "../identities/Identity.svelte";
   import type { Card, Deck } from "../utils/cards";
+  import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
   let { deck, isCorp }: { deck: Deck | null; isCorp: boolean; } = $props();
   
@@ -32,6 +33,19 @@
   function factionName(card: Card) {
     return card.printing ? card.printing.faction_id.replace("_", "-") : "";
   }
+
+  async function copyToClipboard() {
+    if (!deck) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(deck.cards.reduce((text: string, card: Card) => card.printing ? `${text}${card.count} ${card.printing.title}\n` : text, ""));
+    alert("Copied to clipboard");
+  }
+
+  function downloadCsv() {
+    // TODO
+  }
 </script>
 
 <!-- Deck summary -->
@@ -54,7 +68,15 @@
           No deck selected
         {/if}
         <div class="float-right dontprint">
-          <!-- TODO: Export dropdown menu -->
+          <span class="dropdown">
+            <button type="button" title="Export deck" class="btn btn-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <FontAwesomeIcon icon="download" />
+            </button>
+            <div class="dropdown-menu">
+              <button type="button" class="dropdown-item" onclick={copyToClipboard}>Copy to clipboard in NetrunnerDB format</button>
+              <button type="button" class="dropdown-item" onclick={downloadCsv}>Download as a CSV spreadsheet</button>
+            </div>
+          </span>
           <!-- TODO: Edit deck link -->
         </div>
       </td>
@@ -78,8 +100,6 @@
         <tr>
           <td class="text-center align-middle">{deck.identity.printing.minimum_deck_size}</td>
           <td>
-            <!-- TODO: Edit in place? -->
-            <!-- TODO: Card image -->
             <Identity identity={{ name: deck.identity.printing.title, faction: factionName(deck.identity) }} />
           </td>
           <td class="text-center align-middle">{deck.identity.printing.influence_limit}</td>
