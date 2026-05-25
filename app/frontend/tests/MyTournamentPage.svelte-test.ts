@@ -9,6 +9,7 @@ import {
   getByText,
   queryByRole,
   render,
+  waitFor,
 } from "@testing-library/svelte";
 import MyTournamentPage from "../tournaments/MyTournamentPage.svelte";
 import userEvent from "@testing-library/user-event";
@@ -41,9 +42,14 @@ describe("MyTournamentPage", () => {
       render(MyTournamentPage, componentProps);
     });
 
-    it("does not show the Report Pairing button when self-reporting is not enabled", () => {
+    it("does not show the Report Pairing button when self-reporting is not enabled", async () => {
+      await waitFor(() => {
+        const table = document.getElementById("rounds_table") as HTMLTableElement;
+        expect(table).not.toBeNull();
+      });
       const table = document.getElementById("rounds_table") as HTMLTableElement;
       const currentRow = table.rows[table.rows.length - 1];
+      expect(currentRow).not.toBeNull();
       expect(
         queryByRole(currentRow, "button", { name: /report pairing/i }),
       ).toBeNull();
@@ -59,7 +65,7 @@ describe("MyTournamentPage", () => {
 
     describe.each([
       [6, 0, /6-0/i, "6 - 0"],
-      [3, 3, /3-3 \(c\)/i, "3 - 3 (c)"],
+      [3, 3, /3-3 \(c\)/i, "3 - 3 (C)"],
       [3, 3, /3-3 \(r\)/i, "3 - 3 (R)"],
       [6, 0, /0-6/i, "0 - 6"],
     ])("using preset score", (score1, score2, buttonText, scoreText) => {
@@ -73,6 +79,11 @@ describe("MyTournamentPage", () => {
         vi.spyOn(MockSelfReport, "score1", "get").mockReturnValue(score1);
         vi.spyOn(MockSelfReport, "score2", "get").mockReturnValue(score2);
         vi.spyOn(MockSelfReport, "label", "get").mockReturnValue(scoreText);
+
+        await waitFor(() => {
+          const table = document.getElementById("rounds_table") as HTMLTableElement;
+          expect(table).not.toBeNull();
+        });
 
         const table = document.getElementById(
           "rounds_table",
