@@ -12,12 +12,12 @@
   import {
     type NrdbDeck,
     loadPrintings,
-    type Printing,
     type Deck,
     convertNrdbDeck,
   } from "../utils/decks";
   import { savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
+  import type { Printing } from "../lib/api_types";
 
   let {
     tournamentId,
@@ -43,7 +43,7 @@
     // Load printings and hydrate decks
     const printingsResponse = await loadPrintings();
     if (printingsResponse) {
-      printingsResponse.data.forEach((p) => printings.set(p.id, p.attributes));
+      printingsResponse.data.forEach((p) => printings.set(p.id, p));
 
       nrdbDecks.forEach((nrdbDeck: NrdbDeck) => {
         const deck = convertNrdbDeck(nrdbDeck, printings);

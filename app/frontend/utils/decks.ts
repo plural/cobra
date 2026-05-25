@@ -1,6 +1,6 @@
+import type { Printing, PrintingsResponse } from "../lib/api_types";
 import { quoteCsvValue } from "./files";
 import { globalMessages } from "./GlobalMessageState.svelte";
-import type { ApiResponse } from "./network";
 
 export interface NrdbCard {
   id: string;
@@ -18,17 +18,6 @@ export interface NrdbDeck {
   mwl_code: string;
   tags: string;
   cards: NrdbCard[];
-}
-
-export class Printing {
-  card_id = "";
-  title = "";
-  card_type_id = "";
-  side_id = "";
-  faction_id = "";
-  influence_cost = 0;
-  influence_limit = 0;
-  minimum_deck_size = 0;
 }
 
 export interface Card {
@@ -73,7 +62,7 @@ export function convertNrdbDeck(
   printings: Map<string, Printing>,
 ): Deck {
   let identityNrdbId = 0;
-  let identity = new Printing();
+  let identity: Printing | null = null;
   const cards: Card[] = [];
   nrdbDeck.cards.forEach((card: NrdbCard) => {
     const printing = printings.get(card.id);
@@ -81,7 +70,7 @@ export function convertNrdbDeck(
       return;
     }
 
-    if (printing.card_type_id.endsWith("identity")) {
+    if (printing.attributes.card_type_id.endsWith("identity")) {
       identityNrdbId = parseInt(card.id);
       identity = printing;
       return;
@@ -90,35 +79,38 @@ export function convertNrdbDeck(
     cards.push({
       id: parseInt(card.id),
       deck_id: nrdbDeck.id,
-      title: printing.title,
+      title: printing.attributes.title,
       quantity: card.count,
-      influence: printing.influence_cost * card.count,
-      nrdb_card_id: printing.card_id,
+      influence: printing.attributes.influence_cost * card.count,
+      nrdb_card_id: printing.attributes.card_id,
       created_at: "",
       updated_at: "",
       nrdb_printing_id: parseInt(card.id),
-      card_type_id: printing.card_type_id,
-      faction_id: printing.faction_id,
-      influence_cost: printing.influence_cost,
+      card_type_id: printing.attributes.card_type_id,
+      faction_id: printing.attributes.faction_id,
+      influence_cost: printing.attributes.influence_cost,
     });
   });
+
+  // This fixes a typing warning below where TS thinks this variable is null instead of Printing | null
+  identity = identity as Printing | null;
 
   return {
     details: {
       id: nrdbDeck.id,
       player_id: 0,
-      side_id: identity.side_id,
+      side_id: identity?.attributes.side_id ?? "",
       name: nrdbDeck.name,
-      identity_title: identity.title,
-      min_deck_size: identity.minimum_deck_size,
-      max_influence: identity.influence_limit,
+      identity_title: identity?.attributes.title ?? "",
+      min_deck_size: identity?.attributes.minimum_deck_size ?? 0,
+      max_influence: identity?.attributes.influence_limit ?? 0,
       nrdb_uuid: nrdbDeck.uuid,
-      identity_nrdb_card_id: identity.card_id,
+      identity_nrdb_card_id: identity?.attributes.card_id ?? "",
       created_at: nrdbDeck.date_creation,
       updated_at: nrdbDeck.date_upate,
       identity_nrdb_printing_id: identityNrdbId,
       user_id: 0,
-      faction_id: identity.faction_id,
+      faction_id: identity?.attributes.faction_id ?? "",
       mine: true,
       player_name: "",
     },
@@ -187,7 +179,7 @@ export function deckCsv(decks: Deck[]) {
 }
 
 export async function loadPrintings() {
-  let data: ApiResponse<Printing> | null = null;
+  let data: PrintingsResponse | null = null;
 
   try {
     const response = await fetch(
@@ -196,7 +188,7 @@ export async function loadPrintings() {
     );
 
     if (response.status === 200) {
-      data = (await response.json()) as ApiResponse<Printing>;
+      data = (await response.json()) as PrintingsResponse;
     } else {
       globalMessages.errors.push(
         `Failed to load printings: ${response.statusText}`,
