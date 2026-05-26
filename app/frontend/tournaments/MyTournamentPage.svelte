@@ -9,6 +9,8 @@
   import PlayerDisplay from "../pairings/PlayerDisplay.svelte";
   import SelfReportOptions from "../pairings/SelfReportOptions.svelte";
   import { reportScore, type ScoreReport } from "../pairings/SelfReport";
+  import Identity from "../identities/Identity.svelte";
+  import { CreateMyTournamentSummary } from "../lib/transformations";
 
   let {
     tournamentId,
@@ -20,7 +22,7 @@
 
   let data: PairingsData | undefined = $state();
   let showPreviousRounds = $state(false);
-  let pairingCount = $derived(
+  let numPairings = $derived(
     data
       ? data.stages.reduce(
           (acc, s) =>
@@ -30,6 +32,8 @@
       : 0,
   );
 
+  let me = $derived(CreateMyTournamentSummary(data, userId));
+
   onMount(async () => {
     data = await loadPairings(tournamentId, userId);
   });
@@ -38,12 +42,33 @@
     return pairing.player1.id === 0 || pairing.player2.id === 0;
   }
 
-  function getMySide(pairing: Pairing) {
-    const side =
-      pairing.player1.user_id === userId
-        ? pairing.player1.side
-        : pairing.player2.side;
-    return side ? side.charAt(0).toUpperCase() + side.slice(1) : "";
+  function iWon(pairing: Pairing): boolean {
+    if (isBye(pairing) || !pairing.reported) return false;
+    const isMe1 = pairing.player1.user_id === userId;
+    const myScore = isMe1 ? pairing.score1 : pairing.score2;
+    const oppScore = isMe1 ? pairing.score2 : pairing.score1;
+    return myScore > oppScore;
+  }
+
+  function opponentWon(pairing: Pairing): boolean {
+    if (isBye(pairing) || !pairing.reported) return false;
+    const isMe1 = pairing.player1.user_id === userId;
+    const myScore = isMe1 ? pairing.score1 : pairing.score2;
+    const oppScore = isMe1 ? pairing.score2 : pairing.score1;
+    return oppScore > myScore;
+  }
+
+  function getScoreResultStyle(pairing: Pairing): string {
+    if (pairing.score_label.trim() === "" || pairing.score_label.trim() === "-") {
+      return "";
+    }
+    if (isBye(pairing) || iWon(pairing)) {
+      return "background-color: limegreen; color: black;";
+    }
+    if (opponentWon(pairing)) {
+      return "background-color: orangered; color: black;";
+    }
+    return "background-color: lightgrey; color: black;";
   }
 
   async function reportScoreCallback(
@@ -69,9 +94,33 @@
 
 {#if data}
   <div class="container">
-    <h2>Me</h2>
+    {#if numPairings > 0}
+      <div class="row mb-3 align-items-center">
+        <div class="col-12 col-md-4 d-flex flex-column justify-content-center text-center mt-3 mt-md-0">
+          <h2>Corp</h2>
+          {#if me.corpIdentity}
+            <div class="text-muted mb-2"><Identity identity={me.corpIdentity} /></div>
+          {/if}
+          <h4 class="text-bold">{me.corp.wins} - {me.corp.losses} - {me.corp.ties}</h4>
+        </div>
 
-    {#if pairingCount === 0}
+        <div class="col-12 col-md-4 d-flex flex-column justify-content-center text-center mt-3 mt-md-0">
+          <h4>Total Points</h4>
+          <h1>{me.total.points}</h1>
+          <h4 class="text-bold">{me.total.wins} - {me.total.losses} - {me.total.ties}</h4>
+        </div>
+
+        <div class="col-12 col-md-4 d-flex flex-column justify-content-center text-center mt-3 mt-md-0">
+          <h2>Runner</h2>
+          {#if me.runnerIdentity}
+            <div class="text-muted mb-2"><Identity identity={me.runnerIdentity} /></div>
+          {/if}
+          <h4 class="text-bold">{me.runner.wins} - {me.runner.losses} - {me.runner.ties}</h4>
+        </div>
+      </div>
+    {/if}
+
+    {#if numPairings === 0}
       <div class="row">
         <div class="col-12">
           <div class="alert alert-info">
@@ -81,7 +130,7 @@
         </div>
       </div>
     {:else}
-      {#if pairingCount > 1}
+      {#if numPairings > 1}
         <div class="row">
           <div class="col-12">
             <button
@@ -109,82 +158,101 @@
                 <th>Side</th>
               {/if}
               <th>Opponent</th>
-              <th class="text-center">Score</th>
+              <th class="text-center">Result</th>
+              <th class="text-center">Points</th>
             </tr>
           </thead>
           <tbody>
-            {#each data.stages as stage, stageIdx (stage.id)}
-              {#if showPreviousRounds || stageIdx == data.stages.length - 1}
-                {#each stage.rounds as round, roundIdx (round.id)}
-                  {#if showPreviousRounds || roundIdx === stage.rounds.length - 1}
-                    {#each round.pairings as pairing (pairing.id)}
-                      <tr>
-                        <td>
-                          {stage.is_elimination ? "Cut " : ""}{round.number}
-                        </td>
-                        <td>{isBye(pairing) ? "" : pairing.table_number}</td>
-                        {#if stage.is_single_sided}
-                          <td>{isBye(pairing) ? "" : getMySide(pairing)}</td>
-                        {/if}
-                        <td>
-                          {#if isBye(pairing)}
-                            (Bye)
-                          {:else}
-                            <PlayerDisplay
-                              player={pairing.player1.user_id === userId
-                                ? pairing.player2
-                                : pairing.player1}
-                              {pairing}
-                              left_or_right="left"
-                              is_single_sided={stage.is_single_sided}
-                            />
-                          {/if}
-                        </td>
-                        <td class="text-center">
-                          {#if pairing.score_label.trim() !== "" && pairing.score_label.trim() !== "-"}
-                            {pairing.score_label}
-                            {#if pairing.intentional_draw}
-                              <span
-                                class="badge badge-pill badge-secondary score-badge"
-                              >
-                                ID
-                              </span>
-                            {/if}
-                            {#if pairing.two_for_one}
-                              <span
-                                class="badge badge-pill badge-secondary score-badge"
-                              >
-                                2 for 1
-                              </span>
-                            {/if}
-                          {:else}
-                            {#if pairing.policy.self_report}
-                              <SelfReportOptions
-                                {stage}
-                                {pairing}
-                                reportScoreCallback={async (
-                                  pairingId: number,
-                                  report: ScoreReport,
-                                  selfReport: boolean,
-                                ) => {
-                                  await reportScoreCallback(
-                                    round.id,
-                                    pairingId,
-                                    report,
-                                    selfReport,
-                                  );
-                                }}
-                              />
-                            {/if}
-                            {#if pairing.self_reports && pairing.self_reports.length !== 0}
-                              Report: {pairing.self_reports[0].label}
-                            {/if}
-                          {/if}
-                        </td>
-                      </tr>
-                    {/each}
+            {#each me.pairings as myPairing (myPairing.id)}
+              {#if showPreviousRounds || (myPairing.stage.id === data.stages[data.stages.length - 1].id && myPairing.round.id === data.stages[data.stages.length - 1].rounds[data.stages[data.stages.length - 1].rounds.length - 1].id)}
+                <tr>
+                  <td>
+                    {myPairing.stage.is_elimination ? "Cut " : ""}{myPairing.round.number}
+                  </td>
+                  <td>{isBye(myPairing) ? "" : myPairing.table_number}</td>
+                  {#if myPairing.stage.is_single_sided}
+                    <td style="background-color: #eeeeee" class={iWon(myPairing) ? "font-weight-bold" : ""}>
+                      {#if !isBye(myPairing)}
+                        <PlayerDisplay
+                          player={myPairing.player1.user_id === userId
+                            ? myPairing.player1
+                            : myPairing.player2}
+                          pairing={myPairing}
+                          left_or_right="left"
+                          is_single_sided={myPairing.stage.is_single_sided}
+                        />
+                      {/if}
+                    </td>
                   {/if}
-                {/each}
+                  <td class={opponentWon(myPairing) ? "font-weight-bold" : ""}>
+                    {#if isBye(myPairing)}
+                      (Bye)
+                    {:else}
+                      <PlayerDisplay
+                        player={myPairing.player1.user_id === userId
+                          ? myPairing.player2
+                          : myPairing.player1}
+                        pairing={myPairing}
+                        left_or_right="left"
+                        is_single_sided={myPairing.stage.is_single_sided}
+                      />
+                    {/if}
+                  </td>
+                  <td class="text-center align-middle" style={getScoreResultStyle(myPairing)}>
+                    {#if myPairing.score_label.trim() !== "" && myPairing.score_label.trim() !== "-"}
+                      <div class="h4 mb-0 font-weight-bold">
+                        {#if isBye(myPairing) || iWon(myPairing)}
+                          W
+                        {:else if opponentWon(myPairing)}
+                          L
+                        {:else}
+                          T
+                        {/if}
+                      </div>
+                      {#if myPairing.intentional_draw}
+                        <span
+                          class="badge badge-pill badge-secondary score-badge"
+                        >
+                          ID
+                        </span>
+                      {/if}
+                      {#if myPairing.two_for_one}
+                        <span
+                          class="badge badge-pill badge-secondary score-badge"
+                        >
+                          2 for 1
+                        </span>
+                      {/if}
+                    {:else}
+                      {#if myPairing.policy.self_report}
+                        <SelfReportOptions
+                          stage={myPairing.stage}
+                          pairing={myPairing}
+                          reportScoreCallback={async (
+                            pairingId: number,
+                            report: ScoreReport,
+                            selfReport: boolean,
+                          ) => {
+                            await reportScoreCallback(
+                              myPairing.round.id,
+                              pairingId,
+                              report,
+                              selfReport,
+                            );
+                          }}
+                        />
+                      {/if}
+                      {#if myPairing.self_reports && myPairing.self_reports.length !== 0}
+                        Report: {myPairing.self_reports[0].label}
+                      {/if}
+                    {/if}
+                  </td>
+                  <td class="text-center align-middle">
+                    {#if myPairing.cumulativePoints !== null}
+                      {myPairing.cumulativePoints}
+                    {/if}
+                  </td>
+                </tr>
               {/if}
             {/each}
           </tbody>
