@@ -38,8 +38,8 @@ vi.mock("../players/PlayersData", async (importOriginal) => ({
 const user = userEvent.setup();
 
 describe("Tournament", () => {
-  async function renderTournament(userId: number) {
-    render(Tournament, { tournamentId: 1, userId: userId });
+  async function renderTournament(userId: number, userName?: string) {
+    render(Tournament, { tournamentId: 1, userId: userId, userName: userName });
 
     await waitFor(() => {
       expect(loadTournament).toHaveBeenCalledOnce();
@@ -146,10 +146,20 @@ describe("Tournament", () => {
         vi.mocked(loadPlayer).mockImplementation(() =>
           Promise.resolve(new Player()),
         );
-        await renderTournament(2);
+
+        await renderTournament(MockPlayerBob.id, MockPlayerBob.name);
         await waitFor(() => {
           expect(loadIdentityNames).toHaveBeenCalledOnce();
         });
+      });
+
+      it("displays the user's name before registration", () => {
+        expect(
+          getByLabelText(
+            screen.getByLabelText("registration information"),
+            "Name",
+          ),
+        ).toHaveValue("Bob");
       });
 
       it("allows registration", async () => {
@@ -157,6 +167,7 @@ describe("Tournament", () => {
           "registration information",
         );
 
+        await user.clear(getByLabelText(registrationCard, "Name"));
         await user.type(getByLabelText(registrationCard, "Name"), "Bob Again");
         await user.type(
           getByLabelText(registrationCard, "Pronouns"),
