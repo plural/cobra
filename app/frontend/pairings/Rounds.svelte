@@ -25,7 +25,13 @@
     type ScoreReport,
   } from "./SelfReport";
 
-  let { tournamentId }: { tournamentId: number } = $props();
+  let {
+    tournamentId,
+    playerView,
+  }: {
+    tournamentId: number;
+    playerView: boolean;
+  } = $props();
 
   let data = $state(new PairingsData());
   let forcePlayerView = $state(false);
@@ -35,7 +41,7 @@
 
   onMount(async () => {
     data = await loadPairings(tournamentId);
-    ctx.showOrganizerView = data.policy.update;
+    ctx.showOrganizerView = !playerView && data.policy.update;
   });
 
   function toggleForcePlayerView() {
