@@ -67,6 +67,8 @@ class TournamentResource < ApplicationResource
 
   belongs_to :tournament_type
   belongs_to :user
+  has_many :stages
+  has_many :rounds
 
   def create_timestamp(date, time_24h, timezone)
     return nil if date.nil? || time_24h.nil? || timezone.nil?
