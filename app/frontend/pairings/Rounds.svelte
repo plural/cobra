@@ -27,12 +27,10 @@
 
   let {
     tournamentId,
-    betaVersion = true,
-    playerView,
+    classicVersion = false,
   }: {
     tournamentId: number;
-    betaVersion?: boolean;
-    playerView: boolean;
+    classicVersion?: boolean;
   } = $props();
 
   let data = $state(new PairingsData());
@@ -43,14 +41,14 @@
 
   onMount(async () => {
     data = await loadPairings(tournamentId);
-    ctx.showOrganizerView = !playerView && data.policy.update;
+    ctx.showOrganizerView = !classicVersion && data.policy.update;
   });
 
   function toggleForcePlayerView() {
     forcePlayerView = !forcePlayerView;
     ctx.showOrganizerView = data.policy.update && !forcePlayerView;
 
-    if (!betaVersion) {
+    if (classicVersion) {
       window.location.href = `/tournaments/${tournamentId}/rounds`;
     }
   }
