@@ -27,9 +27,11 @@
 
   let {
     tournamentId,
+    betaVersion = true,
     playerView,
   }: {
     tournamentId: number;
+    betaVersion?: boolean;
     playerView: boolean;
   } = $props();
 
@@ -47,6 +49,10 @@
   function toggleForcePlayerView() {
     forcePlayerView = !forcePlayerView;
     ctx.showOrganizerView = data.policy.update && !forcePlayerView;
+
+    if (!betaVersion) {
+      window.location.href = `/tournaments/${tournamentId}/rounds`;
+    }
   }
 
   async function addStage(cutSingleElim?: boolean, cutCount?: number) {
