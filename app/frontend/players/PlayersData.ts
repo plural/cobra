@@ -1,6 +1,7 @@
 import { Identity } from "../identities/Identity";
 import type { TournamentPolicies } from "../pairings/PairingsData";
 import type { Tournament } from "../tournaments/TournamentSettings";
+import type { Deck } from "../utils/decks";
 import { globalMessages } from "../utils/GlobalMessageState.svelte";
 import { csrfToken } from "../utils/network";
 
@@ -193,41 +194,4 @@ export class Player {
   fixed_table_number: number | null = null;
   side: string | null = null;
   side_label: string | null = null;
-}
-
-export interface Deck {
-  details: {
-    id: number;
-    player_id: number;
-    side_id: string;
-    name: string | null;
-    identity_title: string;
-    min_deck_size: number;
-    max_influence: number;
-    nrdb_uuid: string | null;
-    identity_nrdb_card_id: string;
-    created_at: string;
-    updated_at: string;
-    identity_nrdb_printing_id: number | null;
-    user_id: number;
-    faction_id: string;
-    mine: boolean;
-    player_name: string;
-  };
-  cards: Card[];
-}
-
-export interface Card {
-  id: number;
-  deck_id: number;
-  title: string;
-  quantity: number;
-  influence: number;
-  nrdb_card_id: string;
-  created_at: string;
-  updated_at: string;
-  nrdb_printing_id: number | null;
-  card_type_id: string;
-  faction_id: string;
-  influence_cost: number;
 }

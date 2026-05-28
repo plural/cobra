@@ -5,6 +5,6 @@ export default {
   // for more information about preprocessors
   preprocess: vitePreprocess(),
   compilerOptions: {
-		runes: true // Enforce Svelte 5 style runes usage.
-	}
+    runes: true, // Enforce Svelte 5 style runes usage.
+  },
 };

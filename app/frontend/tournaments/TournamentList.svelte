@@ -1,6 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { TournamentInfo, TournamentsResponse, TournamentTypesResponse } from "../lib/api_types";
+  import type {
+    TournamentInfo,
+    TournamentsResponse,
+    TournamentTypesResponse,
+  } from "../lib/api_types";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import PagingRow from "../widgets/PagingRow.svelte";
   import TournamentRow from "../widgets/TournamentRow.svelte";
@@ -151,7 +155,11 @@
           showDelete={true}
           {tournament}
           {userId}
-          tournamentTypeName={tournament.attributes.tournament_type_id ? tournamentTypes[tournament.attributes.tournament_type_id.toString()] : null}
+          tournamentTypeName={tournament.attributes.tournament_type_id
+            ? tournamentTypes[
+                tournament.attributes.tournament_type_id.toString()
+              ]
+            : null}
         />
       {/each}
     {/if}
