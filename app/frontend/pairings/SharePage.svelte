@@ -18,11 +18,7 @@
   }
 </script>
 
-<h3>Page {page}</h3>
-
-<textarea readonly={true}>{text}</textarea>
-
-<span>
+<h3>
   <ProgressButton
     css="btn btn-info align-top"
     inProgressText="Copying"
@@ -30,7 +26,12 @@
     onclick={copyMarkdown}
   >
     <FontAwesomeIcon icon="copy" /> Copy
-  </ProgressButton>
+  </ProgressButton> <span style="margin-left: 1rem">Page {page}</span>
+</h3>
+
+<textarea readonly={true} style="width: 100%; min-height: 15rem; box-sizing: border-box;">{text}</textarea>
+
+<span>
   {#if error}
     <div class="alert alert-danger">{error}</div>
   {/if}

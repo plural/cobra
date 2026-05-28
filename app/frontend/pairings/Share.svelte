@@ -13,7 +13,7 @@
     roundId: number;
   } = $props();
 
-  const MAX_MARKDOWN_PAGE_LENGTH = 2000;
+  const MAX_MARKDOWN_PAGE_LENGTH = 2000;  // Break things up roughly around the Discord message limit.
 
   let betaEnabledCookie: CookieListItem | null = $state(null);
   let data: RoundData | undefined = $state();
@@ -68,7 +68,7 @@
   <h2>Export Pairings as Markdown</h2>
 
   {#each markdownPages as text, i (i)}
-    <div class="mb-3">
+    <div style="margin-bottom: 2rem">
       <SharePage {text} page={i + 1} />
     </div>
   {/each}
