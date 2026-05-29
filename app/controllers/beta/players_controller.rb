@@ -128,12 +128,12 @@ module Beta
     def decks
       authorize @tournament, :update?
 
-      players = @tournament.players
-      players = players.find(params[:id]&.to_i) if params[:id]
-      render json: players
-                   .sort_by(&:name)
-                   .flat_map { |p| p.decks.sort_by(&:side_id) }
-                   .map { |d| d.as_view(current_user) }
+      decks = if params[:id]
+                @tournament.players.find(params[:id]&.to_i).decks.sort_by(&:side_id)
+              else
+                @tournament.players.sort_by(&:name).flat_map { |p| p.decks.sort_by(&:side_id) }
+              end
+      render json: decks.map { |d| d.as_view(current_user) }
     end
 
     private
@@ -143,9 +143,14 @@ module Beta
     end
 
     def player_params
+      deck_params = { details: %i[name nrdb_uuid mine identity_title identity_nrdb_printing_id
+                                  identity_nrdb_card_id side_id faction_id min_deck_size max_influence],
+                      cards: %i[title quantity influence influence_cost nrdb_card_id nrdb_printing_id faction_id
+                                card_type_id] }
       params.require(:player)
-            .permit(%i[name pronouns corp_identity runner_identity corp_deck runner_deck
-                       first_round_bye manual_seed include_in_stream fixed_table_number])
+            .permit([:name, :pronouns, :corp_identity, :runner_identity, :first_round_bye, :manual_seed,
+                     :include_in_stream, :fixed_table_number,
+                     { corp_deck: deck_params, runner_deck: deck_params }])
     end
 
     def organiser_view?
@@ -155,21 +160,16 @@ module Beta
     def save_deck(params, param, side)
       return unless params.key?(param)
 
-      begin
-        request = JSON.parse(params[param])
-      rescue StandardError
-        @player.decks.destroy_by(side_id: side)
-        return
-      end
-      details = request['details']
-      return if details['user_id'] && details['user_id'] != current_user.id
+      deck = params[param]
+      details = deck[:details]
+      return if details[:user_id] && details[:user_id] != current_user.id
 
       details.keep_if { |key| Deck.column_names.include? key }
-      details['side_id'] = side
-      details['user_id'] = current_user.id
+      details[:side_id] = side
+      details[:user_id] = current_user.id
       @player.decks.destroy_by(side_id: side)
       deck = @player.decks.create(details)
-      deck.cards.create(request['cards'])
+      deck.cards.create(params[param][:cards])
     end
   end
 end

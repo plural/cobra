@@ -68,12 +68,15 @@
       loadTournament(tournamentId),
       loadPlayer(tournamentId, userId),
     ]);
+
     tournamentDecks = await loadDecks(tournamentId, player.id);
     selectedCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? null;
     selectedRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? null;
   });
 
   async function save() {
+    player.corp_deck = selectedCorpDeck ?? undefined;
+    player.runner_deck = selectedRunnerDeck ?? undefined;
     player = await savePlayer(tournamentId, player);
     return true;
   }
