@@ -147,6 +147,9 @@ export function deckCsv(decks: Deck[]) {
       "\n" +
       decks
         .map((deck: Deck) => {
+          if (i >= deck.cards.length) {
+            return ",,";
+          }
           const influence =
             deck.cards[i].influence > 0 &&
             deck.cards[i].faction_id !== deck.details.faction_id
