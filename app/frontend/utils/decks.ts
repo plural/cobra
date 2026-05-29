@@ -21,7 +21,7 @@ export interface NrdbDeck {
 }
 
 export interface Card {
-  id: number;
+  id: string;
   deck_id: number;
   title: string;
   quantity: number;
@@ -29,7 +29,7 @@ export interface Card {
   nrdb_card_id: string;
   created_at: string;
   updated_at: string;
-  nrdb_printing_id: number | null;
+  nrdb_printing_id: string | null;
   card_type_id: string;
   faction_id: string;
   influence_cost: number;
@@ -48,7 +48,7 @@ export interface Deck {
     identity_nrdb_card_id: string;
     created_at: string;
     updated_at: string;
-    identity_nrdb_printing_id: number | null;
+    identity_nrdb_printing_id: string | null;
     user_id: number;
     faction_id: string;
     mine: boolean;
@@ -61,7 +61,7 @@ export function convertNrdbDeck(
   nrdbDeck: NrdbDeck,
   printings: Map<string, Printing>,
 ): Deck {
-  let identityNrdbId = 0;
+  let identityNrdbId = "";
   let identity: Printing | null = null;
   const cards: Card[] = [];
   nrdbDeck.cards.forEach((card: NrdbCard) => {
@@ -71,13 +71,13 @@ export function convertNrdbDeck(
     }
 
     if (printing.attributes.card_type_id.endsWith("identity")) {
-      identityNrdbId = parseInt(card.id);
+      identityNrdbId = card.id;
       identity = printing;
       return;
     }
 
     cards.push({
-      id: parseInt(card.id),
+      id: card.id,
       deck_id: nrdbDeck.id,
       title: printing.attributes.title,
       quantity: card.count,
@@ -85,7 +85,7 @@ export function convertNrdbDeck(
       nrdb_card_id: printing.attributes.card_id,
       created_at: "",
       updated_at: "",
-      nrdb_printing_id: parseInt(card.id),
+      nrdb_printing_id: card.id,
       card_type_id: printing.attributes.card_type_id,
       faction_id: printing.attributes.faction_id,
       influence_cost: printing.attributes.influence_cost,
