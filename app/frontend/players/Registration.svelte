@@ -15,7 +15,7 @@
     type Deck,
     convertNrdbDeck,
   } from "../utils/decks";
-  import { savePlayer } from "../players/PlayersData";
+  import { loadDecks, savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
   import type { Printing } from "../lib/api_types";
 
@@ -35,6 +35,7 @@
   let tournament = $state<Tournament | undefined>();
   let player = $state(new Player());
   let decks = $state<Deck[]>([]);
+  let tournamentDecks = $state<Deck[]>();
   let printings = $state(new Map<string, Printing>());
   let selectedCorpDeck = $state<Deck | null>(null);
   let selectedRunnerDeck = $state<Deck | null>(null);
@@ -67,6 +68,9 @@
       loadTournament(tournamentId),
       loadPlayer(tournamentId, userId),
     ]);
+    tournamentDecks = await loadDecks(tournamentId, player.id);
+    selectedCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? null;
+    selectedRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? null;
   });
 
   async function save() {
