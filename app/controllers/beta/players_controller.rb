@@ -128,10 +128,12 @@ module Beta
     def decks
       authorize @tournament, :update?
 
-      render json: @tournament.players
-                              .sort_by(&:name)
-                              .flat_map { |p| p.decks.sort_by(&:side_id) }
-                              .map { |d| d.as_view(current_user) }
+      players = @tournament.players
+      players = players.find(params[:id]&.to_i) if params[:id]
+      render json: players
+                   .sort_by(&:name)
+                   .flat_map { |p| p.decks.sort_by(&:side_id) }
+                   .map { |d| d.as_view(current_user) }
     end
 
     private

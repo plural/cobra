@@ -46,6 +46,7 @@ Rails.application.routes.draw do
         patch :drop, on: :member
         patch :reinstate, on: :member
         get :decks, on: :collection
+        get :decks, on: :member
       end
       get :qr, on: :member
       get :registration, on: :member

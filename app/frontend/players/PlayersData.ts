@@ -28,7 +28,7 @@ declare const Routes: {
     tournamentId: number,
     playerId: number,
   ) => string;
-  decks_beta_tournament_players_path: (tournamentId: number) => string;
+  decks_beta_tournament_players_path: (tournamentId: number, playerId: number | null) => string;
 };
 
 export async function loadPlayers(tournamentId: number) {
@@ -147,9 +147,9 @@ export async function reinstatePlayer(tournamentId: number, player: Player) {
   return response.status === 200;
 }
 
-export async function loadDecks(tournamentId: number) {
+export async function loadDecks(tournamentId: number, playerId: number | null = null) {
   const response = await fetch(
-    Routes.decks_beta_tournament_players_path(tournamentId),
+    Routes.decks_beta_tournament_players_path(tournamentId, playerId),
     {
       method: "GET",
     },
