@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       resources :players, only: %i[index create update destroy] do
         get :players_data, on: :collection
         get 'by_user_id/:user_id', to: 'players#by_user_id', on: :collection
+        get :registration, on: :member
         patch :lock_registration, on: :member
         patch :unlock_registration, on: :member
         patch :drop, on: :member

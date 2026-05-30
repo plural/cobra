@@ -33,20 +33,15 @@
   const THE_SYNDICATE_NRDB_CODE = "30077";
 
   let tournament = $state<Tournament | undefined>();
-  let player = $state(new Player());
+  let player = $state<Player | null>(null);
   let decks = $state<Deck[] | null>(null);
   let tournamentDecks = $state<Deck[]>();
   let printings = $state(new Map<string, Printing>());
   let selectedCorpDeck = $state<Deck | null>(null);
   let selectedRunnerDeck = $state<Deck | null>(null);
-  let returnToUrl = $state("");
+  let editMode = $state(new URLSearchParams(document.location.search).get("edit") === "true");
 
   onMount(async () => {
-    let editMode = new URLSearchParams(document.location.search).get("edit");
-    returnToUrl = editMode === "true"
-      ? `/beta/tournaments/${tournamentId}/rounds`
-      : `/beta/tournaments/${tournamentId}`;
-    
     [tournament, player] = await Promise.all([
       loadTournament(tournamentId),
       loadPlayer(tournamentId, userId),
@@ -54,38 +49,44 @@
 
     // Load printings and hydrate decks
     const loadedDecks: Deck[] = [];
-    const printingsResponse = await loadPrintings();
-    if (printingsResponse) {
-      printingsResponse.data.forEach((p) => printings.set(p.id, p));
+    if (nrdbDecks.length > 0) {
+      const printingsResponse = await loadPrintings();
+      if (printingsResponse) {
+        printingsResponse.data.forEach((p) => printings.set(p.id, p));
 
-      nrdbDecks.forEach((nrdbDeck: NrdbDeck) => {
-        const deck = convertNrdbDeck(nrdbDeck, printings);
-        deck.cards.sort((a, b) => {
-          if (a.card_type_id != b.card_type_id) {
-            return a.card_type_id < b.card_type_id ? -1 : 1;
-          }
+        nrdbDecks.forEach((nrdbDeck: NrdbDeck) => {
+          const deck = convertNrdbDeck(nrdbDeck, printings);
+          deck.cards.sort((a, b) => {
+            if (a.card_type_id != b.card_type_id) {
+              return a.card_type_id < b.card_type_id ? -1 : 1;
+            }
 
-          if (a.title !== b.title) {
-            return a.title < b.title ? -1 : 1;
-          }
+            if (a.title !== b.title) {
+              return a.title < b.title ? -1 : 1;
+            }
 
-          return 0;
+            return 0;
+          });
+
+          loadedDecks.push(deck);
         });
-
-        loadedDecks.push(deck);
-      });
+      }
     }
 
-    tournamentDecks = await loadDecks(tournamentId, player.id);
-    selectedCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? null;
-    selectedRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? null;
+    if (player) {
+      tournamentDecks = await loadDecks(tournamentId, player.id);
+      selectedCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? null;
+      selectedRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? null;
+    }
     decks = loadedDecks;
   });
 
   async function save() {
-    player.corp_deck = selectedCorpDeck ?? undefined;
-    player.runner_deck = selectedRunnerDeck ?? undefined;
-    player = await savePlayer(tournamentId, player);
+    if (player) {
+      player.corp_deck = selectedCorpDeck ?? undefined;
+      player.runner_deck = selectedRunnerDeck ?? undefined;
+      player = await savePlayer(tournamentId, player);
+    }
     return true;
   }
 
@@ -170,16 +171,21 @@
   {/if}
 {/snippet}
 
-{#if player.id !== 0 && tournament}
+{#if player && player.id !== 0 && tournament}
   <div class="card mb-3">
     <div class="card-header">
       <div class="d-flex justify-content-between">
-        <h5>My Registration Information</h5>
+        <h5 class="mb-0">My Registration Information</h5>
         <span class="float-right dontprint">
           <button type="button" class="btn btn-link p-0 mr-3" title="Print" onclick={() => { window.print(); }}>
             <FontAwesomeIcon icon="print" />
           </button>
-          <a href={returnToUrl} class="btn btn-link p-0" title="Cancel">
+          <a href={editMode
+            ? `/beta/tournaments/${tournamentId}/rounds`
+            : `/beta/tournaments/${tournamentId}`}
+            class="btn btn-link p-0"
+            title="Cancel"
+          >
             <FontAwesomeIcon icon="undo" />
           </a>
         </span>
@@ -249,44 +255,52 @@
     Please ensure your decks are legal.
   </div>
 
-  <div class="alert alert-secondary dontprint">
-    Please select from your decks below. <a
-      href="https://netrunnerdb.com/en/decks"
-      target="_blank">See your decks in NetrunnerDB</a
-    >. Refresh the page to reload from NetrunnerDB.
-  </div>
+  {#if !editMode}
+    <div class="alert alert-secondary dontprint">
+      Please select from your decks below. <a
+        href="https://netrunnerdb.com/en/decks"
+        target="_blank">See your decks in NetrunnerDB</a
+      >. Refresh the page to reload from NetrunnerDB.
+    </div>
 
-  <div class="row mb-3 justify-content-center dontprint">
-    {#if decks !== null}
-      <!-- Corp deck selection -->
-      <div class="col-md-6">
-        <div class="card">
-          <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-          {@render decksList(true, selectedCorpDeck)}
+    <div class="row mb-3 justify-content-center dontprint">
+      {#if decks !== null}
+        <!-- Corp deck selection -->
+        <div class="col-md-6">
+          <div class="card">
+            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+            {@render decksList(true, selectedCorpDeck)}
+          </div>
         </div>
+
+        <!-- Runner deck selection -->
+        <div class="col-md-6">
+          <div class="card">
+            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+            {@render decksList(false, selectedRunnerDeck)}
+          </div>
+        </div>
+      {:else}
+        <div class="spinner-border m-auto"></div>
+      {/if}
+    </div>
+  {/if}
+
+  {#if selectedCorpDeck && selectedRunnerDeck}
+    <div class="row">
+      <div class="col-md-6">
+        <DeckDisplay deck={selectedCorpDeck} isCorp={true} />
       </div>
 
-      <!-- Runner deck selection -->
       <div class="col-md-6">
-        <div class="card">
-          <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-          {@render decksList(false, selectedRunnerDeck)}
-        </div>
+        <DeckDisplay deck={selectedRunnerDeck} isCorp={false} />
       </div>
-    {:else}
+    </div>
+  {:else}
+    <div class="d-flex align-items-center m-2">
       <div class="spinner-border m-auto"></div>
-    {/if}
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <DeckDisplay deck={selectedCorpDeck} isCorp={true} />
     </div>
-
-    <div class="col-md-6">
-      <DeckDisplay deck={selectedRunnerDeck} isCorp={false} />
-    </div>
-  </div>
+  {/if}
 {:else}
   <div class="d-flex align-items-center m-2">
     <div class="spinner-border m-auto"></div>

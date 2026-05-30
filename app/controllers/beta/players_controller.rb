@@ -3,7 +3,8 @@
 module Beta
   class PlayersController < ApplicationController # rubocop:disable Metrics/ClassLength,Style/Documentation
     before_action :set_tournament
-    before_action :set_player, only: %i[update destroy lock_registration unlock_registration drop reinstate]
+    before_action :set_player,
+                  only: %i[update destroy registration lock_registration unlock_registration drop reinstate]
 
     def index
       authorize @tournament, :update?
@@ -87,6 +88,10 @@ module Beta
       render json: helpers.player_json(@tournament.players.find { |p|
         p.user_id == params[:user_id].to_i
       })
+    end
+
+    def registration
+      authorize @tournament, :update?
     end
 
     def lock_registration

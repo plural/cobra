@@ -1,4 +1,5 @@
-import type { Player } from "../players/PlayersData";
+import { Player } from "../players/PlayersData";
+import { globalMessages } from "../utils/GlobalMessageState.svelte";
 
 export type Errors = Record<string, string[]>;
 
@@ -157,10 +158,7 @@ export async function loadTournament(
   return tournament;
 }
 
-export async function loadPlayer(
-  tournamentId: number,
-  userId: number,
-): Promise<Player> {
+export async function loadPlayer(tournamentId: number, userId: number) {
   const response = await fetch(
     `/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,
     {
@@ -168,7 +166,15 @@ export async function loadPlayer(
     },
   );
 
-  return (await response.json()) as Player;
+  let player: Player;
+  try {
+    player = (await response.json()) as Player;
+  } catch {
+    globalMessages.warnings.push(`Player data for user ${userId} could not be loaded.`);
+    return null;
+  }
+
+  return player;
 }
 
 export async function loadNewTournament(): Promise<TournamentSettingsData> {
