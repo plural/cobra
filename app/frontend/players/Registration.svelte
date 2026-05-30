@@ -163,7 +163,14 @@
 {#if player.id !== 0 && tournament}
   <div class="card mb-3">
     <div class="card-header">
-      <h5>My Registration Information</h5>
+      <div class="d-flex justify-content-between">
+        <h5>My Registration Information</h5>
+        <span class="float-right dontprint">
+          <button type="button" class="btn btn-link p-0" onclick={() => { window.print(); }}>
+            <FontAwesomeIcon icon="print" />
+          </button>
+        </span>
+      </div>
     </div>
 
     <div class="card-body">
@@ -210,7 +217,7 @@
         {/if}
       </div>
 
-      <div class="text-right">
+      <div class="text-right dontprint">
         <!-- Create/Save -->
         <ProgressButton
           css="btn btn-success"
