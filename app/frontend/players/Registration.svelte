@@ -34,7 +34,7 @@
 
   let tournament = $state<Tournament | undefined>();
   let player = $state(new Player());
-  let decks = $state<Deck[]>([]);
+  let decks = $state<Deck[] | null>(null);
   let tournamentDecks = $state<Deck[]>();
   let printings = $state(new Map<string, Printing>());
   let selectedCorpDeck = $state<Deck | null>(null);
@@ -46,8 +46,14 @@
     returnToUrl = editMode === "true"
       ? `/beta/tournaments/${tournamentId}/rounds`
       : `/beta/tournaments/${tournamentId}`;
+    
+    [tournament, player] = await Promise.all([
+      loadTournament(tournamentId),
+      loadPlayer(tournamentId, userId),
+    ]);
 
     // Load printings and hydrate decks
+    const loadedDecks: Deck[] = [];
     const printingsResponse = await loadPrintings();
     if (printingsResponse) {
       printingsResponse.data.forEach((p) => printings.set(p.id, p));
@@ -66,18 +72,14 @@
           return 0;
         });
 
-        decks.push(deck);
+        loadedDecks.push(deck);
       });
     }
-
-    [tournament, player] = await Promise.all([
-      loadTournament(tournamentId),
-      loadPlayer(tournamentId, userId),
-    ]);
 
     tournamentDecks = await loadDecks(tournamentId, player.id);
     selectedCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? null;
     selectedRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? null;
+    decks = loadedDecks;
   });
 
   async function save() {
@@ -126,44 +128,46 @@
 {/snippet}
 
 {#snippet decksList(isCorp: boolean, selectedDeck: Deck | null)}
-  <ul class="list-group list-group-flush" style="border-bottom: 0;">
-    <li class="list-group-item selected-deck">
-      <div class="selected-deck-buttons">
-        <!-- TODO: Undo -->
+  {#if decks !== null}
+    <ul class="list-group list-group-flush" style="border-bottom: 0;">
+      <li class="list-group-item selected-deck">
+        <div class="selected-deck-buttons">
+          <!-- TODO: Undo -->
+          {#if selectedDeck}
+            <button
+              type="button"
+              title="Deselect"
+              class="btn btn-link p-0"
+              onclick={() => {
+                selectDeck(null, isCorp);
+              }}
+            >
+              <FontAwesomeIcon icon="close" />
+            </button>
+          {/if}
+        </div>
         {#if selectedDeck}
-          <button
-            type="button"
-            title="Deselect"
-            class="btn btn-link p-0"
-            onclick={() => {
-              selectDeck(null, isCorp);
-            }}
-          >
-            <FontAwesomeIcon icon="close" />
-          </button>
+          <div
+            class="selected-deck-identity"
+            style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${selectedDeck.details.identity_nrdb_printing_id}.jpg)`}
+          ></div>
+          <p class="mb-1">{selectedDeck.details.name}</p>
+        {:else}
+          <div
+            class="selected-deck-identity"
+            style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${isCorp ? THE_SYNDICATE_NRDB_CODE : THE_CATALYST_NRDB_CODE}.jpg)`}
+          ></div>
+          <p class="mb-1">{isCorp ? "No corp selected" : "No runner selected"}</p>
         {/if}
-      </div>
-      {#if selectedDeck}
-        <div
-          class="selected-deck-identity"
-          style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${selectedDeck.details.identity_nrdb_printing_id}.jpg)`}
-        ></div>
-        <p class="mb-1">{selectedDeck.details.name}</p>
-      {:else}
-        <div
-          class="selected-deck-identity"
-          style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${isCorp ? THE_SYNDICATE_NRDB_CODE : THE_CATALYST_NRDB_CODE}.jpg)`}
-        ></div>
-        <p class="mb-1">{isCorp ? "No corp selected" : "No runner selected"}</p>
-      {/if}
-    </li>
-  </ul>
-  <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
-    {#each decks.filter((d) => d.details.side_id === (isCorp ? "corp" : "runner")) as deck (deck.details.id)}
-      <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-      {@render deckListItem(deck, isCorp)}
-    {/each}
-  </ul>
+      </li>
+    </ul>
+    <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
+      {#each decks.filter((d) => d.details.side_id === (isCorp ? "corp" : "runner")) as deck (deck.details.id)}
+        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+        {@render deckListItem(deck, isCorp)}
+      {/each}
+    </ul>
+  {/if}
 {/snippet}
 
 {#if player.id !== 0 && tournament}
@@ -252,22 +256,26 @@
     >. Refresh the page to reload from NetrunnerDB.
   </div>
 
-  <div class="row mb-3 dontprint">
-    <!-- Corp deck selection -->
-    <div class="col-md-6">
-      <div class="card">
-        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-        {@render decksList(true, selectedCorpDeck)}
+  <div class="row mb-3 justify-content-center dontprint">
+    {#if decks !== null}
+      <!-- Corp deck selection -->
+      <div class="col-md-6">
+        <div class="card">
+          <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+          {@render decksList(true, selectedCorpDeck)}
+        </div>
       </div>
-    </div>
 
-    <!-- Runner deck selection -->
-    <div class="col-md-6">
-      <div class="card">
-        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-        {@render decksList(false, selectedRunnerDeck)}
+      <!-- Runner deck selection -->
+      <div class="col-md-6">
+        <div class="card">
+          <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+          {@render decksList(false, selectedRunnerDeck)}
+        </div>
       </div>
-    </div>
+    {:else}
+      <div class="spinner-border m-auto"></div>
+    {/if}
   </div>
 
   <div class="row">
