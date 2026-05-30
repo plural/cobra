@@ -39,8 +39,14 @@
   let printings = $state(new Map<string, Printing>());
   let selectedCorpDeck = $state<Deck | null>(null);
   let selectedRunnerDeck = $state<Deck | null>(null);
+  let returnToUrl = $state("");
 
   onMount(async () => {
+    let editMode = new URLSearchParams(document.location.search).get("edit");
+    returnToUrl = editMode === "true"
+      ? `/beta/tournaments/${tournamentId}/rounds`
+      : `/beta/tournaments/${tournamentId}`;
+
     // Load printings and hydrate decks
     const printingsResponse = await loadPrintings();
     if (printingsResponse) {
@@ -166,9 +172,12 @@
       <div class="d-flex justify-content-between">
         <h5>My Registration Information</h5>
         <span class="float-right dontprint">
-          <button type="button" class="btn btn-link p-0" onclick={() => { window.print(); }}>
+          <button type="button" class="btn btn-link p-0 mr-3" title="Print" onclick={() => { window.print(); }}>
             <FontAwesomeIcon icon="print" />
           </button>
+          <a href={returnToUrl} class="btn btn-link p-0" title="Cancel">
+            <FontAwesomeIcon icon="undo" />
+          </a>
         </span>
       </div>
     </div>
