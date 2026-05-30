@@ -12,7 +12,7 @@
   import {
     type NrdbDeck,
     loadPrintings,
-    type Deck,
+    Deck,
     convertNrdbDeck,
   } from "../utils/decks";
   import { loadDecks, savePlayer } from "../players/PlayersData";
@@ -21,11 +21,11 @@
 
   let {
     tournamentId,
-    userId,
+    playerId,
     nrdbDecks,
   }: {
     tournamentId: number;
-    userId: number;
+    playerId: number;
     nrdbDecks: NrdbDeck[];
   } = $props();
 
@@ -44,7 +44,7 @@
   onMount(async () => {
     [tournament, player] = await Promise.all([
       loadTournament(tournamentId),
-      loadPlayer(tournamentId, userId),
+      loadPlayer(tournamentId, playerId),
     ]);
 
     // Load printings and hydrate decks
@@ -75,8 +75,8 @@
 
     if (player) {
       tournamentDecks = await loadDecks(tournamentId, player.id);
-      selectedCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? null;
-      selectedRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? null;
+      selectedCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? new Deck();
+      selectedRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? new Deck();
     }
     decks = loadedDecks;
   });

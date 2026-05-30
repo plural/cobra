@@ -158,23 +158,36 @@ export async function loadTournament(
   return tournament;
 }
 
-export async function loadPlayer(tournamentId: number, userId: number) {
-  const response = await fetch(
-    `/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,
-    {
-      method: "GET",
-    },
-  );
-
-  let player: Player;
+export async function loadPlayer(tournamentId: number, playerId: number) {
   try {
-    player = (await response.json()) as Player;
+    const response = await fetch(
+      `/beta/tournaments/${tournamentId}/players/${playerId}`,
+      {
+        method: "GET",
+      },
+    );
+
+    return  (await response.json()) as Player;
   } catch {
-    globalMessages.warnings.push(`Player data for user ${userId} could not be loaded.`);
+    globalMessages.errors.push(`Error loading player data for player ${playerId}`);
     return null;
   }
+}
 
-  return player;
+export async function loadPlayerByUserId(tournamentId: number, userId: number) {
+  try {
+    const response = await fetch(
+      `/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,
+      {
+        method: "GET",
+      },
+    );
+
+    return (await response.json()) as Player;
+  } catch {
+    globalMessages.errors.push(`Error loading player data for user ${userId}.`);
+    return null;
+  }
 }
 
 export async function loadNewTournament(): Promise<TournamentSettingsData> {

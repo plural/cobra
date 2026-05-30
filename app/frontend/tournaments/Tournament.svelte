@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import {
-    loadPlayer,
+    loadPlayerByUserId,
     loadQRCode,
     loadTournament,
     Tournament,
@@ -30,7 +30,7 @@
 
   onMount(async () => {
     tournament = await loadTournament(tournamentId);
-    player = await loadPlayer(tournamentId, userId);
+    player = await loadPlayerByUserId(tournamentId, userId);
 
     qrCodeImageData = URL.createObjectURL(await loadQRCode(tournamentId));
 

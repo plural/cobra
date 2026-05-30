@@ -35,26 +35,28 @@ export interface Card {
   influence_cost: number;
 }
 
-export interface Deck {
-  details: {
-    id: number;
-    player_id: number;
-    side_id: string;
-    name: string | null;
-    identity_title: string;
-    min_deck_size: number;
-    max_influence: number;
-    nrdb_uuid: string | null;
-    identity_nrdb_card_id: string;
-    created_at: string;
-    updated_at: string;
-    identity_nrdb_printing_id: string | null;
-    user_id: number;
-    faction_id: string;
-    mine: boolean;
-    player_name: string;
-  };
-  cards: Card[];
+export class DeckDetails {
+  id = 0;
+  player_id: number | null = null;
+  side_id: string | null = null;
+  name: string | null = null;
+  identity_title: string | null = null;
+  min_deck_size: number | null = null;
+  max_influence: number | null = null;
+  nrdb_uuid: string | null = null;
+  identity_nrdb_card_id: string | null = null;
+  created_at: string = "";
+  updated_at: string = "";
+  identity_nrdb_printing_id: string | null = null;
+  user_id: number | null = null;
+  faction_id: string | null = null;
+  mine: boolean | null = null;
+  player_name: string | null = null;
+}
+
+export class Deck {
+  details = new DeckDetails();
+  cards: Card[] = [];
 }
 
 export function convertNrdbDeck(
@@ -121,7 +123,7 @@ export function convertNrdbDeck(
 export function deckCsv(decks: Deck[]) {
   const headerCsv =
     decks
-      .map((deck) => `Player,${quoteCsvValue(deck.details.player_name)},`)
+      .map((deck) => `Player,${quoteCsvValue(deck.details.player_name ?? "")},`)
       .join(",,") +
     "\n" +
     decks
@@ -133,7 +135,7 @@ export function deckCsv(decks: Deck[]) {
     decks
       .map(
         (deck) =>
-          `${deck.details.min_deck_size},${quoteCsvValue(deck.details.identity_title)},${deck.details.max_influence}`,
+          `${deck.details.min_deck_size},${quoteCsvValue(deck.details.identity_title ?? "")},${deck.details.max_influence}`,
       )
       .join(",,");
 

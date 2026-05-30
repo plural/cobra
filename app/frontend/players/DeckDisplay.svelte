@@ -68,7 +68,7 @@
   <tbody>
     <tr>
       <td>
-        {#if deck}
+        {#if deck && deck.details.id !== 0}
           {#if deck.details.name}
             {deck.details.name}
             <div class="float-right dontprint">
@@ -123,7 +123,7 @@
   </tbody>
 </table>
 
-{#if deck}
+{#if deck && deck.details.id !== 0}
   <!-- Identity -->
   <table class="table table-bordered table-striped">
     <thead class="thead-dark">
@@ -139,8 +139,8 @@
         <td>
           <Identity
             identity={{
-              name: deck.details.identity_title,
-              faction: adjustFactionId(deck.details.faction_id),
+              name: deck.details.identity_title ?? "",
+              faction: adjustFactionId(deck.details.faction_id ?? ""),
             }}
           />
         </td>
