@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         resources :formats, only: %i[index show]
         resources :identities, only: %i[index show]
         resources :official_prize_kits, only: %i[index show]
+        resources :players, only: %i[index show]
       end
     end
   end

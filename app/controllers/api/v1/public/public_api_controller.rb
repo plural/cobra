@@ -13,6 +13,8 @@ module Api
             render_record_not_found(e)
           when ActiveRecord::RecordInvalid
             render_record_invalid(e)
+          when Graphiti::Errors::RequiredFilter
+            render_required_filter(e)
           when ActionController::ParameterMissing
             render_parameter_missing(e)
           else
@@ -64,6 +66,18 @@ module Api
               {
                 status: '422',
                 title: 'ActiveRecord::RecordInvalid',
+                detail: exception.message
+              }
+            ]
+          }, status: :unprocessable_content
+        end
+
+        def render_required_filter(exception)
+          render json: {
+            errors: [
+              {
+                status: '422',
+                title: 'Invalid request',
                 detail: exception.message
               }
             ]
