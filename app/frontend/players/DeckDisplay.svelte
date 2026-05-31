@@ -1,6 +1,6 @@
 <script lang="ts">
   import Identity from "../identities/Identity.svelte";
-  import { deckCsv, type Card, type Deck } from "../utils/decks";
+  import { deckCsv, type Card, type Deck } from "../utils/decks.svelte";
   import { downloadBlob } from "../utils/files";
   import { getCardTypeImage } from "../utils/images";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";

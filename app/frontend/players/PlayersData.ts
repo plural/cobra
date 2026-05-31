@@ -1,7 +1,7 @@
 import { Identity } from "../identities/Identity";
 import type { TournamentPolicies } from "../pairings/PairingsData";
 import type { Tournament } from "../tournaments/TournamentSettings";
-import type { Card, Deck } from "../utils/decks";
+import type { Card, Deck } from "../utils/decks.svelte";
 import { globalMessages } from "../utils/GlobalMessageState.svelte";
 import { csrfToken } from "../utils/network";
 

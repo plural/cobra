@@ -1,6 +1,6 @@
 import { mount } from "svelte";
 import Registration from "../players/Registration.svelte";
-import { type NrdbDeck } from "../utils/decks";
+import { type NrdbDeck } from "../utils/decks.svelte";
 
 document.addEventListener("turbolinks:load", function () {
   const anchor = document.getElementById("registration_anchor");

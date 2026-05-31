@@ -14,10 +14,10 @@
     loadPrintings,
     Deck,
     convertNrdbDeck,
-  } from "../utils/decks";
+    getPrintings,
+  } from "../utils/decks.svelte";
   import { loadDecks, savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
-  import type { Printing } from "../lib/api_types";
 
   let {
     tournamentId,
@@ -36,7 +36,6 @@
   let player = $state<Player | null>(null);
   let decks = $state<Deck[] | null>(null);
   let tournamentDecks = $state<Deck[]>();
-  let printings = $state(new Map<string, Printing>());
   let selectedCorpDeck = $state<Deck | null>(null);
   let selectedRunnerDeck = $state<Deck | null>(null);
   let editMode = $state(new URLSearchParams(document.location.search).get("edit") === "true");
@@ -50,10 +49,8 @@
     // Load printings and hydrate decks
     const loadedDecks: Deck[] = [];
     if (nrdbDecks.length > 0) {
-      const printingsResponse = await loadPrintings();
-      if (printingsResponse) {
-        printingsResponse.data.forEach((p) => printings.set(p.id, p));
-
+      const printings = await getPrintings();
+      if (printings.size > 0) {
         nrdbDecks.forEach((nrdbDeck: NrdbDeck) => {
           const deck = convertNrdbDeck(nrdbDeck, printings);
           deck.cards.sort((a, b) => {

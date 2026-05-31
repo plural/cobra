@@ -2,6 +2,19 @@ import type { Printing, PrintingsResponse } from "../lib/api_types";
 import { quoteCsvValue } from "./files";
 import { globalMessages } from "./GlobalMessageState.svelte";
 
+const printings = $state(new Map<string, Printing>());
+
+export async function getPrintings() {
+  if (printings.size === 0) {
+    const response = await loadPrintings();
+    if (response) {
+      response.data.forEach((p) => printings.set(p.id, p));
+    }
+  }
+
+  return printings;
+}
+
 export interface NrdbCard {
   id: string;
   count: number;
