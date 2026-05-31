@@ -7,20 +7,20 @@ RSpec.describe 'Public API Stages' do
   let!(:stage) { create(:stage, tournament: tournament, number: 1, format: :swiss) }
 
   describe 'GET /api/v1/public/stages/:id' do
-    it 'returns a successful 200 response with stage details (a match)' do
-      expect_json_api_match("/api/v1/public/stages/#{stage.id}", stage.id, number: 1, format: 'swiss')
+    it 'matches existing record' do
+      matches_record("/api/v1/public/stages/#{stage.id}", stage.id, number: 1, format: 'swiss')
     end
 
-    it 'ensures relationship links are present in the JSON response' do
-      expect_json_api_relationships(
+    it 'has expected relationships' do
+      has_relationships(
         "/api/v1/public/stages/#{stage.id}",
         tournament: '/api/v1/public/tournaments/',
         rounds: '/api/v1/public/rounds'
       )
     end
 
-    it 'returns a 404 not found error response (a missing record)' do
-      expect_json_api_missing('/api/v1/public/stages/999999')
+    it 'does not match missing record' do
+      missing_record('/api/v1/public/stages/999999')
     end
   end
 end
