@@ -6,7 +6,7 @@ const printings = $state(new Map<string, Printing>());
 
 export async function getPrintings() {
   if (printings.size === 0) {
-    const response = await loadPrintings();
+    const response = await loadPrintings("page[size]=10000");
     if (response) {
       response.data.forEach((p) => printings.set(p.id, p));
     }
@@ -58,8 +58,8 @@ export class DeckDetails {
   max_influence: number | null = null;
   nrdb_uuid: string | null = null;
   identity_nrdb_card_id: string | null = null;
-  created_at: string = "";
-  updated_at: string = "";
+  created_at = "";
+  updated_at = "";
   identity_nrdb_printing_id: string | null = null;
   user_id: number | null = null;
   faction_id: string | null = null;
@@ -196,17 +196,20 @@ export function deckCsv(decks: Deck[]) {
   return `\ufeff${headerCsv}\n\n${cardCsv}`;
 }
 
-export async function loadPrintings() {
-  let data: PrintingsResponse | null = null;
+export async function loadPrintings(query?: string) {
+  let queryString = "fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost";
+  if (queryString) {
+    queryString += `&${query}`;
+  }
 
   try {
     const response = await fetch(
-      "https://api.netrunnerdb.com/api/v3/public/printings?page[size]=10000&fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost",
-      { method: "GET" },
+      `https://api.netrunnerdb.com/api/v3/public/printings?${queryString}`,
+      { method: "GET", },
     );
 
     if (response.status === 200) {
-      data = (await response.json()) as PrintingsResponse;
+      return (await response.json()) as PrintingsResponse;
     } else {
       globalMessages.errors.push(
         `Failed to load printings: ${response.statusText}`,
@@ -217,5 +220,5 @@ export async function loadPrintings() {
     globalMessages.errors.push(`Failed to load printings: ${err.message}`);
   }
 
-  return data;
+  return null;
 }

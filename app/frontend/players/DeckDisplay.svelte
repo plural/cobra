@@ -1,11 +1,19 @@
 <script lang="ts">
   import Identity from "../identities/Identity.svelte";
-  import { deckCsv, type Card, type Deck } from "../utils/decks.svelte";
+  import { deckCsv, type Card, type Deck, loadPrintings } from "../utils/decks.svelte";
   import { downloadBlob } from "../utils/files";
   import { getCardTypeImage } from "../utils/images";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
 
-  let { deck, isCorp }: { deck: Deck | null; isCorp: boolean } = $props();
+  let {
+    deck = $bindable(),
+    isCorp,
+    editMode,
+  }: {
+    deck?: Deck;
+    isCorp: boolean;
+    editMode: boolean;
+  } = $props();
 
   let cardTotal = $derived.by(() => {
     if (!deck) {
@@ -53,6 +61,81 @@
       `${deck.details.player_name} - ${deck.details.name}.csv`,
       new Blob([deckCsv([deck])], { type: "text/csv" }),
     );
+  }
+
+  async function cardNameChanged(event: { currentTarget: HTMLInputElement }, card: Card) {
+    const currentTarget = event.currentTarget;
+
+    if (!deck || !currentTarget.value) {
+      setInputValidity(currentTarget, false);
+      return;
+    }
+
+    const printings = await loadPrintings(`filter[side_id]=${deck.details.side_id}&filter[search]=${currentTarget.value}&filter[distinct_cards]=true&page[size]=1`);
+    if (!printings || (printings.meta?.stats?.total?.count && printings.meta.stats.total.count !== 1)) {
+      setInputValidity(currentTarget, false);
+      return;
+    }
+
+    const i = deck.cards.indexOf(card);
+    if (i === -1) {
+      setInputValidity(currentTarget, false);
+      return;
+    }
+
+    deck.cards.splice(i, 1, {
+      id: card.id,
+      deck_id: card.deck_id,
+      title: printings.data[0].attributes.title,
+      quantity: card.quantity,
+      influence: printings.data[0].attributes.influence_cost * card.quantity,
+      nrdb_card_id: printings.data[0].attributes.card_id,
+      created_at: "",
+      updated_at: "",
+      nrdb_printing_id: card.id,
+      card_type_id: printings.data[0].attributes.card_type_id,
+      faction_id: printings.data[0].attributes.faction_id,
+      influence_cost: printings.data[0].attributes.influence_cost,
+    });
+    setInputValidity(currentTarget, true);
+  }
+
+  // function addCard(event: { currentTarget: HTMLInputElement }) {
+  //   console.log(JSON.stringify(event));
+
+  //   let valid = false;
+  //   if (event.currentTarget.value) {
+  //     const newCardPrinting = printings.values().find((p) => p.attributes.title.includes(event.currentTarget.value));
+  //     if (newCardPrinting) {
+  //       deck?.cards.push({
+  //         id: "",
+  //         deck_id: deck.details.id,
+  //         title: newCardPrinting.attributes.title,
+  //         quantity: 1,
+  //         influence: newCardPrinting.attributes.influence_cost,
+  //         nrdb_card_id: newCardPrinting.attributes.card_id,
+  //         created_at: "",
+  //         updated_at: "",
+  //         nrdb_printing_id: newCardPrinting.id,
+  //         card_type_id: newCardPrinting.attributes.card_type_id,
+  //         faction_id: newCardPrinting.attributes.faction_id,
+  //         influence_cost: newCardPrinting.attributes.influence_cost,
+  //       });
+  //       valid = true;
+  //     }
+  //   }
+
+  //   setInputValidity(event.currentTarget, valid);
+  // }
+
+  function setInputValidity(input: HTMLInputElement, valid: boolean) {
+    input.classList.remove("is-valid", "is-invalid");
+    
+    if (valid) {
+      input.classList.add("is-valid");
+    } else {
+      input.classList.add("is-invalid");
+    }
   }
 </script>
 
@@ -137,12 +220,24 @@
       <tr>
         <td class="text-center align-middle">{deck.details.min_deck_size}</td>
         <td>
-          <Identity
-            identity={{
-              name: deck.details.identity_title ?? "",
-              faction: adjustFactionId(deck.details.faction_id ?? ""),
-            }}
-          />
+          {#if editMode}
+            <!-- TODO: Autocomplete -->
+            <input
+              id="name"
+              type="text"
+              placeholder="Enter identity name"
+              class="form-control"
+              value={deck.details.identity_title}
+              onchange={() => { /* TODO: Function to update deck.details */ }}
+            />
+          {:else}
+            <Identity
+              identity={{
+                name: deck.details.identity_title ?? "",
+                faction: adjustFactionId(deck.details.faction_id ?? ""),
+              }}
+            />
+          {/if}
         </td>
         <td class="text-center align-middle">{deck.details.max_influence}</td>
       </tr>
@@ -164,16 +259,27 @@
         <tr>
           <td class="text-center align-middle">{card.quantity}</td>
           <td>
-            <img
-              src={getCardTypeImage(card.card_type_id)}
-              alt={card.card_type_id}
-            />
-            <i
-              class="fa icon icon-{adjustFactionId(
-                card.faction_id,
-              )} {adjustFactionId(card.faction_id)}"
-            ></i>
-            {card.title}
+            {#if editMode}
+              <input
+                id="name"
+                type="text"
+                placeholder="Enter card name"
+                class="form-control"
+                value={card.title}
+                onchange={async (e) => { await cardNameChanged(e, card); }}
+              />
+            {:else}
+              <img
+                src={getCardTypeImage(card.card_type_id)}
+                alt={card.card_type_id}
+              />
+              <i
+                class="fa icon icon-{adjustFactionId(
+                  card.faction_id,
+                )} {adjustFactionId(card.faction_id)}"
+              ></i>
+              {card.title}
+            {/if}
           </td>
           <td class="text-center align-middle">
             {#if card.influence_cost && card.faction_id != deck.details.faction_id}
@@ -182,6 +288,21 @@
           </td>
         </tr>
       {/each}
+      {#if editMode}
+        <tr>
+          <td></td>
+          <td>
+            <input
+              id="name"
+              type="text"
+              placeholder="Enter card name"
+              class="form-control"
+              />
+              <!-- onchange={(e) => { addCard(e); }} -->
+          </td>
+          <td></td>
+        </tr>
+      {/if}
 
       <!-- Totals -->
       <tr>

@@ -11,7 +11,6 @@
   import ProgressButton from "../widgets/ProgressButton.svelte";
   import {
     type NrdbDeck,
-    loadPrintings,
     Deck,
     convertNrdbDeck,
     getPrintings,
@@ -36,9 +35,10 @@
   let player = $state<Player | null>(null);
   let decks = $state<Deck[] | null>(null);
   let tournamentDecks = $state<Deck[]>();
-  let selectedCorpDeck = $state<Deck | null>(null);
-  let selectedRunnerDeck = $state<Deck | null>(null);
+  let selectedCorpDeck = $state(new Deck());
+  let selectedRunnerDeck = $state(new Deck());
   let editMode = $state(new URLSearchParams(document.location.search).get("edit") === "true");
+  let editing = $state(false);
 
   onMount(async () => {
     [tournament, player] = await Promise.all([
@@ -78,6 +78,15 @@
     decks = loadedDecks;
   });
 
+  function toggleEditing() {
+    // TODO: Update edit mode for DeckDisplay components
+    editing = !editing;
+
+    // TODO: Do the following:
+    // - Create edit copies of selected decks
+    // - Reset edit copies if edit mode is cancelled
+  }
+
   async function save() {
     if (player) {
       player.corp_deck = selectedCorpDeck ?? undefined;
@@ -87,16 +96,16 @@
     return true;
   }
 
-  function selectDeck(deck: Deck | null, isCorp: boolean) {
+  function selectDeck(deck: Deck, isCorp: boolean) {
     if (isCorp) {
       selectedCorpDeck =
         deck && deck.details.nrdb_uuid === selectedCorpDeck?.details.nrdb_uuid
-          ? null
+          ? new Deck()
           : deck;
     } else {
       selectedRunnerDeck =
         deck && deck.details.nrdb_uuid === selectedRunnerDeck?.details.nrdb_uuid
-          ? null
+          ? new Deck()
           : deck;
     }
   }
@@ -137,7 +146,7 @@
               title="Deselect"
               class="btn btn-link p-0"
               onclick={() => {
-                selectDeck(null, isCorp);
+                selectDeck(new Deck(), isCorp);
               }}
             >
               <FontAwesomeIcon icon="close" />
@@ -233,16 +242,38 @@
         {/if}
       </div>
 
-      <div class="text-right dontprint">
-        <!-- Create/Save -->
-        <ProgressButton
-          css="btn btn-success"
-          inProgressText="Saving"
-          completeText="Saved"
-          onclick={save}
-        >
-          <FontAwesomeIcon icon="floppy-o" /> Save
-        </ProgressButton>
+      <div class="dontprint mt-sm-2">
+        {#if editMode}
+          <div class="float-left">
+            {#if editing}
+              <button type="button" class="btn btn-link" onclick={toggleEditing}>
+                <FontAwesomeIcon icon="undo" />
+                Cancel edits
+              </button>
+            {:else}
+              <a href="/beta/tournaments/{tournamentId}/registration" class="btn btn-link">
+                <FontAwesomeIcon icon="edit" />
+                Choose decks from your NetrunnerDB account
+              </a>
+              <button type="button" class="btn btn-link" onclick={toggleEditing}>
+                <FontAwesomeIcon icon="edit" />
+                Edit decks in place
+              </button>
+            {/if}
+          </div>
+        {/if}
+
+        <div class="float-right">
+          <!-- Create/Save -->
+          <ProgressButton
+            css="btn btn-success"
+            inProgressText="Saving"
+            completeText="Saved"
+            onclick={save}
+          >
+            <FontAwesomeIcon icon="floppy-o" /> Save
+          </ProgressButton>
+        </div>
       </div>
     </div>
   </div>
@@ -286,11 +317,11 @@
   {#if selectedCorpDeck && selectedRunnerDeck}
     <div class="row">
       <div class="col-md-6">
-        <DeckDisplay deck={selectedCorpDeck} isCorp={true} />
+        <DeckDisplay bind:deck={selectedCorpDeck} isCorp={true} editMode={editing} />
       </div>
 
       <div class="col-md-6">
-        <DeckDisplay deck={selectedRunnerDeck} isCorp={false} />
+        <DeckDisplay bind:deck={selectedRunnerDeck} isCorp={false} editMode={editing} />
       </div>
     </div>
   {:else}
