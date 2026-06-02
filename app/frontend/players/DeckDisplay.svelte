@@ -63,16 +63,49 @@
     );
   }
 
-  async function cardNameChanged(event: { currentTarget: HTMLInputElement }, card: Card) {
-    const currentTarget = event.currentTarget;
+  async function searchCard(name: string, cardType?: string) {
+    if (!deck || !name) {
+      return null;
+    }
+    
+    let queryString = `filter[side_id]=${deck.details.side_id}&filter[search]=${name}&filter[distinct_cards]=true&page[size]=1`;
+    if (cardType) {
+      queryString += `filter[card_type_id]=${cardType}`;
+    }
 
-    if (!deck || !currentTarget.value) {
+    const printings = await loadPrintings(queryString);
+    return !printings || (printings.meta?.stats?.total?.count && printings.meta.stats.total.count !== 1)
+      ? null
+      : printings;
+  }
+
+  async function identityNameChanged(event: { currentTarget: HTMLInputElement }) {
+    const currentTarget = event.currentTarget;
+    if (!deck) {
+      setInputValidity(currentTarget, false);
+      return;
+    }
+    
+    const printings = await searchCard(currentTarget.value, `${deck.details.side_id}_identity`);
+    if (!printings) {
       setInputValidity(currentTarget, false);
       return;
     }
 
-    const printings = await loadPrintings(`filter[side_id]=${deck.details.side_id}&filter[search]=${currentTarget.value}&filter[distinct_cards]=true&page[size]=1`);
-    if (!printings || (printings.meta?.stats?.total?.count && printings.meta.stats.total.count !== 1)) {
+    deck.details.identity_nrdb_printing_id = printings.data[0].id;
+    deck.details.identity_nrdb_card_id = printings.data[0].attributes.card_id;
+    deck.details.identity_title = printings.data[0].attributes.title;
+    deck.details.faction_id = printings.data[0].attributes.faction_id;
+    deck.details.min_deck_size = printings.data[0].attributes.minimum_deck_size;
+    deck.details.max_influence = printings.data[0].attributes.influence_limit;
+    setInputValidity(currentTarget, true);
+  }
+
+  async function cardNameChanged(event: { currentTarget: HTMLInputElement }, card: Card) {
+    const currentTarget = event.currentTarget;
+    const printings = await searchCard(currentTarget.value);
+
+    if (!deck || !printings) {
       setInputValidity(currentTarget, false);
       return;
     }
@@ -100,33 +133,46 @@
     setInputValidity(currentTarget, true);
   }
 
-  // function addCard(event: { currentTarget: HTMLInputElement }) {
-  //   console.log(JSON.stringify(event));
+  async function addCard(event: { currentTarget: HTMLInputElement }) {
+    const currentTarget = event.currentTarget;
+    const printings = await searchCard(currentTarget.value);
 
-  //   let valid = false;
-  //   if (event.currentTarget.value) {
-  //     const newCardPrinting = printings.values().find((p) => p.attributes.title.includes(event.currentTarget.value));
-  //     if (newCardPrinting) {
-  //       deck?.cards.push({
-  //         id: "",
-  //         deck_id: deck.details.id,
-  //         title: newCardPrinting.attributes.title,
-  //         quantity: 1,
-  //         influence: newCardPrinting.attributes.influence_cost,
-  //         nrdb_card_id: newCardPrinting.attributes.card_id,
-  //         created_at: "",
-  //         updated_at: "",
-  //         nrdb_printing_id: newCardPrinting.id,
-  //         card_type_id: newCardPrinting.attributes.card_type_id,
-  //         faction_id: newCardPrinting.attributes.faction_id,
-  //         influence_cost: newCardPrinting.attributes.influence_cost,
-  //       });
-  //       valid = true;
-  //     }
-  //   }
+    if (!deck || !printings) {
+      setInputValidity(currentTarget, false);
+      return;
+    }
 
-  //   setInputValidity(event.currentTarget, valid);
-  // }
+    deck.cards.push({
+      id: "",
+      deck_id: deck.details.id,
+      title: printings.data[0].attributes.title,
+      quantity: 1,
+      influence: printings.data[0].attributes.influence_cost,
+      nrdb_card_id: printings.data[0].attributes.card_id,
+      created_at: "",
+      updated_at: "",
+      nrdb_printing_id: printings.data[0].id,
+      card_type_id: printings.data[0].attributes.card_type_id,
+      faction_id: printings.data[0].attributes.faction_id,
+      influence_cost: printings.data[0].attributes.influence_cost,
+    });
+    currentTarget.classList.remove("is-valid", "is-invalid");
+    currentTarget.value = "";
+  }
+
+  function changeQuantity(card: Card, delta: number) {
+    if (!deck) {
+      return;
+    }
+
+    card.quantity += delta;
+    if (card.quantity === 0) {
+      const i = deck.cards.indexOf(card);
+      if (i !== -1) {
+        deck.cards.splice(i, 1);
+      }
+    }
+  }
 
   function setInputValidity(input: HTMLInputElement, valid: boolean) {
     input.classList.remove("is-valid", "is-invalid");
@@ -221,14 +267,13 @@
         <td class="text-center align-middle">{deck.details.min_deck_size}</td>
         <td>
           {#if editMode}
-            <!-- TODO: Autocomplete -->
             <input
               id="name"
               type="text"
               placeholder="Enter identity name"
               class="form-control"
               value={deck.details.identity_title}
-              onchange={() => { /* TODO: Function to update deck.details */ }}
+              onchange={async (e) => { await identityNameChanged(e); }}
             />
           {:else}
             <Identity
@@ -257,7 +302,19 @@
       <!-- Cards -->
       {#each deck.cards as card (card.id)}
         <tr>
-          <td class="text-center align-middle">{card.quantity}</td>
+          <td class="text-center align-middle">
+            {#if editMode}
+              <button type="button" title="Remove" class="btn btn-link p-0" onclick={() => { changeQuantity(card, -1); }}>
+                <FontAwesomeIcon icon="minus" />
+              </button>
+            {/if}
+            {card.quantity}
+            {#if editMode}
+              <button type="button" title="Add" class="btn btn-link p-0" onclick={() => { changeQuantity(card, 1); }}>
+                <FontAwesomeIcon icon="plus" />
+              </button>
+            {/if}
+          </td>
           <td>
             {#if editMode}
               <input
@@ -297,8 +354,8 @@
               type="text"
               placeholder="Enter card name"
               class="form-control"
-              />
-              <!-- onchange={(e) => { addCard(e); }} -->
+              onchange={async (e) => { await addCard(e); }}
+            />
           </td>
           <td></td>
         </tr>
