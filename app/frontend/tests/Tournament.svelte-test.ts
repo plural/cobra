@@ -9,10 +9,7 @@ import {
 import Tournament from "../tournaments/Tournament.svelte";
 import { MockIdentityNames, MockTournament } from "./TournamentTestData";
 import { MockPlayerBob } from "./RoundsTestData";
-import {
-  loadQRCode,
-  loadTournament,
-} from "../tournaments/TournamentSettings";
+import { loadQRCode, loadTournament } from "../tournaments/TournamentSettings";
 import { loadIdentityNames } from "../identities/Identity";
 import userEvent from "@testing-library/user-event";
 import { loadPlayerByUserId, Player, savePlayer } from "../players/PlayersData";

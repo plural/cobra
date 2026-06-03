@@ -1,11 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
-  import {
-    loadQRCode,
-    loadTournament,
-    Tournament,
-  } from "./TournamentSettings";
+  import { loadQRCode, loadTournament, Tournament } from "./TournamentSettings";
   import { loadPlayerByUserId, Player } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import RegistrationCard from "../players/RegistrationCard.svelte";

@@ -39,9 +39,11 @@ export async function loadPlayer(tournamentId: number, playerId: number) {
       },
     );
 
-    return  (await response.json()) as Player;
+    return (await response.json()) as Player;
   } catch {
-    globalMessages.errors.push(`Error loading player data for player ${playerId}`);
+    globalMessages.errors.push(
+      `Error loading player data for player ${playerId}`,
+    );
     return null;
   }
 }
