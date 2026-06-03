@@ -197,7 +197,8 @@ export function deckCsv(decks: Deck[]) {
 }
 
 export async function loadPrintings(query?: string) {
-  let queryString = "fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost";
+  let queryString =
+    "fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost";
   if (queryString) {
     queryString += `&${query}`;
   }
@@ -205,7 +206,7 @@ export async function loadPrintings(query?: string) {
   try {
     const response = await fetch(
       `https://api.netrunnerdb.com/api/v3/public/printings?${queryString}`,
-      { method: "GET", },
+      { method: "GET" },
     );
 
     if (response.status === 200) {

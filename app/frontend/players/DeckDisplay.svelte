@@ -1,6 +1,11 @@
 <script lang="ts">
   import Identity from "../identities/Identity.svelte";
-  import { deckCsv, type Card, type Deck, loadPrintings } from "../utils/decks.svelte";
+  import {
+    deckCsv,
+    type Card,
+    type Deck,
+    loadPrintings,
+  } from "../utils/decks.svelte";
   import { downloadBlob } from "../utils/files";
   import { getCardTypeImage } from "../utils/images";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
@@ -67,26 +72,33 @@
     if (!deck || !name) {
       return null;
     }
-    
+
     let queryString = `filter[side_id]=${deck.details.side_id}&filter[search]=${name}&filter[distinct_cards]=true&page[size]=1`;
     if (cardType) {
       queryString += `filter[card_type_id]=${cardType}`;
     }
 
     const printings = await loadPrintings(queryString);
-    return !printings || (printings.meta?.stats?.total?.count && printings.meta.stats.total.count !== 1)
+    return !printings ||
+      (printings.meta?.stats?.total?.count &&
+        printings.meta.stats.total.count !== 1)
       ? null
       : printings;
   }
 
-  async function identityNameChanged(event: { currentTarget: HTMLInputElement }) {
+  async function identityNameChanged(event: {
+    currentTarget: HTMLInputElement;
+  }) {
     const currentTarget = event.currentTarget;
     if (!deck) {
       setInputValidity(currentTarget, false);
       return;
     }
-    
-    const printings = await searchCard(currentTarget.value, `${deck.details.side_id}_identity`);
+
+    const printings = await searchCard(
+      currentTarget.value,
+      `${deck.details.side_id}_identity`,
+    );
     if (!printings) {
       setInputValidity(currentTarget, false);
       return;
@@ -101,7 +113,10 @@
     setInputValidity(currentTarget, true);
   }
 
-  async function cardNameChanged(event: { currentTarget: HTMLInputElement }, card: Card) {
+  async function cardNameChanged(
+    event: { currentTarget: HTMLInputElement },
+    card: Card,
+  ) {
     const currentTarget = event.currentTarget;
     const printings = await searchCard(currentTarget.value);
 
@@ -176,7 +191,7 @@
 
   function setInputValidity(input: HTMLInputElement, valid: boolean) {
     input.classList.remove("is-valid", "is-invalid");
-    
+
     if (valid) {
       input.classList.add("is-valid");
     } else {
@@ -273,7 +288,9 @@
               placeholder="Enter identity name"
               class="form-control"
               value={deck.details.identity_title}
-              onchange={async (e) => { await identityNameChanged(e); }}
+              onchange={async (e) => {
+                await identityNameChanged(e);
+              }}
             />
           {:else}
             <Identity
@@ -304,13 +321,27 @@
         <tr>
           <td class="text-center align-middle">
             {#if editMode}
-              <button type="button" title="Remove" class="btn btn-link p-0" onclick={() => { changeQuantity(card, -1); }}>
+              <button
+                type="button"
+                title="Remove"
+                class="btn btn-link p-0"
+                onclick={() => {
+                  changeQuantity(card, -1);
+                }}
+              >
                 <FontAwesomeIcon icon="minus" />
               </button>
             {/if}
             {card.quantity}
             {#if editMode}
-              <button type="button" title="Add" class="btn btn-link p-0" onclick={() => { changeQuantity(card, 1); }}>
+              <button
+                type="button"
+                title="Add"
+                class="btn btn-link p-0"
+                onclick={() => {
+                  changeQuantity(card, 1);
+                }}
+              >
                 <FontAwesomeIcon icon="plus" />
               </button>
             {/if}
@@ -323,7 +354,9 @@
                 placeholder="Enter card name"
                 class="form-control"
                 value={card.title}
-                onchange={async (e) => { await cardNameChanged(e, card); }}
+                onchange={async (e) => {
+                  await cardNameChanged(e, card);
+                }}
               />
             {:else}
               <img
@@ -354,7 +387,9 @@
               type="text"
               placeholder="Enter card name"
               class="form-control"
-              onchange={async (e) => { await addCard(e); }}
+              onchange={async (e) => {
+                await addCard(e);
+              }}
             />
           </td>
           <td></td>

@@ -15,7 +15,10 @@
     convertNrdbDeck,
     getPrintings,
   } from "../utils/decks.svelte";
-  import { loadDecks as loadDecksRequest, savePlayer } from "../players/PlayersData";
+  import {
+    loadDecks as loadDecksRequest,
+    savePlayer,
+  } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
 
   let {
@@ -39,7 +42,9 @@
   let corpDeck = $state(new Deck());
   let originalRunnerDeck = $state(new Deck());
   let runnerDeck = $state(new Deck());
-  let editMode = $state(new URLSearchParams(document.location.search).get("edit") === "true");
+  let editMode = $state(
+    new URLSearchParams(document.location.search).get("edit") === "true",
+  );
   let editing = $state(false);
 
   onMount(async () => {
@@ -72,7 +77,7 @@
       }
     }
 
-    loadDecks();
+    await loadDecks();
 
     decks = loadedDecks;
   });
@@ -83,8 +88,10 @@
     }
 
     tournamentDecks = await loadDecksRequest(tournamentId, player.id);
-    originalCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? new Deck();
-    originalRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? new Deck();
+    originalCorpDeck =
+      tournamentDecks.find((d) => d.details.side_id === "corp") ?? new Deck();
+    originalRunnerDeck =
+      tournamentDecks.find((d) => d.details.side_id === "runner") ?? new Deck();
     resetEditDecks();
   }
 
@@ -104,12 +111,18 @@
     }
 
     player.corp_deck = corpDeck;
-    player.corp_id = { name: corpDeck.details.identity_title ?? "", faction: corpDeck.details.faction_id };
+    player.corp_id = {
+      name: corpDeck.details.identity_title ?? "",
+      faction: corpDeck.details.faction_id,
+    };
     player.runner_deck = runnerDeck;
-    player.runner_id = { name: runnerDeck.details.identity_title ?? "", faction: runnerDeck.details.faction_id };
+    player.runner_id = {
+      name: runnerDeck.details.identity_title ?? "",
+      faction: runnerDeck.details.faction_id,
+    };
     player = await savePlayer(tournamentId, player);
-    
-    loadDecks();
+
+    await loadDecks();
 
     return true;
   }
@@ -117,12 +130,12 @@
   function selectDeck(deck: Deck, isCorp: boolean) {
     if (isCorp) {
       originalCorpDeck =
-        deck && deck.details.nrdb_uuid === originalCorpDeck.details.nrdb_uuid
+        deck.details.nrdb_uuid === originalCorpDeck.details.nrdb_uuid
           ? new Deck()
           : deck;
     } else {
       originalRunnerDeck =
-        deck && deck.details.nrdb_uuid === originalRunnerDeck.details.nrdb_uuid
+        deck.details.nrdb_uuid === originalRunnerDeck.details.nrdb_uuid
           ? new Deck()
           : deck;
     }
@@ -182,7 +195,9 @@
             class="selected-deck-identity"
             style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${isCorp ? THE_SYNDICATE_NRDB_CODE : THE_CATALYST_NRDB_CODE}.jpg)`}
           ></div>
-          <p class="mb-1">{isCorp ? "No corp selected" : "No runner selected"}</p>
+          <p class="mb-1">
+            {isCorp ? "No corp selected" : "No runner selected"}
+          </p>
         {/if}
       </li>
     </ul>
@@ -196,17 +211,26 @@
 {/snippet}
 
 {#if player && player.id !== 0 && tournament}
+  <!-- General registration information -->
   <div class="card mb-3">
     <div class="card-header">
       <div class="d-flex justify-content-between">
         <h5 class="mb-0">My Registration Information</h5>
         <span class="float-right dontprint">
-          <button type="button" class="btn btn-link p-0 mr-3" title="Print" onclick={() => { window.print(); }}>
+          <button
+            type="button"
+            class="btn btn-link p-0 mr-3"
+            title="Print"
+            onclick={() => {
+              window.print();
+            }}
+          >
             <FontAwesomeIcon icon="print" />
           </button>
-          <a href={editMode
-            ? `/beta/tournaments/${tournamentId}/rounds`
-            : `/beta/tournaments/${tournamentId}`}
+          <a
+            href={editMode
+              ? `/beta/tournaments/${tournamentId}/rounds`
+              : `/beta/tournaments/${tournamentId}`}
             class="btn btn-link p-0"
             title="Cancel"
           >
@@ -264,16 +288,27 @@
         {#if editMode}
           <div class="float-left">
             {#if editing}
-              <button type="button" class="btn btn-link" onclick={toggleEditing}>
+              <button
+                type="button"
+                class="btn btn-link"
+                onclick={toggleEditing}
+              >
                 <FontAwesomeIcon icon="undo" />
                 Cancel edits
               </button>
             {:else}
-              <a href="/beta/tournaments/{tournamentId}/registration" class="btn btn-link">
+              <a
+                href="/beta/tournaments/{tournamentId}/registration"
+                class="btn btn-link"
+              >
                 <FontAwesomeIcon icon="edit" />
                 Choose decks from your NetrunnerDB account
               </a>
-              <button type="button" class="btn btn-link" onclick={toggleEditing}>
+              <button
+                type="button"
+                class="btn btn-link"
+                onclick={toggleEditing}
+              >
                 <FontAwesomeIcon icon="edit" />
                 Edit decks in place
               </button>
@@ -301,6 +336,7 @@
     Please ensure your decks are legal.
   </div>
 
+  <!-- Deck selection -->
   {#if !editMode}
     <div class="alert alert-secondary dontprint">
       Please select from your decks below. <a
@@ -311,7 +347,6 @@
 
     <div class="row mb-3 justify-content-center dontprint">
       {#if decks !== null}
-        <!-- Corp deck selection -->
         <div class="col-md-6">
           <div class="card">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
@@ -319,7 +354,6 @@
           </div>
         </div>
 
-        <!-- Runner deck selection -->
         <div class="col-md-6">
           <div class="card">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
@@ -332,21 +366,16 @@
     </div>
   {/if}
 
-  {#if corpDeck && runnerDeck}
-    <div class="row">
-      <div class="col-md-6">
-        <DeckDisplay bind:deck={corpDeck} isCorp={true} editMode={editing} />
-      </div>
+  <!-- Deck display -->
+  <div class="row">
+    <div class="col-md-6">
+      <DeckDisplay bind:deck={corpDeck} isCorp={true} editMode={editing} />
+    </div>
 
-      <div class="col-md-6">
-        <DeckDisplay bind:deck={runnerDeck} isCorp={false} editMode={editing} />
-      </div>
+    <div class="col-md-6">
+      <DeckDisplay bind:deck={runnerDeck} isCorp={false} editMode={editing} />
     </div>
-  {:else}
-    <div class="d-flex align-items-center m-2">
-      <div class="spinner-border m-auto"></div>
-    </div>
-  {/if}
+  </div>
 {:else}
   <div class="d-flex align-items-center m-2">
     <div class="spinner-border m-auto"></div>

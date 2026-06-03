@@ -146,7 +146,10 @@ export async function reinstatePlayer(tournamentId: number, player: Player) {
   return response.status === 200;
 }
 
-export async function loadDecks(tournamentId: number, playerId: number | null = null) {
+export async function loadDecks(
+  tournamentId: number,
+  playerId: number | null = null,
+) {
   const response = await fetch(
     playerId === null
       ? `/beta/tournaments/${tournamentId}/players/decks`
@@ -169,8 +172,12 @@ function playerRequestObject(player: Player) {
     first_round_bye: player.first_round_bye,
     manual_seed: player.manual_seed,
     fixed_table_number: player.fixed_table_number,
-    corp_deck: player.corp_deck ? deckRequestObject(player.corp_deck) : undefined,
-    runner_deck: player.runner_deck ? deckRequestObject(player.runner_deck) : undefined,
+    corp_deck: player.corp_deck
+      ? deckRequestObject(player.corp_deck)
+      : undefined,
+    runner_deck: player.runner_deck
+      ? deckRequestObject(player.runner_deck)
+      : undefined,
   };
 }
 
@@ -192,13 +199,7 @@ function deckRequestObject(deck: Deck) {
 }
 
 function cardRequestObject(card: Card) {
-  const {
-    id,
-    deck_id,
-    created_at,
-    updated_at,
-    ...newCard
-  } = card;
+  const { id, deck_id, created_at, updated_at, ...newCard } = card;
 
   return newCard;
 }
