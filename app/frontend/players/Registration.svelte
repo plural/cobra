@@ -1,12 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
-  import {
-    loadPlayer,
-    loadTournament,
-    Tournament,
-  } from "../tournaments/TournamentSettings";
-  import { Player } from "./PlayersData";
+  import { loadTournament, Tournament } from "../tournaments/TournamentSettings";
+  import { loadPlayer, Player } from "./PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import ProgressButton from "../widgets/ProgressButton.svelte";
   import {

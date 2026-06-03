@@ -2,12 +2,11 @@
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import {
-    loadPlayerByUserId,
     loadQRCode,
     loadTournament,
     Tournament,
   } from "./TournamentSettings";
-  import { Player } from "../players/PlayersData";
+  import { loadPlayerByUserId, Player } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import RegistrationCard from "../players/RegistrationCard.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";

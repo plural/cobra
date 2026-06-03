@@ -1,6 +1,3 @@
-import { Player } from "../players/PlayersData";
-import { globalMessages } from "../utils/GlobalMessageState.svelte";
-
 export type Errors = Record<string, string[]>;
 
 declare const Routes: {
@@ -156,38 +153,6 @@ export async function loadTournament(
   tournament.id = parseInt(apiTournament.data.id);
 
   return tournament;
-}
-
-export async function loadPlayer(tournamentId: number, playerId: number) {
-  try {
-    const response = await fetch(
-      `/beta/tournaments/${tournamentId}/players/${playerId}`,
-      {
-        method: "GET",
-      },
-    );
-
-    return  (await response.json()) as Player;
-  } catch {
-    globalMessages.errors.push(`Error loading player data for player ${playerId}`);
-    return null;
-  }
-}
-
-export async function loadPlayerByUserId(tournamentId: number, userId: number) {
-  try {
-    const response = await fetch(
-      `/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,
-      {
-        method: "GET",
-      },
-    );
-
-    return (await response.json()) as Player;
-  } catch {
-    globalMessages.errors.push(`Error loading player data for user ${userId}.`);
-    return null;
-  }
 }
 
 export async function loadNewTournament(): Promise<TournamentSettingsData> {
