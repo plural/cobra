@@ -15,7 +15,7 @@
     convertNrdbDeck,
     getPrintings,
   } from "../utils/decks.svelte";
-  import { loadDecks, savePlayer } from "../players/PlayersData";
+  import { loadDecks as loadDecksRequest, savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
 
   let {
@@ -35,8 +35,10 @@
   let player = $state<Player | null>(null);
   let decks = $state<Deck[] | null>(null);
   let tournamentDecks = $state<Deck[]>();
-  let selectedCorpDeck = $state(new Deck());
-  let selectedRunnerDeck = $state(new Deck());
+  let originalCorpDeck = $state(new Deck());
+  let corpDeck = $state(new Deck());
+  let originalRunnerDeck = $state(new Deck());
+  let runnerDeck = $state(new Deck());
   let editMode = $state(new URLSearchParams(document.location.search).get("edit") === "true");
   let editing = $state(false);
 
@@ -70,44 +72,61 @@
       }
     }
 
-    if (player) {
-      tournamentDecks = await loadDecks(tournamentId, player.id);
-      selectedCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? new Deck();
-      selectedRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? new Deck();
-    }
+    loadDecks();
+
     decks = loadedDecks;
   });
 
-  function toggleEditing() {
-    // TODO: Update edit mode for DeckDisplay components
-    editing = !editing;
+  async function loadDecks() {
+    if (!player) {
+      return;
+    }
 
-    // TODO: Do the following:
-    // - Create edit copies of selected decks
-    // - Reset edit copies if edit mode is cancelled
+    tournamentDecks = await loadDecksRequest(tournamentId, player.id);
+    originalCorpDeck = tournamentDecks.find(((d) => d.details.side_id === "corp")) ?? new Deck();
+    originalRunnerDeck = tournamentDecks.find(((d) => d.details.side_id === "runner")) ?? new Deck();
+    resetEditDecks();
+  }
+
+  function toggleEditing() {
+    editing = !editing;
+    resetEditDecks();
+  }
+
+  function resetEditDecks() {
+    corpDeck = $state.snapshot(originalCorpDeck);
+    runnerDeck = $state.snapshot(originalRunnerDeck);
   }
 
   async function save() {
-    if (player) {
-      player.corp_deck = selectedCorpDeck ?? undefined;
-      player.runner_deck = selectedRunnerDeck ?? undefined;
-      player = await savePlayer(tournamentId, player);
+    if (!player) {
+      return true;
     }
+
+    player.corp_deck = corpDeck;
+    player.corp_id = { name: corpDeck.details.identity_title ?? "", faction: corpDeck.details.faction_id };
+    player.runner_deck = runnerDeck;
+    player.runner_id = { name: runnerDeck.details.identity_title ?? "", faction: runnerDeck.details.faction_id };
+    player = await savePlayer(tournamentId, player);
+    
+    loadDecks();
+
     return true;
   }
 
   function selectDeck(deck: Deck, isCorp: boolean) {
     if (isCorp) {
-      selectedCorpDeck =
-        deck && deck.details.nrdb_uuid === selectedCorpDeck?.details.nrdb_uuid
+      originalCorpDeck =
+        deck && deck.details.nrdb_uuid === originalCorpDeck.details.nrdb_uuid
           ? new Deck()
           : deck;
     } else {
-      selectedRunnerDeck =
-        deck && deck.details.nrdb_uuid === selectedRunnerDeck?.details.nrdb_uuid
+      originalRunnerDeck =
+        deck && deck.details.nrdb_uuid === originalRunnerDeck.details.nrdb_uuid
           ? new Deck()
           : deck;
     }
+    resetEditDecks();
   }
 </script>
 
@@ -117,8 +136,8 @@
   <button
     class="list-group-item list-group-item-action {deck.details.nrdb_uuid ===
     (isCorp
-      ? selectedCorpDeck?.details.nrdb_uuid
-      : selectedRunnerDeck?.details.nrdb_uuid)
+      ? originalCorpDeck.details.nrdb_uuid
+      : originalRunnerDeck.details.nrdb_uuid)
       ? 'active'
       : ''}"
     onclick={() => {
@@ -139,7 +158,6 @@
     <ul class="list-group list-group-flush" style="border-bottom: 0;">
       <li class="list-group-item selected-deck">
         <div class="selected-deck-buttons">
-          <!-- TODO: Undo -->
           {#if selectedDeck}
             <button
               type="button"
@@ -297,7 +315,7 @@
         <div class="col-md-6">
           <div class="card">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render decksList(true, selectedCorpDeck)}
+            {@render decksList(true, corpDeck)}
           </div>
         </div>
 
@@ -305,7 +323,7 @@
         <div class="col-md-6">
           <div class="card">
             <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render decksList(false, selectedRunnerDeck)}
+            {@render decksList(false, runnerDeck)}
           </div>
         </div>
       {:else}
@@ -314,14 +332,14 @@
     </div>
   {/if}
 
-  {#if selectedCorpDeck && selectedRunnerDeck}
+  {#if corpDeck && runnerDeck}
     <div class="row">
       <div class="col-md-6">
-        <DeckDisplay bind:deck={selectedCorpDeck} isCorp={true} editMode={editing} />
+        <DeckDisplay bind:deck={corpDeck} isCorp={true} editMode={editing} />
       </div>
 
       <div class="col-md-6">
-        <DeckDisplay bind:deck={selectedRunnerDeck} isCorp={false} editMode={editing} />
+        <DeckDisplay bind:deck={runnerDeck} isCorp={false} editMode={editing} />
       </div>
     </div>
   {:else}
