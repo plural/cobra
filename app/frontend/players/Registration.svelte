@@ -15,7 +15,7 @@
     getPrintings,
   } from "../utils/decks.svelte";
   import {
-    loadDecks as loadDecksRequest,
+    loadDecks,
     savePlayer,
   } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
@@ -52,7 +52,9 @@
       loadPlayer(tournamentId, playerId),
     ]);
 
-    // Load printings and hydrate decks
+    await loadTournamentDecks();
+
+    // Load printings and convert NrdbDecks to Decks
     const loadedDecks: Deck[] = [];
     if (nrdbDecks.length > 0) {
       const printings = await getPrintings();
@@ -75,18 +77,15 @@
         });
       }
     }
-
-    await loadDecks();
-
     decks = loadedDecks;
   });
 
-  async function loadDecks() {
+  async function loadTournamentDecks() {
     if (!player) {
       return;
     }
 
-    tournamentDecks = await loadDecksRequest(tournamentId, player.id);
+    tournamentDecks = await loadDecks(tournamentId, player.id);
     originalCorpDeck =
       tournamentDecks.find((d) => d.details.side_id === "corp") ?? new Deck();
     originalRunnerDeck =
@@ -121,7 +120,7 @@
     };
     player = await savePlayer(tournamentId, player);
 
-    await loadDecks();
+    await loadTournamentDecks();
 
     return true;
   }

@@ -137,14 +137,16 @@ module Beta
     end
 
     def decks
-      authorize @tournament, :update?
+      authorize @tournament, :show?
 
       decks = if params[:id]
-                @tournament.players.find(params[:id]&.to_i).decks.sort_by(&:side_id)
+                @tournament.players.find(params[:id]&.to_i).decks
               else
-                @tournament.players.sort_by(&:name).flat_map { |p| p.decks.sort_by(&:side_id) }
+                @tournament.players.sort_by(&:name).flat_map(&:decks)
               end
-      render json: decks.map { |d| d.as_view(current_user) }
+      decks = decks.select { |d| d.user_id == current_user.id } if current_user != @tournament.user
+
+      render json: decks.sort_by(&:side_id).map { |d| d.as_view(current_user) }
     end
 
     private
