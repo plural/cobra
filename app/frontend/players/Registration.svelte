@@ -55,29 +55,12 @@
     await loadTournamentDecks();
 
     // Load printings and convert NrdbDecks to Decks
-    const loadedDecks: Deck[] = [];
     if (nrdbDecks.length > 0) {
       const printings = await getPrintings();
       if (printings.size > 0) {
-        nrdbDecks.forEach((nrdbDeck: NrdbDeck) => {
-          const deck = convertNrdbDeck(nrdbDeck, printings);
-          deck.cards.sort((a, b) => {
-            if (a.card_type_id != b.card_type_id) {
-              return a.card_type_id < b.card_type_id ? -1 : 1;
-            }
-
-            if (a.title !== b.title) {
-              return a.title < b.title ? -1 : 1;
-            }
-
-            return 0;
-          });
-
-          loadedDecks.push(deck);
-        });
+        decks = nrdbDecks.map((d) => convertNrdbDeck(d, printings));
       }
     }
-    decks = loadedDecks;
   });
 
   async function loadTournamentDecks() {

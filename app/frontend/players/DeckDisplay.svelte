@@ -5,6 +5,7 @@
     type Card,
     type Deck,
     loadPrintings,
+    sortCards,
   } from "../utils/decks.svelte";
   import { downloadBlob } from "../utils/files";
   import { getCardTypeImage } from "../utils/images";
@@ -19,6 +20,12 @@
     isCorp: boolean;
     editMode: boolean;
   } = $props();
+
+  $effect(() => {
+    if (deck) {
+      sortCards(deck.cards);
+    }
+  })
 
   let cardTotal = $derived.by(() => {
     if (!deck) {

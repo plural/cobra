@@ -196,6 +196,20 @@ export function deckCsv(decks: Deck[]) {
   return `\ufeff${headerCsv}\n\n${cardCsv}`;
 }
 
+export function sortCards(cards: Card[]) {
+  cards.sort((a, b) => {
+    if (a.card_type_id != b.card_type_id) {
+      return a.card_type_id < b.card_type_id ? -1 : 1;
+    }
+
+    if (a.title !== b.title) {
+      return a.title < b.title ? -1 : 1;
+    }
+
+    return 0;
+  });
+}
+
 export async function loadPrintings(query?: string) {
   let queryString =
     "fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost";
