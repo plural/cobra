@@ -104,6 +104,7 @@
     player = await savePlayer(tournamentId, player, tournament && player.user_id !== tournament.user_id);
 
     await loadTournamentDecks();
+    toggleEditing();
 
     return true;
   }
