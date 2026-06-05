@@ -8,12 +8,14 @@ document.addEventListener("turbolinks:load", function () {
     let decks: NrdbDeck[] = [];
     if (anchor.getAttribute("data-user-decks")) {
       try {
-        decks = JSON.parse(anchor.getAttribute("data-user-decks") ?? "") as NrdbDeck[];
+        decks = JSON.parse(
+          anchor.getAttribute("data-user-decks") ?? "",
+        ) as NrdbDeck[];
       } catch {
         decks = [];
       }
     }
-    
+
     mount(Registration, {
       target: anchor,
       props: {

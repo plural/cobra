@@ -225,11 +225,11 @@ export async function loadPrintings(query?: string) {
 
     if (response.status === 200) {
       return (await response.json()) as PrintingsResponse;
-    } else {
-      globalMessages.errors.push(
-        `Failed to load printings: ${response.statusText}`,
-      );
     }
+
+    globalMessages.errors.push(
+      `Failed to load printings: ${response.statusText}`,
+    );
   } catch (e) {
     const err = e as Error;
     globalMessages.errors.push(`Failed to load printings: ${err.message}`);

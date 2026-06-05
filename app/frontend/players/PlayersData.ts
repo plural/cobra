@@ -42,7 +42,7 @@ export async function loadPlayer(tournamentId: number, playerId: number) {
     return (await response.json()) as Player;
   } catch {
     globalMessages.errors.push(
-      `Error loading player data for player ${playerId}`,
+      `Error loading player data for player ${playerId}.`,
     );
     return null;
   }
@@ -180,12 +180,9 @@ export async function reinstatePlayer(tournamentId: number, player: Player) {
   return response.status === 200;
 }
 
-export async function loadDecks(
-  tournamentId: number,
-  playerId: number | null = null,
-) {
+export async function loadDecks(tournamentId: number, playerId?: number) {
   const response = await fetch(
-    playerId === null
+    playerId === undefined
       ? `/beta/tournaments/${tournamentId}/players/decks`
       : `/beta/tournaments/${tournamentId}/players/${playerId}/decks`,
     {

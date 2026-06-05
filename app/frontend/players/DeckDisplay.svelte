@@ -25,7 +25,7 @@
     if (deck) {
       sortCards(deck.cards);
     }
-  })
+  });
 
   let cardTotal = $derived.by(() => {
     if (!deck) {
@@ -97,6 +97,7 @@
     currentTarget: HTMLInputElement;
   }) {
     const currentTarget = event.currentTarget;
+
     if (!deck) {
       setInputValidity(currentTarget, false);
       return;
@@ -126,7 +127,6 @@
   ) {
     const currentTarget = event.currentTarget;
     const printings = await searchCard(currentTarget.value);
-
     if (!deck || !printings) {
       setInputValidity(currentTarget, false);
       return;
@@ -158,7 +158,6 @@
   async function addCard(event: { currentTarget: HTMLInputElement }) {
     const currentTarget = event.currentTarget;
     const printings = await searchCard(currentTarget.value);
-
     if (!deck || !printings) {
       setInputValidity(currentTarget, false);
       return;
@@ -198,12 +197,7 @@
 
   function setInputValidity(input: HTMLInputElement, valid: boolean) {
     input.classList.remove("is-valid", "is-invalid");
-
-    if (valid) {
-      input.classList.add("is-valid");
-    } else {
-      input.classList.add("is-invalid");
-    }
+    input.classList.add(valid ? "is-valid" : "is-invalid");
   }
 </script>
 
