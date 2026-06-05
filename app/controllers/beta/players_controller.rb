@@ -179,7 +179,7 @@ module Beta
 
       details.keep_if { |key| Deck.column_names.include? key }
       details[:side_id] = side
-      details[:user_id] = current_user.id
+      details[:user_id] = @player.user_id
       @player.decks.destroy_by(side_id: side)
       deck = @player.decks.create(details)
       deck.cards.create(params[param][:cards])
