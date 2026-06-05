@@ -16,6 +16,14 @@ Rails.application.routes.draw do
         resources :tournaments, only: %i[index show]
         resources :tournament_types, only: %i[index show]
         resources :users, only: %i[show]
+        resources :stages, only: %i[index show]
+        resources :rounds, only: %i[index show]
+        resources :card_sets, only: %i[index show]
+        resources :deckbuilding_restrictions, only: %i[index show]
+        resources :formats, only: %i[index show]
+        resources :identities, only: %i[index show]
+        resources :official_prize_kits, only: %i[index show]
+        resources :players, only: %i[index show]
       end
     end
   end
