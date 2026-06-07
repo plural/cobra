@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   MockPairing1,
   MockPairingsData,
-  MockSelfReport,
+  MockSelfReportPlayer1Sweep,
 } from "./RoundsTestData";
 import {
   getByRole,
@@ -74,11 +74,11 @@ describe("MyTournamentPage", () => {
           false,
         );
         vi.spyOn(MockPairing1, "self_reports", "get").mockReturnValue([
-          MockSelfReport,
+          MockSelfReportPlayer1Sweep,
         ]);
-        vi.spyOn(MockSelfReport, "score1", "get").mockReturnValue(score1);
-        vi.spyOn(MockSelfReport, "score2", "get").mockReturnValue(score2);
-        vi.spyOn(MockSelfReport, "label", "get").mockReturnValue(scoreText);
+        vi.spyOn(MockSelfReportPlayer1Sweep, "score1", "get").mockReturnValue(score1);
+        vi.spyOn(MockSelfReportPlayer1Sweep, "score2", "get").mockReturnValue(score2);
+        vi.spyOn(MockSelfReportPlayer1Sweep, "label", "get").mockReturnValue(scoreText);
 
         await waitFor(() => {
           const table = document.getElementById("rounds_table") as HTMLTableElement;
