@@ -64,16 +64,16 @@ export function convertNrdbDeck(
   let identityNrdbId = 0;
   let identity: Printing | null = null;
   const cards: Card[] = [];
-  nrdbDeck.cards.forEach((card: NrdbCard) => {
+  for (const card of nrdbDeck.cards) {
     const printing = printings.get(card.id);
     if (!printing) {
-      return;
+      continue;
     }
 
     if (printing.attributes.card_type_id.endsWith("identity")) {
       identityNrdbId = parseInt(card.id);
       identity = printing;
-      return;
+      continue;
     }
 
     cards.push({
@@ -90,10 +90,7 @@ export function convertNrdbDeck(
       faction_id: printing.attributes.faction_id,
       influence_cost: printing.attributes.influence_cost,
     });
-  });
-
-  // This fixes a typing warning below where TS thinks this variable is null instead of Printing | null
-  identity = identity as Printing | null;
+  }
 
   return {
     details: {
