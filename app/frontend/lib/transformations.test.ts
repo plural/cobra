@@ -28,7 +28,7 @@ const createRound = (overrides: Partial<Round>): Round => ({
   timer: {} as never,
   unpaired_players: [],
   ...overrides
-} as Round);
+});
 
 const alice = createPlayer({
   id: 1,
