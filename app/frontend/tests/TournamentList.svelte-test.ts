@@ -189,7 +189,7 @@ describe("TournamentList", () => {
             },
           }),
       });
-    }) as unknown as typeof fetch;
+    });
 
     const { getAllByRole, getByText, queryByText } = render(TournamentList, {
       props: {

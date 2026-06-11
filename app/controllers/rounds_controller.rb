@@ -336,7 +336,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
 
   def score_label(swiss_format, player1_side, score1, score1_corp, score1_runner, score2, score2_corp, score2_runner) # rubocop:disable Metrics/ParameterLists
     # No scores reported.
-    return '-' if score1 == 0 && score2 == 0 # rubocop:disable Style/NumericPredicate
+    return '-' if score1&.zero? && score2&.zero?
 
     ws = winning_side(score1_corp, score1_runner, score2_corp, score2_runner)
 
