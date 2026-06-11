@@ -2,30 +2,28 @@
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
   import {
-    loadPlayer,
     loadTournament,
     Tournament,
   } from "../tournaments/TournamentSettings";
-  import { Player } from "./PlayersData";
+  import { loadPlayer, Player } from "./PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import ProgressButton from "../widgets/ProgressButton.svelte";
   import {
     type NrdbDeck,
-    loadPrintings,
-    type Deck,
+    Deck,
     convertNrdbDeck,
-  } from "../utils/decks";
-  import { savePlayer } from "../players/PlayersData";
+    getPrintings,
+  } from "../utils/decks.svelte";
+  import { loadDecks, savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
-  import type { Printing } from "../lib/api_types";
 
   let {
     tournamentId,
-    userId,
+    playerId,
     nrdbDecks,
   }: {
     tournamentId: number;
-    userId: number;
+    playerId: number;
     nrdbDecks: NrdbDeck[];
   } = $props();
 
@@ -33,59 +31,98 @@
   const THE_SYNDICATE_NRDB_CODE = "30077";
 
   let tournament = $state<Tournament | undefined>();
-  let player = $state(new Player());
-  let decks = $state<Deck[]>([]);
-  let printings = $state(new Map<string, Printing>());
-  let selectedCorpDeck = $state<Deck | null>(null);
-  let selectedRunnerDeck = $state<Deck | null>(null);
+  let player = $state<Player | null>(null);
+  let decks = $state<Deck[] | null>(null);
+  let tournamentDecks = $state<Deck[]>();
+  let originalCorpDeck = $state(new Deck());
+  let corpDeck = $state(new Deck());
+  let originalRunnerDeck = $state(new Deck());
+  let runnerDeck = $state(new Deck());
+  let editMode = $state(
+    new URLSearchParams(document.location.search).get("edit") === "true",
+  );
+  let editing = $state(false);
 
   onMount(async () => {
-    // Load printings and hydrate decks
-    const printingsResponse = await loadPrintings();
-    if (printingsResponse) {
-      printingsResponse.data.forEach((p) => printings.set(p.id, p));
-
-      nrdbDecks.forEach((nrdbDeck: NrdbDeck) => {
-        const deck = convertNrdbDeck(nrdbDeck, printings);
-        deck.cards.sort((a, b) => {
-          if (a.card_type_id != b.card_type_id) {
-            return a.card_type_id < b.card_type_id ? -1 : 1;
-          }
-
-          if (a.title !== b.title) {
-            return a.title < b.title ? -1 : 1;
-          }
-
-          return 0;
-        });
-
-        decks.push(deck);
-      });
-    }
-
     [tournament, player] = await Promise.all([
       loadTournament(tournamentId),
-      loadPlayer(tournamentId, userId),
+      loadPlayer(tournamentId, playerId),
     ]);
+
+    await loadTournamentDecks();
+
+    // Load printings and convert NrdbDecks to Decks
+    if (nrdbDecks.length > 0) {
+      const printings = await getPrintings();
+      if (printings.size > 0) {
+        decks = nrdbDecks.map((d) => convertNrdbDeck(d, printings));
+      }
+    }
   });
 
+  async function loadTournamentDecks() {
+    if (!player) {
+      return;
+    }
+
+    tournamentDecks = await loadDecks(tournamentId, player.id);
+    originalCorpDeck =
+      tournamentDecks.find((d) => d.details.side_id === "corp") ?? new Deck();
+    originalRunnerDeck =
+      tournamentDecks.find((d) => d.details.side_id === "runner") ?? new Deck();
+    resetEditDecks();
+  }
+
+  function toggleEditing() {
+    editing = !editing;
+    resetEditDecks();
+  }
+
+  function resetEditDecks() {
+    corpDeck = $state.snapshot(originalCorpDeck);
+    runnerDeck = $state.snapshot(originalRunnerDeck);
+  }
+
   async function save() {
-    player = await savePlayer(tournamentId, player);
+    if (!player) {
+      return true;
+    }
+
+    player.corp_deck = corpDeck;
+    player.corp_id = {
+      name: corpDeck.details.identity_title ?? "",
+      faction: corpDeck.details.faction_id,
+    };
+    player.runner_deck = runnerDeck;
+    player.runner_id = {
+      name: runnerDeck.details.identity_title ?? "",
+      faction: runnerDeck.details.faction_id,
+    };
+    player = await savePlayer(
+      tournamentId,
+      player,
+      tournament && player.user_id !== tournament.user_id,
+    );
+
+    await loadTournamentDecks();
+    toggleEditing();
+
     return true;
   }
 
-  function selectDeck(deck: Deck | null, isCorp: boolean) {
+  function selectDeck(deck: Deck, isCorp: boolean) {
     if (isCorp) {
-      selectedCorpDeck =
-        deck && deck.details.nrdb_uuid === selectedCorpDeck?.details.nrdb_uuid
-          ? null
+      originalCorpDeck =
+        deck.details.nrdb_uuid === originalCorpDeck.details.nrdb_uuid
+          ? new Deck()
           : deck;
     } else {
-      selectedRunnerDeck =
-        deck && deck.details.nrdb_uuid === selectedRunnerDeck?.details.nrdb_uuid
-          ? null
+      originalRunnerDeck =
+        deck.details.nrdb_uuid === originalRunnerDeck.details.nrdb_uuid
+          ? new Deck()
           : deck;
     }
+    resetEditDecks();
   }
 </script>
 
@@ -95,8 +132,8 @@
   <button
     class="list-group-item list-group-item-action {deck.details.nrdb_uuid ===
     (isCorp
-      ? selectedCorpDeck?.details.nrdb_uuid
-      : selectedRunnerDeck?.details.nrdb_uuid)
+      ? originalCorpDeck.details.nrdb_uuid
+      : originalRunnerDeck.details.nrdb_uuid)
       ? 'active'
       : ''}"
     onclick={() => {
@@ -113,50 +150,77 @@
 {/snippet}
 
 {#snippet decksList(isCorp: boolean, selectedDeck: Deck | null)}
-  <ul class="list-group list-group-flush" style="border-bottom: 0;">
-    <li class="list-group-item selected-deck">
-      <div class="selected-deck-buttons">
-        <!-- TODO: Undo -->
+  {#if decks !== null}
+    <ul class="list-group list-group-flush" style="border-bottom: 0;">
+      <li class="list-group-item selected-deck">
+        <div class="selected-deck-buttons">
+          {#if selectedDeck}
+            <button
+              type="button"
+              title="Deselect"
+              class="btn btn-link p-0"
+              onclick={() => {
+                selectDeck(new Deck(), isCorp);
+              }}
+            >
+              <FontAwesomeIcon icon="close" />
+            </button>
+          {/if}
+        </div>
         {#if selectedDeck}
-          <button
-            type="button"
-            title="Deselect"
-            class="btn btn-link p-0"
-            onclick={() => {
-              selectDeck(null, isCorp);
-            }}
-          >
-            <FontAwesomeIcon icon="close" />
-          </button>
+          <div
+            class="selected-deck-identity"
+            style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${selectedDeck.details.identity_nrdb_printing_id}.jpg)`}
+          ></div>
+          <p class="mb-1">{selectedDeck.details.name}</p>
+        {:else}
+          <div
+            class="selected-deck-identity"
+            style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${isCorp ? THE_SYNDICATE_NRDB_CODE : THE_CATALYST_NRDB_CODE}.jpg)`}
+          ></div>
+          <p class="mb-1">
+            {isCorp ? "No corp selected" : "No runner selected"}
+          </p>
         {/if}
-      </div>
-      {#if selectedDeck}
-        <div
-          class="selected-deck-identity"
-          style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${selectedDeck.details.identity_nrdb_printing_id}.jpg)`}
-        ></div>
-        <p class="mb-1">{selectedDeck.details.name}</p>
-      {:else}
-        <div
-          class="selected-deck-identity"
-          style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${isCorp ? THE_SYNDICATE_NRDB_CODE : THE_CATALYST_NRDB_CODE}.jpg)`}
-        ></div>
-        <p class="mb-1">{isCorp ? "No corp selected" : "No runner selected"}</p>
-      {/if}
-    </li>
-  </ul>
-  <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
-    {#each decks.filter((d) => d.details.side_id === (isCorp ? "corp" : "runner")) as deck (deck.details.id)}
-      <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-      {@render deckListItem(deck, isCorp)}
-    {/each}
-  </ul>
+      </li>
+    </ul>
+    <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
+      {#each decks.filter((d) => d.details.side_id === (isCorp ? "corp" : "runner")) as deck (deck.details.id)}
+        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+        {@render deckListItem(deck, isCorp)}
+      {/each}
+    </ul>
+  {/if}
 {/snippet}
 
-{#if player.id !== 0 && tournament}
+{#if player && player.id !== 0 && tournament}
+  <!-- General registration information -->
   <div class="card mb-3">
     <div class="card-header">
-      <h5>My Registration Information</h5>
+      <div class="d-flex justify-content-between">
+        <h5 class="mb-0">My Registration Information</h5>
+        <span class="float-right dontprint">
+          <button
+            type="button"
+            class="btn btn-link p-0 mr-3"
+            title="Print"
+            onclick={() => {
+              window.print();
+            }}
+          >
+            <FontAwesomeIcon icon="print" />
+          </button>
+          <a
+            href={editMode
+              ? `/beta/tournaments/${tournamentId}/rounds`
+              : `/beta/tournaments/${tournamentId}`}
+            class="btn btn-link p-0"
+            title="Cancel"
+          >
+            <FontAwesomeIcon icon="undo" />
+          </a>
+        </span>
+      </div>
     </div>
 
     <div class="card-body">
@@ -203,16 +267,49 @@
         {/if}
       </div>
 
-      <div class="text-right">
-        <!-- Create/Save -->
-        <ProgressButton
-          css="btn btn-success"
-          inProgressText="Saving"
-          completeText="Saved"
-          onclick={save}
-        >
-          <FontAwesomeIcon icon="floppy-o" /> Save
-        </ProgressButton>
+      <div class="dontprint mt-sm-2">
+        {#if editMode}
+          <div class="float-left">
+            {#if editing}
+              <button
+                type="button"
+                class="btn btn-link"
+                onclick={toggleEditing}
+              >
+                <FontAwesomeIcon icon="undo" />
+                Cancel edits
+              </button>
+            {:else}
+              <a
+                href="/beta/tournaments/{tournamentId}/registration"
+                class="btn btn-link"
+              >
+                <FontAwesomeIcon icon="edit" />
+                Choose decks from your NetrunnerDB account
+              </a>
+              <button
+                type="button"
+                class="btn btn-link"
+                onclick={toggleEditing}
+              >
+                <FontAwesomeIcon icon="edit" />
+                Edit decks in place
+              </button>
+            {/if}
+          </div>
+        {/if}
+
+        <div class="float-right">
+          <!-- Create/Save -->
+          <ProgressButton
+            css="btn btn-success"
+            inProgressText="Saving"
+            completeText="Saved"
+            onclick={save}
+          >
+            <FontAwesomeIcon icon="floppy-o" /> Save
+          </ProgressButton>
+        </div>
       </div>
     </div>
   </div>
@@ -222,38 +319,44 @@
     Please ensure your decks are legal.
   </div>
 
-  <div class="alert alert-secondary dontprint">
-    Please select from your decks below. <a
-      href="https://netrunnerdb.com/en/decks"
-      target="_blank">See your decks in NetrunnerDB</a
-    >. Refresh the page to reload from NetrunnerDB.
-  </div>
-
-  <div class="row mb-3 dontprint">
-    <!-- Corp deck selection -->
-    <div class="col-md-6">
-      <div class="card">
-        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-        {@render decksList(true, selectedCorpDeck)}
-      </div>
+  <!-- Deck selection -->
+  {#if !editMode}
+    <div class="alert alert-secondary dontprint">
+      Please select from your decks below. <a
+        href="https://netrunnerdb.com/en/decks"
+        target="_blank">See your decks in NetrunnerDB</a
+      >. Refresh the page to reload from NetrunnerDB.
     </div>
 
-    <!-- Runner deck selection -->
-    <div class="col-md-6">
-      <div class="card">
-        <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-        {@render decksList(false, selectedRunnerDeck)}
-      </div>
-    </div>
-  </div>
+    <div class="row mb-3 justify-content-center dontprint">
+      {#if decks !== null}
+        <div class="col-md-6">
+          <div class="card">
+            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+            {@render decksList(true, corpDeck)}
+          </div>
+        </div>
 
+        <div class="col-md-6">
+          <div class="card">
+            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+            {@render decksList(false, runnerDeck)}
+          </div>
+        </div>
+      {:else}
+        <div class="spinner-border m-auto"></div>
+      {/if}
+    </div>
+  {/if}
+
+  <!-- Deck display -->
   <div class="row">
     <div class="col-md-6">
-      <DeckDisplay deck={selectedCorpDeck} isCorp={true} />
+      <DeckDisplay bind:deck={corpDeck} isCorp={true} editMode={editing} />
     </div>
 
     <div class="col-md-6">
-      <DeckDisplay deck={selectedRunnerDeck} isCorp={false} />
+      <DeckDisplay bind:deck={runnerDeck} isCorp={false} editMode={editing} />
     </div>
   </div>
 {:else}

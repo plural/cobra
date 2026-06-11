@@ -1,7 +1,7 @@
 import { Identity } from "../identities/Identity";
 import type { TournamentPolicies } from "../pairings/PairingsData";
 import type { Tournament } from "../tournaments/TournamentSettings";
-import type { Deck } from "../utils/decks";
+import type { Card, Deck } from "../utils/decks.svelte";
 import { globalMessages } from "../utils/GlobalMessageState.svelte";
 import { csrfToken } from "../utils/network";
 
@@ -28,8 +28,41 @@ declare const Routes: {
     tournamentId: number,
     playerId: number,
   ) => string;
-  decks_beta_tournament_players_path: (tournamentId: number) => string;
 };
+
+export async function loadPlayer(tournamentId: number, playerId: number) {
+  try {
+    const response = await fetch(
+      `/beta/tournaments/${tournamentId}/players/${playerId}`,
+      {
+        method: "GET",
+      },
+    );
+
+    return (await response.json()) as Player;
+  } catch {
+    globalMessages.errors.push(
+      `Error loading player data for player ${playerId}.`,
+    );
+    return null;
+  }
+}
+
+export async function loadPlayerByUserId(tournamentId: number, userId: number) {
+  try {
+    const response = await fetch(
+      `/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,
+      {
+        method: "GET",
+      },
+    );
+
+    return (await response.json()) as Player;
+  } catch {
+    globalMessages.errors.push(`Error loading player data for user ${userId}.`);
+    return null;
+  }
+}
 
 export async function loadPlayers(tournamentId: number) {
   const response = await fetch(
@@ -147,9 +180,11 @@ export async function reinstatePlayer(tournamentId: number, player: Player) {
   return response.status === 200;
 }
 
-export async function loadDecks(tournamentId: number) {
+export async function loadDecks(tournamentId: number, playerId?: number) {
   const response = await fetch(
-    Routes.decks_beta_tournament_players_path(tournamentId),
+    playerId === undefined
+      ? `/beta/tournaments/${tournamentId}/players/decks`
+      : `/beta/tournaments/${tournamentId}/players/${playerId}/decks`,
     {
       method: "GET",
     },
@@ -168,7 +203,36 @@ function playerRequestObject(player: Player) {
     first_round_bye: player.first_round_bye,
     manual_seed: player.manual_seed,
     fixed_table_number: player.fixed_table_number,
+    corp_deck: player.corp_deck
+      ? deckRequestObject(player.corp_deck)
+      : undefined,
+    runner_deck: player.runner_deck
+      ? deckRequestObject(player.runner_deck)
+      : undefined,
   };
+}
+
+function deckRequestObject(deck: Deck) {
+  const {
+    id,
+    user_id,
+    player_id,
+    player_name,
+    created_at,
+    updated_at,
+    ...details
+  } = deck.details;
+
+  return {
+    details: details,
+    cards: deck.cards.map((c) => cardRequestObject(c)),
+  };
+}
+
+function cardRequestObject(card: Card) {
+  const { id, deck_id, created_at, updated_at, ...newCard } = card;
+
+  return newCard;
 }
 
 export interface PlayersData {
@@ -194,4 +258,6 @@ export class Player {
   fixed_table_number: number | null = null;
   side: string | null = null;
   side_label: string | null = null;
+  corp_deck?: Deck;
+  runner_deck?: Deck;
 }

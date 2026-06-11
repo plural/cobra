@@ -46,14 +46,16 @@ Rails.application.routes.draw do
         patch :update_timer, on: :member
         get :pairings_data, on: :collection
       end
-      resources :players, only: %i[index create update destroy] do
+      resources :players, only: %i[index show create update destroy] do
         get :players_data, on: :collection
         get 'by_user_id/:user_id', to: 'players#by_user_id', on: :collection
+        get :registration, on: :member
         patch :lock_registration, on: :member
         patch :unlock_registration, on: :member
         patch :drop, on: :member
         patch :reinstate, on: :member
         get :decks, on: :collection
+        get :decks, on: :member
       end
       get :qr, on: :member
       get :registration, on: :member

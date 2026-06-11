@@ -91,16 +91,16 @@ module Beta
       players = @tournament.players.includes(%i[corp_identity_ref runner_identity_ref]).active.sort_by do |p|
         p.name || ''
       end
-      current_user_player = players.find do |p|
+      @current_user_player = players.find do |p|
         p.user_id == current_user.id
       end
-      unless current_user_player
+      unless @current_user_player
         redirect_to tournament_path(@tournament)
         return
       end
 
       return unless @tournament.nrdb_deck_registration?
-      return if current_user_player.registration_locked?
+      return if @current_user_player.registration_locked?
 
       begin
         @decks = Nrdb::Connection.new(current_user).decks.map do |deck|

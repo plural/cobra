@@ -1,5 +1,3 @@
-import type { Player } from "../players/PlayersData";
-
 export type Errors = Record<string, string[]>;
 
 declare const Routes: {
@@ -155,20 +153,6 @@ export async function loadTournament(
   tournament.id = parseInt(apiTournament.data.id);
 
   return tournament;
-}
-
-export async function loadPlayer(
-  tournamentId: number,
-  userId: number,
-): Promise<Player> {
-  const response = await fetch(
-    `/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,
-    {
-      method: "GET",
-    },
-  );
-
-  return (await response.json()) as Player;
 }
 
 export async function loadNewTournament(): Promise<TournamentSettingsData> {

@@ -1,13 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import GlobalMessages from "../widgets/GlobalMessages.svelte";
-  import {
-    loadPlayer,
-    loadQRCode,
-    loadTournament,
-    Tournament,
-  } from "./TournamentSettings";
-  import { Player } from "../players/PlayersData";
+  import { loadQRCode, loadTournament, Tournament } from "./TournamentSettings";
+  import { loadPlayerByUserId, Player } from "../players/PlayersData";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
   import RegistrationCard from "../players/RegistrationCard.svelte";
   import ModalDialog from "../widgets/ModalDialog.svelte";
@@ -23,32 +18,32 @@
   } = $props();
 
   let tournament: Tournament | undefined = $state();
-  let player: Player | undefined = $state();
+  let player: Player | null = $state(null);
   let notices: string[] = $state([]);
 
   let qrCodeImageData = $state("");
 
   onMount(async () => {
     tournament = await loadTournament(tournamentId);
-    player = await loadPlayer(tournamentId, userId);
+    player = await loadPlayerByUserId(tournamentId, userId);
 
     qrCodeImageData = URL.createObjectURL(await loadQRCode(tournamentId));
 
-    if (player.id === 0) {
+    if (player?.id === 0) {
       player.name = userName ?? "";
     }
 
     if (tournament.nrdb_deck_registration) {
       if (
         !tournament.registration_closed &&
-        (player.id === 0 || !player.registration_locked)
+        (player?.id === 0 || !player?.registration_locked)
       ) {
         notices.push("Registration is open.");
       }
       if (userId === tournament.user_id && tournament.any_player_unlocked) {
         notices.push("One or more players are unlocked for editing.");
       }
-      if (player.id !== 0 && !player.registration_locked) {
+      if (player?.id !== 0 && !player?.registration_locked) {
         notices.push("Your registration is editable.");
       }
     }

@@ -2,6 +2,19 @@ import type { Printing, PrintingsResponse } from "../lib/api_types";
 import { quoteCsvValue } from "./files";
 import { globalMessages } from "./GlobalMessageState.svelte";
 
+const printings = $state(new Map<string, Printing>());
+
+export async function getPrintings() {
+  if (printings.size === 0) {
+    const response = await loadPrintings("page[size]=10000");
+    if (response) {
+      response.data.forEach((p) => printings.set(p.id, p));
+    }
+  }
+
+  return printings;
+}
+
 export interface NrdbCard {
   id: string;
   count: number;
@@ -21,7 +34,7 @@ export interface NrdbDeck {
 }
 
 export interface Card {
-  id: number;
+  id: string;
   deck_id: number;
   title: string;
   quantity: number;
@@ -29,39 +42,41 @@ export interface Card {
   nrdb_card_id: string;
   created_at: string;
   updated_at: string;
-  nrdb_printing_id: number | null;
+  nrdb_printing_id: string | null;
   card_type_id: string;
   faction_id: string;
   influence_cost: number;
 }
 
-export interface Deck {
-  details: {
-    id: number;
-    player_id: number;
-    side_id: string;
-    name: string | null;
-    identity_title: string;
-    min_deck_size: number;
-    max_influence: number;
-    nrdb_uuid: string | null;
-    identity_nrdb_card_id: string;
-    created_at: string;
-    updated_at: string;
-    identity_nrdb_printing_id: number | null;
-    user_id: number;
-    faction_id: string;
-    mine: boolean;
-    player_name: string;
-  };
-  cards: Card[];
+export class DeckDetails {
+  id = 0;
+  player_id: number | null = null;
+  side_id: string | null = null;
+  name: string | null = null;
+  identity_title: string | null = null;
+  min_deck_size: number | null = null;
+  max_influence: number | null = null;
+  nrdb_uuid: string | null = null;
+  identity_nrdb_card_id: string | null = null;
+  created_at = "";
+  updated_at = "";
+  identity_nrdb_printing_id: string | null = null;
+  user_id: number | null = null;
+  faction_id: string | null = null;
+  mine: boolean | null = null;
+  player_name: string | null = null;
+}
+
+export class Deck {
+  details = new DeckDetails();
+  cards: Card[] = [];
 }
 
 export function convertNrdbDeck(
   nrdbDeck: NrdbDeck,
   printings: Map<string, Printing>,
 ): Deck {
-  let identityNrdbId = 0;
+  let identityNrdbId = "";
   let identity: Printing | null = null;
   const cards: Card[] = [];
   for (const card of nrdbDeck.cards) {
@@ -71,13 +86,13 @@ export function convertNrdbDeck(
     }
 
     if (printing.attributes.card_type_id.endsWith("identity")) {
-      identityNrdbId = parseInt(card.id);
+      identityNrdbId = card.id;
       identity = printing;
       continue;
     }
 
     cards.push({
-      id: parseInt(card.id),
+      id: card.id,
       deck_id: nrdbDeck.id,
       title: printing.attributes.title,
       quantity: card.count,
@@ -85,7 +100,7 @@ export function convertNrdbDeck(
       nrdb_card_id: printing.attributes.card_id,
       created_at: "",
       updated_at: "",
-      nrdb_printing_id: parseInt(card.id),
+      nrdb_printing_id: card.id,
       card_type_id: printing.attributes.card_type_id,
       faction_id: printing.attributes.faction_id,
       influence_cost: printing.attributes.influence_cost,
@@ -118,7 +133,7 @@ export function convertNrdbDeck(
 export function deckCsv(decks: Deck[]) {
   const headerCsv =
     decks
-      .map((deck) => `Player,${quoteCsvValue(deck.details.player_name)},`)
+      .map((deck) => `Player,${quoteCsvValue(deck.details.player_name ?? "")},`)
       .join(",,") +
     "\n" +
     decks
@@ -130,7 +145,7 @@ export function deckCsv(decks: Deck[]) {
     decks
       .map(
         (deck) =>
-          `${deck.details.min_deck_size},${quoteCsvValue(deck.details.identity_title)},${deck.details.max_influence}`,
+          `${deck.details.min_deck_size},${quoteCsvValue(deck.details.identity_title ?? "")},${deck.details.max_influence}`,
       )
       .join(",,");
 
@@ -144,6 +159,9 @@ export function deckCsv(decks: Deck[]) {
       "\n" +
       decks
         .map((deck: Deck) => {
+          if (i >= deck.cards.length) {
+            return ",,";
+          }
           const influence =
             deck.cards[i].influence > 0 &&
             deck.cards[i].faction_id !== deck.details.faction_id
@@ -175,26 +193,44 @@ export function deckCsv(decks: Deck[]) {
   return `\ufeff${headerCsv}\n\n${cardCsv}`;
 }
 
-export async function loadPrintings() {
-  let data: PrintingsResponse | null = null;
+export function sortCards(cards: Card[]) {
+  cards.sort((a, b) => {
+    if (a.card_type_id != b.card_type_id) {
+      return a.card_type_id < b.card_type_id ? -1 : 1;
+    }
+
+    if (a.title !== b.title) {
+      return a.title < b.title ? -1 : 1;
+    }
+
+    return 0;
+  });
+}
+
+export async function loadPrintings(query?: string) {
+  let queryString =
+    "fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost";
+  if (queryString) {
+    queryString += `&${query}`;
+  }
 
   try {
     const response = await fetch(
-      "https://api.netrunnerdb.com/api/v3/public/printings?page[size]=10000&fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost",
+      `https://api.netrunnerdb.com/api/v3/public/printings?${queryString}`,
       { method: "GET" },
     );
 
     if (response.status === 200) {
-      data = (await response.json()) as PrintingsResponse;
-    } else {
-      globalMessages.errors.push(
-        `Failed to load printings: ${response.statusText}`,
-      );
+      return (await response.json()) as PrintingsResponse;
     }
+
+    globalMessages.errors.push(
+      `Failed to load printings: ${response.statusText}`,
+    );
   } catch (e) {
     const err = e as Error;
     globalMessages.errors.push(`Failed to load printings: ${err.message}`);
   }
 
-  return data;
+  return null;
 }
