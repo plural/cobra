@@ -202,7 +202,7 @@
 </script>
 
 <!-- Deck summary -->
-<table class="table table-bordered table-striped">
+<table class="table table-bordered table-striped" aria-label={isCorp ? "corp deck" : "runner deck"}>
   <thead class="thead-dark">
     <tr>
       <th class="text-center deck-name-header">

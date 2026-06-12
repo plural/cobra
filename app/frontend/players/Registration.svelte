@@ -57,6 +57,8 @@
       if (printings.size > 0) {
         decks = nrdbDecks.map((d) => convertNrdbDeck(d, printings));
       }
+    } else {
+      decks = [];
     }
   });
 
@@ -195,7 +197,7 @@
 
 {#if player && player.id !== 0 && tournament}
   <!-- General registration information -->
-  <div class="card mb-3">
+  <div class="card mb-3" aria-label="registration information">
     <div class="card-header">
       <div class="d-flex justify-content-between">
         <h5 class="mb-0">My Registration Information</h5>
@@ -330,19 +332,23 @@
 
     <div class="row mb-3 justify-content-center dontprint">
       {#if decks !== null}
-        <div class="col-md-6">
-          <div class="card">
-            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render decksList(true, corpDeck)}
+        {#if decks.length > 0}
+          <div class="col-md-6">
+            <div class="card">
+              <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+              {@render decksList(true, corpDeck)}
+            </div>
           </div>
-        </div>
 
-        <div class="col-md-6">
-          <div class="card">
-            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render decksList(false, runnerDeck)}
+          <div class="col-md-6">
+            <div class="card">
+              <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+              {@render decksList(false, runnerDeck)}
+            </div>
           </div>
-        </div>
+        {:else}
+          <div class="alert alert-warning">You have no decks saved in NRDB.</div>
+        {/if}
       {:else}
         <div class="spinner-border m-auto"></div>
       {/if}
