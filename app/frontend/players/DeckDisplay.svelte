@@ -143,14 +143,14 @@
       deck_id: card.deck_id,
       title: printings.data[0].attributes.title,
       quantity: card.quantity,
-      influence: printings.data[0].attributes.influence_cost * card.quantity,
+      influence: (printings.data[0].attributes.influence_cost ?? 0) * card.quantity,
       nrdb_card_id: printings.data[0].attributes.card_id,
       created_at: "",
       updated_at: "",
-      nrdb_printing_id: card.id,
+      nrdb_printing_id: card.nrdb_printing_id,
       card_type_id: printings.data[0].attributes.card_type_id,
       faction_id: printings.data[0].attributes.faction_id,
-      influence_cost: printings.data[0].attributes.influence_cost,
+      influence_cost: printings.data[0].attributes.influence_cost ?? 0,
     });
     setInputValidity(currentTarget, true);
   }
@@ -164,18 +164,18 @@
     }
 
     deck.cards.push({
-      id: "",
+      id: 0,
       deck_id: deck.details.id,
       title: printings.data[0].attributes.title,
       quantity: 1,
-      influence: printings.data[0].attributes.influence_cost,
+      influence: printings.data[0].attributes.influence_cost ?? 0,
       nrdb_card_id: printings.data[0].attributes.card_id,
       created_at: "",
       updated_at: "",
       nrdb_printing_id: printings.data[0].id,
       card_type_id: printings.data[0].attributes.card_type_id,
       faction_id: printings.data[0].attributes.faction_id,
-      influence_cost: printings.data[0].attributes.influence_cost,
+      influence_cost: printings.data[0].attributes.influence_cost ?? 0,
     });
     currentTarget.classList.remove("is-valid", "is-invalid");
     currentTarget.value = "";
@@ -213,7 +213,7 @@
   <tbody>
     <tr>
       <td>
-        {#if deck && deck.details.id !== 0}
+        {#if deck?.details.nrdb_uuid}
           {#if deck.details.name}
             {deck.details.name}
             <div class="float-right dontprint">
@@ -268,9 +268,9 @@
   </tbody>
 </table>
 
-{#if deck && deck.details.id !== 0}
+{#if deck?.details.nrdb_uuid}
   <!-- Identity -->
-  <table class="table table-bordered table-striped">
+  <table class="table table-bordered table-striped" aria-label={isCorp ? "corp deck ID" : "runner deck ID"}>
     <thead class="thead-dark">
       <tr>
         <th class="text-center deck-side-column">Min</th>
@@ -308,7 +308,7 @@
   </table>
 
   <!-- Deck list -->
-  <table class="table table-bordered table-striped">
+  <table class="table table-bordered table-striped" aria-label={isCorp ? "corp deck list" : "runner deck list"}>
     <thead class="thead-dark">
       <tr>
         <th class="text-center deck-side-column">Qty</th>
@@ -318,7 +318,7 @@
     </thead>
     <tbody>
       <!-- Cards -->
-      {#each deck.cards as card (card.id)}
+      {#each deck.cards as card (card.nrdb_card_id)}
         <tr>
           <td class="text-center align-middle">
             {#if editMode}

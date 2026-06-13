@@ -16,6 +16,7 @@
   } from "../utils/decks.svelte";
   import { loadDecks, savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
+  import { Identity } from "../identities/Identity";
 
   let {
     tournamentId,
@@ -90,16 +91,16 @@
       return true;
     }
 
-    player.corp_deck = corpDeck;
-    player.corp_id = {
+    player.corp_deck = corpDeck.details.identity_title || corpDeck.cards.length > 0 ? corpDeck : undefined;
+    player.corp_id = Object.assign(new Identity(), {
       name: corpDeck.details.identity_title ?? "",
       faction: corpDeck.details.faction_id,
-    };
-    player.runner_deck = runnerDeck;
-    player.runner_id = {
+    });
+    player.runner_deck = runnerDeck.details.identity_title || runnerDeck.cards.length > 0 ? runnerDeck : undefined;
+    player.runner_id = Object.assign(new Identity(), {
       name: runnerDeck.details.identity_title ?? "",
       faction: runnerDeck.details.faction_id,
-    };
+    });
     player = await savePlayer(
       tournamentId,
       player,
@@ -187,7 +188,7 @@
       </li>
     </ul>
     <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
-      {#each decks.filter((d) => d.details.side_id === (isCorp ? "corp" : "runner")) as deck (deck.details.id)}
+      {#each decks.filter((d) => d.details.side_id === (isCorp ? "corp" : "runner")) as deck (deck.details.nrdb_uuid)}
         <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
         {@render deckListItem(deck, isCorp)}
       {/each}
@@ -334,14 +335,14 @@
       {#if decks !== null}
         {#if decks.length > 0}
           <div class="col-md-6">
-            <div class="card">
+            <div class="card" aria-label="NRDB corp decks">
               <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
               {@render decksList(true, corpDeck)}
             </div>
           </div>
 
           <div class="col-md-6">
-            <div class="card">
+            <div class="card" aria-label="NRDB runner decks">
               <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
               {@render decksList(false, runnerDeck)}
             </div>
