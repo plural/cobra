@@ -13,8 +13,8 @@ RUN apk -U upgrade && apk add --no-cache \
   && rm -rf /var/cache/apk/*
 
 # Define where our application will live inside the image
-ENV RAILS_ROOT /var/www/cobra
-ENV BUNDLE_ROOT /var/www/bundle
+ENV RAILS_ROOT=/var/www/cobra
+ENV BUNDLE_ROOT=/var/www/bundle
 
 
 #####################################################################
