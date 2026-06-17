@@ -3,7 +3,7 @@ import Registration from "../players/Registration.svelte";
 import { MockTournament } from "./TournamentTestData";
 import { MockPlayerBob, MockPlayerBobDecks, MockPlayerBobNrdbDecks } from "./PlayersTestData";
 import userEvent from "@testing-library/user-event";
-import { fireEvent, getByDisplayValue, getByLabelText, getByRole, render, screen, waitFor } from "@testing-library/svelte";
+import { fireEvent, getByDisplayValue, getByLabelText, getByRole, getByTestId, queryByDisplayValue, render, screen, waitFor } from "@testing-library/svelte";
 import { loadTournament } from "../tournaments/TournamentSettings";
 import { loadDecks, loadPlayer, savePlayer } from "../players/PlayersData";
 import { Identity } from "../identities/Identity";
@@ -44,6 +44,48 @@ const MockBetaBuildPrinting: Printing = {
     minimum_deck_size: null
   }
 };
+const MockSureGamblePrinting: Printing = {
+  id: "30030",
+  type: "printings",
+  attributes: {
+    card_id: "sure_gamble",
+    title: "Sure Gamble",
+    card_type_id: "event",
+    side_id: "runner",
+    faction_id: "neutral_runner",
+    influence_cost: 0,
+    influence_limit: null,
+    minimum_deck_size: null
+  }
+};
+const MockBazPrinting: Printing = {
+  id: "35012",
+  type: "printings",
+  attributes: {
+    card_id: "barry_baz_wong_tri_maf_veteran",
+    title: "Barry “Baz” Wong: Tri-Maf Veteran",
+    card_type_id: "runner_identity",
+    side_id: "runner",
+    faction_id: "criminal",
+    influence_cost: null,
+    influence_limit: 15,
+    minimum_deck_size: 45
+  }
+};
+const MockZahyaPrinting: Printing = {
+  id: "30010",
+  type: "printings",
+  attributes: {
+    card_id: "zahya_sadeghi_versatile_smuggler",
+    title: "Zahya Sadeghi: Versatile Smuggler",
+    card_type_id: "runner_identity",
+    side_id: "runner",
+    faction_id: "criminal",
+    influence_cost: null,
+    influence_limit: 15,
+    minimum_deck_size: 40
+  }
+};
 const MockPrintings = new Map<string, Printing>([
   [
     "35068",
@@ -80,38 +122,12 @@ const MockPrintings = new Map<string, Printing>([
     }
   ],
   [
-    "35012",
-    {
-      id: "35012",
-      type: "printings",
-      attributes: {
-        card_id: "barry_baz_wong_tri_maf_veteran",
-        title: "Barry “Baz” Wong: Tri-Maf Veteran",
-        card_type_id: "runner_identity",
-        side_id: "runner",
-        faction_id: "criminal",
-        influence_cost: null,
-        influence_limit: 15,
-        minimum_deck_size: 45
-      }
-    }
+    MockBazPrinting.id,
+    MockBazPrinting
   ],
   [
-    "30030",
-    {
-      id: "30030",
-      type: "printings",
-      attributes: {
-        card_id: "sure_gamble",
-        title: "Sure Gamble",
-        card_type_id: "event",
-        side_id: "runner",
-        faction_id: "neutral_runner",
-        influence_cost: 0,
-        influence_limit: null,
-        minimum_deck_size: null
-      }
-    }
+    MockSureGamblePrinting.id,
+    MockSureGamblePrinting
   ],
   [
     MockBetaBuildPrinting.id,
@@ -238,7 +254,7 @@ describe("Registration", () => {
         await renderRegistration([], true);
       });
 
-      it("add cards", async () => {
+      it("add a card", async () => {
         await user.click(getByRole(screen.getByLabelText("registration information"), "button", { name: "Edit decks in place" }));
 
         const runnerDeckTable = screen.getByLabelText("runner deck list");
@@ -247,18 +263,72 @@ describe("Registration", () => {
           Promise.resolve({ data: [ MockBetaBuildPrinting ] }),
         );
 
-        const newCardRow = getByLabelText(runnerDeckTable, "new card");
+        const newCardRow = getByTestId(runnerDeckTable, "new_card_row");
         await fireEvent.change(getByRole(newCardRow, "textbox"), { target: { value: "beta bui" }});
 
         expect(loadPrintings).toHaveBeenCalledOnce();
-        expect(getByDisplayValue(runnerDeckTable, "Beta Build")).toBeInTheDocument();
+        expect(getByDisplayValue(runnerDeckTable, MockBetaBuildPrinting.attributes.title)).toBeInTheDocument();
         expect((newCardRow as HTMLInputElement).value).toBeUndefined();
       });
 
-      // TODO: allows cards to be removed
-      // TODO: allows cards to change
-      // TODO: allows card quantity to be changed
-      // TODO: allows the deck ID to change
+      it("change a card", async () => {
+        await user.click(getByRole(screen.getByLabelText("registration information"), "button", { name: "Edit decks in place" }));
+
+        const runnerDeckTable = screen.getByLabelText("runner deck list");
+
+        vi.mocked(loadPrintings).mockImplementation(() =>
+          Promise.resolve({ data: [ MockBetaBuildPrinting ] }),
+        );
+
+        const cardRow = getByTestId(runnerDeckTable, `card_${MockSureGamblePrinting.attributes.card_id}_row`);
+        await fireEvent.change(getByRole(cardRow, "textbox"), { target: { value: "beta bui" }});
+
+        expect(queryByDisplayValue(runnerDeckTable, MockBetaBuildPrinting.attributes.title)).toBeInTheDocument();
+        expect(queryByDisplayValue(runnerDeckTable, MockSureGamblePrinting.attributes.title)).not.toBeInTheDocument();
+      });
+
+      it("change a card's quantity", async () => {
+        await user.click(getByRole(screen.getByLabelText("registration information"), "button", { name: "Edit decks in place" }));
+
+        const runnerDeckTable = screen.getByLabelText("runner deck list");
+        const cardRow = getByTestId(runnerDeckTable, `card_${MockSureGamblePrinting.attributes.card_id}_row`);
+
+        await user.click(getByRole(cardRow, "button", { name: "Remove" }));
+        expect(cardRow).toHaveTextContent("2");
+
+        await user.click(getByRole(cardRow, "button", { name: "Add" }));
+        expect(cardRow).toHaveTextContent("3");
+      });
+
+      it("remove a card", async () => {
+        await user.click(getByRole(screen.getByLabelText("registration information"), "button", { name: "Edit decks in place" }));
+
+        const runnerDeckTable = screen.getByLabelText("runner deck list");
+
+        const cardRow = getByTestId(runnerDeckTable, `card_${MockSureGamblePrinting.attributes.card_id}_row`);
+        const removeButton = getByRole(cardRow, "button", { name: "Remove" });
+        await user.click(removeButton);
+        await user.click(removeButton);
+        await user.click(removeButton);
+
+        expect(queryByDisplayValue(runnerDeckTable, MockSureGamblePrinting.attributes.title)).not.toBeInTheDocument();
+      });
+
+      it("change an identity", async () => {
+        await user.click(getByRole(screen.getByLabelText("registration information"), "button", { name: "Edit decks in place" }));
+
+        const runnerIdTable = screen.getByLabelText("runner deck ID");
+
+        vi.mocked(loadPrintings).mockImplementation(() =>
+          Promise.resolve({ data: [ MockZahyaPrinting ] }),
+        );
+
+        const cardRow = getByTestId(runnerIdTable, `identity_row`);
+        await fireEvent.change(getByRole(cardRow, "textbox"), { target: { value: "zahya" }});
+
+        expect(queryByDisplayValue(runnerIdTable, MockZahyaPrinting.attributes.title)).toBeInTheDocument();
+        expect(queryByDisplayValue(runnerIdTable, MockBazPrinting.attributes.title)).not.toBeInTheDocument();
+      });
     });
   });
 });

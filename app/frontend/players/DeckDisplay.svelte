@@ -283,12 +283,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <tr data-testid="identity_row">
         <td class="text-center align-middle">{deck.details.min_deck_size}</td>
         <td>
           {#if editMode}
             <input
-              id="name"
               type="text"
               placeholder="Enter identity name"
               class="form-control"
@@ -323,7 +322,7 @@
     <tbody>
       <!-- Cards -->
       {#each deck.cards as card (card.nrdb_card_id)}
-        <tr>
+        <tr data-testid="card_{card.nrdb_card_id}_row">
           <td class="text-center align-middle">
             {#if editMode}
               <button
@@ -354,7 +353,6 @@
           <td>
             {#if editMode}
               <input
-                id="name"
                 type="text"
                 placeholder="Enter card name"
                 class="form-control"
@@ -384,7 +382,7 @@
         </tr>
       {/each}
       {#if editMode}
-        <tr aria-label="new card">
+        <tr data-testid="new_card_row">
           <td></td>
           <td>
             <input
