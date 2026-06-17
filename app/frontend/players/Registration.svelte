@@ -100,11 +100,11 @@
       name: runnerDeck.details.identity_title ?? "",
       faction: runnerDeck.details.faction_id,
     });
-    player = await savePlayer(
+    Object.assign(player, await savePlayer(
       tournamentId,
       player,
       tournament && player.user_id !== tournament.user_id,
-    );
+    ));
 
     await loadTournamentDecks();
     toggleEditing();
