@@ -22,10 +22,12 @@
     tournamentId,
     playerId,
     nrdbDecks,
+    editMode = false,
   }: {
     tournamentId: number;
     playerId: number;
     nrdbDecks: NrdbDeck[];
+    editMode?: boolean;
   } = $props();
 
   const THE_CATALYST_NRDB_CODE = "30076";
@@ -39,9 +41,6 @@
   let corpDeck = $state(new Deck());
   let originalRunnerDeck = $state(new Deck());
   let runnerDeck = $state(new Deck());
-  let editMode = $state(
-    new URLSearchParams(document.location.search).get("edit") === "true",
-  );
   let editing = $state(false);
 
   onMount(async () => {

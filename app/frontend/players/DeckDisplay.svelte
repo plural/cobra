@@ -163,20 +163,24 @@
       return;
     }
 
-    deck.cards.push({
-      id: 0,
-      deck_id: deck.details.id,
-      title: printings.data[0].attributes.title,
-      quantity: 1,
-      influence: printings.data[0].attributes.influence_cost ?? 0,
-      nrdb_card_id: printings.data[0].attributes.card_id,
-      created_at: "",
-      updated_at: "",
-      nrdb_printing_id: printings.data[0].id,
-      card_type_id: printings.data[0].attributes.card_type_id,
-      faction_id: printings.data[0].attributes.faction_id,
-      influence_cost: printings.data[0].attributes.influence_cost ?? 0,
-    });
+    // Add the card to the deck if it doesn't already exist
+    if (!deck.cards.find((c) => c.nrdb_printing_id === printings.data[0].id)) {
+      deck.cards.push({
+        id: 0,
+        deck_id: deck.details.id,
+        title: printings.data[0].attributes.title,
+        quantity: 1,
+        influence: printings.data[0].attributes.influence_cost ?? 0,
+        nrdb_card_id: printings.data[0].attributes.card_id,
+        created_at: "",
+        updated_at: "",
+        nrdb_printing_id: printings.data[0].id,
+        card_type_id: printings.data[0].attributes.card_type_id,
+        faction_id: printings.data[0].attributes.faction_id,
+        influence_cost: printings.data[0].attributes.influence_cost ?? 0,
+      });
+    }
+
     currentTarget.classList.remove("is-valid", "is-invalid");
     currentTarget.value = "";
   }
@@ -380,7 +384,7 @@
         </tr>
       {/each}
       {#if editMode}
-        <tr>
+        <tr aria-label="new card">
           <td></td>
           <td>
             <input
