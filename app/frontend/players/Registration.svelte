@@ -90,21 +90,30 @@
       return true;
     }
 
-    player.corp_deck = corpDeck.details.identity_title || corpDeck.cards.length > 0 ? corpDeck : undefined;
+    player.corp_deck =
+      corpDeck.details.identity_title || corpDeck.cards.length > 0
+        ? corpDeck
+        : undefined;
     player.corp_id = Object.assign(new Identity(), {
       name: corpDeck.details.identity_title ?? "",
       faction: corpDeck.details.faction_id,
     });
-    player.runner_deck = runnerDeck.details.identity_title || runnerDeck.cards.length > 0 ? runnerDeck : undefined;
+    player.runner_deck =
+      runnerDeck.details.identity_title || runnerDeck.cards.length > 0
+        ? runnerDeck
+        : undefined;
     player.runner_id = Object.assign(new Identity(), {
       name: runnerDeck.details.identity_title ?? "",
       faction: runnerDeck.details.faction_id,
     });
-    Object.assign(player, await savePlayer(
-      tournamentId,
+    Object.assign(
       player,
-      tournament && player.user_id !== tournament.user_id,
-    ));
+      await savePlayer(
+        tournamentId,
+        player,
+        tournament && player.user_id !== tournament.user_id,
+      ),
+    );
 
     await loadTournamentDecks();
     toggleEditing();
@@ -347,7 +356,9 @@
             </div>
           </div>
         {:else}
-          <div class="alert alert-warning">You have no decks saved in NRDB.</div>
+          <div class="alert alert-warning">
+            You have no decks saved in NRDB.
+          </div>
         {/if}
       {:else}
         <div class="spinner-border m-auto"></div>

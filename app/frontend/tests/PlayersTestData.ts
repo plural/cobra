@@ -64,8 +64,8 @@ export const MockPlayerBobNrdbDecks: NrdbDeck[] = [
     tags: "",
     cards: [
       { id: "35068", count: 1 },
-      { id: "30075", count: 3 }
-    ]
+      { id: "30075", count: 3 },
+    ],
   },
   {
     id: 2,
@@ -78,8 +78,8 @@ export const MockPlayerBobNrdbDecks: NrdbDeck[] = [
     tags: "",
     cards: [
       { id: "35012", count: 1 },
-      { id: "30030", count: 3 }
-    ]
+      { id: "30030", count: 3 },
+    ],
   },
 ];
 
@@ -101,7 +101,7 @@ export const MockPlayerBobDecks: Deck[] = [
       user_id: MockPlayerBob.user_id,
       faction_id: "weyland_consortium",
       mine: true,
-      player_name: null
+      player_name: null,
     },
     cards: [
       {
@@ -116,7 +116,7 @@ export const MockPlayerBobDecks: Deck[] = [
         nrdb_printing_id: "30075",
         card_type_id: "operation",
         faction_id: "neutral_corp",
-        influence_cost: 0
+        influence_cost: 0,
       },
     ],
   },
@@ -137,7 +137,7 @@ export const MockPlayerBobDecks: Deck[] = [
       user_id: MockPlayerBob.user_id,
       faction_id: "criminal",
       mine: true,
-      player_name: null
+      player_name: null,
     },
     cards: [
       {
@@ -152,10 +152,10 @@ export const MockPlayerBobDecks: Deck[] = [
         nrdb_printing_id: "30030",
         card_type_id: "event",
         faction_id: "neutral_runner",
-        influence_cost: 0
+        influence_cost: 0,
       },
     ],
-  }
+  },
 ];
 
 export const MockPlayersData: PlayersData = {

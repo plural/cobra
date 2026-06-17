@@ -143,7 +143,8 @@
       deck_id: card.deck_id,
       title: printings.data[0].attributes.title,
       quantity: card.quantity,
-      influence: (printings.data[0].attributes.influence_cost ?? 0) * card.quantity,
+      influence:
+        (printings.data[0].attributes.influence_cost ?? 0) * card.quantity,
       nrdb_card_id: printings.data[0].attributes.card_id,
       created_at: "",
       updated_at: "",
@@ -206,7 +207,10 @@
 </script>
 
 <!-- Deck summary -->
-<table class="table table-bordered table-striped" aria-label={isCorp ? "corp deck" : "runner deck"}>
+<table
+  class="table table-bordered table-striped"
+  aria-label={isCorp ? "corp deck" : "runner deck"}
+>
   <thead class="thead-dark">
     <tr>
       <th class="text-center deck-name-header">
@@ -274,7 +278,10 @@
 
 {#if deck?.details.nrdb_uuid}
   <!-- Identity -->
-  <table class="table table-bordered table-striped" aria-label={isCorp ? "corp deck ID" : "runner deck ID"}>
+  <table
+    class="table table-bordered table-striped"
+    aria-label={isCorp ? "corp deck ID" : "runner deck ID"}
+  >
     <thead class="thead-dark">
       <tr>
         <th class="text-center deck-side-column">Min</th>
@@ -311,7 +318,10 @@
   </table>
 
   <!-- Deck list -->
-  <table class="table table-bordered table-striped" aria-label={isCorp ? "corp deck list" : "runner deck list"}>
+  <table
+    class="table table-bordered table-striped"
+    aria-label={isCorp ? "corp deck list" : "runner deck list"}
+  >
     <thead class="thead-dark">
       <tr>
         <th class="text-center deck-side-column">Qty</th>
