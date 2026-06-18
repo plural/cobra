@@ -50,6 +50,9 @@ describe("Tournament", () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
+    vi.mocked(loadPlayerByUserId).mockImplementation(() =>
+      Promise.resolve(MockPlayerBob),
+    );
 
     Object.defineProperty(window, "matchMedia", {
       writable: true,
