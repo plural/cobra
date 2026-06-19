@@ -16,15 +16,18 @@
   } from "../utils/decks.svelte";
   import { loadDecks, savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
+  import { Identity } from "../identities/Identity";
 
   let {
     tournamentId,
     playerId,
     nrdbDecks,
+    editMode = false,
   }: {
     tournamentId: number;
     playerId: number;
     nrdbDecks: NrdbDeck[];
+    editMode?: boolean;
   } = $props();
 
   const THE_CATALYST_NRDB_CODE = "30076";
@@ -38,9 +41,6 @@
   let corpDeck = $state(new Deck());
   let originalRunnerDeck = $state(new Deck());
   let runnerDeck = $state(new Deck());
-  let editMode = $state(
-    new URLSearchParams(document.location.search).get("edit") === "true",
-  );
   let editing = $state(false);
 
   onMount(async () => {
@@ -57,6 +57,8 @@
       if (printings.size > 0) {
         decks = nrdbDecks.map((d) => convertNrdbDeck(d, printings));
       }
+    } else {
+      decks = [];
     }
   });
 
@@ -88,20 +90,29 @@
       return true;
     }
 
-    player.corp_deck = corpDeck;
-    player.corp_id = {
+    player.corp_deck =
+      corpDeck.details.identity_title || corpDeck.cards.length > 0
+        ? corpDeck
+        : undefined;
+    player.corp_id = Object.assign(new Identity(), {
       name: corpDeck.details.identity_title ?? "",
       faction: corpDeck.details.faction_id,
-    };
-    player.runner_deck = runnerDeck;
-    player.runner_id = {
+    });
+    player.runner_deck =
+      runnerDeck.details.identity_title || runnerDeck.cards.length > 0
+        ? runnerDeck
+        : undefined;
+    player.runner_id = Object.assign(new Identity(), {
       name: runnerDeck.details.identity_title ?? "",
       faction: runnerDeck.details.faction_id,
-    };
-    player = await savePlayer(
-      tournamentId,
+    });
+    Object.assign(
       player,
-      tournament && player.user_id !== tournament.user_id,
+      await savePlayer(
+        tournamentId,
+        player,
+        tournament && player.user_id !== tournament.user_id,
+      ),
     );
 
     await loadTournamentDecks();
@@ -185,7 +196,7 @@
       </li>
     </ul>
     <ul class="list-group list-group-flush overflow-auto" style="height: 24em;">
-      {#each decks.filter((d) => d.details.side_id === (isCorp ? "corp" : "runner")) as deck (deck.details.id)}
+      {#each decks.filter((d) => d.details.side_id === (isCorp ? "corp" : "runner")) as deck (deck.details.nrdb_uuid)}
         <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
         {@render deckListItem(deck, isCorp)}
       {/each}
@@ -195,7 +206,7 @@
 
 {#if player && player.id !== 0 && tournament}
   <!-- General registration information -->
-  <div class="card mb-3">
+  <div class="card mb-3" aria-label="registration information">
     <div class="card-header">
       <div class="d-flex justify-content-between">
         <h5 class="mb-0">My Registration Information</h5>
@@ -330,19 +341,25 @@
 
     <div class="row mb-3 justify-content-center dontprint">
       {#if decks !== null}
-        <div class="col-md-6">
-          <div class="card">
-            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render decksList(true, corpDeck)}
+        {#if decks.length > 0}
+          <div class="col-md-6">
+            <div class="card" aria-label="NRDB corp decks">
+              <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+              {@render decksList(true, corpDeck)}
+            </div>
           </div>
-        </div>
 
-        <div class="col-md-6">
-          <div class="card">
-            <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
-            {@render decksList(false, runnerDeck)}
+          <div class="col-md-6">
+            <div class="card" aria-label="NRDB runner decks">
+              <!-- eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -->
+              {@render decksList(false, runnerDeck)}
+            </div>
           </div>
-        </div>
+        {:else}
+          <div class="alert alert-warning">
+            You have no decks saved in NRDB.
+          </div>
+        {/if}
       {:else}
         <div class="spinner-border m-auto"></div>
       {/if}
