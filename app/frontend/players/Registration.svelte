@@ -116,7 +116,10 @@
     );
 
     await loadTournamentDecks();
-    toggleEditing();
+
+    if (editing) {
+      toggleEditing();
+    }
 
     return true;
   }
