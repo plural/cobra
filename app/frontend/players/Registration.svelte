@@ -160,12 +160,12 @@
   </button>
 {/snippet}
 
-{#snippet decksList(isCorp: boolean, selectedDeck: Deck | null)}
+{#snippet decksList(isCorp: boolean, selectedDeck: Deck)}
   {#if decks !== null}
     <ul class="list-group list-group-flush" style="border-bottom: 0;">
       <li class="list-group-item selected-deck">
-        <div class="selected-deck-buttons">
-          {#if selectedDeck}
+        {#if selectedDeck.details.nrdb_uuid}
+          <div class="selected-deck-buttons">
             <button
               type="button"
               title="Deselect"
@@ -176,9 +176,7 @@
             >
               <FontAwesomeIcon icon="close" />
             </button>
-          {/if}
-        </div>
-        {#if selectedDeck}
+          </div>
           <div
             class="selected-deck-identity"
             style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${selectedDeck.details.identity_nrdb_printing_id}.jpg)`}
