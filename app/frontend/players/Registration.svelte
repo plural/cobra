@@ -13,6 +13,7 @@
     Deck,
     convertNrdbDeck,
     getPrintings,
+    sortCards,
   } from "../utils/decks.svelte";
   import { loadDecks, savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
@@ -82,7 +83,9 @@
 
   function resetEditDecks() {
     corpDeck = $state.snapshot(originalCorpDeck);
+    sortCards(corpDeck.cards);
     runnerDeck = $state.snapshot(originalRunnerDeck);
+    sortCards(runnerDeck.cards);
   }
 
   async function save() {
