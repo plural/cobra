@@ -45,16 +45,8 @@
   }
 </script>
 
-{#if editing}
-  <button
-    type="button"
-    title="Add"
-    class="btn btn-link p-0 float-right"
-    onclick={() => editing = false}
-  >
-    <FontAwesomeIcon icon="close" />
-  </button>
-  <div>
+<div class="d-flex">
+  {#if editing}
     <Svelecte
       controlClass="form-control"
       placeholder="Enter identity name"
@@ -64,20 +56,27 @@
       valueField="value"
       onChange={sveleteOnChange}
     />
-  </div>
-{:else}
-  <div>
+    <button
+      type="button"
+      title="Add"
+      class="btn btn-link p-0 ml-2"
+      onclick={() => editing = false}
+    >
+      <FontAwesomeIcon icon="close" />
+    </button>
+  {:else}
+    <div class="w-100">
+      {@render children()}
+    </div>
     {#if allowEdit}
       <button
         type="button"
         title="Add"
-        class="btn btn-link p-0 float-right"
+        class="btn btn-link p-0 ml-2"
         onclick={() => editing = true}
       >
         <FontAwesomeIcon icon="pencil" />
       </button>
     {/if}
-
-    {@render children()}
-  </div>
-{/if}
+  {/if}
+</div>
