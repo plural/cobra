@@ -158,7 +158,6 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
 
   def pairings_data_stages(user_id = nil)
     players = pairings_data_players
-    puts players.inspect
     @tournament.stages.includes(:rounds, :registrations).map do |stage|
       stage_players = pairings_data_players_with_seeds(players, stage)
       {
