@@ -38,6 +38,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
 
     # Load pairing data for elimination stages
     stages = pairings_data_stages
+
     stages.each do |stage|
       bracket_info = bracket_games(stage)
       next if bracket_info.nil?
@@ -157,6 +158,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
 
   def pairings_data_stages(user_id = nil)
     players = pairings_data_players
+    puts players.inspect
     @tournament.stages.includes(:rounds, :registrations).map do |stage|
       stage_players = pairings_data_players_with_seeds(players, stage)
       {
@@ -227,7 +229,7 @@ class RoundsController < ApplicationController # rubocop:disable Metrics/ClassLe
     filtered_pairings = round.pairings.order(:table_number)
     unless user_id.nil?
       filtered_pairings = filtered_pairings
-                          .joins(:player1, :player2)
+                          .left_joins(:player1, :player2)
                           .where('players.user_id = ? or player2s_pairings.user_id = ?', user_id, user_id)
     end
     filtered_pairings.pluck(pairings_fields).each do | # rubocop:disable Metrics/ParameterLists
