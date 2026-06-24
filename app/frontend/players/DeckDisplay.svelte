@@ -17,17 +17,25 @@
     value: Printing;
   }
 
+  interface CardDiff {
+    title: string;
+    delta: number;
+  }
+
   let {
     deck = $bindable(),
+    originalDeck,
     isCorp,
     editMode,
   }: {
     deck?: Deck;
+    originalDeck: Deck;
     isCorp: boolean;
     editMode: boolean;
   } = $props();
 
-  let selectedCard = $state<Printing | null>();
+  let selectedCard = $state<Printing | null>(null);
+  let cardDiffs = $state<CardDiff[]>([]);
   let cardTotal = $derived.by(() => {
     if (!deck) {
       return 0;
@@ -53,6 +61,43 @@
 
   function adjustFactionId(factionId: string) {
     return factionId.replace("_", "-");
+  }
+
+  function diffDecks() {
+    cardDiffs = [];
+
+    if (!deck) {
+      return;
+    }
+    
+    // Removed cards and quantity changes
+    originalDeck.cards.forEach((originalCard) => {
+      const card = deck.cards.find((c) => c.nrdb_card_id === originalCard.nrdb_card_id);
+      if (card) {
+        if (card.quantity !== originalCard.quantity) {
+          cardDiffs.push({
+            title: originalCard.title,
+            delta: card.quantity - originalCard.quantity,
+          });
+        }
+      } else {
+        cardDiffs.push({
+          title: originalCard.title,
+          delta: -originalCard.quantity,
+        });
+      }
+    });
+
+    // Added cards
+    deck.cards.forEach((card) => {
+      const originalCard = originalDeck.cards.find((c) => c.nrdb_card_id === card.nrdb_card_id);
+      if (!originalCard) {
+        cardDiffs.push({
+          title: card.title,
+          delta: card.quantity,
+        });
+      }
+    });
   }
 
   async function copyToClipboard() {
@@ -118,6 +163,8 @@
       faction_id: printing.attributes.faction_id,
       influence_cost: printing.attributes.influence_cost ?? 0,
     });
+
+    diffDecks();
   }
 
   function addCard(selection: CardSearchOption | null) {
@@ -143,6 +190,8 @@
     }
 
     selectedCard = null;
+
+    diffDecks();
   }
 
   function transformCardLookup(response: PrintingsResponse) {
@@ -161,6 +210,8 @@
         deck.cards.splice(i, 1);
       }
     }
+
+    diffDecks();
   }
 </script>
 
@@ -371,4 +422,30 @@
       </tr>
     </tbody>
   </table>
+
+  <!-- Editing diffs -->
+  {#if editMode}
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th class="text-center">Changes</th>
+          <th class="text-center deck-side-column">Qty</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#if cardDiffs.length === 0}
+          <tr>
+            <td colspan="2">No changes</td>
+          </tr>
+        {:else}
+          {#each cardDiffs as diff (diff.title)}
+            <tr>
+              <td>{diff.title}</td>
+              <td class="text-center align-middle">{diff.delta > 0 ? "+" : ""}{diff.delta}</td>
+            </tr>
+          {/each}
+        {/if}
+      </tbody>
+    </table>
+  {/if}
 {/if}

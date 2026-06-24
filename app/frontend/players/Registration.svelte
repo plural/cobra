@@ -373,12 +373,25 @@
   <!-- Deck display -->
   <div class="row">
     <div class="col-md-6">
-      <DeckDisplay bind:deck={corpDeck} isCorp={true} editMode={editing} />
+      <DeckDisplay bind:deck={corpDeck} originalDeck={originalCorpDeck} isCorp={true} editMode={editing} />
     </div>
 
     <div class="col-md-6">
-      <DeckDisplay bind:deck={runnerDeck} isCorp={false} editMode={editing} />
+      <DeckDisplay bind:deck={runnerDeck} originalDeck={originalRunnerDeck} isCorp={false} editMode={editing} />
     </div>
+
+    {#if editing}
+      <div class="col-md-12">
+        <ProgressButton
+          css="btn btn-success float-right"
+          inProgressText="Saving"
+          completeText="Saved"
+          onclick={save}
+        >
+          <FontAwesomeIcon icon="floppy-o" /> Save
+        </ProgressButton>
+      </div>
+    {/if}
   </div>
 {:else}
   <div class="d-flex align-items-center m-2">
