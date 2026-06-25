@@ -48,6 +48,11 @@ export interface Card {
   influence_cost: number;
 }
 
+export interface CardSearchOption {
+  label: string;
+  value: Printing;
+}
+
 export class DeckDetails {
   id = 0;
   player_id: number | null = null;
@@ -233,4 +238,8 @@ export async function loadPrintings(query?: string) {
   }
 
   return null;
+}
+
+export function transformCardLookup(response: PrintingsResponse): CardSearchOption[] {
+  return response.data.map((p) => { return { label: p.attributes.title, value: p }; });
 }

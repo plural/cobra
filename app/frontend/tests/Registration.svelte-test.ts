@@ -8,12 +8,12 @@ import {
 } from "./PlayersTestData";
 import userEvent from "@testing-library/user-event";
 import {
-  fireEvent,
-  getByDisplayValue,
   getByLabelText,
   getByRole,
   getByTestId,
+  getByText,
   queryByDisplayValue,
+  queryByText,
   render,
   screen,
   waitFor,
@@ -23,7 +23,7 @@ import { loadDecks, loadPlayer, savePlayer } from "../players/PlayersData";
 import { Identity } from "../identities/Identity";
 import {
   getPrintings,
-  loadPrintings,
+  transformCardLookup,
   type NrdbDeck,
 } from "../utils/decks.svelte";
 import type { Printing } from "../lib/api_types";
@@ -44,9 +44,7 @@ vi.mock("../utils/decks.svelte", async (importOriginal) => {
   return {
     ...(await importOriginal<typeof import("../utils/decks.svelte")>()),
     getPrintings: vi.fn(() => MockPrintings),
-    loadPrintings: vi.fn(() => {
-      return { data: Array.from(MockPrintings.values()) };
-    }),
+    transformCardLookup: vi.fn(() => []),
   };
 });
 
@@ -175,6 +173,18 @@ describe("Registration", () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
+
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
   });
 
   describe("no existing decks", () => {
@@ -338,20 +348,21 @@ describe("Registration", () => {
           ),
         );
 
-        const runnerDeckTable = screen.getByLabelText("runner deck list");
-
-        vi.mocked(loadPrintings).mockImplementation(() =>
-          Promise.resolve({ data: [MockBetaBuildPrinting] }),
+        vi.mocked(transformCardLookup).mockImplementation(() =>
+          [{ label: MockBetaBuildPrinting.attributes.title, value: MockBetaBuildPrinting }]
         );
 
-        const newCardRow = getByTestId(runnerDeckTable, "new_card_row");
-        await fireEvent.change(getByRole(newCardRow, "textbox"), {
-          target: { value: "beta bui" },
-        });
+        const runnerDeckTable = screen.getByLabelText("runner deck list");
 
-        expect(loadPrintings).toHaveBeenCalledOnce();
+        const newCardRow = getByTestId(runnerDeckTable, "new_card_row");
+        await user.type(getByRole(newCardRow, "textbox"), "beta");
+        await waitFor(() => {
+          expect(getByText(newCardRow, "Build")).toBeInTheDocument()
+        });
+        await user.keyboard("{Enter}");
+
         expect(
-          getByDisplayValue(
+          getByText(
             runnerDeckTable,
             MockBetaBuildPrinting.attributes.title,
           ),
@@ -368,31 +379,35 @@ describe("Registration", () => {
           ),
         );
 
-        const runnerDeckTable = screen.getByLabelText("runner deck list");
-
-        vi.mocked(loadPrintings).mockImplementation(() =>
-          Promise.resolve({ data: [MockBetaBuildPrinting] }),
+        vi.mocked(transformCardLookup).mockImplementation(() =>
+          [{ label: MockBetaBuildPrinting.attributes.title, value: MockBetaBuildPrinting }]
         );
 
-        const cardRow = getByTestId(
-          runnerDeckTable,
+        let cardRow = getByTestId(
+          screen.getByLabelText("runner deck list"),
           `card_${MockSureGamblePrinting.attributes.card_id}_row`,
         );
-        await fireEvent.change(getByRole(cardRow, "textbox"), {
-          target: { value: "beta bui" },
+
+        await user.click(getByRole(cardRow, "button", { name: "Edit" }));
+        expect(
+          getByRole(cardRow, "button", { name: "Cancel" }),
+        ).toBeInTheDocument();
+        await user.type(getByRole(cardRow, "textbox"), "beta");
+        await waitFor(() => {
+          expect(getByText(cardRow, "Build")).toBeInTheDocument();
         });
+        await user.keyboard("{Enter}");
+        cardRow = getByTestId(
+          screen.getByLabelText("runner deck list"),
+          `card_${MockBetaBuildPrinting.attributes.card_id}_row`,
+        );
+        await waitFor(() => expect(getByRole(cardRow, "button", { name: "Edit" })).toBeInTheDocument());
 
         expect(
-          queryByDisplayValue(
-            runnerDeckTable,
-            MockBetaBuildPrinting.attributes.title,
-          ),
+          queryByText(cardRow, MockBetaBuildPrinting.attributes.title),
         ).toBeInTheDocument();
         expect(
-          queryByDisplayValue(
-            runnerDeckTable,
-            MockSureGamblePrinting.attributes.title,
-          ),
+          queryByText(cardRow, MockSureGamblePrinting.attributes.title),
         ).not.toBeInTheDocument();
       });
 
@@ -455,25 +470,28 @@ describe("Registration", () => {
           ),
         );
 
-        const runnerIdTable = screen.getByLabelText("runner deck ID");
-
-        vi.mocked(loadPrintings).mockImplementation(() =>
-          Promise.resolve({ data: [MockZahyaPrinting] }),
+        vi.mocked(transformCardLookup).mockImplementation(() =>
+          [{ label: MockZahyaPrinting.attributes.title, value: MockZahyaPrinting }]
         );
 
-        const cardRow = getByTestId(runnerIdTable, `identity_row`);
-        await fireEvent.change(getByRole(cardRow, "textbox"), {
-          target: { value: "zahya" },
+        const cardRow = getByTestId(screen.getByLabelText("runner deck ID"), `identity_row`);
+
+        await user.click(getByRole(cardRow, "button", { name: "Edit" }));
+        expect(
+          getByRole(cardRow, "button", { name: "Cancel" }),
+        ).toBeInTheDocument();
+        await user.type(getByRole(cardRow, "textbox"), "zahya");
+        await waitFor(() => {
+          expect(getByText(cardRow, "Sadeghi: Versatile Smuggler")).toBeInTheDocument()
         });
+        await user.keyboard("{Enter}");
+        await waitFor(() => expect(getByRole(cardRow, "button", { name: "Edit" })).toBeInTheDocument());
 
         expect(
-          queryByDisplayValue(
-            runnerIdTable,
-            MockZahyaPrinting.attributes.title,
-          ),
+          queryByText(cardRow, MockZahyaPrinting.attributes.title),
         ).toBeInTheDocument();
         expect(
-          queryByDisplayValue(runnerIdTable, MockBazPrinting.attributes.title),
+          queryByText(cardRow, MockBazPrinting.attributes.title),
         ).not.toBeInTheDocument();
       });
     });

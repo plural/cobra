@@ -1,13 +1,9 @@
 <script lang="ts">
   import Svelecte from "svelecte";
-  import type { Printing, PrintingsResponse } from "../lib/api_types";
+  import type { Printing } from "../lib/api_types";
   import type { Snippet } from "svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-
-  interface CardSearchOption {
-    label: string;
-    value: Printing;
-  }
+  import { transformCardLookup, type CardSearchOption } from "../utils/decks.svelte";
 
   let {
     sideId,
@@ -28,10 +24,6 @@
   function getCardSearchUrl(sideId: string | null) {
     const searchString = `[query] ${isIdentity ? "t:identity" : "t!identity"}`;
     return `https://api.netrunnerdb.com/api/v3/public/printings?fields[printings]=card_id,card_type_id,title,side_id,faction_id,minimum_deck_size,influence_limit,influence_cost&filter[side_id]=${sideId}&filter[distinct_cards]=true&filter[search]=${searchString}`;
-  }
-
-  function transformCardLookup(response: PrintingsResponse) {
-    return response.data.map((p) => { return { label: p.attributes.title, value: p }; });
   }
 
   function sveleteOnChange(selection: CardSearchOption | null) {
@@ -58,7 +50,7 @@
     />
     <button
       type="button"
-      title="Add"
+      title="Cancel"
       class="btn btn-link p-0 ml-2"
       onclick={() => editing = false}
     >
@@ -71,7 +63,7 @@
     {#if allowEdit}
       <button
         type="button"
-        title="Add"
+        title="Edit"
         class="btn btn-link p-0 ml-2"
         onclick={() => editing = true}
       >
