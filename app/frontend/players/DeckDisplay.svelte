@@ -204,6 +204,7 @@
     }
 
     card.quantity += delta;
+    card.influence = card.influence_cost * card.quantity
     if (card.quantity === 0) {
       const i = deck.cards.indexOf(card);
       if (i !== -1) {
