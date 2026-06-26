@@ -69,6 +69,22 @@
     if (!deck) {
       return;
     }
+
+    // Identity
+    if (originalDeck.details.identity_title !== deck.details.identity_title) {
+      if (originalDeck.details.identity_title) {
+        cardDiffs.push({
+          title: originalDeck.details.identity_title,
+          delta: -1,
+        });
+      }
+      if (deck.details.identity_title) {
+        cardDiffs.push({
+          title: deck.details.identity_title,
+          delta: 1,
+        });
+      }
+    }
     
     // Removed cards and quantity changes
     originalDeck.cards.forEach((originalCard) => {
@@ -136,6 +152,8 @@
     deck.details.faction_id = printing.attributes.faction_id;
     deck.details.min_deck_size = printing.attributes.minimum_deck_size;
     deck.details.max_influence = printing.attributes.influence_limit;
+
+    diffDecks();
   }
   
   function changeCard(cardPrintingId: string | null, printing: Printing) {
@@ -426,7 +444,10 @@
 
   <!-- Editing diffs -->
   {#if editMode}
-    <table class="table table-bordered table-striped">
+    <table
+      class="table table-bordered table-striped"
+      aria-label={isCorp ? "corp deck changes" : "runner deck changes"}
+    >
       <thead class="thead-dark">
         <tr>
           <th class="text-center">Changes</th>
