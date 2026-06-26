@@ -240,6 +240,10 @@ export async function loadPrintings(query?: string) {
   return null;
 }
 
-export function transformCardLookup(response: PrintingsResponse): CardSearchOption[] {
-  return response.data.map((p) => { return { label: p.attributes.title, value: p }; });
+export function transformCardLookup(
+  response: PrintingsResponse,
+): CardSearchOption[] {
+  return response.data.map((p) => {
+    return { label: p.attributes.title, value: p };
+  });
 }

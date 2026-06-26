@@ -3,14 +3,17 @@
   import type { Printing } from "../lib/api_types";
   import type { Snippet } from "svelte";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import { transformCardLookup, type CardSearchOption } from "../utils/decks.svelte";
+  import {
+    transformCardLookup,
+    type CardSearchOption,
+  } from "../utils/decks.svelte";
 
   let {
     sideId,
     allowEdit,
     isIdentity,
     onChange,
-    children
+    children,
   }: {
     sideId: string;
     allowEdit: boolean;
@@ -52,7 +55,7 @@
       type="button"
       title="Cancel"
       class="btn btn-link p-0 ml-2"
-      onclick={() => editing = false}
+      onclick={() => (editing = false)}
     >
       <FontAwesomeIcon icon="close" />
     </button>
@@ -65,7 +68,7 @@
         type="button"
         title="Edit"
         class="btn btn-link p-0 ml-2"
-        onclick={() => editing = true}
+        onclick={() => (editing = true)}
       >
         <FontAwesomeIcon icon="pencil" />
       </button>

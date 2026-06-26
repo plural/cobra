@@ -9,7 +9,7 @@
     type IdentityNames,
   } from "../identities/Identity";
   import { onMount } from "svelte";
-    import ProgressButton from "../widgets/ProgressButton.svelte";
+  import ProgressButton from "../widgets/ProgressButton.svelte";
 
   let {
     userId,

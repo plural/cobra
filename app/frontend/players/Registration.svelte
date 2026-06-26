@@ -373,11 +373,21 @@
   <!-- Deck display -->
   <div class="row">
     <div class="col-md-6">
-      <DeckDisplay bind:deck={corpDeck} originalDeck={originalCorpDeck} isCorp={true} editMode={editing} />
+      <DeckDisplay
+        bind:deck={corpDeck}
+        originalDeck={originalCorpDeck}
+        isCorp={true}
+        editMode={editing}
+      />
     </div>
 
     <div class="col-md-6">
-      <DeckDisplay bind:deck={runnerDeck} originalDeck={originalRunnerDeck} isCorp={false} editMode={editing} />
+      <DeckDisplay
+        bind:deck={runnerDeck}
+        originalDeck={originalRunnerDeck}
+        isCorp={false}
+        editMode={editing}
+      />
     </div>
 
     {#if editing}

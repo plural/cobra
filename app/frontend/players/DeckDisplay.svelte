@@ -1,11 +1,7 @@
 <script lang="ts">
   import Svelecte from "svelecte";
   import Identity from "../identities/Identity.svelte";
-  import {
-    deckCsv,
-    type Card,
-    type Deck,
-  } from "../utils/decks.svelte";
+  import { deckCsv, type Card, type Deck } from "../utils/decks.svelte";
   import { downloadBlob } from "../utils/files";
   import { getCardTypeImage } from "../utils/images";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
@@ -85,10 +81,12 @@
         });
       }
     }
-    
+
     // Removed cards and quantity changes
     originalDeck.cards.forEach((originalCard) => {
-      const card = deck.cards.find((c) => c.nrdb_card_id === originalCard.nrdb_card_id);
+      const card = deck.cards.find(
+        (c) => c.nrdb_card_id === originalCard.nrdb_card_id,
+      );
       if (card) {
         if (card.quantity !== originalCard.quantity) {
           cardDiffs.push({
@@ -106,7 +104,9 @@
 
     // Added cards
     deck.cards.forEach((card) => {
-      const originalCard = originalDeck.cards.find((c) => c.nrdb_card_id === card.nrdb_card_id);
+      const originalCard = originalDeck.cards.find(
+        (c) => c.nrdb_card_id === card.nrdb_card_id,
+      );
       if (!originalCard) {
         cardDiffs.push({
           title: card.title,
@@ -155,13 +155,15 @@
 
     diffDecks();
   }
-  
+
   function changeCard(cardPrintingId: string | null, printing: Printing) {
     if (!cardPrintingId || !deck || !printing.id) {
       return;
     }
 
-    const i = deck.cards.findIndex((c) => c.nrdb_printing_id === cardPrintingId);
+    const i = deck.cards.findIndex(
+      (c) => c.nrdb_printing_id === cardPrintingId,
+    );
     if (i < 0 || i >= deck.cards.length) {
       return;
     }
@@ -213,7 +215,9 @@
   }
 
   function transformCardLookup(response: PrintingsResponse) {
-    return response.data.map((p) => { return { label: p.attributes.title, value: p }; });
+    return response.data.map((p) => {
+      return { label: p.attributes.title, value: p };
+    });
   }
 
   function changeQuantity(card: Card, delta: number) {
@@ -222,7 +226,7 @@
     }
 
     card.quantity += delta;
-    card.influence = card.influence_cost * card.quantity
+    card.influence = card.influence_cost * card.quantity;
     if (card.quantity === 0) {
       const i = deck.cards.indexOf(card);
       if (i !== -1) {
@@ -388,7 +392,9 @@
               sideId={deck.details.side_id ?? ""}
               isIdentity={false}
               allowEdit={editMode}
-              onChange={(p: Printing) => { changeCard(card.nrdb_printing_id, p); }}
+              onChange={(p: Printing) => {
+                changeCard(card.nrdb_printing_id, p);
+              }}
             >
               <img
                 src={getCardTypeImage(card.card_type_id)}
@@ -463,7 +469,9 @@
           {#each cardDiffs as diff (diff.title)}
             <tr>
               <td>{diff.title}</td>
-              <td class="text-center align-middle">{diff.delta > 0 ? "+" : ""}{diff.delta}</td>
+              <td class="text-center align-middle">
+                {diff.delta > 0 ? "+" : ""}{diff.delta}
+              </td>
             </tr>
           {/each}
         {/if}
