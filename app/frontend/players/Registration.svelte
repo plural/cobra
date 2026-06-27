@@ -13,6 +13,7 @@
     Deck,
     convertNrdbDeck,
     getPrintings,
+    sortCards,
   } from "../utils/decks.svelte";
   import { loadDecks, savePlayer } from "../players/PlayersData";
   import DeckDisplay from "./DeckDisplay.svelte";
@@ -82,7 +83,9 @@
 
   function resetEditDecks() {
     corpDeck = $state.snapshot(originalCorpDeck);
+    sortCards(corpDeck.cards);
     runnerDeck = $state.snapshot(originalRunnerDeck);
+    sortCards(runnerDeck.cards);
   }
 
   async function save() {
@@ -116,7 +119,10 @@
     );
 
     await loadTournamentDecks();
-    toggleEditing();
+
+    if (editing) {
+      toggleEditing();
+    }
 
     return true;
   }
@@ -160,12 +166,12 @@
   </button>
 {/snippet}
 
-{#snippet decksList(isCorp: boolean, selectedDeck: Deck | null)}
+{#snippet decksList(isCorp: boolean, selectedDeck: Deck)}
   {#if decks !== null}
     <ul class="list-group list-group-flush" style="border-bottom: 0;">
       <li class="list-group-item selected-deck">
-        <div class="selected-deck-buttons">
-          {#if selectedDeck}
+        {#if selectedDeck.details.nrdb_uuid}
+          <div class="selected-deck-buttons">
             <button
               type="button"
               title="Deselect"
@@ -176,9 +182,7 @@
             >
               <FontAwesomeIcon icon="close" />
             </button>
-          {/if}
-        </div>
-        {#if selectedDeck}
+          </div>
           <div
             class="selected-deck-identity"
             style={`background-image:url(https://card-images.netrunnerdb.com/v2/small/${selectedDeck.details.identity_nrdb_printing_id}.jpg)`}
@@ -369,12 +373,35 @@
   <!-- Deck display -->
   <div class="row">
     <div class="col-md-6">
-      <DeckDisplay bind:deck={corpDeck} isCorp={true} editMode={editing} />
+      <DeckDisplay
+        bind:deck={corpDeck}
+        originalDeck={originalCorpDeck}
+        isCorp={true}
+        editMode={editing}
+      />
     </div>
 
     <div class="col-md-6">
-      <DeckDisplay bind:deck={runnerDeck} isCorp={false} editMode={editing} />
+      <DeckDisplay
+        bind:deck={runnerDeck}
+        originalDeck={originalRunnerDeck}
+        isCorp={false}
+        editMode={editing}
+      />
     </div>
+
+    {#if editing}
+      <div class="col-md-12">
+        <ProgressButton
+          css="btn btn-success float-right"
+          inProgressText="Saving"
+          completeText="Saved"
+          onclick={save}
+        >
+          <FontAwesomeIcon icon="floppy-o" /> Save
+        </ProgressButton>
+      </div>
+    {/if}
   </div>
 {:else}
   <div class="d-flex align-items-center m-2">

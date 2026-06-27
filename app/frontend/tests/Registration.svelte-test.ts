@@ -8,12 +8,12 @@ import {
 } from "./PlayersTestData";
 import userEvent from "@testing-library/user-event";
 import {
-  fireEvent,
-  getByDisplayValue,
   getByLabelText,
   getByRole,
   getByTestId,
+  getByText,
   queryByDisplayValue,
+  queryByText,
   render,
   screen,
   waitFor,
@@ -23,7 +23,7 @@ import { loadDecks, loadPlayer, savePlayer } from "../players/PlayersData";
 import { Identity } from "../identities/Identity";
 import {
   getPrintings,
-  loadPrintings,
+  transformCardLookup,
   type NrdbDeck,
 } from "../utils/decks.svelte";
 import type { Printing } from "../lib/api_types";
@@ -44,9 +44,7 @@ vi.mock("../utils/decks.svelte", async (importOriginal) => {
   return {
     ...(await importOriginal<typeof import("../utils/decks.svelte")>()),
     getPrintings: vi.fn(() => MockPrintings),
-    loadPrintings: vi.fn(() => {
-      return { data: Array.from(MockPrintings.values()) };
-    }),
+    transformCardLookup: vi.fn(() => []),
   };
 });
 
@@ -175,6 +173,18 @@ describe("Registration", () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
+
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
   });
 
   describe("no existing decks", () => {
@@ -338,25 +348,33 @@ describe("Registration", () => {
           ),
         );
 
+        vi.mocked(transformCardLookup).mockImplementation(() => [
+          {
+            label: MockBetaBuildPrinting.attributes.title,
+            value: MockBetaBuildPrinting,
+          },
+        ]);
+
         const runnerDeckTable = screen.getByLabelText("runner deck list");
 
-        vi.mocked(loadPrintings).mockImplementation(() =>
-          Promise.resolve({ data: [MockBetaBuildPrinting] }),
-        );
-
+        // Add card
         const newCardRow = getByTestId(runnerDeckTable, "new_card_row");
-        await fireEvent.change(getByRole(newCardRow, "textbox"), {
-          target: { value: "beta bui" },
+        await user.type(getByRole(newCardRow, "textbox"), "beta");
+        await waitFor(() => {
+          expect(getByText(newCardRow, "Build")).toBeInTheDocument();
         });
+        await user.keyboard("{Enter}");
 
-        expect(loadPrintings).toHaveBeenCalledOnce();
+        // Validate new card
         expect(
-          getByDisplayValue(
-            runnerDeckTable,
-            MockBetaBuildPrinting.attributes.title,
-          ),
+          getByText(runnerDeckTable, MockBetaBuildPrinting.attributes.title),
         ).toBeInTheDocument();
         expect((newCardRow as HTMLInputElement).value).toBeUndefined();
+
+        // Validate diff
+        expect(screen.getByLabelText("runner deck changes")).toHaveTextContent(
+          `ChangesQty${MockBetaBuildPrinting.attributes.title}+1`,
+        );
       });
 
       it("change a card", async () => {
@@ -368,32 +386,50 @@ describe("Registration", () => {
           ),
         );
 
-        const runnerDeckTable = screen.getByLabelText("runner deck list");
+        vi.mocked(transformCardLookup).mockImplementation(() => [
+          {
+            label: MockBetaBuildPrinting.attributes.title,
+            value: MockBetaBuildPrinting,
+          },
+        ]);
 
-        vi.mocked(loadPrintings).mockImplementation(() =>
-          Promise.resolve({ data: [MockBetaBuildPrinting] }),
-        );
-
-        const cardRow = getByTestId(
-          runnerDeckTable,
+        let cardRow = getByTestId(
+          screen.getByLabelText("runner deck list"),
           `card_${MockSureGamblePrinting.attributes.card_id}_row`,
         );
-        await fireEvent.change(getByRole(cardRow, "textbox"), {
-          target: { value: "beta bui" },
-        });
 
+        // Change card
+        await user.click(getByRole(cardRow, "button", { name: "Edit" }));
         expect(
-          queryByDisplayValue(
-            runnerDeckTable,
-            MockBetaBuildPrinting.attributes.title,
-          ),
+          getByRole(cardRow, "button", { name: "Cancel" }),
+        ).toBeInTheDocument();
+        await user.type(getByRole(cardRow, "textbox"), "beta");
+        await waitFor(() => {
+          expect(getByText(cardRow, "Build")).toBeInTheDocument();
+        });
+        await user.keyboard("{Enter}");
+        cardRow = getByTestId(
+          screen.getByLabelText("runner deck list"),
+          `card_${MockBetaBuildPrinting.attributes.card_id}_row`,
+        );
+        await waitFor(() =>
+          expect(
+            getByRole(cardRow, "button", { name: "Edit" }),
+          ).toBeInTheDocument(),
+        );
+
+        // Validate change
+        expect(
+          queryByText(cardRow, MockBetaBuildPrinting.attributes.title),
         ).toBeInTheDocument();
         expect(
-          queryByDisplayValue(
-            runnerDeckTable,
-            MockSureGamblePrinting.attributes.title,
-          ),
+          queryByText(cardRow, MockSureGamblePrinting.attributes.title),
         ).not.toBeInTheDocument();
+
+        // Validate diff
+        expect(screen.getByLabelText("runner deck changes")).toHaveTextContent(
+          `ChangesQty${MockSureGamblePrinting.attributes.title}-3${MockBetaBuildPrinting.attributes.title}+3`,
+        );
       });
 
       it("change a card's quantity", async () => {
@@ -410,12 +446,19 @@ describe("Registration", () => {
           runnerDeckTable,
           `card_${MockSureGamblePrinting.attributes.card_id}_row`,
         );
+        const runnerDiffsTable = screen.getByLabelText("runner deck changes");
 
+        // -1 quantity
         await user.click(getByRole(cardRow, "button", { name: "Remove" }));
         expect(cardRow).toHaveTextContent("2");
+        expect(runnerDiffsTable).toHaveTextContent(
+          `ChangesQty${MockSureGamblePrinting.attributes.title}-1`,
+        );
 
+        // +1 quantity
         await user.click(getByRole(cardRow, "button", { name: "Add" }));
         expect(cardRow).toHaveTextContent("3");
+        expect(runnerDiffsTable).toHaveTextContent("ChangesQtyNo changes");
       });
 
       it("remove a card", async () => {
@@ -429,6 +472,7 @@ describe("Registration", () => {
 
         const runnerDeckTable = screen.getByLabelText("runner deck list");
 
+        // Remove card
         const cardRow = getByTestId(
           runnerDeckTable,
           `card_${MockSureGamblePrinting.attributes.card_id}_row`,
@@ -438,12 +482,18 @@ describe("Registration", () => {
         await user.click(removeButton);
         await user.click(removeButton);
 
+        // Validate removal
         expect(
           queryByDisplayValue(
             runnerDeckTable,
             MockSureGamblePrinting.attributes.title,
           ),
         ).not.toBeInTheDocument();
+
+        // Validate diffs
+        expect(screen.getByLabelText("runner deck changes")).toHaveTextContent(
+          `ChangesQty${MockSureGamblePrinting.attributes.title}-3`,
+        );
       });
 
       it("change an identity", async () => {
@@ -455,26 +505,48 @@ describe("Registration", () => {
           ),
         );
 
-        const runnerIdTable = screen.getByLabelText("runner deck ID");
+        vi.mocked(transformCardLookup).mockImplementation(() => [
+          {
+            label: MockZahyaPrinting.attributes.title,
+            value: MockZahyaPrinting,
+          },
+        ]);
 
-        vi.mocked(loadPrintings).mockImplementation(() =>
-          Promise.resolve({ data: [MockZahyaPrinting] }),
+        const cardRow = getByTestId(
+          screen.getByLabelText("runner deck ID"),
+          `identity_row`,
         );
 
-        const cardRow = getByTestId(runnerIdTable, `identity_row`);
-        await fireEvent.change(getByRole(cardRow, "textbox"), {
-          target: { value: "zahya" },
-        });
-
+        // Change identity
+        await user.click(getByRole(cardRow, "button", { name: "Edit" }));
         expect(
-          queryByDisplayValue(
-            runnerIdTable,
-            MockZahyaPrinting.attributes.title,
-          ),
+          getByRole(cardRow, "button", { name: "Cancel" }),
+        ).toBeInTheDocument();
+        await user.type(getByRole(cardRow, "textbox"), "zahya");
+        await waitFor(() => {
+          expect(
+            getByText(cardRow, "Sadeghi: Versatile Smuggler"),
+          ).toBeInTheDocument();
+        });
+        await user.keyboard("{Enter}");
+        await waitFor(() =>
+          expect(
+            getByRole(cardRow, "button", { name: "Edit" }),
+          ).toBeInTheDocument(),
+        );
+
+        // Validate change
+        expect(
+          queryByText(cardRow, MockZahyaPrinting.attributes.title),
         ).toBeInTheDocument();
         expect(
-          queryByDisplayValue(runnerIdTable, MockBazPrinting.attributes.title),
+          queryByText(cardRow, MockBazPrinting.attributes.title),
         ).not.toBeInTheDocument();
+
+        // Validate diffs
+        expect(screen.getByLabelText("runner deck changes")).toHaveTextContent(
+          `ChangesQty${MockBazPrinting.attributes.title}-1${MockZahyaPrinting.attributes.title}+1`,
+        );
       });
     });
   });
