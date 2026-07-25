@@ -72,7 +72,7 @@ jobs:
       - name: Run CI
         run: bundle exec bin/ci
       
-      - name: Install frontend NPM dependencies
+      - name: Run svelte-check
         working-directory: ./frontend
         run: npm run check
 
