@@ -25,7 +25,7 @@ If you open this folder in VS Code it will prompt you to re-open in the
 devcontainer. From there, your terminal will be in the container and you will have a
 self-contained, full-featured development environment.
 
-There are two containers used by Cobra: one for the Rails API backend and another to serve the Sveltekit frontend. These containers can be opened in separate VS Code windows simulataneously using the command palette. The [VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/connect-multiple-containers) provides more detail on managing multiple devcontainers.
+There are two servers used by Cobra: one for the Rails API backend and another to serve the Sveltekit frontend. Both of these servers reside within the same devcontainer and can be opened in separate VS Code terminals simulataneously (see the "Start the servers" section below).
 
 ### Local dev with Docker Compose
 If you want to develop with Docker outside of VS Code, these instructions are
