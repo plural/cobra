@@ -3,7 +3,7 @@
   "scripts": {
     "lint": "eslint app && eslint frontend",
     "prettier:write": "prettier --write .",
-    "svelte-check": "svelte-check",
+    "svelte-check": "VITE_RUBY_ROOT=. svelte-check",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
