@@ -30,10 +30,21 @@
     // This can be used to network with other containers or the host.
     "forwardPorts": [
         3000,
+        5173,
         5432
     ],
+    "portsAttributes": {
+      "3000": {
+        "label": "API",
+        "onAutoForward": "notify"
+      },
+      "5173": {
+        "label": "Frontend",
+        "onAutoForward": "notify"
+      }
+    },
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "cat config/database.example.app-in-docker.yml | sed s/localhost/db/ > config/database.yml && bundle install && bundle exec rails db:setup && npm install",
+    "postCreateCommand": "cat config/database.example.app-in-docker.yml | sed s/localhost/db/ > config/database.yml && bundle install && bundle exec rails db:setup && npm install && cd frontend && npm install",
 
     // Configure tool-specific properties.
     "customizations": {
