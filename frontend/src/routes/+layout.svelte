@@ -14,7 +14,7 @@
   let isDropdownOpen = $state(false);
 
   onMount(() => {
-    authStore.checkAuth();
+    void authStore.checkAuth();
   });
 
   function toggleDropdown(e: MouseEvent) {
@@ -85,20 +85,12 @@
             class="dropdown-menu dropdown-menu-right {isDropdownOpen ? 'show' : ''}"
             aria-labelledby="signedInDropdown"
           >
-            <a
-              href="/tournaments/my"
-              class="dropdown-item"
-              onclick={closeDropdown}
-            >
+            <a href={resolve("/tournaments/my")} class="dropdown-item" onclick={closeDropdown}>
               <FontAwesomeIcon icon="trophy" />
               My tournaments
             </a>
             <div class="dropdown-divider"></div>
-            <a
-              href={getLogoutUrl()}
-              class="dropdown-item"
-              onclick={closeDropdown}
-            >
+            <a href={getLogoutUrl()} rel="external" class="dropdown-item" onclick={closeDropdown}>
               <FontAwesomeIcon icon="sign-out" />
               Jack Out
             </a>
@@ -106,11 +98,7 @@
         </li>
       {:else}
         <li class="nav-item">
-          <a
-            href="/login"
-            id="signIn"
-            class="nav-link text-light"
-          >
+          <a href={resolve("/login")} id="signIn" class="nav-link text-light">
             <FontAwesomeIcon icon="sign-in" />
             Sign in
           </a>

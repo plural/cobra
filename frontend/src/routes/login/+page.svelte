@@ -10,7 +10,7 @@
   onMount(async () => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
-      returnTo = urlParams.get("return_to") || (window.location.origin + "/tournaments/my");
+      returnTo = urlParams.get("return_to") ?? window.location.origin + "/tournaments/my";
     }
 
     const user = await authStore.checkAuth();
@@ -21,7 +21,9 @@
 
   function getLoginUrl() {
     if (typeof window === "undefined") return `${serverOrigin}/login`;
-    const fullReturnUrl = returnTo.startsWith("http") ? returnTo : (window.location.origin + returnTo);
+    const fullReturnUrl = returnTo.startsWith("http")
+      ? returnTo
+      : window.location.origin + returnTo;
     return `${serverOrigin}/login?return_to=${encodeURIComponent(fullReturnUrl)}`;
   }
 </script>
@@ -43,10 +45,7 @@
               <span class="sr-only">Checking authentication...</span>
             </div>
           {:else}
-            <a
-              href={getLoginUrl()}
-              class="btn btn-primary btn-lg btn-block mb-3"
-            >
+            <a href={getLoginUrl()} rel="external" class="btn btn-primary btn-lg btn-block mb-3">
               <FontAwesomeIcon icon="sign-in" /> Sign in with NetrunnerDB
             </a>
 

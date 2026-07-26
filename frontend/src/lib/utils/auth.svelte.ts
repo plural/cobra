@@ -6,6 +6,16 @@ export interface AuthUser {
   nrdb_username: string;
 }
 
+interface JsonApiUserResponse {
+  data: {
+    id: string | number;
+    attributes: {
+      nrdb_id: number;
+      nrdb_username: string;
+    };
+  };
+}
+
 const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
 
 class AuthStore {
@@ -27,7 +37,7 @@ class AuthStore {
       });
 
       if (response.ok) {
-        const json = await response.json();
+        const json = (await response.json()) as JsonApiUserResponse;
         this.user = {
           id: Number(json.data.id),
           nrdb_id: json.data.attributes.nrdb_id,
@@ -48,9 +58,11 @@ class AuthStore {
   redirectToLogin(returnTo?: string) {
     if (typeof window !== "undefined") {
       const defaultReturn = window.location.origin + window.location.pathname;
-      const targetPath = returnTo || defaultReturn;
-      const fullReturnUrl = targetPath.startsWith("http") ? targetPath : window.location.origin + targetPath;
-      
+      const targetPath = returnTo ?? defaultReturn;
+      const fullReturnUrl = targetPath.startsWith("http")
+        ? targetPath
+        : window.location.origin + targetPath;
+
       window.location.href = `${serverOrigin}/login?return_to=${encodeURIComponent(fullReturnUrl)}`;
     }
   }

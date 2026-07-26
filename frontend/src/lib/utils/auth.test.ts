@@ -18,7 +18,7 @@ describe("authStore (SvelteKit frontend)", () => {
     };
 
     vi.spyOn(global, "fetch").mockResolvedValueOnce(
-      new Response(JSON.stringify(mockUserResponse), { status: 200 })
+      new Response(JSON.stringify(mockUserResponse), { status: 200 }),
     );
 
     const user = await authStore.checkAuth();
@@ -33,7 +33,7 @@ describe("authStore (SvelteKit frontend)", () => {
 
   it("should set user to null on HTTP 401 response", async () => {
     vi.spyOn(global, "fetch").mockResolvedValueOnce(
-      new Response(JSON.stringify({ errors: [{ status: "401" }] }), { status: 401 })
+      new Response(JSON.stringify({ errors: [{ status: "401" }] }), { status: 401 }),
     );
 
     const user = await authStore.checkAuth();
