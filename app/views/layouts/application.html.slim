@@ -6,7 +6,8 @@ html
         (function(){
           var stored = localStorage.getItem('cobra-theme');
           var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          document.documentElement.setAttribute('data-theme', stored ? stored : (prefersDark ? 'dark' : 'light'));
+          var theme = stored ? stored : (prefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
         })();
     title Cobra
     script src="https://cdn.jsdelivr.net/npm/apexcharts"
@@ -80,7 +81,7 @@ html
                 => fa_icon 'sign-in'
                 | Sign in
             li.nav-item
-              button.btn.btn-link.nav-link.text-light data-theme-toggle="" aria-label="Toggle dark mode"
+              button#theme-toggle.btn.btn-link.nav-link.text-light data-theme-toggle="" onclick="toggleTheme()" aria-label="Toggle mode" title="Switch mode"
                 => fa_icon 'moon-o'
                 => fa_icon 'sun-o'
     .container
