@@ -28,6 +28,10 @@ Rails.application.routes.draw do
         resources :official_prize_kits, only: %i[index show]
         resources :players, only: %i[index show]
       end
+      namespace :private do
+        get :user, to: 'users#show'
+        get 'user/tournaments', to: 'user_tournaments#index'
+      end
     end
   end
 

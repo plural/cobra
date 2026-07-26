@@ -24,14 +24,8 @@
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark dontprint">
   <div class="container">
-    <a href={resolve("/")} class="navbar-brand">Cobra (BETA)</a>
+    <a href={resolve("/")} class="navbar-brand">Cobra (SPA)</a>
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item">
-        <a href="{COBRA_API_SERVER}{page.url.pathname}" rel="external" class="nav-link text-light">
-          <FontAwesomeIcon icon="flask" />
-          Switch to classic
-        </a>
-      </li>
       <li class="nav-item">
         <a href={resolve("/")} class="nav-link text-light">
           <FontAwesomeIcon icon="life-ring" />
@@ -53,17 +47,15 @@
         </a>
         <!-- TODO: Menu -->
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item">
         <a
-          href="#"
-          id="userDropdown"
+          href={resolve("/login")}
+          id="signIn"
           role="button"
-          data-toggle="dropdown"
-          aria-haspopup="true"
           aria-expanded="false"
-          class="nav-link dropdown-toggle text-light"
+          class="nav-link text-light"
         >
-          <FontAwesomeIcon icon="user" />
+          <i class="fa fa-sign-in"></i>
           Sign in
         </a>
         <!-- TODO: Menu -->
