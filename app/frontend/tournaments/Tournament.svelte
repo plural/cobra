@@ -182,11 +182,13 @@
                     <h4 class="mb-3">
                       {window.location.origin}/{tournament.slug}
                     </h4>
-                    <img
-                      src={qrCodeImageData}
-                      class="w-100 h-100"
-                      alt="QR code of the tournament's URL"
-                    />
+                    <div class="d-inline-block bg-white p-3 rounded shadow-sm">
+                      <img
+                        src={qrCodeImageData}
+                        class="w-100 h-100"
+                        alt="QR code of the tournament's URL"
+                      />
+                    </div>
                   </div>
                 </div>
               </ModalDialog>
