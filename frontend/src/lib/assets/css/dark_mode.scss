@@ -295,6 +295,12 @@
   .close {
     color: var(--cobra-text);
   }
+
+  /* ApexCharts */
+  .apexcharts-text, .apexcharts-legend-text {
+    fill: var(--cobra-text) !important;
+    color: var(--cobra-text) !important;
+  }
 }
 
 /* Theme toggle icon visibility */
