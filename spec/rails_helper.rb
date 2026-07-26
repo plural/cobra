@@ -34,8 +34,8 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
-  
-  config.after(:each) do
+
+  config.after do
     RescueRegistry.context = nil if defined?(RescueRegistry)
   end
 
@@ -44,7 +44,6 @@ RSpec.configure do |config|
       example.run
     end
   end
-
 end
 
 VCR.configure do |config|

@@ -55,18 +55,17 @@
         </a>
       </li>
       <li class="nav-item dropdown">
-        <a
-          href="#"
+        <button
+          type="button"
           id="tournamentTypeDropdown"
-          role="button"
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
-          class="nav-link dropdown-toggle text-light"
+          class="nav-link dropdown-toggle text-light btn btn-link"
         >
           <FontAwesomeIcon icon="trophy" />
           Tournament types
-        </a>
+        </button>
       </li>
 
       {#if authStore.isAuthenticated && authStore.user}

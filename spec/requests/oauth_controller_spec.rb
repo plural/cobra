@@ -14,14 +14,14 @@ RSpec.describe OauthController do
 
   describe '#logout' do
     it 'clears user_id session and redirects to root_path by default' do
-      get logout_path, session: { user_id: 123 }
+      get logout_path
 
       expect(session[:user_id]).to be_nil
       expect(response).to redirect_to(root_path)
     end
 
     it 'redirects to params[:return_to] when provided' do
-      get logout_path, params: { return_to: 'http://localhost:5173/' }, session: { user_id: 123 }
+      get logout_path, params: { return_to: 'http://localhost:5173/' }
 
       expect(session[:user_id]).to be_nil
       expect(response).to redirect_to('http://localhost:5173/')
@@ -77,7 +77,8 @@ RSpec.describe OauthController do
       end
 
       it 'redirects to session return_to URL when provided' do
-        get oauth_callback_path, params: { code: :some_code }, session: { return_to: 'http://localhost:5173/tournaments/my' }
+        get login_path, params: { return_to: 'http://localhost:5173/tournaments/my' }
+        get oauth_callback_path, params: { code: :some_code }
 
         expect(response).to redirect_to('http://localhost:5173/tournaments/my')
       end
