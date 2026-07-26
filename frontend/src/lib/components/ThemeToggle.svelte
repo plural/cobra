@@ -7,7 +7,9 @@
   <button
     class="btn btn-link nav-link text-light"
     aria-label="Toggle dark mode"
-    onclick={() => theme.toggle()}
+    onclick={() => {
+      theme.toggle();
+    }}
   >
     {#if theme.current === "dark"}
       <FontAwesomeIcon icon="sun-o" cssClass="fa-sun" />
