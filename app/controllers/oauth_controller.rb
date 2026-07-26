@@ -11,7 +11,7 @@ class OauthController < ApplicationController # rubocop:disable Style/Documentat
   def logout
     session[:user_id] = nil
 
-    redirect_to root_path
+    redirect_to params[:return_to] || root_path, allow_other_host: true
   end
 
   def callback
@@ -29,7 +29,7 @@ class OauthController < ApplicationController # rubocop:disable Style/Documentat
 
       session[:user_id] = user.id
 
-      redirect_to session[:return_to] || root_path
+      redirect_to session.delete(:return_to) || root_path, allow_other_host: true
     else
       render json: { message: :failed }, status: :internal_server_error
     end

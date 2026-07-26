@@ -4,10 +4,32 @@
   import { resolve } from "$app/paths";
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
   import { COBRA_API_SERVER } from "$app/env/public";
-  import { page } from "$app/state";
+  import { authStore } from "$lib/utils/auth.svelte";
+  import { onMount } from "svelte";
   import type { Snippet } from "svelte";
 
   let { children }: { children: Snippet } = $props();
+
+  const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
+  let isDropdownOpen = $state(false);
+
+  onMount(() => {
+    authStore.checkAuth();
+  });
+
+  function toggleDropdown(e: MouseEvent) {
+    e.preventDefault();
+    isDropdownOpen = !isDropdownOpen;
+  }
+
+  function closeDropdown() {
+    isDropdownOpen = false;
+  }
+
+  function getLogoutUrl() {
+    const returnUrl = typeof window !== "undefined" ? window.location.origin : "/";
+    return `${serverOrigin}/logout?return_to=${encodeURIComponent(returnUrl)}`;
+  }
 </script>
 
 <svelte:head>
@@ -45,21 +67,55 @@
           <FontAwesomeIcon icon="trophy" />
           Tournament types
         </a>
-        <!-- TODO: Menu -->
       </li>
-      <li class="nav-item">
-        <a
-          href={resolve("/login")}
-          id="signIn"
-          role="button"
-          aria-expanded="false"
-          class="nav-link text-light"
-        >
-          <i class="fa fa-sign-in"></i>
-          Sign in
-        </a>
-        <!-- TODO: Menu -->
-      </li>
+
+      {#if authStore.isAuthenticated && authStore.user}
+        <li class="nav-item dropdown {isDropdownOpen ? 'show' : ''}">
+          <button
+            type="button"
+            id="signedInDropdown"
+            class="btn btn-link nav-link dropdown-toggle text-light"
+            onclick={toggleDropdown}
+            aria-expanded={isDropdownOpen}
+          >
+            <FontAwesomeIcon icon="user" />
+            {authStore.user.nrdb_username}
+          </button>
+          <div
+            class="dropdown-menu dropdown-menu-right {isDropdownOpen ? 'show' : ''}"
+            aria-labelledby="signedInDropdown"
+          >
+            <a
+              href="/tournaments/my"
+              class="dropdown-item"
+              onclick={closeDropdown}
+            >
+              <FontAwesomeIcon icon="trophy" />
+              My tournaments
+            </a>
+            <div class="dropdown-divider"></div>
+            <a
+              href={getLogoutUrl()}
+              class="dropdown-item"
+              onclick={closeDropdown}
+            >
+              <FontAwesomeIcon icon="sign-out" />
+              Jack Out
+            </a>
+          </div>
+        </li>
+      {:else}
+        <li class="nav-item">
+          <a
+            href="/login"
+            id="signIn"
+            class="nav-link text-light"
+          >
+            <FontAwesomeIcon icon="sign-in" />
+            Sign in
+          </a>
+        </li>
+      {/if}
     </ul>
   </div>
 </nav>

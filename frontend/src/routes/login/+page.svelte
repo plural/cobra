@@ -1,14 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { authStore } from "$lib/utils/auth.svelte";
+  import { COBRA_API_SERVER } from "$app/env/public";
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
 
+  const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
   let returnTo = $state("/tournaments/my");
 
   onMount(async () => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
-      returnTo = urlParams.get("return_to") || "/tournaments/my";
+      returnTo = urlParams.get("return_to") || (window.location.origin + "/tournaments/my");
     }
 
     const user = await authStore.checkAuth();
@@ -16,6 +18,12 @@
       window.location.href = returnTo;
     }
   });
+
+  function getLoginUrl() {
+    if (typeof window === "undefined") return `${serverOrigin}/login`;
+    const fullReturnUrl = returnTo.startsWith("http") ? returnTo : (window.location.origin + returnTo);
+    return `${serverOrigin}/login?return_to=${encodeURIComponent(fullReturnUrl)}`;
+  }
 </script>
 
 <div class="container mt-5">
@@ -36,7 +44,7 @@
             </div>
           {:else}
             <a
-              href={`/login?return_to=${encodeURIComponent(returnTo)}`}
+              href={getLoginUrl()}
               class="btn btn-primary btn-lg btn-block mb-3"
             >
               <FontAwesomeIcon icon="sign-in" /> Sign in with NetrunnerDB

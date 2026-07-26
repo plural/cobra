@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { authStore, type AuthUser } from "$lib/utils/auth.svelte";
+  import { COBRA_API_SERVER } from "$app/env/public";
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
 
   interface Tournament {
@@ -14,6 +15,7 @@
     stage?: string;
   }
 
+  const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
   let user = $state<AuthUser | null>(null);
   let tournaments = $state<Tournament[]>([]);
   let isLoading = $state<boolean>(true);
@@ -21,12 +23,14 @@
   onMount(async () => {
     user = await authStore.checkAuth();
     if (!user) {
-      authStore.redirectToLogin("/tournaments/my");
+      const currentUrl = window.location.origin + window.location.pathname;
+      authStore.redirectToLogin(currentUrl);
       return;
     }
 
     try {
-      const response = await fetch("/api/v1/private/user/tournaments", {
+      const response = await fetch(`${serverOrigin}/api/v1/private/user/tournaments`, {
+        credentials: "include",
         headers: { Accept: "application/vnd.api+json" },
       });
       if (response.ok) {
@@ -63,7 +67,7 @@
         <h2>My Tournaments</h2>
         <p class="text-muted mb-0">Logged in as <strong>{user.nrdb_username}</strong></p>
       </div>
-      <a href="/tournaments/new" class="btn btn-success">
+      <a href={`${serverOrigin}/tournaments/new`} class="btn btn-success">
         <FontAwesomeIcon icon="plus" /> New Tournament
       </a>
     </div>
@@ -78,7 +82,7 @@
           <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div>
               <h5 class="mb-1">
-                <a href={`/tournaments/${t.id}`}>{t.name}</a>
+                <a href={`${serverOrigin}/tournaments/${t.id}`}>{t.name}</a>
                 {#if t.private}
                   <span class="badge badge-secondary ml-2">Private</span>
                 {/if}
@@ -88,10 +92,10 @@
               </small>
             </div>
             <div>
-              <a href={`/tournaments/${t.id}/edit`} class="btn btn-sm btn-outline-primary mr-2">
+              <a href={`${serverOrigin}/tournaments/${t.id}/edit`} class="btn btn-sm btn-outline-primary mr-2">
                 <FontAwesomeIcon icon="edit" /> Edit
               </a>
-              <a href={`/tournaments/${t.id}`} class="btn btn-sm btn-primary">
+              <a href={`${serverOrigin}/tournaments/${t.id}`} class="btn btn-sm btn-primary">
                 View
               </a>
             </div>
