@@ -40,7 +40,7 @@
   --cobra-dropdown-bg: rgb(30, 33, 50);
   --cobra-card-bg: #252836;
   --cobra-card-hover: rgba(255, 255, 255, 0.04);
-  --cobra-input-bg: #2a2d3e;
+  --cobra-input-bg: #181a24;
   --cobra-badge-bg: #4a4d60;
   --cobra-pairing-highlight: #1e304d;
   --cobra-self-report-bg: #7a5a0080;
@@ -200,27 +200,47 @@
     background-color: #371414;
     border-color: #812f2f;
     color: #ff908e;
+
+    .alert-link, a {
+      color: #ffb3b1 !important;
+      text-decoration: underline;
+    }
   }
 
   .alert-warning {
     background-color: #3d3014;
     border-color: #7a6028;
     color: #ffd97d;
+
+    .alert-link, a {
+      color: #ffe699 !important;
+      text-decoration: underline;
+    }
   }
 
   .alert-secondary {
     background-color: var(--cobra-surface);
     border-color: var(--cobra-border);
     color: var(--cobra-text);
+
+    .alert-link, a {
+      color: #6bb4f8 !important;
+      text-decoration: underline;
+    }
   }
 
   .alert-info {
     background-color: #1a3044;
     border-color: #274866;
     color: #88c0f0;
+
+    .alert-link, a {
+      color: #aae0ff !important;
+      text-decoration: underline;
+    }
   }
 
-  /* Awesomplete autocomplete dropdowns */
+  /* Awesomplete autocomplete dropdowns (Slim surface) */
   .awesomplete > ul {
     background: var(--cobra-dropdown-bg);
     border-color: var(--cobra-border);
@@ -235,13 +255,76 @@
       color: var(--cobra-text);
 
       &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
       }
 
       &[aria-selected="true"] {
-        background-color: #365678;
-        color: #ffffff;
+        background-color: #365678 !important;
+        color: #ffffff !important;
+      }
+    }
+
+    mark {
+      background: transparent !important;
+      color: #6bb4f8 !important;
+    }
+  }
+
+  /* Svelecte component (Svelte ID Select dropdowns - aligned to Slim Awesomplete) */
+  .svelecte-control {
+    --sv-bg: var(--cobra-input-bg);
+    --sv-color: var(--cobra-text);
+    --sv-border: 1px solid var(--cobra-border);
+    --sv-dropdown-bg: var(--cobra-dropdown-bg);
+    --sv-placeholder-color: var(--cobra-text-muted);
+    --sv-item-color: var(--cobra-text);
+    --sv-item-btn-color: var(--cobra-text-muted);
+    --sv-item-active-bg: rgba(255, 255, 255, 0.1);
+    --sv-item-selected-bg: #365678;
+
+    .sv-control {
+      background-color: var(--cobra-input-bg) !important;
+      border-color: var(--cobra-border) !important;
+      color: var(--cobra-text) !important;
+    }
+
+    .sv-item--value {
+      color: var(--cobra-text) !important;
+    }
+
+    .sv-dropdown {
+      background-color: var(--cobra-dropdown-bg) !important;
+      border-color: var(--cobra-border) !important;
+      color: var(--cobra-text) !important;
+
+      .sv-item {
+        color: var(--cobra-text) !important;
+
+        &:hover, &.is-active {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+          color: #ffffff !important;
+
+          mark, b, strong {
+            color: #ffffff !important;
+            background-color: transparent !important;
+          }
+        }
+
+        &.is-selected {
+          background-color: #365678 !important;
+          color: #ffffff !important;
+
+          mark, b, strong {
+            color: #ffffff !important;
+            background-color: transparent !important;
+          }
+        }
+      }
+
+      mark, b, strong {
+        color: #6bb4f8 !important;
+        background-color: transparent !important;
       }
     }
   }
@@ -271,11 +354,11 @@
   .form-control {
     background-color: var(--cobra-input-bg);
     border-color: var(--cobra-border);
-    color: var(--cobra-text);
+    color: #f0f4f8;
 
     &:focus {
       background-color: var(--cobra-input-bg);
-      color: var(--cobra-text);
+      color: #ffffff;
       border-color: #6bb4f8;
       box-shadow: 0 0 0 0.2rem rgba(107, 180, 248, 0.25);
     }
