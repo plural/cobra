@@ -6,7 +6,8 @@
 <li class="nav-item">
   <button
     class="btn btn-link nav-link text-light"
-    aria-label="Toggle dark mode"
+    aria-label={theme.current === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+    title={theme.current === "dark" ? "Switch to light mode" : "Switch to dark mode"}
     onclick={() => {
       theme.toggle();
     }}
