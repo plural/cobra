@@ -284,7 +284,7 @@
                         m.winner_game,
                         upperY,
                       )}
-                      stroke="#999"
+                      stroke="var(--cobra-text-muted)"
                       fill="none"
                     />
                   {/if}
@@ -329,7 +329,7 @@
                       lowerY,
                       lowerColOffset,
                     )}
-                    stroke="#999"
+                    stroke="var(--cobra-text-muted)"
                     fill="none"
                   />
                 {/if}
@@ -359,6 +359,7 @@
 
 <style>
   .bracket-embedded {
-    background-color: #fafafa;
+    background-color: var(--cobra-surface);
+    border-color: var(--cobra-border) !important;
   }
 </style>

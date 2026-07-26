@@ -122,7 +122,7 @@
 </script>
 
 <g transform={`translate(${x}, ${y})`}>
-  <rect {width} {height} rx="6" ry="6" fill="#fff" stroke="#ccc" />
+  <rect {width} {height} rx="6" ry="6" class="match-box" />
   {#if !isSingleElim}
     <text x="8" y={height / 2} class="game-label" dominant-baseline="middle"
       >{match.table_number}</text
@@ -248,6 +248,10 @@
 </g>
 
 <style>
+  .match-box {
+    fill: var(--cobra-card-bg);
+    stroke: var(--cobra-border);
+  }
   .small {
     font-size: 0.85rem;
     line-height: 1.1rem;
@@ -257,13 +261,14 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    color: var(--cobra-text);
   }
   .winner {
     font-weight: 600;
-    color: #212529;
+    color: var(--cobra-text);
   }
   .loser {
-    color: #6c757d;
+    color: var(--cobra-text-muted);
   }
   .player-line {
     white-space: nowrap;
@@ -283,12 +288,12 @@
   }
   .game-label {
     font-size: 0.75rem;
-    fill: #6c757d;
+    fill: var(--cobra-text-muted);
     font-weight: 500;
   }
   .seed-label {
     font-size: 0.75rem;
-    color: #6c757d;
+    color: var(--cobra-text-muted);
     font-weight: 500;
     min-width: 1.2em;
     text-align: right;
@@ -303,7 +308,7 @@
     margin-top: 2px;
   }
   .placeholder-text {
-    color: #868e96;
+    color: var(--cobra-text-muted);
     font-style: italic;
   }
 </style>
