@@ -3,11 +3,18 @@
   import favicon from "$lib/assets/favicon.ico";
   import { resolve } from "$app/paths";
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
+  import ThemeToggle from "$lib/components/ThemeToggle.svelte";
   import { COBRA_API_SERVER } from "$app/env/public";
   import { page } from "$app/state";
+  import { onMount } from "svelte";
   import type { Snippet } from "svelte";
+  import { theme } from "$lib/utils/theme.svelte";
 
   let { children }: { children: Snippet } = $props();
+
+  onMount(() => {
+    theme.init();
+  });
 </script>
 
 <svelte:head>
@@ -19,7 +26,8 @@
     integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
     crossorigin="anonymous"
   />
-  <link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
+  <link rel="stylesheet" href="/node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 </svelte:head>
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark dontprint">
@@ -68,6 +76,7 @@
         </a>
         <!-- TODO: Menu -->
       </li>
+      <ThemeToggle />
     </ul>
   </div>
 </nav>
