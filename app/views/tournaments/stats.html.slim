@@ -121,9 +121,13 @@
     p This tournament has no rounds yet. Stats will be available once the tournament has started and rounds have been played.
 
 javascript:
+  const apexChartInstances = [];
+
   function drawPieChart(element, series, labels, colors=null) {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const options = {
       chart: {
+        background: 'transparent',
         offsetY: 20,
         animations: {
           enabled: false
@@ -146,12 +150,35 @@ javascript:
       tooltip: {
         enabled: false,
       },
+      theme: {
+        mode: isDark ? 'dark' : 'light'
+      },
       series: series,
       labels: labels,
       colors: colors,
     }
-    var chart = new ApexCharts(document.querySelector(element), options);
-    chart.render();
+    const container = document.querySelector(element);
+    if (container) {
+      const chart = new ApexCharts(container, options);
+      chart.render();
+      apexChartInstances.push(chart);
+    }
+  }
+
+  // Update ApexCharts theme mode whenever the user toggles light/dark mode
+  if (typeof MutationObserver !== 'undefined') {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          const mode = isDark ? 'dark' : 'light';
+          apexChartInstances.forEach(chart => {
+            chart.updateOptions({ theme: { mode: mode } });
+          });
+        }
+      });
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
   // Strip dashes and capitalize first letter of each word for display.
