@@ -23,6 +23,19 @@
   --cobra-table-stripe-dark: #343a40;
   --cobra-table-stripe-light: #fdfdfe;
   --cobra-table-stripe-dark-text: #ffffff;
+
+  /* NetrunnerDB Faction Colors (Light Mode, NRDB-aligned) */
+  --cobra-faction-anarch: orangered;
+  --cobra-faction-criminal: royalblue;
+  --cobra-faction-shaper: limegreen;
+  --cobra-faction-haas-bioroid: blueviolet;
+  --cobra-faction-jinteki: crimson;
+  --cobra-faction-nbn: darkorange;
+  --cobra-faction-weyland: darkgreen;
+  --cobra-faction-sunny-lebeau: #66686b;
+  --cobra-faction-adam: #a89c33;
+  --cobra-faction-apex: #000000;
+  --cobra-faction-neutral: gray;
 }
 
 /* --- Dark-mode overrides --------------------------------------------------- */
@@ -47,6 +60,19 @@
   --cobra-table-stripe-dark: #2a2d3e;
   --cobra-table-stripe-light: #1e2030;
   --cobra-table-stripe-dark-text: #c8c2bc;
+
+  /* Faction Colors (Dark Mode, NRDB-aligned) */
+  --cobra-faction-anarch: #d9693f;
+  --cobra-faction-criminal: #3862df;
+  --cobra-faction-shaper: #60a260;
+  --cobra-faction-haas-bioroid: #8854b9;
+  --cobra-faction-jinteki: #b14157;
+  --cobra-faction-nbn: #ffde00;
+  --cobra-faction-weyland: #458c45;
+  --cobra-faction-sunny-lebeau: var(--cobra-text-muted);
+  --cobra-faction-adam: var(--cobra-text-muted);
+  --cobra-faction-apex: var(--cobra-text-muted);
+  --cobra-faction-neutral: var(--cobra-text-muted);
 
   /* Body */
   body {
@@ -385,6 +411,19 @@
     color: var(--cobra-text) !important;
   }
 }
+
+/* Faction Text & Icon Styling (NRDB-aligned) */
+.anarch, .icon-anarch { color: var(--cobra-faction-anarch); }
+.criminal, .icon-criminal { color: var(--cobra-faction-criminal); }
+.shaper, .icon-shaper { color: var(--cobra-faction-shaper); }
+.haas-bioroid, .icon-haas-bioroid { color: var(--cobra-faction-haas-bioroid); }
+.jinteki, .icon-jinteki { color: var(--cobra-faction-jinteki); }
+.nbn, .icon-nbn { color: var(--cobra-faction-nbn); }
+.weyland-consortium, .icon-weyland-consortium { color: var(--cobra-faction-weyland); }
+.sunny-lebeau, .icon-sunny-lebeau { color: var(--cobra-faction-sunny-lebeau); }
+.adam, .icon-adam { color: var(--cobra-faction-adam); }
+.apex, .icon-apex { color: var(--cobra-faction-apex); }
+.neutral-corp, .neutral-runner, .icon-neutral-corp, .icon-neutral-runner { color: var(--cobra-faction-neutral); }
 
 /* Theme toggle icon visibility */
 /* Light mode: show moon (click to go dark) */
