@@ -4,6 +4,8 @@ import { authStore } from "./auth.svelte";
 describe("authStore (SvelteKit frontend)", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    authStore.user = null;
+    authStore.isLoading = true;
   });
 
   it("should populate user on HTTP 200 response", async () => {

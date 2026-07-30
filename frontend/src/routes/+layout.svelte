@@ -5,17 +5,12 @@
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
   import { COBRA_API_SERVER } from "$app/env/public";
   import { authStore } from "$lib/utils/auth.svelte";
-  import { onMount } from "svelte";
   import type { Snippet } from "svelte";
 
   let { children }: { children: Snippet } = $props();
 
   const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
   let isDropdownOpen = $state(false);
-
-  onMount(() => {
-    void authStore.checkAuth();
-  });
 
   function toggleDropdown(e: MouseEvent) {
     e.preventDefault();
@@ -68,7 +63,7 @@
         </button>
       </li>
 
-      {#if authStore.isAuthenticated && authStore.user}
+      {#if authStore.isAuthenticated}
         <li class="nav-item dropdown {isDropdownOpen ? 'show' : ''}">
           <button
             type="button"
@@ -78,7 +73,9 @@
             aria-expanded={isDropdownOpen}
           >
             <FontAwesomeIcon icon="user" />
-            {authStore.user.nrdb_username}
+            {#if authStore.user}
+              {authStore.user.nrdb_username}
+            {/if}
           </button>
           <div
             class="dropdown-menu dropdown-menu-right {isDropdownOpen ? 'show' : ''}"

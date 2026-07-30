@@ -27,6 +27,10 @@ class AuthStore {
   }
 
   async checkAuth(): Promise<AuthUser | null> {
+    if (this.isAuthenticated) { 
+      return this.user;
+    }
+
     this.isLoading = true;
     try {
       const response = await fetch(`${serverOrigin}/api/v1/private/user`, {

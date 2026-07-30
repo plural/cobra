@@ -10,7 +10,7 @@
   onMount(async () => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
-      returnTo = urlParams.get("return_to") ?? window.location.origin + "/tournaments/my";
+      returnTo = urlParams.get("return_to") ?? window.location.origin + "/";
     }
 
     const user = await authStore.checkAuth();
