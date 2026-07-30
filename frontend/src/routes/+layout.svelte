@@ -14,6 +14,7 @@
 
   onMount(() => {
     theme.init();
+    void authStore.checkAuth();
   });
 
   const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
