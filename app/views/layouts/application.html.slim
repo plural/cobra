@@ -1,6 +1,14 @@
 doctype html
 html
   head
+    script
+      |
+        (function(){
+          var stored = localStorage.getItem('cobra-theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = stored ? stored : (prefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        })();
     title Cobra
     script src="https://cdn.jsdelivr.net/npm/apexcharts"
     = csrf_meta_tags
@@ -72,6 +80,10 @@ html
               li.nav-item= link_to login_path(:return_to => request.path), class: 'nav-link' do
                 => fa_icon 'sign-in'
                 | Sign in
+            li.nav-item
+              button#theme-toggle.btn.btn-link.nav-link.text-light data-theme-toggle="" onclick="toggleTheme()" aria-label="Toggle mode" title="Switch mode"
+                => fa_icon 'moon-o'
+                => fa_icon 'sun-o'
     .container
       - if @tournament
         .row.dontprint

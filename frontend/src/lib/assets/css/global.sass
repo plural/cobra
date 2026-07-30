@@ -1,11 +1,12 @@
-@use 'sass:color';
+
 
 html
   position: relative
   min-height: 100%
 
 body
-  color: #333
+  background-color: var(--cobra-bg)
+  color: var(--cobra-text)
   padding-top: 70px
   margin-bottom: 60px
 
@@ -18,27 +19,29 @@ body
 
 a
   text-decoration: none
-  color: #1b98f8
+  color: var(--cobra-link)
 
   &:hover
     text-decoration: none
+    color: var(--cobra-link-hover)
 
 nav.navbar, .footer
-  $color__dark-bg: rgb(37, 42, 58)
-  background: $color__dark-bg
+  background: var(--cobra-navbar-bg)
   color: #f8f9fa
 
   .dropdown-menu
-    background: color.adjust($color__dark-bg, $lightness: 20%)
+    background: var(--cobra-dropdown-bg)
 
   .navbar-brand
-    color: #ffc94c
+    color: var(--cobra-navbar-brand)
 
   .nav-item
-    a, .nav-link
+    a, .nav-link, button.nav-link
       color: #fff
+      background: transparent
+      border: 0
 
-      &:hover
+      &:hover, &:focus
         background: rgb(55, 60, 90)
 
 @media print
@@ -78,8 +81,8 @@ nav.navbar, .footer
     color-adjust: exact !important
 
 .table-striped-horizontal tbody tr td:nth-of-type(2n)
-  color: #fff
-  background-color: #343a40
+  color: var(--cobra-table-stripe-dark-text)
+  background-color: var(--cobra-table-stripe-dark)
 
 .table-striped-horizontal tbody tr td:nth-of-type(2n+1)
-  background-color: #fdfdfe
+  background-color: var(--cobra-table-stripe-light)
