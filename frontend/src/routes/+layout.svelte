@@ -5,7 +5,7 @@
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
   import ThemeToggle from "$lib/components/ThemeToggle.svelte";
   import { COBRA_API_SERVER } from "$app/env/public";
-  import { page } from "$app/state";
+  import { authStore } from "$lib/utils/auth.svelte";
   import { onMount } from "svelte";
   import type { Snippet } from "svelte";
   import { theme } from "$lib/utils/theme.svelte";
@@ -14,7 +14,25 @@
 
   onMount(() => {
     theme.init();
+    void authStore.checkAuth();
   });
+
+  const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
+  let isDropdownOpen = $state(false);
+
+  function toggleDropdown(e: MouseEvent) {
+    e.preventDefault();
+    isDropdownOpen = !isDropdownOpen;
+  }
+
+  function closeDropdown() {
+    isDropdownOpen = false;
+  }
+
+  function getLogoutUrl() {
+    const returnUrl = typeof window !== "undefined" ? window.location.origin : "/";
+    return `${serverOrigin}/logout?return_to=${encodeURIComponent(returnUrl)}`;
+  }
 </script>
 
 <svelte:head>
@@ -32,14 +50,8 @@
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark dontprint">
   <div class="container">
-    <a href={resolve("/")} class="navbar-brand">Cobra (BETA)</a>
+    <a href={resolve("/")} class="navbar-brand">Cobra (SPA)</a>
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item">
-        <a href="{COBRA_API_SERVER}{page.url.pathname}" rel="external" class="nav-link text-light">
-          <FontAwesomeIcon icon="flask" />
-          Switch to classic
-        </a>
-      </li>
       <li class="nav-item">
         <a href={resolve("/")} class="nav-link text-light">
           <FontAwesomeIcon icon="life-ring" />
@@ -53,27 +65,51 @@
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
-          class="nav-link dropdown-toggle text-light"
+          class="nav-link dropdown-toggle text-light btn btn-link"
         >
           <FontAwesomeIcon icon="trophy" />
           Tournament types
         </button>
-        <!-- TODO: Menu -->
       </li>
-      <li class="nav-item dropdown">
-        <button
-          type="button"
-          id="userDropdown"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-          class="nav-link dropdown-toggle text-light"
-        >
-          <FontAwesomeIcon icon="user" />
-          Sign in
-        </button>
-        <!-- TODO: Menu -->
-      </li>
+
+      {#if authStore.isAuthenticated}
+        <li class="nav-item dropdown {isDropdownOpen ? 'show' : ''}">
+          <button
+            type="button"
+            id="signedInDropdown"
+            class="btn btn-link nav-link dropdown-toggle text-light"
+            onclick={toggleDropdown}
+            aria-expanded={isDropdownOpen}
+          >
+            <FontAwesomeIcon icon="user" />
+            {#if authStore.user}
+              {authStore.user.nrdb_username}
+            {/if}
+          </button>
+          <div
+            class="dropdown-menu dropdown-menu-right {isDropdownOpen ? 'show' : ''}"
+            aria-labelledby="signedInDropdown"
+          >
+            <a href={resolve("/tournaments/my")} class="dropdown-item" onclick={closeDropdown}>
+              <FontAwesomeIcon icon="trophy" />
+              My tournaments
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href={getLogoutUrl()} rel="external" class="dropdown-item" onclick={closeDropdown}>
+              <FontAwesomeIcon icon="sign-out" />
+              Jack Out
+            </a>
+          </div>
+        </li>
+      {:else}
+        <li class="nav-item">
+          <a href={resolve("/login")} id="signIn" class="nav-link text-light">
+            <FontAwesomeIcon icon="sign-in" />
+            Sign in
+          </a>
+        </li>
+      {/if}
+
       <ThemeToggle />
     </ul>
   </div>

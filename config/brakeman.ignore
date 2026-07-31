@@ -1,0 +1,29 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Redirect",
+      "warning_code": 18,
+      "fingerprint": "501099618e5c7d1543a96802aacaf1bacace53bbcd611da7828ca4bcf1c59d1e",
+      "check_name": "Redirect",
+      "message": "Possible unprotected redirect",
+      "file": "app/controllers/oauth_controller.rb",
+      "line": 15,
+      "link": "https://brakemanscanner.org/docs/warning_types/redirect/",
+      "code": "redirect_to(sanitize_return_to(params[:return_to]), :allow_other_host => true)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "OauthController",
+        "method": "logout"
+      },
+      "user_input": "params[:return_to]",
+      "confidence": "Weak",
+      "cwe_id": [
+        601
+      ],
+      "note": "Sanitized via sanitize_return_to method in OauthController to only permit relative paths or allowed hosts."
+    }
+  ],
+  "updated": "2026-07-26 05:07:15 +0000",
+  "brakeman_version": "8.0.5"
+}

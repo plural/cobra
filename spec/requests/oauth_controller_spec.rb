@@ -12,6 +12,22 @@ RSpec.describe OauthController do
     end
   end
 
+  describe '#logout' do
+    it 'clears user_id session and redirects to root_path by default' do
+      get logout_path
+
+      expect(session[:user_id]).to be_nil
+      expect(response).to redirect_to(root_path)
+    end
+
+    it 'redirects to params[:return_to] when provided' do
+      get logout_path, params: { return_to: 'http://localhost:5173/' }
+
+      expect(session[:user_id]).to be_nil
+      expect(response).to redirect_to('http://localhost:5173/')
+    end
+  end
+
   describe '#callback' do
     let(:make_request) { get oauth_callback_path, params: { code: :some_code } }
     let(:token_data) { { access_token: 'ABC123', refresh_token: 'DEF456' } }
@@ -58,6 +74,13 @@ RSpec.describe OauthController do
         make_request
 
         expect(User.find_by(nrdb_id: 12).nrdb_username).to eq('jack')
+      end
+
+      it 'redirects to session return_to URL when provided' do
+        get login_path, params: { return_to: 'http://localhost:5173/tournaments/my' }
+        get oauth_callback_path, params: { code: :some_code }
+
+        expect(response).to redirect_to('http://localhost:5173/tournaments/my')
       end
     end
   end

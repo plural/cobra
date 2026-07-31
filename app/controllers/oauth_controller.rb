@@ -11,7 +11,8 @@ class OauthController < ApplicationController # rubocop:disable Style/Documentat
   def logout
     session[:user_id] = nil
 
-    redirect_to root_path
+    target_url = sanitize_return_to(params[:return_to])
+    redirect_to target_url, allow_other_host: true
   end
 
   def callback
@@ -29,13 +30,36 @@ class OauthController < ApplicationController # rubocop:disable Style/Documentat
 
       session[:user_id] = user.id
 
-      redirect_to session[:return_to] || root_path
+      target_url = sanitize_return_to(session.delete(:return_to))
+      redirect_to target_url, allow_other_host: true
     else
       render json: { message: :failed }, status: :internal_server_error
     end
   end
 
   private
+
+  def sanitize_return_to(url)
+    return root_path if url.blank?
+
+    begin
+      uri = URI.parse(url.to_s)
+      if uri.relative? || allowed_redirect_host?(uri.host)
+        url
+      else
+        root_path
+      end
+    rescue URI::InvalidURIError
+      root_path
+    end
+  end
+
+  def allowed_redirect_host?(host)
+    return true if host.blank?
+    return true if Rails.env.local?
+
+    host == request.host
+  end
 
   def callback_code
     params.require(:code)

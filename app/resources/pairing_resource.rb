@@ -3,6 +3,7 @@
 # Public resource for Pairing objects.
 class PairingResource < ApplicationResource
   primary_endpoint '/tournaments/:tournament_id/pairings', %i[index show]
+  # Allow this resource to be used from multiple paths, not just the expected default.
   self.validate_endpoints = false
 
   # Since this is scoped to tournaments, set a larger page size by default.

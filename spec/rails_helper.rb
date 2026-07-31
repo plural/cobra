@@ -35,6 +35,10 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
+  config.after do
+    RescueRegistry.context = nil if defined?(RescueRegistry)
+  end
+
   config.around do |example|
     DatabaseCleaner.cleaning do
       example.run

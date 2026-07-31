@@ -35,7 +35,11 @@ export default defineConfig(
     },
   },
   {
-    files: ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"],
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs"],
+    ...ts.configs.disableTypeChecked,
+  },
+  {
+    files: ["**/*.ts", "**/*.svelte", "**/*.svelte.ts"],
     languageOptions: {
       parserOptions: {
         projectService: true,

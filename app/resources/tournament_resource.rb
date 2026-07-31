@@ -3,6 +3,8 @@
 # Public resource for Tournament objects.
 class TournamentResource < ApplicationResource
   primary_endpoint '/tournaments', %i[index show]
+  # Allow this resource to be used from multiple paths, not just the expected default.
+  self.validate_endpoints = false
 
   self.default_page_size = 25
 
