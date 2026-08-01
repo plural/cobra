@@ -89,8 +89,7 @@
 
 <div class="mt-3 text-center">
   <p>
-    <!-- TODO: Add route for recent tournaments page -->
-    <a href={resolve("/")} class="btn btn-primary">
+    <a href={resolve("/tournaments")} class="btn btn-primary">
       <i class="fa fa-users"></i>
       More tournaments
     </a>
