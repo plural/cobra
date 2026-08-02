@@ -10,3 +10,4 @@ describe("Help Page", () => {
     expect(heading).toBeDefined();
   });
 });
+
