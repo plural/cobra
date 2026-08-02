@@ -53,7 +53,7 @@
     <a href={resolve("/")} class="navbar-brand">Cobra (SPA)</a>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a href={resolve("/")} class="nav-link text-light">
+        <a href={resolve("/help")} class="nav-link text-light">
           <FontAwesomeIcon icon="life-ring" />
           How to
         </a>
