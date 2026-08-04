@@ -33,10 +33,11 @@ export interface TournamentInfo {
 }
 
 export interface TournamentTypeInfo {
-  id: string | number;
+  id: string;
   type: string;
   attributes: {
     name: string;
+    nsg_format: boolean;
   };
 }
 

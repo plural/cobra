@@ -6,12 +6,12 @@
     showDelete,
     tournament,
     userId,
-    tournamentTypeName = null,
+    tournamentTypeName,
   }: {
     showDelete: boolean;
     tournament: TournamentInfo;
     userId: number | null;
-    tournamentTypeName?: string | null;
+    tournamentTypeName?: string;
   } = $props();
 </script>
 

@@ -9,8 +9,9 @@
   import { onMount } from "svelte";
   import type { Snippet } from "svelte";
   import { theme } from "$lib/utils/theme.svelte";
+  import type { LayoutProps } from "./+layout";
 
-  let { children }: { children: Snippet } = $props();
+  let { children, data }: { children: Snippet; data: LayoutProps; } = $props();
 
   onMount(() => {
     theme.init();
@@ -18,16 +19,8 @@
   });
 
   const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
-  let isDropdownOpen = $state(false);
-
-  function toggleDropdown(e: MouseEvent) {
-    e.preventDefault();
-    isDropdownOpen = !isDropdownOpen;
-  }
-
-  function closeDropdown() {
-    isDropdownOpen = false;
-  }
+  let isUserDropdownOpen = $state(false);
+  let isTournamentTypesDropdownOpen = $state(false);
 
   function getLogoutUrl() {
     const returnUrl = typeof window !== "undefined" ? window.location.origin : "/";
@@ -61,28 +54,43 @@
           How to
         </a>
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown {isTournamentTypesDropdownOpen ? 'show' : ''}">
         <button
           type="button"
           id="tournamentTypeDropdown"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-          class="nav-link dropdown-toggle text-light btn btn-link"
+          onclick={() => isTournamentTypesDropdownOpen = !isTournamentTypesDropdownOpen}
+          aria-expanded={isTournamentTypesDropdownOpen}
+          class="btn btn-link nav-link dropdown-toggle text-light"
         >
           <FontAwesomeIcon icon="trophy" />
           Tournament types
         </button>
+        <div
+          class="dropdown-menu dropdown-menu-right {isTournamentTypesDropdownOpen ? 'show' : ''}"
+          aria-labelledby="userDropdown"
+        >
+          {#each data.tournamentTypes as type (type.id)}
+            <a href={resolve(`/tournaments/type/${type.id}`)} class="dropdown-item" onclick={() => isTournamentTypesDropdownOpen = false}>
+              {#if type.attributes.nsg_format}
+                <!-- TODO: Fix icon -->
+                <FontAwesomeIcon icon="nsg" />
+              {:else}
+                <!-- TOOD: Spacing? -->
+              {/if}
+              {type.attributes.name}
+            </a>
+          {/each}
+        </div>
       </li>
 
       {#if authStore.isAuthenticated}
-        <li class="nav-item dropdown {isDropdownOpen ? 'show' : ''}">
+        <li class="nav-item dropdown {isUserDropdownOpen ? 'show' : ''}">
           <button
             type="button"
-            id="signedInDropdown"
+            id="userDropdown"
             class="btn btn-link nav-link dropdown-toggle text-light"
-            onclick={toggleDropdown}
-            aria-expanded={isDropdownOpen}
+            onclick={() => isUserDropdownOpen = !isUserDropdownOpen}
+            aria-expanded={isUserDropdownOpen}
           >
             <FontAwesomeIcon icon="user" />
             {#if authStore.user}
@@ -90,15 +98,15 @@
             {/if}
           </button>
           <div
-            class="dropdown-menu dropdown-menu-right {isDropdownOpen ? 'show' : ''}"
-            aria-labelledby="signedInDropdown"
+            class="dropdown-menu dropdown-menu-right {isUserDropdownOpen ? 'show' : ''}"
+            aria-labelledby="userDropdown"
           >
-            <a href={resolve("/tournaments/my")} class="dropdown-item" onclick={closeDropdown}>
+            <a href={resolve("/tournaments/my")} class="dropdown-item" onclick={() => isUserDropdownOpen = false}>
               <FontAwesomeIcon icon="trophy" />
               My tournaments
             </a>
             <div class="dropdown-divider"></div>
-            <a href={getLogoutUrl()} rel="external" class="dropdown-item" onclick={closeDropdown}>
+            <a href={getLogoutUrl()} rel="external" class="dropdown-item" onclick={() => isUserDropdownOpen = false}>
               <FontAwesomeIcon icon="sign-out" />
               Jack Out
             </a>
