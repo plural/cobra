@@ -28,9 +28,7 @@
         : "Tournaments",
   );
 
-  function tournamentsApiUrl(
-    tournamentTypeId: string | null | undefined,
-  ): string {
+  function tournamentsApiUrl(tournamentTypeId: string | null | undefined): string {
     const query = [
       `${COBRA_API_SERVER}/api/v1/public/tournaments?page[size]=10`,
       "include=tournament_type",
@@ -66,7 +64,7 @@
         let newTypes: Record<string, string> = {};
         for (const included of data.included) {
           if (included.type === "tournament_types") {
-            newTypes[included.id.toString()] = included.attributes.name;
+            newTypes[included.id] = included.attributes.name;
           }
         }
         tournamentTypes = newTypes;
@@ -100,9 +98,7 @@
       }
 
       const data = (await response.json()) as TournamentTypesResponse;
-      const matchingType = data.data.find(
-        (tournamentType) => String(tournamentType.id) === typeId,
-      );
+      const matchingType = data.data.find((tournamentType) => tournamentType.id === typeId);
       tournamentTypeName = matchingType?.attributes.name ?? null;
     } catch {
       tournamentTypeName = null;
@@ -123,10 +119,7 @@
 
   onMount(async () => {
     if (typeId) {
-      await Promise.all([
-        loadTournaments(fetchTournamentsUrl),
-        loadTournamentTypeName(),
-      ]);
+      await Promise.all([loadTournaments(fetchTournamentsUrl), loadTournamentTypeName()]);
       return;
     }
 
@@ -157,9 +150,7 @@
           {tournament}
           userId={authStore.user ? authStore.user.id : null}
           tournamentTypeName={tournament.attributes.tournament_type_id
-            ? tournamentTypes[
-                tournament.attributes.tournament_type_id.toString()
-              ]
+            ? tournamentTypes[tournament.attributes.tournament_type_id.toString()]
             : null}
         />
       {/each}

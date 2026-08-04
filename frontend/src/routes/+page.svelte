@@ -35,7 +35,7 @@
         let newTypes: Record<string, string> = {};
         for (const included of data.included) {
           if (included.type === "tournament_types") {
-            newTypes[included.id.toString()] = included.attributes.name;
+            newTypes[included.id] = included.attributes.name;
           }
         }
         tournamentTypes = newTypes;
