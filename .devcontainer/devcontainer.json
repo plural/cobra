@@ -13,13 +13,14 @@
         "ghcr.io/devcontainers/features/git:1": {
             "version": "latest"
         },
+        "ghcr.io/devcontainers/features/github-cli:1": {},
         "ghcr.io/devcontainers/features/ruby:1": {
             "version": "3.4.4" // Change to match Ruby version from Gemfile
         },
         "ghcr.io/devcontainers/features/node:1": {
             "version": 24 // Change Node version as required
         },
-        "ghcr.io/devcontainers/features/common-utils:2.4.3": {
+        "ghcr.io/devcontainers/features/common-utils:2.5.9": {
             "username": "vscode",
             "uid": 1000,
             "gid": 1000,
@@ -34,18 +35,17 @@
         5432
     ],
     "portsAttributes": {
-      "3000": {
-        "label": "API",
-        "onAutoForward": "notify"
-      },
-      "5173": {
-        "label": "Frontend",
-        "onAutoForward": "notify"
-      }
+        "3000": {
+            "label": "API",
+            "onAutoForward": "notify"
+        },
+        "5173": {
+            "label": "Frontend",
+            "onAutoForward": "notify"
+        }
     },
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "cat config/database.example.app-in-docker.yml | sed s/localhost/db/ > config/database.yml && bundle install && bundle exec rails db:setup && npm install && cd frontend && npm install",
-
     // Configure tool-specific properties.
     "customizations": {
         "vscode": {
