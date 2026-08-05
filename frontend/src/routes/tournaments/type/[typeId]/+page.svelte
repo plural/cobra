@@ -6,7 +6,7 @@
 </script>
 
 <TournamentList
-  typeId={params.typeId}
+  typeId={parseInt(params.typeId)}
   tournamentsResponse={data.tournamentsResponse}
   tournamentTypes={data.tournamentTypes}
 />

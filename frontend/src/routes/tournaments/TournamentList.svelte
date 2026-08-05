@@ -15,16 +15,16 @@
     tournamentsResponse,
     tournamentTypes
   }: {
-    typeId?: string | null,
+    typeId?: number | null,
     tournamentsResponse: TournamentsResponse,
     tournamentTypes: TournamentTypeInfo[]
   } = $props();
 
   let tournamentTypeName = $derived(getTournamentTypeName(typeId));
 
-  function getTournamentTypeName(typeId: string | null) {
+  function getTournamentTypeName(typeId: number | null) {
     return tournamentTypes.find(
-      (tournamentType) => tournamentType.id === typeId,
+      (tournamentType) => tournamentType.id === typeId?.toString(),
     )?.attributes.name;
   }
 
@@ -72,7 +72,7 @@
           showDelete={true}
           {tournament}
           userId={authStore.user ? authStore.user.id : null}
-          tournamentTypeName={getTournamentTypeName(tournament.attributes.tournament_type_id.toString())}
+          tournamentTypeName={getTournamentTypeName(tournament.attributes.tournament_type_id)}
         />
       {/each}
     {/if}
