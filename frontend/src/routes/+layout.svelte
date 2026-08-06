@@ -19,8 +19,6 @@
   });
 
   const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
-  let isUserDropdownOpen = $state(false);
-  let isTournamentTypesDropdownOpen = $state(false);
 
   function getLogoutUrl() {
     const returnUrl = typeof window !== "undefined" ? window.location.origin : "/";
@@ -42,11 +40,14 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
   />
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 </svelte:head>
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark dontprint">
   <div class="container">
     <a href={resolve("/")} class="navbar-brand">Cobra (SPA)</a>
+
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
         <a href={resolve("/help")} class="nav-link text-light">
@@ -54,23 +55,19 @@
           How to
         </a>
       </li>
-      <li class="nav-item dropdown {isTournamentTypesDropdownOpen ? 'show' : ''}">
+
+      <li class="nav-item dropdown">
         <button
           type="button"
-          id="tournamentTypeDropdown"
-          onclick={() => isTournamentTypesDropdownOpen = !isTournamentTypesDropdownOpen}
-          aria-expanded={isTournamentTypesDropdownOpen}
-          class="btn btn-link nav-link dropdown-toggle text-light"
+          class="nav-link dropdown-toggle text-light"
+          data-toggle="dropdown"
         >
           <FontAwesomeIcon icon="trophy" />
           Tournament types
         </button>
-        <div
-          class="dropdown-menu dropdown-menu-right {isTournamentTypesDropdownOpen ? 'show' : ''}"
-          aria-labelledby="userDropdown"
-        >
+        <div class="dropdown-menu dropdown-menu-right">
           {#each data.tournamentTypes as type (type.id)}
-            <a href={resolve(`/tournaments/type/${type.id}`)} class="dropdown-item" onclick={() => isTournamentTypesDropdownOpen = false}>
+            <a href={resolve(`/tournaments/type/${type.id}`)} class="dropdown-item">
               {#if type.attributes.nsg_format}
                 <!-- TODO: Fix icon -->
                 <FontAwesomeIcon icon="nsg" />
@@ -84,29 +81,24 @@
       </li>
 
       {#if authStore.isAuthenticated}
-        <li class="nav-item dropdown {isUserDropdownOpen ? 'show' : ''}">
+        <li class="nav-item dropdown">
           <button
             type="button"
-            id="userDropdown"
-            class="btn btn-link nav-link dropdown-toggle text-light"
-            onclick={() => isUserDropdownOpen = !isUserDropdownOpen}
-            aria-expanded={isUserDropdownOpen}
+            class="nav-link dropdown-toggle text-light"
+            data-toggle="dropdown"
           >
             <FontAwesomeIcon icon="user" />
             {#if authStore.user}
               {authStore.user.nrdb_username}
             {/if}
           </button>
-          <div
-            class="dropdown-menu dropdown-menu-right {isUserDropdownOpen ? 'show' : ''}"
-            aria-labelledby="userDropdown"
-          >
-            <a href={resolve("/tournaments/my")} class="dropdown-item" onclick={() => isUserDropdownOpen = false}>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a href={resolve("/tournaments/my")} class="dropdown-item">
               <FontAwesomeIcon icon="trophy" />
               My tournaments
             </a>
             <div class="dropdown-divider"></div>
-            <a href={getLogoutUrl()} rel="external" class="dropdown-item" onclick={() => isUserDropdownOpen = false}>
+            <a href={getLogoutUrl()} rel="external" class="dropdown-item">
               <FontAwesomeIcon icon="sign-out" />
               Jack Out
             </a>
