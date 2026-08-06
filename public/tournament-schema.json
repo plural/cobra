@@ -1,0 +1,155 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    
+    "title": "Cobra Tournament",
+    "description": "Schema for Cobra's Tournament JSON export. Extension of NRTM (https://steffens.org/nrtm/nrtm-schema.json)",
+    
+    "definitions": {
+        "player": {
+            "description": "a player in this tournament",
+            "type": "object",
+            "properties": {
+                "id": { "type": "number" },
+                "name": { "type": "string" },
+                "pronouns": { "type": "string"},
+                "rank": { "type": "number" },
+                "corpFaction": { "type": "string" },
+                "corpIdentity": { "type": "string" },
+                "runnerIdentity": { "type": "string" },
+                "runnerFaction": { "type": "string" },
+                "prestige": { "type": "number", "description": "deprecated, use matchPoints instead" },
+                "matchPoints": { "type": "number" },
+                "strengthOfSchedule": { "type": "number" },
+                "extendedStrengthOfSchedule": { "type": "number" },
+                "averageScore": { "type": "number" },
+                "forfeit": { "type": "boolean" },
+                "disqualified": { "type": "boolean" },
+                "isBye": { "type": "boolean" },
+                "pod": { "type": "number" }
+            }
+        },
+        
+        "eliminationPlayer": {
+            "description": "a player in the elimination rounds",
+            "type": "object",
+            "properties": {
+                "id": { "type": "number" },
+                "name": { "type": "string" },
+                "rank": { "type": "number", "description": "player's rank after elimination rounds" },
+                "seed": { "type": "number", "description": "player's rank after swiss rounds" }
+            }
+        },
+        
+        "swissGameResult": {
+            "description": "a swiss game's result for one player",
+            "type": "object",
+            "properties": {
+                "id": { "type": "number", "description": "refers to player.id" },
+                "runnerScore": { "type": "number", "description": "this player's runner score" },
+                "corpScore": { "type": "number", "description": "this player's corp score" }
+            },
+            "required": [ "id", "runnerScore", "corpScore" ]
+        },
+        
+        "eliminationGameResult": {
+            "description": "an elimination game's result for one player",
+            "type": "object",
+            "properties": {
+                "id": { "type": "number", "description": "refers to player.id" },
+                "role": { "type": "string", "enum": [ "runner", "corp" ], "description": "this player's role (corp/runner)" },
+                "winner": { "type": "boolean", "description": "did this player win?" }
+            },
+            "required": [ "id", "role", "winner" ]
+        },
+        
+        "game": {
+            "description": "a game's result",
+            "type": "object",
+            "properties": {
+                "table": { "type": "number" },
+                "player1": { "type": "object", "oneOf": [ { "$ref": "#/definitions/swissGameResult" }, { "$ref": "#/definitions/eliminationGameResult" } ] },
+                "player2": { "type": "object", "oneOf": [ { "$ref": "#/definitions/swissGameResult" }, { "$ref": "#/definitions/eliminationGameResult" } ] },
+                "eliminationGame": { "type": "boolean" },
+                "intentionalDraw": { "type": "boolean", "description": "true if this was an intentional draw" },
+                "game1WonBy": {
+                    "description": "game 1 (p1 runner vs p2 corp) win",
+                    "type": "string",
+                    "enum": [ "ap", "mill", "flatline" ]
+                },
+                "game2WonBy": {
+                    "description": "game 2 (p1 corp vs p2 runner) win",
+                    "type": "string",
+                    "enum": [ "ap", "mill", "flatline" ]
+                },
+                "gameWonBy": {
+                    "description": "elimination game win",
+                    "type": "string",
+                    "enum": [ "ap", "mill", "flatline" ]
+                }
+            }
+        },
+        
+        "round": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/game" }
+        }
+     },
+    
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "type": {
+            "description": "tournament type (gnk, sc etc)",
+            "type": "string"
+        },
+        "allowedSet": {
+            "description": "cards up to this data pack/set were allowed",
+            "type": "string"
+        },
+        "city": {
+            "description": "city where the tournament was held",
+            "type": "string"
+        },
+        "country": {
+            "description": "country where the tournament was held",
+            "type": "string"
+        },
+        "date": {
+            "description": "date the tournament was held (YYYY-MM-DD)",
+            "type": "string"
+        },
+        "version": {
+            "description": "app version",
+            "type": "string"
+        },
+        "usesPods": {
+            "description": "tournament uses pods",
+            "type": "boolean"
+        },
+        "cutToTop": {
+            "description": "for elimination rounds: size of the cut",
+            "type": "number"
+        },
+        "preliminaryRounds": {
+            "description": "for eliminiation rounds: number of preliminary rounds",
+            "type": "number"
+        },
+        "players": {
+            "description": "players in the tournament. this represents the rankings after swiss rounds",
+            "type": "array",
+            "items": { "$ref": "#/definitions/player" }
+        },
+        "eliminationPlayers": {
+            "description": "players in the elimination rounds. this represents the rankings after elimination rounds",
+            "type": "array",
+            "items": { "$ref": "#/definitions/eliminationPlayer" }
+        },
+        "rounds": {
+            "description": "array of array of game results",
+            "type": "array",
+            "items": { "$ref": "#/definitions/round" }
+        }
+    }
+}

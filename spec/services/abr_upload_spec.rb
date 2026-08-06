@@ -25,10 +25,10 @@ RSpec.describe AbrUpload do
   end
 
   describe '#upload!' do
-    let(:json) { NrtmJson.new(tournament) }
+    let(:json) { NrtmJson.new(tournament, 'tournaments.nullsignal.games/') }
 
     before do
-      allow(NrtmJson).to receive(:new).with(tournament).and_return(json)
+      allow(NrtmJson).to receive(:new).with(tournament, 'tournaments.nullsignal.games/').and_return(json)
       allow(json).to receive(:data).and_return({ some: :data })
     end
 

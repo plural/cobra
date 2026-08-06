@@ -62,7 +62,7 @@ RSpec.describe 'a completed top cut with a player with no seed' do
   end
 
   it 'generates NRTM data for the tournament' do
-    expect(NrtmJson.new(tournament).data('https://server/SLUG')[:eliminationPlayers]
+    expect(NrtmJson.new(tournament, "tournaments.nullsignal.games/").data('https://server/SLUG')[:eliminationPlayers]
              .map { |player| [player[:rank], player[:seed]] })
       .to eq([[1, nil], [2, 2], [3, 4], [4, 3]])
   end

@@ -35,6 +35,6 @@ class AbrUpload # rubocop:disable Style/Documentation
   end
 
   def json(_tournament, _tournament_url)
-    NrtmJson.new(@tournament).data(@tournament_url).to_json
+    NrtmJson.new(@tournament, "tournaments.nullsignal.games/").data(@tournament_url).to_json
   end
 end
