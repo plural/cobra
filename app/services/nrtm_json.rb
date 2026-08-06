@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class NrtmJson # rubocop:disable Metrics/ClassLength,Style/Documentation
-  attr_reader :tournament
-  attr_reader :root_url 
+  attr_reader :tournament, :root_url
+
   def initialize(tournament, root_url)
     @tournament = tournament
     @root_url = root_url
@@ -18,21 +18,27 @@ class NrtmJson # rubocop:disable Metrics/ClassLength,Style/Documentation
         id: standing.player.id,
         name: standing.name,
         rank: i + 1,
-        corpFaction: (standing.corp_identity.faction if standing.corp_identity.id and displayIdentities),
-        corpIdentity: (standing.corp_identity.name.gsub(/[“”]/, '"') if standing.corp_identity.id and displayIdentities),
-        runnerFaction: (standing.runner_identity.faction if standing.runner_identity.id and displayIdentities),
-        runnerIdentity: (standing.runner_identity.name.gsub(/[“”]/, '"') if standing.runner_identity.id and displayIdentities),
+        corpFaction: (standing.corp_identity.faction if standing.corp_identity.id && displayIdentities),
+        corpIdentity: (if standing.corp_identity.id && displayIdentities
+                         standing.corp_identity.name.gsub(/[“”]/,
+                                                          '"')
+                       end),
+        runnerFaction: (standing.runner_identity.faction if standing.runner_identity.id && displayIdentities),
+        runnerIdentity: (if standing.runner_identity.id && displayIdentities
+                           standing.runner_identity.name.gsub(/[“”]/,
+                                                              '"')
+                         end),
         matchPoints: standing.points,
         strengthOfSchedule: standing.sos,
         extendedStrengthOfSchedule: standing.extended_sos
       }
-      playerEntry.merge!(pronouns: standing.pronouns) if (standing.pronouns != nil) # conditionally render pronouns (omit if nil)
+      # conditionally render pronouns (omit if nil)
+      playerEntry.merge!(pronouns: standing.pronouns) unless standing.pronouns.nil?
       playerEntry
     end
 
     players ||= []
     preliminaryRounds ||= 0
-
 
     {
       name: tournament.name,
@@ -55,7 +61,7 @@ class NrtmJson # rubocop:disable Metrics/ClassLength,Style/Documentation
       rounds: swiss_pairing_data + cut_pairing_data,
       uploadedFrom: 'Cobra',
       links: [
-        { rel: 'schemaderivedfrom', href: root_url + "tournament-schema.json" },
+        { rel: 'schemaderivedfrom', href: "#{root_url}tournament-schema.json" },
         { rel: 'uploadedfrom', href: tournament_url }
       ]
     }

@@ -15,23 +15,23 @@ RSpec.describe NrtmJson do
   let(:pop) { create(:player, name: 'Pop', corp_identity: 'TWIY', runner_identity: 'Reina', id: 1007) }
   let(:round) { create(:round, stage: tournament.current_stage) }
 
-  let(:json) { described_class.new(tournament, "tournaments.nullsignal.games/") }
+  let(:json) { described_class.new(tournament, 'tournaments.nullsignal.games/') }
 
   before do
     pairs = [
-      ["ETF", "haas_bioroid"],
-      ["Noise", "anarch"],
-      ["PE", "jinteki"],
-      ["Gabe", "criminal"],
-      ["MN", "neutral_corp"],
-      ["Kate", "shaper"],
-      ["BABW", "weyland_consortium"],
-      ["Whizzard", "anarch"],
-      ["ST", "nbn"],
-      ["RP", "nbn"],
-      ["Andromeda", "criminal"],
-      ["TWIY", "nbn"],
-      ["Reina", "anarch"]
+      %w[ETF haas_bioroid],
+      %w[Noise anarch],
+      %w[PE jinteki],
+      %w[Gabe criminal],
+      %w[MN neutral_corp],
+      %w[Kate shaper],
+      %w[BABW weyland_consortium],
+      %w[Whizzard anarch],
+      %w[ST nbn],
+      %w[RP nbn],
+      %w[Andromeda criminal],
+      %w[TWIY nbn],
+      %w[Reina anarch]
     ]
     pairs.each do |id, faction|
       create(:identity, name: id, faction: faction)
@@ -82,7 +82,7 @@ RSpec.describe NrtmJson do
 
       context 'with elimination bracket' do
         let(:cut) { tournament.cut_to! :double_elim, 4 }
-        let(:json) { described_class.new(tournament, "tournaments.nullsignal.games/") }
+        let(:json) { described_class.new(tournament, 'tournaments.nullsignal.games/') }
 
         before do
           r1 = create(:round, number: 2, stage: cut, completed: true)
@@ -129,8 +129,8 @@ RSpec.describe NrtmJson do
       end
 
       before do
-        create(:identity, name: 'René “Loup” Arcemont: Party Animal', faction: "anarch")
-        create(:identity, name: 'Rielle “Kit” Peddler: Transhuman', faction: "shaper")
+        create(:identity, name: 'René “Loup” Arcemont: Party Animal', faction: 'anarch')
+        create(:identity, name: 'Rielle “Kit” Peddler: Transhuman', faction: 'shaper')
 
         round.pairings << create(:pairing, player1: loup_player, player2: kit_player, table_number: 1, score1_runner: 3,
                                            score2_corp: 0, side: :player1_is_runner)
