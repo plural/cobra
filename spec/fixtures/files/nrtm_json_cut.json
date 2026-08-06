@@ -148,7 +148,7 @@
   ],
   "uploadedFrom": "Cobra",
   "links": [
-    { "rel": "schemaderivedfrom", "href": "tournaments.nullsignal.games/tournament-schema.json" },
+    { "rel": "schemaderivedfrom", "href": "tournaments.nullsignal.games/schemas/tournament-schema.json" },
     { "rel": "uploadedfrom", "href": "https://server/SLUG" }
   ]
 }

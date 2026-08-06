@@ -242,7 +242,7 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
   def upload_to_abr
     authorize @tournament
 
-    response = AbrUpload.upload!(@tournament, tournament_url(@tournament.slug, @request))
+    response = AbrUpload.upload!(@tournament, root_url, tournament_url(@tournament.slug, @request))
 
     @tournament.update(abr_code: response[:code]) if response[:code]
 

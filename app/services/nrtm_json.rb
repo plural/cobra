@@ -61,7 +61,7 @@ class NrtmJson # rubocop:disable Metrics/ClassLength,Style/Documentation
       rounds: swiss_pairing_data + cut_pairing_data,
       uploadedFrom: 'Cobra',
       links: [
-        { rel: 'schemaderivedfrom', href: "#{root_url}tournament-schema.json" },
+        { rel: 'schemaderivedfrom', href: "#{root_url}schemas/tournament-schema.json" },
         { rel: 'uploadedfrom', href: tournament_url }
       ]
     }
