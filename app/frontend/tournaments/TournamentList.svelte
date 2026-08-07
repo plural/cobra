@@ -152,9 +152,7 @@
     {:else}
       {#each tournaments as tournament (tournament.id)}
         <TournamentRow
-          showDelete={true}
           {tournament}
-          {userId}
           tournamentTypeName={tournament.attributes.tournament_type_id
             ? tournamentTypes[
                 tournament.attributes.tournament_type_id.toString()

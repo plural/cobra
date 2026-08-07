@@ -110,10 +110,6 @@ describe("TournamentList", () => {
       expect(getByText("Tournaments: Standard")).toBeTruthy();
       expect(getByText("Second Tournament")).toBeTruthy();
     });
-
-    // userId evaluates to 42, which matches Second Tournament but not First Tournament
-    const deleteButtons = getByRole("link", { name: /Delete/i });
-    expect(deleteButtons).toBeTruthy();
   });
 
   it("loads next page when API provides a next link", async () => {
