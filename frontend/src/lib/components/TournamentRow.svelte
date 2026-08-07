@@ -3,14 +3,10 @@
   import type { TournamentInfo } from "$lib/utils/api_types";
 
   let {
-    showDelete,
     tournament,
-    userId,
     tournamentTypeName = null,
   }: {
-    showDelete: boolean;
     tournament: TournamentInfo;
-    userId: number | null;
     tournamentTypeName?: string | null;
   } = $props();
 </script>
@@ -54,19 +50,5 @@
         - <i class="fa fa-video-camera"></i>
       {/if}
     </h6>
-
-    {#if showDelete && userId !== null && tournament.attributes.user_id === userId}
-      <div class="delete_action">
-        <a
-          href="{COBRA_API_SERVER}/beta/tournaments/{tournament.id}"
-          data-method="delete"
-          rel="external"
-          class="btn btn-danger"
-          data-confirm="Are you sure? This cannot be reversed."
-        >
-          <i class="fa fa-trash-o"></i> Delete
-        </a>
-      </div>
-    {/if}
   </div>
 </div>
