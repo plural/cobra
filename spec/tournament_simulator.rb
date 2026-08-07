@@ -9,6 +9,8 @@ require 'stackprof'
 # to control the simulation.
 #
 # The following environment variables can be set to control the simulation:
+#     CUT_FORMAT - Single- or Double-Elimination type of cut. Defaults to Double-Elimination.
+#     CUT_SIZE - The number of players in the cut. Defaults to 8.
 #     DROPS_PER_ROUND -  The number of players that drop out of the tournament each round, defaults to 0
 #     DSS_BOTH_TIE - The number of times both games in double-sided swiss end in a tie, defaults to 1.
 #     DSS_P1_SWEEPS - The number of times player 1 sweeps in double-sided swiss, defaults to 25.
@@ -21,8 +23,9 @@ require 'stackprof'
 #     NUM_PLAYERS - The number of players in the tournament, defaults to 150
 #     NUM_ROUNDS - The number of rounds in the tournament, defaults to 15
 #     PROFILE - If set to '1' or 'true', runs the simulation in profiling mode using stackprof.
+#     RUN_CUT - If truthy, will simulate a top cut as well.
 #     SSS_P1_WINS - The number of times player 1 wins in single-sided swiss, defaults to 48.
-#     SSS_P2_WINS - The number of times player 2 wins in single-sided swiss, defaults to 48.
+#     SSS_P2_WINS - The number of times pla wins in single-sided swiss, defaults to 48.
 #     SSS_TIES - The number of times a game ends in a tie in single-sided swiss, defaults to 4.
 #     WRITE_JSON_FILE - If set to '1' or 'true', writes the results to JSON files in the current directory.
 
@@ -64,6 +67,22 @@ RSpec.describe 'load testing' do # rubocop:disable RSpec/DescribeClass
       0
     else
       ENV['FIRST_ROUND_BYES'].strip.to_i
+    end
+  end
+
+  let(:run_cut) { %w[1 true].include?(ENV.fetch('RUN_CUT', nil)) || false }
+  let(:cut_size) do
+    if ENV['CUT_SIZE'].nil? || ENV['CUT_SIZE'].strip.empty?
+      8
+    else
+      ENV['CUT_SIZE'].strip.to_i
+    end
+  end
+  let(:cut_format) do
+    if ENV['CUT_FORMAT'].nil? || ENV['CUT_FORMAT'].strip.empty?
+      'double'
+    else
+      ENV['CUT_FORMAT'].strip.downcase
     end
   end
 
@@ -141,7 +160,9 @@ RSpec.describe 'load testing' do # rubocop:disable RSpec/DescribeClass
       num_drops_per_round:,
       num_first_round_byes:,
       num_pairings: 0,
-      num_bye_vs_bye_pairings: 0
+      num_bye_vs_bye_pairings: 0,
+      rounds: {},
+      top_cut: {}
     }
   end
 
@@ -575,6 +596,131 @@ RSpec.describe 'load testing' do # rubocop:disable RSpec/DescribeClass
       time_taken = timer
       round_results[:standings_page_load_time_seconds] = time_taken
       puts "\t\tDone. Took #{time_taken} seconds"
+    end
+
+    if run_cut
+      puts "--- Starting Cut Simulation (Top #{cut_size} #{cut_format} elimination) ---"
+      format_sym = cut_format.include?('single') ? :single_elim : :double_elim
+      stage = tournament.cut_to!(format_sym, cut_size)
+
+      summary_results[:top_cut] = {
+        cut_format:,
+        cut_size:,
+        rounds: {},
+        side_bias: {}
+      }
+      cut_round_num = 1
+      cut_round_side_bias = {}
+      loop do
+        cut_round_side_bias[cut_round_num] = {}
+        puts "Cut Round #{cut_round_num}"
+        round = tournament.pair_new_round!
+
+        if round.pairings.empty?
+          puts "\tNo more pairings to play. Cut is complete!"
+          round.destroy!
+          break
+        end
+
+        # Calculate side bias for players in the cut stage (completed rounds only)
+        stage.rounds.reload
+        cut_side_bias = Hash.new(0)
+        stage.players.each do |p|
+          corp_games = stage.rounds.select(&:completed?).map(&:pairings).flatten.compact.count do |pairing|
+            (pairing.player1_id == p.id && pairing.player1_is_corp?) ||
+              (pairing.player2_id == p.id && pairing.player1_is_runner?)
+          end
+          runner_games = stage.rounds.select(&:completed?).map(&:pairings).flatten.compact.count do |pairing|
+            (pairing.player1_id == p.id && pairing.player1_is_runner?) ||
+              (pairing.player2_id == p.id && pairing.player1_is_corp?)
+          end
+          bias = corp_games - runner_games
+          cut_side_bias[bias] += 1
+        end
+
+        summary_results[:top_cut][:side_bias][cut_round_num] = cut_side_bias.sort.to_h
+        cut_round_side_bias[cut_round_num] = cut_side_bias.sort.to_h
+        puts "  Side bias: #{cut_round_side_bias[cut_round_num]}"
+
+        # Track cut side assignments
+        ActiveRecord::Base.transaction do
+          round.pairings.each do |p|
+            if cut_round_num == 1 && p.side.nil?
+              # Simulator simulates side selection choice randomly for the first round only.
+              p.side = %i[player1_is_corp player1_is_runner].sample
+            end
+
+            if cut_round_num != 1 && p.side.nil?
+              puts "Found side not set in later cut stage (#{cut_round_num})!"
+              exit(1)
+            end
+
+            # Cuts have win/loss (3/0 or 0/3) and no ties
+            score = [[3, 0], [0, 3]].sample
+            p.update!(score1: score.first, score2: score.last, side: p.side)
+          end
+          round.update!(completed: true)
+        end
+
+        # Print pairings & results
+        round.pairings.each do |p|
+          puts "\tTable #{p.table_number}: #{p.player1.name} " \
+               "(Seed: #{stage.registrations.find_by(player_id: p.player1_id)&.seed}) " \
+               "as #{p.player1_side} vs #{p.player2.name} " \
+               "(Seed: #{stage.registrations.find_by(player_id: p.player2_id)&.seed}) " \
+               "as #{p.player2_side} -> Winner: #{p.winner.name}"
+        end
+
+        cut_round_num += 1
+      end
+
+      # Print summary statistics
+      puts '--- Cut Statistics ---'
+      stage.rounds.reload
+      corp_games_count = 0
+      runner_games_count = 0
+      player_corp_counts = Hash.new(0)
+      player_runner_counts = Hash.new(0)
+
+      stage.rounds.each do |r|
+        r.pairings.each do |p|
+          next if p.side.nil?
+
+          corp_games_count += 1
+          runner_games_count += 1
+          if p.player1_is_corp?
+            player_corp_counts[p.player1_id] += 1
+            player_runner_counts[p.player2_id] += 1
+          else
+            player_runner_counts[p.player1_id] += 1
+            player_corp_counts[p.player2_id] += 1
+          end
+        end
+      end
+      puts "Total Cut Games: #{corp_games_count}"
+      stage.players.each do |player|
+        bias = player_corp_counts[player.id] - player_runner_counts[player.id]
+        puts "  Player #{player.name}: Corp #{player_corp_counts[player.id]}, " \
+             "Runner #{player_runner_counts[player.id]} (Bias: #{bias})"
+      end
+
+      # Histogram-style cut display.
+
+      puts 'Cut Side Bias by Round:'
+      cut_round_side_bias.keys.sort.each do |r|
+        bias_counts = cut_round_side_bias[r]
+        # Max count used to normalize histogram width.
+        max_count = bias_counts.values.max.to_f
+        # Used to align the side bias values in the output.
+        max_bias_string_width = bias_counts.values.max.to_s.length
+
+        puts "  Round #{r}:"
+        bias_counts.keys.sort.each do |bias|
+          count = bias_counts[bias]
+          bar_length = max_count > 50 ? (count / max_count * 50).round : count
+          puts format("  Bias %2d: %#{max_bias_string_width}d | %s", bias, count, '█' * bar_length)
+        end
+      end
     end
 
     if write_json_file
