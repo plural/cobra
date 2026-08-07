@@ -5,7 +5,7 @@
   import { downloadBlob } from "../utils/files";
   import { getCardTypeImage } from "../utils/images";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import type { Printing, PrintingsResponse } from "../lib/api_types";
+  import type { Printing } from "../lib/api_types";
   import EditableCard from "./EditableCard.svelte";
 
   interface CardSearchOption {
