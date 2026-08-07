@@ -243,7 +243,6 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
     authorize @tournament
 
     response = AbrUpload.upload!(@tournament, root_url, tournament_url(@tournament.slug, @request))
-
     @tournament.update(abr_code: response[:code]) if response[:code]
 
     redirect_to edit_tournament_path(@tournament)
