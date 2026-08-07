@@ -160,7 +160,9 @@ RSpec.describe 'load testing' do # rubocop:disable RSpec/DescribeClass
       num_drops_per_round:,
       num_first_round_byes:,
       num_pairings: 0,
-      num_bye_vs_bye_pairings: 0
+      num_bye_vs_bye_pairings: 0,
+      rounds: {},
+      top_cut: {}
     }
   end
 
@@ -601,6 +603,12 @@ RSpec.describe 'load testing' do # rubocop:disable RSpec/DescribeClass
       format_sym = cut_format.include?('single') ? :single_elim : :double_elim
       stage = tournament.cut_to!(format_sym, cut_size)
 
+      summary_results[:top_cut] = {
+        cut_format:,
+        cut_size:,
+        rounds: {},
+        side_bias: {}
+      }
       cut_round_num = 1
       cut_round_side_bias = {}
       loop do
@@ -630,6 +638,7 @@ RSpec.describe 'load testing' do # rubocop:disable RSpec/DescribeClass
           cut_side_bias[bias] += 1
         end
 
+        summary_results[:top_cut][:side_bias][cut_round_num] = cut_side_bias.sort.to_h
         cut_round_side_bias[cut_round_num] = cut_side_bias.sort.to_h
         puts "  Side bias: #{cut_round_side_bias[cut_round_num]}"
 
@@ -689,17 +698,28 @@ RSpec.describe 'load testing' do # rubocop:disable RSpec/DescribeClass
         end
       end
       puts "Total Cut Games: #{corp_games_count}"
-      max_bias = 0
       stage.players.each do |player|
         bias = player_corp_counts[player.id] - player_runner_counts[player.id]
-        max_bias = [max_bias, bias.abs].max
         puts "  Player #{player.name}: Corp #{player_corp_counts[player.id]}, " \
              "Runner #{player_runner_counts[player.id]} (Bias: #{bias})"
       end
-      puts "Max Individual Side Bias in Cut: #{max_bias}"
+
+      # Histogram-style cut display.
+
       puts 'Cut Side Bias by Round:'
       cut_round_side_bias.keys.sort.each do |r|
-        puts "  #{r}: #{cut_round_side_bias[r]}"
+        bias_counts = cut_round_side_bias[r]
+        # Max count used to normalize histogram width.
+        max_count = bias_counts.values.max.to_f
+        # Used to align the side bias values in the output.
+        max_bias_string_width = bias_counts.values.max.to_s.length
+
+        puts "  Round #{r}:"
+        bias_counts.keys.sort.each do |bias|
+          count = bias_counts[bias]
+          bar_length = max_count > 50 ? (count / max_count * 50).round : count
+          puts format("  Bias %2d: %#{max_bias_string_width}d | %s", bias, count, '█' * bar_length)
+        end
       end
     end
 
