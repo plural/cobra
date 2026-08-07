@@ -52,13 +52,13 @@
 
 <div id={`stage${stage.id}`} class="accordion mb-3" role="tablist">
   <div class="row mb-1">
-    <div class="col-sm-10 d-flex align-items-baseline gap-2">
+    <div class="col-sm-6 d-flex align-items-baseline gap-2">
       <h4>{stage.name}</h4>
     </div>
 
     <!-- Admin controls -->
     {#if pairingsContext.showOrganizerView}
-      <div class="col-sm-2" aria-label="admin controls">
+      <div class="col-sm-6 d-flex justify-content-end" aria-label="admin controls">
         {#if !stage.is_elimination && tournamentPolicies?.custom_table_numbering}
           <a
             href="/tournaments/{tournament.id}/stages/{stage.id}"
@@ -66,6 +66,7 @@
             aria-label="edit stage"
           >
             <FontAwesomeIcon icon="pencil" />
+            Edit Stage
           </a>
         {/if}
         <button
@@ -76,6 +77,7 @@
           aria-label="delete stage"
         >
           <FontAwesomeIcon icon="trash" />
+          Delete Entire Stage
         </button>
       </div>
     {/if}
