@@ -27,7 +27,7 @@ class AuthStore {
   }
 
   async checkAuth(): Promise<AuthUser | null> {
-    if (this.isAuthenticated) { 
+    if (this.isAuthenticated) {
       return this.user;
     }
 
