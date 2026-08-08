@@ -238,7 +238,8 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
   def destroy
     authorize @tournament
 
-    Tournament.includes(players: %i[decks registrations standing_rows]).find(@tournament.id).destroy!
+    Tournament.includes(stages: %i[rounds registrations standing_rows table_ranges],
+                        players: %i[decks registrations standing_rows]).find(@tournament.id).destroy!
 
     redirect_to tournaments_path
   end
