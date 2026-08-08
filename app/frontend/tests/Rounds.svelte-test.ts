@@ -12,7 +12,6 @@ import {
   completeRound,
   createStage,
   deletePairing,
-  deleteStage,
   loadPairings,
   pairRound,
   setPlayerRegistrationStatus,
@@ -44,7 +43,6 @@ vi.mock("../pairings/PairingsData", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../pairings/PairingsData")>()),
   loadPairings: vi.fn(() => MockPairingsData),
   createStage: vi.fn(() => true),
-  deleteStage: vi.fn(() => true),
   setRegistrationStatus: vi.fn(() => true),
   setPlayerRegistrationStatus: vi.fn(() => true),
   pairRound: vi.fn(() => true),
@@ -409,24 +407,6 @@ describe("Rounds", () => {
             ).not.toBeChecked();
           }
         });
-      });
-
-      it("deletes a stage", async () => {
-        const stageDiv = document.getElementById("stage1");
-        expect(stageDiv).not.toBeNull();
-        if (!stageDiv) {
-          return;
-        }
-
-        vi.spyOn(MockPairingsData, "stages", "get").mockReturnValue([]);
-        vi.spyOn(window, "confirm").mockReturnValue(true);
-        await user.click(
-          getByRole(stageDiv, "button", { name: /delete stage/i }),
-        );
-
-        expect(deleteStage).toHaveBeenCalledOnce();
-        expect(loadPairings).toHaveBeenCalledTimes(2);
-        expect(stageDiv).not.toBeInTheDocument();
       });
 
       it("does not show the Report Pairing button", () => {

@@ -15,7 +15,6 @@
     stage,
     startExpanded,
     tournamentPolicies,
-    deleteCallback,
     deletePairingCallback,
     changePlayerSideCallback,
     reportScoreCallback,
@@ -26,7 +25,6 @@
     stage: Stage;
     startExpanded: boolean;
     tournamentPolicies?: TournamentPolicies;
-    deleteCallback?: (stageId: number) => void;
     deletePairingCallback?: (roundId: number, pairingId: number) => void;
     changePlayerSideCallback?: (
       roundId: number,
@@ -69,16 +67,6 @@
             Edit Stage
           </a>
         {/if}
-        <button
-          class="btn btn-danger mx-1"
-          onclick={() => {
-            deleteCallback?.(stage.id);
-          }}
-          aria-label="delete stage"
-        >
-          <FontAwesomeIcon icon="trash" />
-          Delete Entire Stage
-        </button>
       </div>
     {/if}
   </div>

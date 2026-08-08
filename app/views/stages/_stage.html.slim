@@ -8,9 +8,6 @@
           = link_to tournament_stage_path(stage.tournament, stage), class: 'btn btn-warning mx-1' do
             => fa_icon 'pencil'
             | Edit Stage
-        = link_to tournament_stage_path(stage.tournament, stage), method: :delete, class: 'btn btn-danger mx-1', data: { confirm: "Are you sure? This cannot be reversed and this stage along with all rounds and pairings within it will be deleted!!!\n\nNo, for real.  \n\nAre you ABSOLUTELY SURE ABOUT THIS?" } do
-          => fa_icon 'trash'
-          | Delete Entire Stage
   - if stage.rounds.any?
     - if stage.players.count > 60 && !policy(stage.tournament).update?
       .alert.alert-info Due to the number of players, only the most recent round will be displayed on this page to help page load.
