@@ -1,11 +1,11 @@
 <script lang="ts">
   import Svelecte from "svelecte";
   import Identity from "../identities/Identity.svelte";
-  import { deckCsv, type Card, type Deck } from "../utils/decks.svelte";
+  import { deckCsv, transformCardLookup, type Card, type Deck } from "../utils/decks.svelte";
   import { downloadBlob } from "../utils/files";
   import { getCardTypeImage } from "../utils/images";
   import FontAwesomeIcon from "../widgets/FontAwesomeIcon.svelte";
-  import type { Printing, PrintingsResponse } from "../lib/api_types";
+  import type { Printing } from "../lib/api_types";
   import EditableCard from "./EditableCard.svelte";
 
   interface CardSearchOption {
@@ -214,11 +214,7 @@
     diffDecks();
   }
 
-  function transformCardLookup(response: PrintingsResponse) {
-    return response.data.map((p) => {
-      return { label: p.attributes.title, value: p };
-    });
-  }
+
 
   function changeQuantity(card: Card, delta: number) {
     if (!deck) {
