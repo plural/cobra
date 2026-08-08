@@ -10,7 +10,7 @@
   import TournamentRow from "../widgets/TournamentRow.svelte";
   import { globalMessages } from "../utils/GlobalMessageState.svelte";
 
-  let { typeId, userId }: { typeId: string | null; userId: number | null } =
+  let { typeId }: { typeId: string | null } =
     $props();
 
   let tournaments: TournamentInfo[] = $state([]);

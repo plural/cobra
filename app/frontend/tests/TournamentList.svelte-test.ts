@@ -91,10 +91,9 @@ describe("TournamentList", () => {
   });
 
   it("renders correctly with specific typeId and user info", async () => {
-    const { getByText, getByRole } = render(TournamentList, {
+    const { getByText } = render(TournamentList, {
       props: {
-        typeId: "11",
-        userId: 42,
+        typeId: "11"
       },
     });
 
@@ -189,8 +188,7 @@ describe("TournamentList", () => {
 
     const { getAllByRole, getByText, queryByText } = render(TournamentList, {
       props: {
-        typeId: "11",
-        userId: null,
+        typeId: "11"
       },
     });
 
@@ -248,8 +246,7 @@ describe("TournamentList", () => {
 
     const { getByText } = render(TournamentList, {
       props: {
-        typeId: "11",
-        userId: null,
+        typeId: "11"
       },
     });
 
@@ -323,8 +320,7 @@ describe("TournamentList", () => {
 
     const { getAllByRole, getAllByText, getByText } = render(TournamentList, {
       props: {
-        typeId: "11",
-        userId: null,
+        typeId: "11"
       },
     });
 
