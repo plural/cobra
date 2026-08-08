@@ -1,0 +1,23 @@
+.col-12
+
+  .alert.alert-secondary.mt-4
+    h5.mb-3 Delete Entire Tournament
+    p
+      | Deleting a tournament is <strong>permanent and cannot be undone.</strong> All data associated with the tournament will be lost.
+    p
+      | If you are sure you want to delete this tournament, please type the tournament name exactly below, click "Delete Tournament", and then confirm.
+    = simple_form_for :tournament, url: tournament_path(@tournament), method: :delete do |f|
+      = f.input_field :name,
+              class: 'form-control w-75',
+              id: 'tournament_name',
+              value: '',
+              placeholder: 'Enter tournament name to confirm deletion'
+      javascript:
+        const tournamentName = '#{@tournament.name}'
+        $('#tournament_name').on('input', function() {
+          const matches = $(this).val() === tournamentName;
+          $('#delete_tournament_button').prop('disabled', !matches);
+        });
+      = button_tag type: :submit, id: 'delete_tournament_button', class: 'btn btn-danger', disabled: true, data: { confirm: 'Are you absolutely sure? This cannot be reversed.' } do
+        => fa_icon 'trash'
+        | Delete Tournament

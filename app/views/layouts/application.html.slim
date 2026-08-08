@@ -142,6 +142,10 @@ html
             li.nav-item= link_to edit_tournament_path(@tournament), class: "nav-link #{'active' if controller_name == 'tournaments' && action_name == 'edit'}" do
               => fa_icon 'cog'
               | Settings
+          - if policy(@tournament).destroy?
+            li.nav-item= link_to danger_zone_tournament_path(@tournament), class: "nav-link #{'active' if controller_name == 'tournaments' && action_name == 'danger_zone'}" do
+              => fa_icon 'trash'
+              | Danger Zone
       - if alert
         .row.py-3
           .col-12
