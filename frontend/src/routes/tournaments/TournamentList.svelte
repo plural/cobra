@@ -21,6 +21,7 @@
   } = $props();
 
   let tournamentTypeName = $derived(getTournamentTypeName(typeId));
+  let loading = $state(false);
 
   function getTournamentTypeName(typeId: number | null) {
     return tournamentTypes.find(
@@ -29,15 +30,23 @@
   }
 
   async function goToPreviousPage() {
-    if (!tournamentsResponse.links?.prev) return;
+    if (!tournamentsResponse.links?.prev || loading) {
+      return;
+    }
 
+    loading = true;
     tournamentsResponse = await loadTournaments(`${COBRA_API_SERVER}/${tournamentsResponse.links.prev}`);
+    loading = false;
   }
 
   async function goToNextPage() {
-    if (!tournamentsResponse.links?.next) return;
+    if (!tournamentsResponse.links?.next || loading) {
+      return;
+    }
 
+    loading = true;
     tournamentsResponse = await loadTournaments(`${COBRA_API_SERVER}/${tournamentsResponse.links.next}`);
+    loading = false;
   }
 </script>
 
@@ -58,6 +67,7 @@
 
   <div>
     <PagingRow
+      {loading}
       canGoBack={!!tournamentsResponse.links?.prev}
       canGoNext={!!tournamentsResponse.links?.next}
       onBack={goToPreviousPage}
@@ -78,6 +88,7 @@
     {/if}
 
     <PagingRow
+      {loading}
       canGoBack={!!tournamentsResponse.links?.prev}
       canGoNext={!!tournamentsResponse.links?.next}
       onBack={goToPreviousPage}
