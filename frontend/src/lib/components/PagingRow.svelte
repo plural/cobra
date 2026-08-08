@@ -16,11 +16,7 @@
 
 <div class="row m-3">
   <div class="col-12 d-flex justify-content-between align-items-center">
-    <button
-      class="btn btn-primary"
-      disabled={!canGoBack || loading}
-      onclick={() => onBack?.()}
-    >
+    <button class="btn btn-primary" disabled={!canGoBack || loading} onclick={() => onBack?.()}>
       <i class="fa fa-arrow-left"></i> Back
     </button>
     <div class="text-muted">
@@ -28,11 +24,7 @@
         <i class="fa fa-spinner fa-spin"></i> Loading...
       {/if}
     </div>
-    <button
-      class="btn btn-primary"
-      disabled={!canGoNext || loading}
-      onclick={() => onNext?.()}
-    >
+    <button class="btn btn-primary" disabled={!canGoNext || loading} onclick={() => onNext?.()}>
       Next <i class="fa fa-arrow-right"></i>
     </button>
   </div>

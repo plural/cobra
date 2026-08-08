@@ -9,16 +9,18 @@
     },
     "players": [
       {
-        "id": 1009, "name": "Loup Fan 1000", "rank": 1, "corpIdentity": "PE",
-        "runnerIdentity": "René \"Loup\" Arcemont: Party Animal",
+        "id": 1009, "name": "Loup Fan 1000", "rank": 1, "corpFaction": "jinteki", "corpIdentity": "PE",
+        "runnerFaction": "anarch", "runnerIdentity": "René \"Loup\" Arcemont: Party Animal",
         "matchPoints": 3, "strengthOfSchedule": 1.5, 
-        "extendedStrengthOfSchedule": 2.5
+        "extendedStrengthOfSchedule": 2.5,
+        "pronouns": "he/him"
       },
       {
-        "id": 1008, "name": "Kit Fan 100", "rank": 2, "corpIdentity": "RP",
-        "runnerIdentity": "Rielle \"Kit\" Peddler: Transhuman",
+        "id": 1008, "name": "Kit Fan 100", "rank": 2, "corpFaction": "nbn", "corpIdentity": "RP",
+        "runnerFaction": "shaper", "runnerIdentity": "Rielle \"Kit\" Peddler: Transhuman",
         "matchPoints": 0, "strengthOfSchedule": 1.6,
-        "extendedStrengthOfSchedule": 2.6
+        "extendedStrengthOfSchedule": 2.6,
+        "pronouns": "she/her"
       }
     ],
     "eliminationPlayers": [],
@@ -36,7 +38,7 @@
     ],
     "uploadedFrom": "Cobra",
     "links": [
-      { "rel": "schemaderivedfrom", "href": "http://steffens.org/nrtm/nrtm-schema.json" },
+      { "rel": "schemaderivedfrom", "href": "tournaments.nullsignal.games/schemas/tournament-schema.json" },
       { "rel": "uploadedfrom", "href": "https://server/SLUG" }
     ]
   }

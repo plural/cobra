@@ -35,7 +35,7 @@
         let newTypes: Record<string, string> = {};
         for (const included of data.included) {
           if (included.type === "tournament_types") {
-            newTypes[included.id.toString()] = included.attributes.name;
+            newTypes[included.id] = included.attributes.name;
           }
         }
         tournamentTypes = newTypes;
@@ -89,8 +89,7 @@
 
 <div class="mt-3 text-center">
   <p>
-    <!-- TODO: Add route for recent tournaments page -->
-    <a href={resolve("/")} class="btn btn-primary">
+    <a href={resolve("/tournaments")} class="btn btn-primary">
       <i class="fa fa-users"></i>
       More tournaments
     </a>

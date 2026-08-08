@@ -166,7 +166,7 @@
   async function deleteStageCallback(stageId: number) {
     if (
       !confirm(
-        "Are you sure? This cannot be reversed and all rounds will be deleted.",
+        "Are you sure? This cannot be reversed and this stage along with all rounds and pairings within it will be deleted!!!\n\nNo, for real.  \n\nAre you ABSOLUTELY SURE ABOUT THIS?",
       )
     ) {
       return;

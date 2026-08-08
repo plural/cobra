@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { COBRA_API_SERVER } from "$app/env/public";
   import type { TournamentInfo } from "$lib/utils/api_types";
 
   let {
@@ -17,7 +18,7 @@
 <div class="tournament card m-3">
   <div class="card-body">
     <h4 class="card-title">
-      <a href={`http://localhost:3000/beta/tournaments/${tournament.id}`}>
+      <a href="{COBRA_API_SERVER}/beta/tournaments/{tournament.id}" rel="external">
         {tournament.attributes.name}
       </a>
       {#if tournamentTypeName}
@@ -57,8 +58,9 @@
     {#if showDelete && userId !== null && tournament.attributes.user_id === userId}
       <div class="delete_action">
         <a
-          href={`http://localhost:3000/beta/tournaments/${tournament.id}`}
+          href="{COBRA_API_SERVER}/beta/tournaments/{tournament.id}"
           data-method="delete"
+          rel="external"
           class="btn btn-danger"
           data-confirm="Are you sure? This cannot be reversed."
         >
