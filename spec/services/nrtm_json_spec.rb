@@ -15,11 +15,26 @@ RSpec.describe NrtmJson do
   let(:pop) { create(:player, name: 'Pop', corp_identity: 'TWIY', runner_identity: 'Reina', id: 1007) }
   let(:round) { create(:round, stage: tournament.current_stage) }
 
-  let(:json) { described_class.new(tournament) }
+  let(:json) { described_class.new(tournament, 'tournaments.nullsignal.games/') }
 
   before do
-    %w[ETF Noise PE Gabe MN Kate BABW Whizzard ST RP Andromeda TWIY Reina].each do |id|
-      create(:identity, name: id)
+    pairs = [
+      %w[ETF haas_bioroid],
+      %w[Noise anarch],
+      %w[PE jinteki],
+      %w[Gabe criminal],
+      %w[MN neutral_corp],
+      %w[Kate shaper],
+      %w[BABW weyland_consortium],
+      %w[Whizzard anarch],
+      %w[ST nbn],
+      %w[RP nbn],
+      %w[Andromeda criminal],
+      %w[TWIY nbn],
+      %w[Reina anarch]
+    ]
+    pairs.each do |id, faction|
+      create(:identity, name: id, faction: faction)
     end
   end
 
@@ -67,7 +82,7 @@ RSpec.describe NrtmJson do
 
       context 'with elimination bracket' do
         let(:cut) { tournament.cut_to! :double_elim, 4 }
-        let(:json) { described_class.new(tournament) }
+        let(:json) { described_class.new(tournament, 'tournaments.nullsignal.games/') }
 
         before do
           r1 = create(:round, number: 2, stage: cut, completed: true)
@@ -105,17 +120,17 @@ RSpec.describe NrtmJson do
       let(:swiss_format) { :single_sided }
       let(:kit_player) do
         create(:player, name: 'Kit Fan 100', corp_identity: 'RP', runner_identity: 'Rielle “Kit” Peddler: Transhuman',
-                        id: 1008)
+                        pronouns: 'she/her', id: 1008)
       end
 
       let(:loup_player) do
         create(:player, name: 'Loup Fan 1000', corp_identity: 'PE',
-                        runner_identity: 'René “Loup” Arcemont: Party Animal', id: 1009)
+                        runner_identity: 'René “Loup” Arcemont: Party Animal', pronouns: 'he/him', id: 1009)
       end
 
       before do
-        create(:identity, name: 'René “Loup” Arcemont: Party Animal')
-        create(:identity, name: 'Rielle “Kit” Peddler: Transhuman')
+        create(:identity, name: 'René “Loup” Arcemont: Party Animal', faction: 'anarch')
+        create(:identity, name: 'Rielle “Kit” Peddler: Transhuman', faction: 'shaper')
 
         round.pairings << create(:pairing, player1: loup_player, player2: kit_player, table_number: 1, score1_runner: 3,
                                            score2_corp: 0, side: :player1_is_runner)
