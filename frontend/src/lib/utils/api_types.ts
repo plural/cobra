@@ -27,16 +27,17 @@ export interface TournamentInfo {
     active_player_count: number;
     tournament_organizer: string;
     stream_url: string;
-    tournament_type_id: number;
+    tournament_type_id: number | null;
     user_id: number | null;
   };
 }
 
 export interface TournamentTypeInfo {
-  id: string | number;
+  id: string;
   type: string;
   attributes: {
     name: string;
+    nsg_format: boolean;
   };
 }
 

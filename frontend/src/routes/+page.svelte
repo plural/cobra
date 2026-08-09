@@ -67,7 +67,7 @@
         {tournament}
         tournamentTypeName={tournament.attributes.tournament_type_id
           ? tournamentTypes[tournament.attributes.tournament_type_id.toString()]
-          : null}
+          : undefined}
       />
     {/each}
   {/if}

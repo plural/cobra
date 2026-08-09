@@ -9,8 +9,9 @@
   import { onMount } from "svelte";
   import type { Snippet } from "svelte";
   import { theme } from "$lib/utils/theme.svelte";
+  import type { LayoutProps } from "./+layout";
 
-  let { children }: { children: Snippet } = $props();
+  let { children, data }: { children: Snippet; data: LayoutProps; } = $props();
 
   onMount(() => {
     theme.init();
@@ -18,16 +19,6 @@
   });
 
   const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
-  let isDropdownOpen = $state(false);
-
-  function toggleDropdown(e: MouseEvent) {
-    e.preventDefault();
-    isDropdownOpen = !isDropdownOpen;
-  }
-
-  function closeDropdown() {
-    isDropdownOpen = false;
-  }
 
   function getLogoutUrl() {
     const returnUrl = typeof window !== "undefined" ? window.location.origin : "/";
@@ -49,11 +40,14 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
   />
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 </svelte:head>
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark dontprint">
   <div class="container">
     <a href={resolve("/")} class="navbar-brand">Cobra (SPA)</a>
+
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
         <a href={resolve("/help")} class="nav-link text-light">
@@ -61,44 +55,50 @@
           How to
         </a>
       </li>
+
       <li class="nav-item dropdown">
         <button
           type="button"
-          id="tournamentTypeDropdown"
+          class="nav-link dropdown-toggle text-light"
           data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-          class="nav-link dropdown-toggle text-light btn btn-link"
         >
           <FontAwesomeIcon icon="trophy" />
           Tournament types
         </button>
+        <div class="dropdown-menu dropdown-menu-right">
+          {#each data.tournamentTypes as type (type.id)}
+            <a href={resolve(`/tournaments/type/${type.id}`)} class="dropdown-item">
+              {#if type.attributes.nsg_format}
+                <!-- TODO: Fix icon -->
+                <FontAwesomeIcon icon="nsg" />
+              {:else}
+                <!-- TOOD: Spacing? -->
+              {/if}
+              {type.attributes.name}
+            </a>
+          {/each}
+        </div>
       </li>
 
       {#if authStore.isAuthenticated}
-        <li class="nav-item dropdown {isDropdownOpen ? 'show' : ''}">
+        <li class="nav-item dropdown">
           <button
             type="button"
-            id="signedInDropdown"
-            class="btn btn-link nav-link dropdown-toggle text-light"
-            onclick={toggleDropdown}
-            aria-expanded={isDropdownOpen}
+            class="nav-link dropdown-toggle text-light"
+            data-toggle="dropdown"
           >
             <FontAwesomeIcon icon="user" />
             {#if authStore.user}
               {authStore.user.nrdb_username}
             {/if}
           </button>
-          <div
-            class="dropdown-menu dropdown-menu-right {isDropdownOpen ? 'show' : ''}"
-            aria-labelledby="signedInDropdown"
-          >
-            <a href={resolve("/tournaments/my")} class="dropdown-item" onclick={closeDropdown}>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a href={resolve("/tournaments/my")} class="dropdown-item">
               <FontAwesomeIcon icon="trophy" />
               My tournaments
             </a>
             <div class="dropdown-divider"></div>
-            <a href={getLogoutUrl()} rel="external" class="dropdown-item" onclick={closeDropdown}>
+            <a href={getLogoutUrl()} rel="external" class="dropdown-item">
               <FontAwesomeIcon icon="sign-out" />
               Jack Out
             </a>

@@ -1,153 +1,86 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import type {
-    TournamentInfo,
     TournamentsResponse,
-    TournamentTypesResponse,
+    TournamentTypeInfo,
   } from "$lib/utils/api_types";
   import GlobalMessages from "$lib/components/GlobalMessages.svelte";
   import PagingRow from "$lib/components/PagingRow.svelte";
   import TournamentRow from "$lib/components/TournamentRow.svelte";
-  import { globalMessages } from "$lib/utils/GlobalMessageState.svelte";
   import { COBRA_API_SERVER } from "$app/env/public";
+  import { loadTournaments } from "./api_helper";
 
-  let { typeId = null }: { typeId?: string | null } = $props();
+  let {
+    typeId = null,
+    tournamentsResponse,
+    tournamentTypes
+  }: {
+    typeId?: number | null,
+    tournamentsResponse: TournamentsResponse,
+    tournamentTypes: TournamentTypeInfo[]
+  } = $props();
 
-  let tournaments: TournamentInfo[] = $state([]);
-  let tournamentTypes: Record<string, string> = $state({});
-  let loading = $state(true);
-  let prevLink: string | null = $state(null);
-  let nextLink: string | null = $state(null);
-  let tournamentTypeName: string | null = $state(null);
-  let heading = $derived(
-    !typeId
-      ? "Recent Tournaments"
-      : tournamentTypeName
-        ? `Tournaments: ${tournamentTypeName}`
-        : "Tournaments",
-  );
+  let tournamentTypeName = $derived(getTournamentTypeName(typeId));
+  let loading = $state(false);
 
-  function tournamentsApiUrl(tournamentTypeId: string | null | undefined): string {
-    const query = [
-      `${COBRA_API_SERVER}/api/v1/public/tournaments?page[size]=10`,
-      "include=tournament_type",
-      "sort=-date,name",
-    ];
-
-    if (tournamentTypeId && tournamentTypeId.length > 0) {
-      query.push(`filter[tournament_type_id]=${tournamentTypeId}`);
-    }
-
-    return query.join("&");
+  function getTournamentTypeName(typeId: number | null) {
+    return tournamentTypes.find(
+      (tournamentType) => tournamentType.id === typeId?.toString(),
+    )?.attributes.name;
   }
 
-  const fetchTournamentsUrl = $derived(tournamentsApiUrl(typeId));
+  async function goToPreviousPage() {
+    if (!tournamentsResponse.links?.prev || loading) {
+      return;
+    }
 
-  async function loadTournaments(url: string): Promise<void> {
     loading = true;
-
-    try {
-      const response = await fetch(url, {
-        headers: {
-          Accept: "application/vnd.api+json",
-          "Content-Type": "application/vnd.api+json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = (await response.json()) as TournamentsResponse;
-      tournaments = data.data;
-
-      if (data.included) {
-        let newTypes: Record<string, string> = {};
-        for (const included of data.included) {
-          if (included.type === "tournament_types") {
-            newTypes[included.id] = included.attributes.name;
-          }
-        }
-        tournamentTypes = newTypes;
-      }
-
-      prevLink = data.links?.prev ?? null;
-      nextLink = data.links?.next ?? null;
-    } catch (e) {
-      const err = e as Error;
-      globalMessages.errors.push(`Failed to load tournaments: ${err.message}`);
-    } finally {
-      loading = false;
-    }
+    tournamentsResponse = await loadTournaments(`${COBRA_API_SERVER}/${tournamentsResponse.links.prev}`);
+    loading = false;
   }
 
-  async function loadTournamentTypeName(): Promise<void> {
-    if (!typeId) {
-      tournamentTypeName = null;
+  async function goToNextPage() {
+    if (!tournamentsResponse.links?.next || loading) {
       return;
     }
 
-    try {
-      const response = await fetch("/api/v1/public/tournament_types", {
-        headers: {
-          Accept: "application/vnd.api+json",
-          "Content-Type": "application/vnd.api+json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = (await response.json()) as TournamentTypesResponse;
-      const matchingType = data.data.find((tournamentType) => tournamentType.id === typeId);
-      tournamentTypeName = matchingType?.attributes.name ?? null;
-    } catch {
-      tournamentTypeName = null;
-    }
+    loading = true;
+    tournamentsResponse = await loadTournaments(`${COBRA_API_SERVER}/${tournamentsResponse.links.next}`);
+    loading = false;
   }
-
-  async function goToPreviousPage(): Promise<void> {
-    if (!prevLink || loading) return;
-
-    await loadTournaments(prevLink);
-  }
-
-  async function goToNextPage(): Promise<void> {
-    if (!nextLink || loading) return;
-
-    await loadTournaments(nextLink);
-  }
-
-  onMount(async () => {
-    if (typeId) {
-      await Promise.all([loadTournaments(fetchTournamentsUrl), loadTournamentTypeName()]);
-      return;
-    }
-
-    await loadTournaments(fetchTournamentsUrl);
-  });
 </script>
 
 <div>
   <GlobalMessages />
 
-  <h1>{heading}</h1>
+  <h1>
+    {#if typeId}
+      {#if tournamentTypeName}
+        Tournaments: {tournamentTypeName}
+      {:else}
+        Tournaments
+      {/if}
+    {:else}
+      Recent Tournaments
+    {/if}
+  </h1>
 
   <div>
     <PagingRow
       {loading}
-      canGoBack={!!prevLink}
-      canGoNext={!!nextLink}
+      canGoBack={!!tournamentsResponse.links?.prev}
+      canGoNext={!!tournamentsResponse.links?.next}
       onBack={goToPreviousPage}
       onNext={goToNextPage}
     />
 
-    {#if tournaments.length === 0 && !loading}
+    {#if tournamentsResponse.data.length === 0}
       <div class="m-3">No tournaments found for this type.</div>
     {:else}
-      {#each tournaments as tournament (tournament.id)}
+      {#each tournamentsResponse.data as tournament (tournament.id)}
         <TournamentRow
           {tournament}
           tournamentTypeName={tournament.attributes.tournament_type_id
-            ? tournamentTypes[tournament.attributes.tournament_type_id.toString()]
+            ? getTournamentTypeName(tournament.attributes.tournament_type_id)
             : null}
         />
       {/each}
@@ -155,8 +88,8 @@
 
     <PagingRow
       {loading}
-      canGoBack={!!prevLink}
-      canGoNext={!!nextLink}
+      canGoBack={!!tournamentsResponse.links?.prev}
+      canGoNext={!!tournamentsResponse.links?.next}
       onBack={goToPreviousPage}
       onNext={goToNextPage}
     />
