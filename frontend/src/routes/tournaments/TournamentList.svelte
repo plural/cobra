@@ -9,7 +9,6 @@
   import PagingRow from "$lib/components/PagingRow.svelte";
   import TournamentRow from "$lib/components/TournamentRow.svelte";
   import { globalMessages } from "$lib/utils/GlobalMessageState.svelte";
-  import { authStore } from "$lib/utils/auth.svelte";
   import { COBRA_API_SERVER } from "$app/env/public";
 
   let { typeId = null }: { typeId?: string | null } = $props();
