@@ -5,9 +5,9 @@ export interface LayoutProps {
   tournamentTypes: TournamentTypeInfo[];
 }
 
-async function loadTournamentTypes() {
+async function loadTournamentTypes(altFetch: typeof globalThis.fetch) {
   try {
-    const response = await fetch(`${COBRA_API_SERVER}/api/v1/public/tournament_types`, {
+    const response = await altFetch(`${COBRA_API_SERVER}/api/v1/public/tournament_types`, {
       headers: {
         Accept: "application/vnd.api+json",
         "Content-Type": "application/vnd.api+json",
@@ -24,8 +24,8 @@ async function loadTournamentTypes() {
   }
 }
 
-export const load = async (): Promise<LayoutProps> => {
+export const load = async ({ fetch }) => {
 	return {
-    tournamentTypes: await loadTournamentTypes(),
+    tournamentTypes: await loadTournamentTypes(fetch as typeof globalThis.fetch),
   };
 };

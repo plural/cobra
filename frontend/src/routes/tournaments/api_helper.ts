@@ -2,9 +2,9 @@ import { COBRA_API_SERVER } from "$app/env/public";
 import type { TournamentsResponse } from "$lib/utils/api_types";
 import { globalMessages } from "$lib/utils/GlobalMessageState.svelte";
 
-export async function loadTournaments(url: string): Promise<TournamentsResponse> {
+export async function loadTournaments(url: string, altFetch = fetch): Promise<TournamentsResponse> {
   try {
-    const response = await fetch(url, {
+    const response = await altFetch(url, {
       headers: {
         Accept: "application/vnd.api+json",
         "Content-Type": "application/vnd.api+json",
