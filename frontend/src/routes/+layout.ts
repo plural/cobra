@@ -1,13 +1,14 @@
 import { COBRA_API_SERVER } from "$app/env/public";
 import type { TournamentTypeInfo, TournamentTypesResponse } from "$lib/utils/api_types";
+import type * as Kit from "@sveltejs/kit";
 
 export interface LayoutProps {
   tournamentTypes: TournamentTypeInfo[];
 }
 
-async function loadTournamentTypes() {
+async function loadTournamentTypes(altFetch: Kit.LoadEvent["fetch"]) {
   try {
-    const response = await fetch(`${COBRA_API_SERVER}/api/v1/public/tournament_types`, {
+    const response = await altFetch(`${COBRA_API_SERVER}/api/v1/public/tournament_types`, {
       headers: {
         Accept: "application/vnd.api+json",
         "Content-Type": "application/vnd.api+json",
@@ -24,8 +25,8 @@ async function loadTournamentTypes() {
   }
 }
 
-export const load = async (): Promise<LayoutProps> => {
+export const load = async ({ fetch }) => {
 	return {
-    tournamentTypes: await loadTournamentTypes(),
+    tournamentTypes: await loadTournamentTypes(fetch as Kit.LoadEvent["fetch"]),
   };
 };
