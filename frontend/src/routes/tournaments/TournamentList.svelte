@@ -6,7 +6,6 @@
   import GlobalMessages from "$lib/components/GlobalMessages.svelte";
   import PagingRow from "$lib/components/PagingRow.svelte";
   import TournamentRow from "$lib/components/TournamentRow.svelte";
-  import { globalMessages } from "$lib/utils/GlobalMessageState.svelte";
   import { COBRA_API_SERVER } from "$app/env/public";
   import { loadTournaments } from "./api_helper";
 
