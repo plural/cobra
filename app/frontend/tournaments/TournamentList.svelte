@@ -10,7 +10,7 @@
   import TournamentRow from "../widgets/TournamentRow.svelte";
   import { globalMessages } from "../utils/GlobalMessageState.svelte";
 
-  let { typeId, userId }: { typeId: string | null; userId: number | null } =
+  let { typeId }: { typeId: string | null } =
     $props();
 
   let tournaments: TournamentInfo[] = $state([]);
@@ -152,9 +152,7 @@
     {:else}
       {#each tournaments as tournament (tournament.id)}
         <TournamentRow
-          showDelete={true}
           {tournament}
-          {userId}
           tournamentTypeName={tournament.attributes.tournament_type_id
             ? tournamentTypes[
                 tournament.attributes.tournament_type_id.toString()

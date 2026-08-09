@@ -40,6 +40,13 @@ vi.mock("../players/PlayersData", async (importOriginal) => ({
   savePlayer: vi.fn(() => true),
 }));
 
+global.fetch = vi.fn().mockImplementation(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ data: [] }),
+  } as Response),
+);
+
 vi.mock("../utils/decks.svelte", async (importOriginal) => {
   return {
     ...(await importOriginal<typeof import("../utils/decks.svelte")>()),

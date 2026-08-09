@@ -5,7 +5,7 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
     show info edit edit_form update destroy
     upload_to_abr save_json cut qr my_tournament registration timer
     close_registration open_registration lock_player_registrations unlock_player_registrations
-    id_and_faction_data cut_conversion_rates side_win_percentages stats bracket
+    id_and_faction_data cut_conversion_rates side_win_percentages stats bracket danger_zone
   ]
 
   def index
@@ -52,7 +52,7 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
       end
       format.json do
         headers['Access-Control-Allow-Origin'] = '*'
-        render json: NrtmJson.new(@tournament).data(tournament_url(@tournament.slug, @request))
+        render json: NrtmJson.new(@tournament, root_url).data(tournament_url(@tournament.slug, @request))
       end
     end
   end
@@ -111,6 +111,10 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
 
   def edit
     authorize @tournament
+  end
+
+  def danger_zone
+    authorize @tournament, :destroy?
   end
 
   def create
@@ -234,7 +238,8 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
   def destroy
     authorize @tournament
 
-    Tournament.includes(players: %i[decks registrations standing_rows]).find(@tournament.id).destroy!
+    Tournament.includes(stages: %i[rounds registrations standing_rows table_ranges],
+                        players: %i[decks registrations standing_rows]).find(@tournament.id).destroy!
 
     redirect_to tournaments_path
   end
@@ -242,8 +247,7 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
   def upload_to_abr
     authorize @tournament
 
-    response = AbrUpload.upload!(@tournament, tournament_url(@tournament.slug, @request))
-
+    response = AbrUpload.upload!(@tournament, root_url, tournament_url(@tournament.slug, @request))
     @tournament.update(abr_code: response[:code]) if response[:code]
 
     redirect_to edit_tournament_path(@tournament)
@@ -252,7 +256,7 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
   def save_json
     authorize @tournament
 
-    data = NrtmJson.new(@tournament).data(tournament_url(@tournament.slug, @request))
+    data = NrtmJson.new(@tournament, root_url).data(tournament_url(@tournament.slug, @request))
 
     send_data data.to_json,
               type: :json,

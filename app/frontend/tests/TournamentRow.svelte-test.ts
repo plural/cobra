@@ -18,9 +18,7 @@ describe("TournamentRow", () => {
 
   it("renders tournament details", () => {
     const { getByText } = render(TournamentRow, {
-      showDelete: true,
       tournament: mockTournament,
-      userId: 10,
       tournamentTypeName: "Standard",
     });
 
@@ -31,27 +29,5 @@ describe("TournamentRow", () => {
     expect(getByText("Standard")).toBeDefined();
     // tournament organizer
     expect(getByText(/- Test Organizer/)).toBeDefined();
-    // delete action should be visible since showDelete=true and userId matches user_id
-    expect(getByText("Delete")).toBeDefined();
-  });
-
-  it("does not render delete action if showDelete is false", () => {
-    const { queryByText } = render(TournamentRow, {
-      showDelete: false,
-      tournament: mockTournament,
-      userId: 10,
-    });
-
-    expect(queryByText("Delete")).toBeNull();
-  });
-
-  it("does not render delete action if userId does not match", () => {
-    const { queryByText } = render(TournamentRow, {
-      showDelete: true,
-      tournament: mockTournament,
-      userId: 20,
-    });
-
-    expect(queryByText("Delete")).toBeNull();
   });
 });

@@ -5,7 +5,7 @@ RSpec.describe TournamentsController do
 
   describe '#save_json' do
     before do
-      allow(NrtmJson).to receive(:new).with(tournament).and_return(
+      allow(NrtmJson).to receive(:new).with(tournament, root_url).and_return(
         instance_double(NrtmJson, data: { some: :data })
       )
     end

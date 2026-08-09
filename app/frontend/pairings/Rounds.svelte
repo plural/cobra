@@ -5,7 +5,6 @@
     completeRound,
     createStage,
     deletePairing,
-    deleteStage,
     loadPairings,
     PairingsData,
     pairRound,
@@ -156,23 +155,6 @@
 
   async function completeRoundCallback(roundId: number) {
     const success = await completeRound(tournamentId, roundId, true);
-    if (!success) {
-      return;
-    }
-
-    data = await loadPairings(tournamentId);
-  }
-
-  async function deleteStageCallback(stageId: number) {
-    if (
-      !confirm(
-        "Are you sure? This cannot be reversed and all rounds will be deleted.",
-      )
-    ) {
-      return;
-    }
-
-    const success = await deleteStage(tournamentId, stageId);
     if (!success) {
       return;
     }
@@ -356,7 +338,6 @@
           startExpanded={index === data.stages.length - 1}
           tournament={data.tournament}
           tournamentPolicies={data.policy}
-          deleteCallback={deleteStageCallback}
           {deletePairingCallback}
           {changePlayerSideCallback}
           {reportScoreCallback}
