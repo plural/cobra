@@ -81,7 +81,7 @@
         <TournamentRow
           {tournament}
           tournamentTypeName={tournament.attributes.tournament_type_id
-            ? tournamentTypes[tournament.attributes.tournament_type_id.toString()]
+            ? getTournamentTypeName(tournament.attributes.tournament_type_id)
             : null}
         />
       {/each}
