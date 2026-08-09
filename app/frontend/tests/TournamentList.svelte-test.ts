@@ -91,10 +91,9 @@ describe("TournamentList", () => {
   });
 
   it("renders correctly with specific typeId and user info", async () => {
-    const { getByText, getByRole } = render(TournamentList, {
+    const { getByText } = render(TournamentList, {
       props: {
-        typeId: "11",
-        userId: 42,
+        typeId: "11"
       },
     });
 
@@ -110,10 +109,6 @@ describe("TournamentList", () => {
       expect(getByText("Tournaments: Standard")).toBeTruthy();
       expect(getByText("Second Tournament")).toBeTruthy();
     });
-
-    // userId evaluates to 42, which matches Second Tournament but not First Tournament
-    const deleteButtons = getByRole("link", { name: /Delete/i });
-    expect(deleteButtons).toBeTruthy();
   });
 
   it("loads next page when API provides a next link", async () => {
@@ -193,8 +188,7 @@ describe("TournamentList", () => {
 
     const { getAllByRole, getByText, queryByText } = render(TournamentList, {
       props: {
-        typeId: "11",
-        userId: null,
+        typeId: "11"
       },
     });
 
@@ -252,8 +246,7 @@ describe("TournamentList", () => {
 
     const { getByText } = render(TournamentList, {
       props: {
-        typeId: "11",
-        userId: null,
+        typeId: "11"
       },
     });
 
@@ -327,8 +320,7 @@ describe("TournamentList", () => {
 
     const { getAllByRole, getAllByText, getByText } = render(TournamentList, {
       props: {
-        typeId: "11",
-        userId: null,
+        typeId: "11"
       },
     });
 

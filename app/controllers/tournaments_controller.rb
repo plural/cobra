@@ -5,7 +5,7 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
     show info edit edit_form update destroy
     upload_to_abr save_json cut qr my_tournament registration timer
     close_registration open_registration lock_player_registrations unlock_player_registrations
-    id_and_faction_data cut_conversion_rates side_win_percentages stats bracket
+    id_and_faction_data cut_conversion_rates side_win_percentages stats bracket danger_zone
   ]
 
   def index
@@ -111,6 +111,10 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
 
   def edit
     authorize @tournament
+  end
+
+  def danger_zone
+    authorize @tournament, :destroy?
   end
 
   def create
@@ -234,7 +238,8 @@ class TournamentsController < ApplicationController # rubocop:disable Metrics/Cl
   def destroy
     authorize @tournament
 
-    Tournament.includes(players: %i[decks registrations standing_rows]).find(@tournament.id).destroy!
+    Tournament.includes(stages: %i[rounds registrations standing_rows table_ranges],
+                        players: %i[decks registrations standing_rows]).find(@tournament.id).destroy!
 
     redirect_to tournaments_path
   end

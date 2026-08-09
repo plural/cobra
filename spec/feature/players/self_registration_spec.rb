@@ -14,7 +14,8 @@ RSpec.describe 'registering for a tournament', type: :feature do
   end
 
   it 'registers player when tournament has no stages' do
-    delete_tournament_stage
+    tournament.stages.destroy_all
+    expect(tournament.stages).to be_empty
 
     expect do
       register_player player
@@ -37,11 +38,5 @@ RSpec.describe 'registering for a tournament', type: :feature do
     fill_in :player_corp_identity, with: 'Haas-Bioroid: Engineering the Future'
     fill_in :player_runner_identity, with: 'Noise'
     click_button 'Register'
-  end
-
-  def delete_tournament_stage
-    sign_in organiser
-    visit tournament_rounds_path(tournament)
-    click_on class: ['btn-danger']
   end
 end
