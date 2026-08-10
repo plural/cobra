@@ -171,7 +171,7 @@
                   </td>
                   <td>{isBye(myPairing) ? "" : myPairing.table_number}</td>
                   {#if myPairing.stage.is_single_sided}
-                    <td style="background-color: #eeeeee" class={iWon(myPairing) ? "font-weight-bold" : ""}>
+                    <td class={iWon(myPairing) ? "font-weight-bold" : ""}>
                       {#if !isBye(myPairing)}
                         <PlayerDisplay
                           player={myPairing.player1.user_id === userId

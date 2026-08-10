@@ -29,8 +29,8 @@
 {#snippet setSideButton(player: Player, side: string)}
   <button
     class="btn btn-sm mr-1 {player.side === side
-      ? 'btn-dark'
-      : 'btn-outline-dark'}"
+      ? 'btn-secondary'
+      : 'btn-outline-secondary'}"
     onclick={() => {
       changePlayerSide?.(player, side);
     }}
