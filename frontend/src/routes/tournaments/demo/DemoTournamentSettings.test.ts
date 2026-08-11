@@ -25,8 +25,8 @@ describe("DemoTournamentSettings", () => {
 
       vi.spyOn(global, "fetch").mockResolvedValue({
         ok: true,
-        json: async () => mockData,
-      } as Response);
+        json: () => mockData,
+      } as unknown as Response);
 
       const result = await loadNewDemoTournament();
       expect(result).toEqual(mockData);
@@ -59,17 +59,17 @@ describe("DemoTournamentSettings", () => {
         assign_ids: false,
       };
 
-      vi.spyOn(global, "fetch").mockImplementation(async (_url, init) => {
-        const headers = (init?.headers || {}) as Record<string, string>;
+      vi.spyOn(global, "fetch").mockImplementation((_url, init) => {
+        const headers = (init?.headers ?? {}) as Record<string, string>;
         expect(headers["Content-Type"]).toBe("application/json");
-        expect(headers["Accept"]).toBe("application/json");
+        expect(headers.Accept).toBe("application/json");
         expect(headers["X-CSRF-Token"]).toBe("mock-csrf-token");
         expect(init?.body).toBe(JSON.stringify({ tournament }));
 
-        return {
+        return Promise.resolve({
           ok: true,
-          json: async () => mockResponse,
-        } as Response;
+          json: () => mockResponse,
+        } as unknown as Response);
       });
 
       const result = await createDemoTournament("mock-csrf-token", tournament);
@@ -87,8 +87,8 @@ describe("DemoTournamentSettings", () => {
       vi.spyOn(global, "fetch").mockResolvedValue({
         ok: false,
         status: 422,
-        json: async () => mockErrors,
-      } as Response);
+        json: () => mockErrors,
+      } as unknown as Response);
 
       const tournament = { name: "" };
 

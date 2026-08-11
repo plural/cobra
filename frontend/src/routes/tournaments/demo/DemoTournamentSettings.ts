@@ -2,11 +2,6 @@ import { COBRA_API_SERVER } from "$app/env/public";
 
 export type Errors = Record<string, string[]>;
 
-declare const Routes: {
-  new_demo_form_tournaments_path: () => string;
-  create_demo_tournaments_path: () => string;
-};
-
 export interface DemoTournamentSettings {
   id?: number;
   name?: string;
@@ -22,17 +17,11 @@ export interface DemoTournamentSettingsData {
 }
 
 function getNewDemoFormUrl(): string {
-  if (typeof Routes !== "undefined" && Routes.new_demo_form_tournaments_path) {
-    return Routes.new_demo_form_tournaments_path();
-  }
   const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
   return `${serverOrigin}/tournaments/new_demo_form`;
 }
 
 function getCreateDemoUrl(): string {
-  if (typeof Routes !== "undefined" && Routes.create_demo_tournaments_path) {
-    return Routes.create_demo_tournaments_path();
-  }
   const serverOrigin = (COBRA_API_SERVER || "").replace(/\/$/, "");
   return `${serverOrigin}/tournaments/create_demo`;
 }
