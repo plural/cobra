@@ -54,7 +54,7 @@ module PairingsHelper # rubocop:disable Metrics/ModuleLength,Style/Documentation
             ),
             method: :post,
             data: { confirm: "Are you sure you want to switch #{player.name} to #{side}?" },
-            class: "btn btn-sm mr-1 #{active ? 'btn-dark' : 'btn-outline-dark'}"
+            class: "btn btn-sm mr-1 #{active ? 'btn-secondary' : 'btn-outline-secondary'}"
   end
 
   def presets(pairing)
