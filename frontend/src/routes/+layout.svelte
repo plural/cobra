@@ -69,10 +69,9 @@
           {#each data.tournamentTypes as type (type.id)}
             <a href={resolve(`/tournaments/type/${type.id}`)} class="dropdown-item">
               {#if type.attributes.nsg_format}
-                <!-- TODO: Fix icon -->
                 <FontAwesomeIcon icon="nsg" />
               {:else}
-                <!-- TOOD: Spacing? -->
+                <FontAwesomeIcon icon="missing" />
               {/if}
               {type.attributes.name}
             </a>
