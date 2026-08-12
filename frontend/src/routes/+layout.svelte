@@ -96,6 +96,10 @@
               <FontAwesomeIcon icon="trophy" />
               My tournaments
             </a>
+            <a href={resolve("/tournaments/demo")} class="dropdown-item">
+              <FontAwesomeIcon icon="plus" />
+              Create demo tournament
+            </a>
             <div class="dropdown-divider"></div>
             <a href={getLogoutUrl()} rel="external" class="dropdown-item">
               <FontAwesomeIcon icon="sign-out" />
