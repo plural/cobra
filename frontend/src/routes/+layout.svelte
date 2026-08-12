@@ -92,9 +92,21 @@
             {/if}
           </button>
           <div class="dropdown-menu dropdown-menu-right">
+            <a href={resolve("/tournaments/new")} class="dropdown-item">
+              <FontAwesomeIcon icon="plus" />
+              Create tournament
+            </a>
+            <a href={resolve("/tournaments/demo")} class="dropdown-item">
+              <FontAwesomeIcon icon="plus" />
+              Create demo tournament
+            </a>
             <a href={resolve("/tournaments/my")} class="dropdown-item">
               <FontAwesomeIcon icon="trophy" />
-              My tournaments
+              My Tournaments
+            </a>
+            <a href={resolve("/profile")} class="dropdown-item">
+              <FontAwesomeIcon icon="user" />
+              Profile
             </a>
             <div class="dropdown-divider"></div>
             <a href={getLogoutUrl()} rel="external" class="dropdown-item">
@@ -117,7 +129,7 @@
   </div>
 </nav>
 
-<div class="container">
+<div class="container py-3">
   {@render children()}
 </div>
 
