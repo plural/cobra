@@ -3,6 +3,7 @@
   import { authStore, type AuthUser } from "$lib/utils/auth.svelte";
   import { COBRA_API_SERVER } from "$app/env/public";
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
+  import { resolve } from "$app/paths";
 
   interface Tournament {
     id: number;
@@ -84,7 +85,7 @@
         <h2>My Tournaments</h2>
         <p class="text-muted mb-0">Logged in as <strong>{user.nrdb_username}</strong></p>
       </div>
-      <a href={`${serverOrigin}/tournaments/new`} rel="external" class="btn btn-success">
+      <a href={resolve("/tournaments/new")} rel="external" class="btn btn-success">
         <FontAwesomeIcon icon="plus" /> New Tournament
       </a>
     </div>

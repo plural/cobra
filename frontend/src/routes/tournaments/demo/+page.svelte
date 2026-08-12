@@ -5,10 +5,10 @@
     type Errors,
     loadNewDemoTournament,
     type DemoTournamentSettings,
-    ValidationError,
     navigateTo,
   } from "./DemoTournamentSettings";
   import DemoTournamentSettingsForm from "./DemoTournamentSettingsForm.svelte";
+  import { ValidationError } from "$lib/utils/errors";
 
   let tournament = $state<DemoTournamentSettings | undefined>(undefined);
   let csrfToken = "";
