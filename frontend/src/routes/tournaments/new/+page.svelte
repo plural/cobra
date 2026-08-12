@@ -33,7 +33,6 @@
   }
 </script>
 
-<!-- TODO: Do we need/want these extra divs? -->
 <div>
   <h1>Create a tournament</h1>
 
