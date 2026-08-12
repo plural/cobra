@@ -4,6 +4,7 @@
   import type { Tournament } from "$lib/model/Tournament";
   import { type Errors, ValidationError } from "$lib/utils/errors";
   import { createTournament } from "../api_helper";
+  import { navigateTo } from "$lib/utils/navigation";
 
   let { data }: PageProps = $props();
 
@@ -14,7 +15,7 @@
 
     try {
       const response = await createTournament(data.tournamentSettings.csrf_token, tournament);
-      window.location.href = response.url;
+      navigateTo(response.url);
     } catch (error) {
       if (error instanceof ValidationError) {
         errors = error.errors;

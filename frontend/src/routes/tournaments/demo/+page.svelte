@@ -5,8 +5,8 @@
     type Errors,
     loadNewDemoTournament,
     type DemoTournamentSettings,
-    navigateTo,
   } from "./DemoTournamentSettings";
+  import { navigateTo } from "$lib/utils/navigation";
   import DemoTournamentSettingsForm from "./DemoTournamentSettingsForm.svelte";
   import { ValidationError } from "$lib/utils/errors";
 
