@@ -125,7 +125,7 @@
   </div>
 </nav>
 
-<div class="container">
+<div class="container py-3">
   {@render children()}
 </div>
 

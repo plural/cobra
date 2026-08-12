@@ -5,16 +5,7 @@
   } from "./DemoTournamentSettings";
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
   import ProgressButton from "$lib/components/ProgressButton.svelte";
-
-  // TODO(plural): Replace with appropriate library.
-  function swissFormatDisplayString(format: string) {
-    if (format === "single_sided") {
-      return "Single-sided";
-    } else if (format === "double_sided") {
-      return "Double-sided";
-    }
-    return "Unknown";
-  }
+  import { swissFormatDisplayString } from "$lib/model/Tournament";
 
   let {
     tournament,
