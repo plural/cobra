@@ -102,7 +102,11 @@
             </a>
             <a href={resolve("/tournaments/my")} class="dropdown-item">
               <FontAwesomeIcon icon="trophy" />
-              My tournaments
+              My Tournaments
+            </a>
+            <a href={resolve("/profile")} class="dropdown-item">
+              <FontAwesomeIcon icon="user" />
+              Profile
             </a>
             <div class="dropdown-divider"></div>
             <a href={getLogoutUrl()} rel="external" class="dropdown-item">
