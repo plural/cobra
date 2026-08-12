@@ -21,7 +21,10 @@
       } else {
         errors = { base: ["An unexpected error occurred. Please try again."] };
       }
-      errors = error instanceof ValidationError ? error.errors : { base: ["An unexpected error occurred. Please try again."] };
+      errors =
+        error instanceof ValidationError
+          ? error.errors
+          : { base: ["An unexpected error occurred. Please try again."] };
 
       return false;
     }

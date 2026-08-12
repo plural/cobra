@@ -1,7 +1,13 @@
 <script lang="ts">
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
   import ProgressButton from "$lib/components/ProgressButton.svelte";
-  import { emptyTournamentOptions, swissFormatDisplayString, type FeatureFlags, type Tournament, type TournamentOptions } from "$lib/model/Tournament";
+  import {
+    emptyTournamentOptions,
+    swissFormatDisplayString,
+    type FeatureFlags,
+    type Tournament,
+    type TournamentOptions,
+  } from "$lib/model/Tournament";
   import { type Errors } from "$lib/utils/errors";
 
   let {
@@ -28,12 +34,7 @@
 
 <div class="form-group">
   <label for="name"><abbr title="required">*</abbr> Tournament name</label>
-  <input
-    type="text"
-    id="name"
-    class="form-control"
-    bind:value={tournamentEdit.name}
-  />
+  <input type="text" id="name" class="form-control" bind:value={tournamentEdit.name} />
   {#if errors.name}
     <div class="invalid-feedback d-block">{errors.name}</div>
   {/if}
@@ -43,12 +44,7 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="date">Date</label>
-      <input
-        type="date"
-        id="date"
-        class="form-control"
-        bind:value={tournamentEdit.date}
-      />
+      <input type="date" id="date" class="form-control" bind:value={tournamentEdit.date} />
       {#if errors.date}
         <div class="invalid-feedback d-block">{errors.date}</div>
       {/if}
@@ -57,11 +53,7 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="time_zone">Time zone</label>
-      <select
-        id="time_zone"
-        class="form-control"
-        bind:value={tournamentEdit.time_zone}
-      >
+      <select id="time_zone" class="form-control" bind:value={tournamentEdit.time_zone}>
         {#each options.time_zones as time_zone (time_zone.id)}
           <option value={time_zone.id}>{time_zone.name}</option>
         {/each}
@@ -106,11 +98,7 @@
 
 <div class="form-group">
   <label for="swiss_format">Swiss format</label>
-  <select
-    id="swiss_format"
-    class="form-control"
-    bind:value={tournamentEdit.swiss_format}
-  >
+  <select id="swiss_format" class="form-control" bind:value={tournamentEdit.swiss_format}>
     <option value="double_sided">{swissFormatDisplayString("double_sided")}</option>
     <option value="single_sided">{swissFormatDisplayString("single_sided")}</option>
   </select>
@@ -141,11 +129,7 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="card_set_id">Legal Cardpool Up To</label>
-      <select
-        id="card_set_id"
-        class="form-control"
-        bind:value={tournamentEdit.card_set_id}
-      >
+      <select id="card_set_id" class="form-control" bind:value={tournamentEdit.card_set_id}>
         <option value=""></option>
         {#each options.card_sets as card_set (card_set.id)}
           <option value={card_set.id}>{card_set.name}</option>
@@ -162,11 +146,7 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="format_id">Play Format</label>
-      <select
-        id="format_id"
-        class="form-control"
-        bind:value={tournamentEdit.format_id}
-      >
+      <select id="format_id" class="form-control" bind:value={tournamentEdit.format_id}>
         <option value=""></option>
         {#each options.formats as format (format.id)}
           <option value={format.id}>{format.name}</option>
@@ -206,9 +186,7 @@
     class="form-check-input"
     bind:checked={tournamentEdit.decklist_required}
   />
-  <label for="decklist_required" class="form-check-label">
-    Decklist required for event
-  </label>
+  <label for="decklist_required" class="form-check-label"> Decklist required for event </label>
 </div>
 
 <div class="form-group">
@@ -226,12 +204,7 @@
 
 <div class="form-group">
   <label for="event_link">External Event Link</label>
-  <input
-    type="url"
-    id="event_link"
-    class="form-control"
-    bind:value={tournamentEdit.event_link}
-  />
+  <input type="url" id="event_link" class="form-control" bind:value={tournamentEdit.event_link} />
   {#if errors.event_link}
     <div class="invalid-feedback d-block">{errors.event_link}</div>
   {/if}
@@ -239,10 +212,7 @@
 
 <div class="form-group">
   <label for="description">Event Description (Markdown format supported)</label>
-  <textarea
-    id="description"
-    class="form-control"
-    bind:value={tournamentEdit.description}
+  <textarea id="description" class="form-control" bind:value={tournamentEdit.description}
   ></textarea>
   {#if errors.description}
     <div class="invalid-feedback d-block">{errors.description}</div>
@@ -273,8 +243,7 @@
   <textarea
     id="additional_prizes_description"
     class="form-control"
-    bind:value={tournamentEdit.additional_prizes_description}
-  ></textarea>
+    bind:value={tournamentEdit.additional_prizes_description}></textarea>
   {#if errors.additional_prizes_description}
     <div class="invalid-feedback d-block">
       {errors.additional_prizes_description}
@@ -284,12 +253,7 @@
 
 <div class="form-group">
   <label for="stream_url">Stream URL</label>
-  <input
-    type="url"
-    id="stream_url"
-    class="form-control"
-    bind:value={tournamentEdit.stream_url}
-  />
+  <input type="url" id="stream_url" class="form-control" bind:value={tournamentEdit.stream_url} />
   {#if errors.stream_url}
     <div class="invalid-feedback d-block">{errors.stream_url}</div>
   {/if}
@@ -339,9 +303,8 @@
     bind:checked={tournamentEdit.manual_seed}
   />
   <label for="manual_seed" class="form-check-label">
-    Use manual seeding for tiebreakers: Players can be assigned a "seed" value
-    that will be used before all other tiebreakers (in ascending order; i.e.
-    Seed 1 wins all ties)
+    Use manual seeding for tiebreakers: Players can be assigned a "seed" value that will be used
+    before all other tiebreakers (in ascending order; i.e. Seed 1 wins all ties)
   </label>
 </div>
 
@@ -353,9 +316,9 @@
     bind:checked={tournamentEdit.allow_streaming_opt_out}
   />
   <label for="allow_streaming_opt_out" class="form-check-label">
-    Streaming opt out: Allow players to choose whether their games should be
-    included in video coverage (defaults to yes, and players are notified that
-    in a top cut it may not be possible to exclude them)
+    Streaming opt out: Allow players to choose whether their games should be included in video
+    coverage (defaults to yes, and players are notified that in a top cut it may not be possible to
+    exclude them)
   </label>
 </div>
 
