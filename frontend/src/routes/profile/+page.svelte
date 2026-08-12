@@ -1,5 +1,4 @@
 <script lang="ts">
-
   import { onMount } from "svelte";
   import { authStore, type AuthUser } from "$lib/utils/auth.svelte";
 
@@ -22,7 +21,7 @@
   {#if isLoading}
     <div class="d-flex justify-content-center p-5">
       <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Loading My Tournaments...</span>
+        <span class="sr-only">Loading profile...</span>
       </div>
     </div>
   {:else if user}
