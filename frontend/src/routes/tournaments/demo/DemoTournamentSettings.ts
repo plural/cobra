@@ -1,4 +1,5 @@
 import { COBRA_API_SERVER } from "$app/env/public";
+import { ValidationError } from "$lib/utils/errors";
 
 export type Errors = Record<string, string[]>;
 
@@ -77,13 +78,6 @@ export async function createDemoTournament(
   }
 
   return (await response.json()) as TournamentDemoCreateResponse;
-}
-
-export class ValidationError extends Error {
-  constructor(public errors: Errors) {
-    super("Validation failed");
-    this.name = "ValidationError";
-  }
 }
 
 export function navigateTo(url: string) {

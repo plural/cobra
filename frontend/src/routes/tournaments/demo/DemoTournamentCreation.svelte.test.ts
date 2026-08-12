@@ -2,11 +2,11 @@ import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/sv
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import DemoTournamentCreation from "./+page.svelte";
 import {
-  ValidationError,
   loadNewDemoTournament,
   createDemoTournament,
   navigateTo,
 } from "./DemoTournamentSettings";
+import { ValidationError } from "$lib/utils/errors";
 
 // Mock the DemoTournamentSettings module
 vi.mock("./DemoTournamentSettings", () => {
