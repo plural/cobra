@@ -69,12 +69,22 @@ jobs:
         working-directory: ./frontend
         run: npm install
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Run CI
         run: bundle exec bin/ci
       
       - name: Run svelte-check
         working-directory: ./frontend
         run: npm run check
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
   build_and_push:
     name: Build docker image
