@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   loadNewDemoTournament,
   createDemoTournament,
-  ValidationError,
 } from "./DemoTournamentSettings";
+import { ValidationError } from "$lib/utils/errors";
 
 describe("DemoTournamentSettings", () => {
   beforeEach(() => {
