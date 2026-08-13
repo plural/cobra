@@ -10,6 +10,7 @@
   import type { Snippet } from "svelte";
   import { theme } from "$lib/utils/theme.svelte";
   import type { LayoutProps } from "./+layout";
+  import GlobalMessages from "$lib/components/GlobalMessages.svelte";
 
   let { children, data }: { children: Snippet; data: LayoutProps; } = $props();
 
@@ -130,6 +131,8 @@
 </nav>
 
 <div class="container py-3">
+  <GlobalMessages />
+
   {@render children()}
 </div>
 
