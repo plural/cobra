@@ -80,6 +80,3 @@ export async function createDemoTournament(
   return (await response.json()) as TournamentDemoCreateResponse;
 }
 
-export function navigateTo(url: string) {
-  window.location.href = url;
-}

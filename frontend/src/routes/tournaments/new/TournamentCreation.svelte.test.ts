@@ -1,14 +1,20 @@
+import type { ComponentProps } from "svelte";
+import type { PageProps } from "./$types";
 import { Tournament } from "$lib/model/Tournament";
 import { ValidationError } from "$lib/utils/errors";
-import { render, screen, fireEvent, waitFor } from "@testing-library/svelte";
+import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/svelte";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import TournamentCreation from "./+page.svelte";
+import { navigateTo } from "$lib/utils/navigation";
 
 // Mock the TournamentSettings module
-vi.mock("../api_helper", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("../api_helper")>()),
+vi.mock("../api_helper", () => ({
   loadNewTournament: vi.fn(),
   createTournament: vi.fn(),
+}));
+
+vi.mock("$lib/utils/navigation", () => ({
+  navigateTo: vi.fn(),
 }));
 
 describe("TournamentCreation", () => {
@@ -38,16 +44,24 @@ describe("TournamentCreation", () => {
     csrf_token: "fake-csrf-token",
   };
 
-  beforeEach(async () => {
-    vi.clearAllMocks();
+  const createProps = (
+    dataPartial: Partial<PageProps["data"]> = {},
+  ): ComponentProps<typeof TournamentCreation> => ({
+    params: {},
+    data: {
+      tournamentTypes: [],
+      tournamentSettings: mockTournamentData,
+      ...dataPartial,
+    },
+  });
 
-    // Mock loadNewTournament to return test data
-    const { loadNewTournament } = await import("../api_helper");
-    vi.mocked(loadNewTournament).mockResolvedValue(mockTournamentData);
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
   });
 
   it("renders the tournament creation form", async () => {
-    render(TournamentCreation);
+    render(TournamentCreation, { props: createProps() });
 
     await waitFor(() => {
       expect(screen.getByText("Create a tournament")).toBeInTheDocument();
@@ -57,32 +71,15 @@ describe("TournamentCreation", () => {
     expect(screen.getByRole("button", { name: /create/i })).toBeInTheDocument();
   });
 
-  it("loads initial tournament data on mount", async () => {
-    const { loadNewTournament } = await import("../api_helper");
-
-    render(TournamentCreation);
-
-    await waitFor(() => {
-      expect(loadNewTournament).toHaveBeenCalledOnce();
+  it("shows a loading spinner", () => {
+    render(TournamentCreation, {
+      props: createProps({
+        tournamentSettings: {} as unknown as PageProps["data"]["tournamentSettings"],
+      }),
     });
-  });
 
-  it("shows a loading spinner", async () => {
-    const { loadNewTournament } = await import("../api_helper");
-    vi.mocked(loadNewTournament).mockImplementation(
-      () =>
-        new Promise(() => {
-          // This promise intentionally never resolves to test loading state
-        }),
-    );
-
-    render(TournamentCreation);
-
-    await waitFor(() => {
-      expect(screen.getByText("Create a tournament")).toBeInTheDocument();
-    });
-    expect(screen.queryByLabelText(/tournament name/i)).not.toBeInTheDocument();
     expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+    expect(screen.queryByLabelText(/tournament name/i)).not.toBeInTheDocument();
   });
 
   it("successfully creates a tournament", async () => {
@@ -94,14 +91,7 @@ describe("TournamentCreation", () => {
     };
     vi.mocked(createTournament).mockResolvedValue(mockResponse);
 
-    // Mock window.location.href
-    const mockLocation = { href: "" };
-    Object.defineProperty(window, "location", {
-      value: mockLocation,
-      writable: true,
-    });
-
-    render(TournamentCreation);
+    render(TournamentCreation, { props: createProps() });
 
     await waitFor(() => {
       expect(screen.getByLabelText(/tournament name/i)).toBeInTheDocument();
@@ -128,7 +118,7 @@ describe("TournamentCreation", () => {
 
     // Check that redirect happens
     await waitFor(() => {
-      expect(mockLocation.href).toBe("/tournaments/123");
+      expect(navigateTo).toHaveBeenCalledWith("/tournaments/123");
     });
   });
 
@@ -140,7 +130,7 @@ describe("TournamentCreation", () => {
     });
     vi.mocked(createTournament).mockRejectedValue(validationError);
 
-    render(TournamentCreation);
+    render(TournamentCreation, { props: createProps() });
 
     await waitFor(() => {
       expect(screen.getByLabelText(/tournament name/i)).toBeInTheDocument();
@@ -164,7 +154,7 @@ describe("TournamentCreation", () => {
     const { createTournament } = await import("../api_helper");
     vi.mocked(createTournament).mockRejectedValue(new Error("Network error"));
 
-    render(TournamentCreation);
+    render(TournamentCreation, { props: createProps() });
 
     await waitFor(() => {
       expect(screen.getByLabelText(/tournament name/i)).toBeInTheDocument();
@@ -193,7 +183,7 @@ describe("TournamentCreation", () => {
         }),
     );
 
-    render(TournamentCreation);
+    render(TournamentCreation, { props: createProps() });
 
     await waitFor(() => {
       expect(screen.getByLabelText(/tournament name/i)).toBeInTheDocument();

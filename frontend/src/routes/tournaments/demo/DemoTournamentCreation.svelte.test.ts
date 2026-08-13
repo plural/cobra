@@ -4,8 +4,8 @@ import DemoTournamentCreation from "./+page.svelte";
 import {
   loadNewDemoTournament,
   createDemoTournament,
-  navigateTo,
 } from "./DemoTournamentSettings";
+import { navigateTo } from "$lib/utils/navigation";
 import { ValidationError } from "$lib/utils/errors";
 
 // Mock the DemoTournamentSettings module
@@ -13,7 +13,6 @@ vi.mock("./DemoTournamentSettings", () => {
   return {
     loadNewDemoTournament: vi.fn(),
     createDemoTournament: vi.fn(),
-    navigateTo: vi.fn(),
     ValidationError: class ValidationError extends Error {
       constructor(public errors: Record<string, string[]>) {
         super("Validation failed");
@@ -22,6 +21,10 @@ vi.mock("./DemoTournamentSettings", () => {
     },
   };
 });
+
+vi.mock("$lib/utils/navigation", () => ({
+  navigateTo: vi.fn(),
+}));
 
 describe("DemoTournamentCreation", () => {
   const mockTournamentData = {
