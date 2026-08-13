@@ -1,4 +1,5 @@
 import { COBRA_API_SERVER } from "$app/env/public";
+import type { Player } from "$lib/model/Player";
 import { Tournament, type FeatureFlags, type TournamentOptions } from "$lib/model/Tournament";
 import type { TournamentsResponse, TournamentsResponseSingle } from "$lib/utils/api_types";
 import { ValidationError, type Errors } from "$lib/utils/errors";
@@ -117,4 +118,22 @@ export async function createTournament(
   }
 
   return (await response.json()) as TournamentCreateResponse;
+}
+
+export async function loadPlayerByUserId(tournamentId: number, userId: number, altFetch = fetch) {
+  try {
+    const response = await altFetch(
+      `${COBRA_API_SERVER}/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
+
+    return (await response.json()) as Player;
+  } catch {
+    globalMessages.errors.push(`Error loading player data for user ${userId}.`);
+  }
+  
+  return null;
 }

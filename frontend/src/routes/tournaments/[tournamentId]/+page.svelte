@@ -4,28 +4,31 @@
   import { resolve } from "$app/paths";
   import type { PageProps } from "./$types";
   import { page } from "$app/state";
+  import { authStore } from "$lib/utils/auth.svelte";
+  import { swissFormatDisplayString } from "$lib/model/Tournament";
+  import { onMount } from "svelte";
 
   let { data }: PageProps = $props();
 
+  let userId = $state(0);
   let qrCodeImageData = $state("");
 
-  // TODO: Can notices be a derived variable?
   let notices = $derived.by(() => {
     let notices: string[] = [];
-    // if (data.tournament.nrdb_deck_registration) {
-    //   if (
-    //     !data.tournament.registration_closed &&
-    //     (player?.id === 0 || !player?.registration_locked)
-    //   ) {
-    //     notices.push("Registration is open.");
-    //   }
-    //   if (userId === data.tournament.user_id && data.tournament.any_player_unlocked) {
-    //     notices.push("One or more players are unlocked for editing.");
-    //   }
-    //   if (player?.id !== 0 && !player?.registration_locked) {
-    //     notices.push("Your registration is editable.");
-    //   }
-    // }
+    if (data.tournament.nrdb_deck_registration) {
+      if (
+        !data.tournament.registration_closed &&
+        (data.player?.id === 0 || !data.player?.registration_locked)
+      ) {
+        notices.push("Registration is open.");
+      }
+      if (userId === data.tournament.user_id && data.tournament.any_player_unlocked) {
+        notices.push("One or more players are unlocked for editing.");
+      }
+      if (data.player?.id !== 0 && !data.player?.registration_locked) {
+        notices.push("Your registration is editable.");
+      }
+    }
 
     return notices;
   });
@@ -44,6 +47,11 @@
     printWindow.print();
     printWindow.close();
   }
+
+  onMount(async () => {
+    const user = await authStore.checkAuth();
+    userId = user?.id ?? 0;
+  });
 </script>
 
 {#if data.tournament.id === 0}
@@ -71,8 +79,7 @@
               <div class="small text-secondary">Shortcode:</div>
               {data.tournament.slug}
               (<a href={resolve(`/tournaments/${data.tournament.slug}`)}>
-                <!-- {window.location.origin}/{tournament.slug} -->
-                {resolve(`/tournaments/${data.tournament.slug}`)}
+                {page.url.origin}/{data.tournament.slug}
               </a>)
             </li>
           {/if}
@@ -186,7 +193,117 @@
           {/if}
         </div>
       </div>
+      <!-- Registration -->
+      <div class="col-md-6" aria-label="registration information">
+        {#if data.player}
+          {#if data.player.id !== 0}
+            {#if data.player.active}
+              <!-- User is logged in and registered -->
+              <RegistrationCard {userId} tournament={data.tournament} player={data.player} />
+            {:else}
+              <!-- User is logged in and registered but dropped -->
+              <h5 class="card-title">Rejoin this Event</h5>
+              {#if userId === data.tournament.user_id}
+                <p>
+                  You can reinstate yourself on the
+                  <a href={resolve(`/beta/tournaments/${data.tournament.id}/players`)}>
+                    Players
+                  </a>
+                  tab.
+                </p>
+              {:else}
+                <p>Talk to a Tournament Organiser to rejoin the event.</p>
+              {/if}
+            {/if}
+          {:else if !data.tournament.registration_closed && data.tournament.self_registration}
+            {#if userId != -1}
+              <!-- User is logged in and not registered -->
+              <RegistrationCard {userId} tournament={data.tournament} player={data.player} />
+            {:else}
+              <!-- User is not logged in and not registered -->
+              <div class="card card-body alert alert-warning">
+                <h5 class="card-title">Register for this Event</h5>
+
+                <p class="mb-1">
+                  You must be logged in to register for this tournament:
+                </p>
+                <a
+                  class="alert-link"
+                  href={resolve(`/login?return_to=/beta/tournaments/${data.tournament.id}`)}
+                >
+                  <FontAwesomeIcon icon="sign-in" /> Sign in
+                </a>
+
+                <p class="mt-4 mb-1">
+                  Don't have an account? Register with NetrunnerDB, then return
+                  to Cobra to log in:
+                </p>
+                <a class="alert-link" href="https://netrunnerdb.com/register/">
+                  <i class="icon icon-link"></i> Create NRDB Account
+                </a>
+              </div>
+            {/if}
+          {/if}
+        {:else}
+          <div class="d-flex align-items-center m-2">
+            <div class="spinner-border m-auto"></div>
+          </div>
+        {/if}
       </div>
-      
+    </div>
+
+    <!-- Additional Details -->
+    <div class="row mt-3" aria-label="additional details">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between">
+            <h5 class="mb-0">Additional Details</h5>
+          </div>
+          
+          <ul class="list-group list-group-flush">
+            <!-- Description -->
+            {#if data.tournament.description}
+              <li class="list-group-item">
+                <h5>Description</h5>
+                <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                <p>{@html DOMPurify.sanitize(marked(data.tournament.description, { async: false }))}</p>
+              </li>
+            {/if}
+
+            <!-- Format and Deckbuilding -->
+            <li class="list-group-item">
+              <h5>Format and Deckbuilding</h5>
+              <div>Swiss Format: {swissFormatDisplayString(data.tournament.swiss_format)}</div>
+              {#if data.tournament.format_id}
+                <div>Game Format: {data.tournament.format_name}</div>
+              {/if}
+              {#if data.tournament.deckbuilding_restriction_id}
+                <div>Deckbuilding Restrictions: {data.tournament.deckbuilding_restriction_name}</div>
+              {/if}
+              {#if data.tournament.decklist_required}
+                <div>Decklists are required for this event.</div>
+              {/if}
+            </li>
+
+            <!-- Prizes -->
+            {#if data.tournament.official_prize_kit_id ?? data.tournament.additional_prizes_description}
+              {#if data.tournament.official_prize_kit_id}
+                <li class="list-group-item">
+                  <h5>Official Prize Kit</h5>
+                  <p>{data.tournament.official_prize_kit_name}</p>
+                </li>
+              {/if}
+              {#if data.tournament.additional_prizes_description}
+                <li class="list-group-item">
+                  <h5>Additional Prizes</h5>
+                  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                  <p>{@html DOMPurify.sanitize(marked(data.tournament.additional_prizes_description, { async: false }))}</p>
+                </li>
+              {/if}
+            {/if}
+          </ul>
+        </div>
+      </div>
+    </div>  
   </div>
 {/if}
