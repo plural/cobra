@@ -1,8 +1,8 @@
-import type { PageLoad } from "./$types";
-import { loadPlayerByUserId, loadTournament } from "../api_helper";
 import { authStore } from "$lib/utils/auth.svelte";
+import { loadPlayerByUserId, loadTournament } from "../api_helper";
+import type { LayoutLoad } from "./$types";
 
-export const load: PageLoad = async ({ params, fetch }) => {
+export const load: LayoutLoad = async ({ params, fetch }) => {
   const user = await authStore.checkAuth(fetch);
 
   return {

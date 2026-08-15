@@ -9,10 +9,10 @@
   import { onMount } from "svelte";
   import type { Snippet } from "svelte";
   import { theme } from "$lib/utils/theme.svelte";
-  import type { LayoutProps } from "./+layout";
   import GlobalMessages from "$lib/components/GlobalMessages.svelte";
+  import type { LayoutData } from "./$types";
 
-  let { children, data }: { children: Snippet; data: LayoutProps; } = $props();
+  let { children, data }: { children: Snippet; data: LayoutData; } = $props();
 
   onMount(() => {
     theme.init();
