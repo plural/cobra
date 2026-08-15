@@ -5,6 +5,11 @@
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    // Tells Bundler where to write files and keeps everything local in the /workspaces/cobra/ directory.
+    "containerEnv": {
+        "BUNDLE_PATH": "/home/vscode/.bundle",
+        "BUNDLE_APP_CONFIG": "/home/vscode/.bundle"
+    },
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
         "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
@@ -14,10 +19,7 @@
             "version": "latest"
         },
         "ghcr.io/devcontainers/features/github-cli:1": {},
-        "ghcr.io/devcontainers/features/ruby:1": {
-            "version": "3.4.4" // Change to match Ruby version from Gemfile
-        },
-        "ghcr.io/devcontainers/features/node:1": {
+        "ghcr.io/devcontainers/features/node:2.1.0": {
             "version": 24 // Change Node version as required
         },
         "ghcr.io/devcontainers/features/common-utils:2.5.9": {
