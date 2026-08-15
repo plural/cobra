@@ -1,4 +1,5 @@
 import { COBRA_API_SERVER } from "$app/env/public";
+import type { IdentityNames } from "$lib/model/Identity";
 import type { Player } from "$lib/model/Player";
 import { Tournament, type FeatureFlags, type TournamentOptions } from "$lib/model/Tournament";
 import type { TournamentsResponse, TournamentsResponseSingle } from "$lib/utils/api_types";
@@ -136,4 +137,12 @@ export async function loadPlayerByUserId(tournamentId: number, userId: number, a
   }
   
   return null;
+}
+
+export async function loadIdentityNames() {
+  const response = await fetch(`${COBRA_API_SERVER}/beta/identities`, {
+    method: "GET",
+  });
+
+  return (await response.json()) as IdentityNames;
 }

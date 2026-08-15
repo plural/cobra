@@ -7,6 +7,9 @@
   import { authStore } from "$lib/utils/auth.svelte";
   import { swissFormatDisplayString } from "$lib/model/Tournament";
   import { onMount } from "svelte";
+  import RegistrationCard from "./RegistrationCard.svelte";
+  import DOMPurify from "dompurify";
+  import { marked } from "marked";
 
   let { data }: PageProps = $props();
 

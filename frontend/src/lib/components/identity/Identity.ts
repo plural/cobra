@@ -1,3 +1,5 @@
+import type { IdentityNames } from "$lib/model/Identity";
+
 declare const Routes: {
   beta_identities_path: () => string;
 };
@@ -8,19 +10,4 @@ export async function loadIdentityNames() {
   });
 
   return (await response.json()) as IdentityNames;
-}
-
-export interface IdentityName {
-  label: string;
-  value: string;
-}
-
-export interface IdentityNames {
-  corp: IdentityName[];
-  runner: IdentityName[];
-}
-
-export class Identity {
-  name = "";
-  faction: string | null = null;
 }
