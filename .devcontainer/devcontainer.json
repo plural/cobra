@@ -5,8 +5,10 @@
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-    // Tells Bundler where to write files and keeps everything local in the /workspaces/cobra/ directory.
+    // Direct all gem installations (gem install & bundle install) into the persistent .bundle volume
     "containerEnv": {
+        "GEM_HOME": "/home/vscode/.bundle",
+        "GEM_PATH": "/home/vscode/.bundle:/usr/local/rvm/gems/default:/usr/local/rvm/gems/default@global",
         "BUNDLE_PATH": "/home/vscode/.bundle",
         "BUNDLE_APP_CONFIG": "/home/vscode/.bundle"
     },
@@ -46,8 +48,8 @@
             "onAutoForward": "notify"
         }
     },
-    // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "cat config/database.example.app-in-docker.yml | sed s/localhost/db/ > config/database.yml && bundle install && bundle exec rails db:setup && npm install && cd frontend && npm install",
+    // Use 'postCreateCommand' to run commands after the container is created and volumes are mounted.
+    "postCreateCommand": "cp -n config/database.example.app-in-docker.yml config/database.yml 2>/dev/null || true && bundle install && bundle exec rails db:prepare && npm install && cd frontend && npm install",
     // Configure tool-specific properties.
     "customizations": {
         "vscode": {
@@ -81,9 +83,8 @@
                 "rubyLsp.featuresConfiguration": {},
                 "rubyLsp.formatter": "auto",
                 "rubyLsp.rubyVersionManager": {
-                    "identifier": "auto"
+                    "identifier": "none"
                 },
-                "rubyLsp.rubyExecutablePath": "bundle exec ruby",
                 "rubyLsp.useBundler": true,
                 "rubyTestExplorer.debugCommand": "bundle exec rdebug-ide",
                 "rubyTestExplorer.testFramework": "rspec",
@@ -133,7 +134,6 @@
                 "ms-azuretools.vscode-docker",
                 "mtxr.sqltools-driver-pg",
                 "mtxr.sqltools",
-                "ruby-slim.tmbundle",
                 "Shopify.ruby-lsp",
                 "sianglim.slim",
                 "svelte.svelte-vscode",
