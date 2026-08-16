@@ -10,9 +10,17 @@
   import type { Snippet } from "svelte";
   import { theme } from "$lib/utils/theme.svelte";
   import GlobalMessages from "$lib/components/GlobalMessages.svelte";
+  import { globalMessages } from "$lib/utils/GlobalMessageState.svelte";
   import type { LayoutData } from "./$types";
+  import { beforeNavigate } from "$app/navigation";
 
   let { children, data }: { children: Snippet; data: LayoutData; } = $props();
+
+  beforeNavigate(() => {
+    globalMessages.infos = [];
+    globalMessages.warnings = [];
+    globalMessages.errors = [];
+  });
 
   onMount(() => {
     theme.init();

@@ -23,7 +23,7 @@ export interface TournamentCreateErrorResponse {
   errors: Errors;
 }
 
-export async function loadTournament(tournamentId: number, altFetch = fetch): Promise<Tournament> {
+export async function loadTournament(tournamentId: number, altFetch = fetch) {
   const response = await altFetch(
     `${COBRA_API_SERVER}/api/v1/public/tournaments/${tournamentId}`,
     {
@@ -37,8 +37,15 @@ export async function loadTournament(tournamentId: number, altFetch = fetch): Pr
   );
 
   const apiTournament = (await response.json()) as TournamentsResponseSingle;
-  const tournament = apiTournament.data.attributes;
-  tournament.id = parseInt(apiTournament.data.id);
+  const tournament = apiTournament.data?.attributes;
+  if (apiTournament.data && tournament)
+  {
+    tournament.id = parseInt(apiTournament.data.id);
+  }
+  else
+  {
+    globalMessages.errors.push(`A tournament with ID ${tournamentId} was not found or does not exist.`);
+  }
 
   return tournament;
 }

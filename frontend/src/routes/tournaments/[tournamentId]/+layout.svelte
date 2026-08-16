@@ -8,7 +8,7 @@
 
   let { children, data }: { children: Snippet; data: LayoutData; } = $props();
 
-  let canEdit = $derived(data.tournament.user_id === authStore.user?.id);
+  let canEdit = $derived(authStore.user && data.tournament?.user_id === authStore.user.id);
 </script>
 
 <style>
@@ -17,6 +17,7 @@
   }
 </style>
 
+{#if data.tournament}
   <!-- Tournament header -->
   <div class="row dontprint">
     <div class="col-md">
@@ -37,8 +38,6 @@
 
   <!-- Tabs -->
   <ul class="nav nav-tabs dontprint">
-    <!-- TODO: Set active class on all tabs -->
-    
     <li class="nav-item">
       <a
         href={resolve(`/tournaments/${data.tournament.id}`)}
@@ -63,16 +62,15 @@
     {/if}
     {#if canEdit}
       <li class="nav-item">
-      <a
-        href={resolve(`/tournaments/${data.tournament.id}/players`)}
-        class="nav-link"
-        class:active={page.route.id as string === "/tournaments/[tournamentId]/players"}
-      >
+        <a
+          href={resolve(`/tournaments/${data.tournament.id}/players`)}
+          class="nav-link"
+          class:active={page.route.id as string === "/tournaments/[tournamentId]/players"}
+        >
           <FontAwesomeIcon icon="users" /> Players
         </a>
       </li>
     {/if}
-    <!-- TODO: Display If show? -->
     <li class="nav-item">
       <a
         href={resolve(`/tournaments/${data.tournament.id}/rounds`)}
@@ -82,7 +80,6 @@
         <FontAwesomeIcon icon="calendar-check-o" /> Pairings
       </a>
     </li>
-    <!-- TODO: Display if show? -->
     <li class="nav-item">
       <a
         href={resolve(`/tournaments/${data.tournament.id}/players/standings`)}
@@ -94,15 +91,14 @@
     </li>
     <!-- TODO: Display if there is an elimination stage. -->
     <li class="nav-item">
-    <a
-      href={resolve(`/tournaments/${data.tournament.id}/bracket`)}
-      class="nav-link"
-      class:active={page.route.id as string === "/tournaments/[tournamentId]/bracket"}
-    >
+      <a
+        href={resolve(`/tournaments/${data.tournament.id}/bracket`)}
+        class="nav-link"
+        class:active={page.route.id as string === "/tournaments/[tournamentId]/bracket"}
+      >
         <FontAwesomeIcon icon="sitemap" /> Bracket
       </a>
     </li>
-    <!-- TODO: Display if show? -->
     <li class="nav-item">
       <a
         href={resolve(`/tournaments/${data.tournament.id}/stats`)}
@@ -114,22 +110,22 @@
     </li>
     {#if canEdit}
       <li class="nav-item">
-      <a
-        href={resolve(`/tournaments/${data.tournament.id}/edit`)}
-        class="nav-link"
-        class:active={page.route.id as string === "/tournaments/[tournamentId]/edit"}
-      >
+        <a
+          href={resolve(`/tournaments/${data.tournament.id}/edit`)}
+          class="nav-link"
+          class:active={page.route.id as string === "/tournaments/[tournamentId]/edit"}
+        >
           <FontAwesomeIcon icon="cog" /> Settings
         </a>
       </li>
     {/if}
     {#if canEdit}
       <li class="nav-item">
-      <a
-        href={resolve(`/tournaments/${data.tournament.id}/danger_zone`)}
-        class="nav-link"
-        class:active={page.route.id as string === "/tournaments/[tournamentId]/danger_zone"}
-      >
+        <a
+          href={resolve(`/tournaments/${data.tournament.id}/danger_zone`)}
+          class="nav-link"
+          class:active={page.route.id as string === "/tournaments/[tournamentId]/danger_zone"}
+        >
           <FontAwesomeIcon icon="trash" /> Danger Zone
         </a>
       </li>
@@ -140,3 +136,4 @@
   <div class="row py-3 main-content">
     {@render children()}
   </div>
+{/if}

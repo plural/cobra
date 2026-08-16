@@ -21,7 +21,7 @@ export interface ApiResponse<T, I = never> {
 }
 
 export interface ApiResponseSingle<T, I = never> {
-  data: T;
+  data?: T;
   included?: I[];
   links?: {
     self?: string;
