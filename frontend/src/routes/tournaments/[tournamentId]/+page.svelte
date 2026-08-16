@@ -209,7 +209,7 @@
               {#if userId === data.tournament.user_id}
                 <p>
                   You can reinstate yourself on the
-                  <a href={resolve(`/beta/tournaments/${data.tournament.id}/players`)}>
+                  <a href={resolve(`/tournaments/${data.tournament.id}/players`)}>
                     Players
                   </a>
                   tab.
@@ -232,7 +232,7 @@
                 </p>
                 <a
                   class="alert-link"
-                  href={resolve(`/login?return_to=/beta/tournaments/${data.tournament.id}`)}
+                  href={resolve(`/login?return_to=/tournaments/${data.tournament.id}`)}
                 >
                   <FontAwesomeIcon icon="sign-in" /> Sign in
                 </a>
