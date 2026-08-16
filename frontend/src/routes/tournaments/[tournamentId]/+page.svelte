@@ -10,11 +10,12 @@
   import RegistrationCard from "./RegistrationCard.svelte";
   import DOMPurify from "dompurify";
   import { marked } from "marked";
+  import { qr } from '@svelte-put/qr/svg';
 
   let { data }: PageProps = $props();
 
   let userId = $state(0);
-  let qrCodeImageData = $state("");
+  let shortcodeUrl = $derived(data.tournament ? `${page.url.origin}/${data.tournament.slug}` : "");
 
   let notices = $derived.by(() => {
     let notices: string[] = [];
@@ -83,7 +84,7 @@
                 <div class="small text-secondary">Shortcode:</div>
                 {data.tournament.slug}
                 (<a href={resolve(`/tournaments/${data.tournament.slug}`)}>
-                  {page.url.origin}/{data.tournament.slug}
+                  {shortcodeUrl}
                 </a>)
               </li>
             {/if}
@@ -149,44 +150,51 @@
             </li>
   
             <!-- QR Code -->
-            <li class="list-group-item">
-              <div class="small text-secondary">QR Code:</div>
-              <div class="row col-sm-6" aria-label="QR code">
-                <button
-                  type="button"
-                  class="btn btn-link p-0"
-                  data-toggle="modal"
-                  data-target="#qrCodeDialog"
-                >
-                  <FontAwesomeIcon icon="qrcode" />
-                  Open QR Code
-                </button>
-  
-                <ModalDialog id="qrCodeDialog" headerText="QR Code">
-                  <div class="text-center">
-                    <button
-                      type="button"
-                      class="btn btn-primary mb-3"
-                      onclick={printQRCode}
-                    >
-                      <FontAwesomeIcon icon="print" /> Print
-                    </button>
-                    <div id="qrCode">
-                      <h4 class="mb-3">
-                        {page.url.origin}/{data.tournament.slug}
-                      </h4>
-                      <div class="d-inline-block bg-white p-3 rounded shadow-sm">
-                        <img
-                          src={qrCodeImageData}
-                          class="w-100 h-100"
-                          alt="QR code of the tournament's URL"
-                        />
+            {#if shortcodeUrl}
+              <li class="list-group-item">
+                <div class="small text-secondary">QR Code:</div>
+                <div class="row col-sm-6" aria-label="QR code">
+                  <button
+                    type="button"
+                    class="btn btn-link p-0"
+                    data-toggle="modal"
+                    data-target="#qrCodeDialog"
+                  >
+                    <FontAwesomeIcon icon="qrcode" />
+                    Open QR Code
+                  </button>
+
+                  <ModalDialog id="qrCodeDialog" headerText="QR Code">
+                    <div class="text-center">
+                      <button
+                        type="button"
+                        class="btn btn-primary mb-3"
+                        onclick={printQRCode}
+                      >
+                        <FontAwesomeIcon icon="print" /> Print
+                      </button>
+                      <div id="qrCode">
+                        <h4 class="mb-3">
+                          {shortcodeUrl}
+                        </h4>
+                        <div class="d-inline-block bg-white p-3 rounded shadow-sm">
+                          <svg
+	                          use:qr={{
+                              data: shortcodeUrl,
+                              anchorInnerFill: 'black',
+                          		anchorOuterFill: 'black',
+                          		moduleFill: 'black',
+                              margin: 0.25,
+	                          }}
+                            class="w-100 h-100"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </ModalDialog>
-              </div>
-            </li>
+                  </ModalDialog>
+                </div>
+              </li>
+            {/if}
   
             <!-- More Information -->
             {#if data.tournament.event_link}
