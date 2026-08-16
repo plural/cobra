@@ -198,59 +198,53 @@
       </div>
       <!-- Registration -->
       <div class="col-md-6" aria-label="registration information">
-        {#if data.player}
-          {#if data.player.id !== 0}
-            {#if data.player.active}
-              <!-- User is logged in and registered -->
-              <RegistrationCard {userId} tournament={data.tournament} player={data.player} />
-            {:else}
-              <!-- User is logged in and registered but dropped -->
-              <h5 class="card-title">Rejoin this Event</h5>
-              {#if userId === data.tournament.user_id}
-                <p>
-                  You can reinstate yourself on the
-                  <a href={resolve(`/tournaments/${data.tournament.id}/players`)}>
-                    Players
-                  </a>
-                  tab.
-                </p>
-              {:else}
-                <p>Talk to a Tournament Organiser to rejoin the event.</p>
-              {/if}
-            {/if}
-          {:else if !data.tournament.registration_closed && data.tournament.self_registration}
-            {#if userId != -1}
-              <!-- User is logged in and not registered -->
-              <RegistrationCard {userId} tournament={data.tournament} player={data.player} />
-            {:else}
-              <!-- User is not logged in and not registered -->
-              <div class="card card-body alert alert-warning">
-                <h5 class="card-title">Register for this Event</h5>
-
-                <p class="mb-1">
-                  You must be logged in to register for this tournament:
-                </p>
-                <a
-                  class="alert-link"
-                  href={resolve(`/login?return_to=/tournaments/${data.tournament.id}`)}
-                >
-                  <FontAwesomeIcon icon="sign-in" /> Sign in
+        {#if data.player && data.player.id !== 0}
+          {#if data.player.active}
+            <!-- User is logged in and registered -->
+            <RegistrationCard {userId} tournament={data.tournament} player={data.player} />
+          {:else}
+            <!-- User is logged in and registered but dropped -->
+            <h5 class="card-title">Rejoin this Event</h5>
+            {#if userId === data.tournament.user_id}
+              <p>
+                You can reinstate yourself on the
+                <a href={resolve(`/tournaments/${data.tournament.id}/players`)}>
+                  Players
                 </a>
-
-                <p class="mt-4 mb-1">
-                  Don't have an account? Register with NetrunnerDB, then return
-                  to Cobra to log in:
-                </p>
-                <a class="alert-link" href="https://netrunnerdb.com/register/">
-                  <i class="icon icon-link"></i> Create NRDB Account
-                </a>
-              </div>
+                tab.
+              </p>
+            {:else}
+              <p>Talk to a Tournament Organiser to rejoin the event.</p>
             {/if}
           {/if}
-        {:else}
-          <div class="d-flex align-items-center m-2">
-            <div class="spinner-border m-auto"></div>
-          </div>
+        {:else if !data.tournament.registration_closed && data.tournament.self_registration}
+          {#if authStore.isAuthenticated && data.player}
+            <!-- User is logged in and not registered -->
+            <RegistrationCard {userId} tournament={data.tournament} player={data.player} />
+          {:else}
+            <!-- User is not logged in and not registered -->
+            <div class="card card-body alert alert-warning">
+              <h5 class="card-title">Register for this Event</h5>
+
+              <p class="mb-1">
+                You must be logged in to register for this tournament:
+              </p>
+              <a
+                class="alert-link"
+                href={resolve(`/login?return_to=/tournaments/${data.tournament.id}`)}
+              >
+                <FontAwesomeIcon icon="sign-in" /> Sign in
+              </a>
+
+              <p class="mt-4 mb-1">
+                Don't have an account? Register with NetrunnerDB, then return
+                to Cobra to log in:
+              </p>
+              <a class="alert-link" href="https://netrunnerdb.com/register/">
+                <i class="icon icon-link"></i> Create NRDB Account
+              </a>
+            </div>
+          {/if}
         {/if}
       </div>
     </div>
