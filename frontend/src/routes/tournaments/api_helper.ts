@@ -1,6 +1,8 @@
 import { COBRA_API_SERVER } from "$app/env/public";
-import type { FeatureFlags, Tournament, TournamentOptions } from "$lib/model/Tournament";
-import type { TournamentsResponse } from "$lib/utils/api_types";
+import type { IdentityNames } from "$lib/model/Identity";
+import type { Player } from "$lib/model/Player";
+import { Tournament, type FeatureFlags, type TournamentOptions } from "$lib/model/Tournament";
+import type { TournamentsResponse, TournamentsResponseSingle } from "$lib/utils/api_types";
 import { ValidationError, type Errors } from "$lib/utils/errors";
 import { globalMessages } from "$lib/utils/GlobalMessageState.svelte";
 
@@ -19,6 +21,26 @@ export interface TournamentCreateResponse {
 
 export interface TournamentCreateErrorResponse {
   errors: Errors;
+}
+
+export async function loadTournament(tournamentId: number, altFetch = fetch): Promise<Tournament> {
+  const response = await altFetch(
+    `${COBRA_API_SERVER}/api/v1/public/tournaments/${tournamentId}`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/vnd.api+json",
+        "Content-Type": "application/vnd.api+json",
+      },
+    },
+  );
+
+  const apiTournament = (await response.json()) as TournamentsResponseSingle;
+  const tournament = apiTournament.data.attributes;
+  tournament.id = parseInt(apiTournament.data.id);
+
+  return tournament;
 }
 
 export async function loadTournaments(url: string, altFetch = fetch): Promise<TournamentsResponse> {
@@ -97,4 +119,30 @@ export async function createTournament(
   }
 
   return (await response.json()) as TournamentCreateResponse;
+}
+
+export async function loadPlayerByUserId(tournamentId: number, userId: number, altFetch = fetch) {
+  try {
+    const response = await altFetch(
+      `${COBRA_API_SERVER}/beta/tournaments/${tournamentId}/players/by_user_id/${userId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
+
+    return (await response.json()) as Player;
+  } catch {
+    globalMessages.errors.push(`Error loading player data for user ${userId}.`);
+  }
+  
+  return null;
+}
+
+export async function loadIdentityNames() {
+  const response = await fetch(`${COBRA_API_SERVER}/beta/identities`, {
+    method: "GET",
+  });
+
+  return (await response.json()) as IdentityNames;
 }

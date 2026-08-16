@@ -100,7 +100,7 @@
           >
             <div>
               <h5 class="mb-1">
-                <a href={`${serverOrigin}/tournaments/${t.id}`} rel="external">{t.name}</a>
+                <a href={resolve(`/tournaments/${t.id}`)}>{t.name}</a>
                 {#if t.private}
                   <span class="badge badge-secondary ml-2">Private</span>
                 {/if}

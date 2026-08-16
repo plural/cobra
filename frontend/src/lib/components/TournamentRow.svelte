@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { COBRA_API_SERVER } from "$app/env/public";
+  import { resolve } from "$app/paths";
   import type { TournamentInfo } from "$lib/utils/api_types";
 
   let {
@@ -14,7 +14,7 @@
 <div class="tournament card m-3">
   <div class="card-body">
     <h4 class="card-title">
-      <a href="{COBRA_API_SERVER}/beta/tournaments/{tournament.id}" rel="external">
+      <a href={resolve(`/tournaments/${tournament.id}`)}>
         {tournament.attributes.name}
       </a>
       {#if tournamentTypeName}

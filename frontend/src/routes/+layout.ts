@@ -1,9 +1,5 @@
 import { COBRA_API_SERVER } from "$app/env/public";
-import type { TournamentTypeInfo, TournamentTypesResponse } from "$lib/utils/api_types";
-
-export interface LayoutProps {
-  tournamentTypes: TournamentTypeInfo[];
-}
+import type { TournamentTypesResponse } from "$lib/utils/api_types";
 
 async function loadTournamentTypes(altFetch: typeof globalThis.fetch) {
   try {

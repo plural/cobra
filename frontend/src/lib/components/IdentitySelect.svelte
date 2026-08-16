@@ -1,6 +1,6 @@
 <script lang="ts">
+  import type { IdentityName } from "$lib/model/Identity";
   import Svelecte from "svelecte";
-  import type { IdentityName } from "./identity/Identity";
 
   let {
     id,

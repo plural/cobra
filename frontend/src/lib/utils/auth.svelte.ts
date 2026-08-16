@@ -26,14 +26,14 @@ class AuthStore {
     return this.user !== null;
   }
 
-  async checkAuth(): Promise<AuthUser | null> {
+  async checkAuth(altFetch = fetch): Promise<AuthUser | null> {
     if (this.isAuthenticated) {
       return this.user;
     }
 
     this.isLoading = true;
     try {
-      const response = await fetch(`${serverOrigin}/api/v1/private/user`, {
+      const response = await altFetch(`${serverOrigin}/api/v1/private/user`, {
         credentials: "include",
         headers: {
           Accept: "application/vnd.api+json",
