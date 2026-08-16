@@ -8,7 +8,7 @@
   import { swissFormatDisplayString } from "$lib/model/Tournament";
   import { onMount } from "svelte";
   import RegistrationCard from "./RegistrationCard.svelte";
-  import DOMPurify from "dompurify";
+  import DOMPurify from "isomorphic-dompurify";
   import { marked } from "marked";
   import { qr } from '@svelte-put/qr/svg';
 
