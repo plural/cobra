@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import type { Snippet } from "svelte";
   import type { LayoutData } from "./$types";
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
@@ -8,8 +9,6 @@
   let { children, data }: { children: Snippet; data: LayoutData; } = $props();
 
   let canEdit = $derived(data.tournament.user_id === authStore.user?.id);
-  // TODO: Determine this properly
-  let canDestroy = $derived(true);
 </script>
 
 <style>
@@ -18,7 +17,6 @@
   }
 </style>
 
-<div class="container">
   <!-- Tournament header -->
   <div class="row dontprint">
     <div class="col-md">
@@ -41,61 +39,97 @@
   <ul class="nav nav-tabs dontprint">
     <!-- TODO: Set active class on all tabs -->
     
-    <!-- TODO: Display if show? -->
     <li class="nav-item">
-      <a href={resolve(`/tournaments/${data.tournament.id}`)} class="nav-link">
+      <a
+        href={resolve(`/tournaments/${data.tournament.id}`)}
+        class="nav-link"
+        class:active={page.route.id === "/tournaments/[tournamentId]"}
+      >
         <FontAwesomeIcon icon="trophy" /> Tournament
       </a>
     </li>
-    <!-- TODO: Display if show? -->
+    
+    <!-- TODO: Remove the 'as string' casts throughout once the route id exists. -->
     {#if data.player}
       <li class="nav-item">
-        <a href={resolve(`/tournaments/${data.tournament.id}/my_tournament`)} class="nav-link">
+      <a
+        href={resolve(`/tournaments/${data.tournament.id}/my_tournament`)}
+        class="nav-link"
+        class:active={page.route.id as string === "/tournaments/[tournamentId]/my_tournament"}
+      >
           <FontAwesomeIcon icon="user" /> Me
         </a>
       </li>
     {/if}
     {#if canEdit}
       <li class="nav-item">
-        <a href={resolve(`/tournaments/${data.tournament.id}/players`)} class="nav-link">
+      <a
+        href={resolve(`/tournaments/${data.tournament.id}/players`)}
+        class="nav-link"
+        class:active={page.route.id as string === "/tournaments/[tournamentId]/players"}
+      >
           <FontAwesomeIcon icon="users" /> Players
         </a>
       </li>
     {/if}
     <!-- TODO: Display If show? -->
     <li class="nav-item">
-      <a href={resolve(`/tournaments/${data.tournament.id}/rounds`)} class="nav-link">
+      <a
+        href={resolve(`/tournaments/${data.tournament.id}/rounds`)}
+        class="nav-link"
+        class:active={page.route.id as string === "/tournaments/[tournamentId]/rounds"}
+      >
         <FontAwesomeIcon icon="calendar-check-o" /> Pairings
       </a>
     </li>
     <!-- TODO: Display if show? -->
     <li class="nav-item">
-      <a href={resolve(`/tournaments/${data.tournament.id}/standings`)} class="nav-link">
+      <a
+        href={resolve(`/tournaments/${data.tournament.id}/players/standings`)}
+        class="nav-link"
+        class:active={page.route.id as string === "/tournaments/[tournamentId]/players/standings"}
+      >
         <FontAwesomeIcon icon="list-ol" /> Standings
       </a>
     </li>
-    <!-- TODO: Display if show? and any elimination stages -->
+    <!-- TODO: Display if there is an elimination stage. -->
     <li class="nav-item">
-      <a href={resolve(`/tournaments/${data.tournament.id}/bracket`)} class="nav-link">
+    <a
+      href={resolve(`/tournaments/${data.tournament.id}/bracket`)}
+      class="nav-link"
+      class:active={page.route.id as string === "/tournaments/[tournamentId]/bracket"}
+    >
         <FontAwesomeIcon icon="sitemap" /> Bracket
       </a>
     </li>
     <!-- TODO: Display if show? -->
     <li class="nav-item">
-      <a href={resolve(`/tournaments/${data.tournament.id}/stats`)} class="nav-link">
+      <a
+        href={resolve(`/tournaments/${data.tournament.id}/stats`)}
+        class="nav-link"
+        class:active={page.route.id as string === "/tournaments/[tournamentId]/stats"}
+      >
         <FontAwesomeIcon icon="pie-chart" /> Stats
       </a>
     </li>
     {#if canEdit}
       <li class="nav-item">
-        <a href={resolve(`/tournaments/${data.tournament.id}/edit`)} class="nav-link">
+      <a
+        href={resolve(`/tournaments/${data.tournament.id}/edit`)}
+        class="nav-link"
+        class:active={page.route.id as string === "/tournaments/[tournamentId]/edit"}
+      >
           <FontAwesomeIcon icon="cog" /> Settings
         </a>
       </li>
     {/if}
-    {#if canDestroy}
+    {#if canEdit}
       <li class="nav-item">
-        <a href={resolve(`/tournaments/${data.tournament.id}/danger_zone`)} class="nav-link">
+      <a
+        href={resolve(`/tournaments/${data.tournament.id}/danger_zone`)}
+        class="nav-link"
+        class:active={page.route.id as string === "/tournaments/[tournamentId]/danger_zone"}
+      >
           <FontAwesomeIcon icon="trash" /> Danger Zone
         </a>
       </li>
@@ -106,4 +140,3 @@
   <div class="row py-3 main-content">
     {@render children()}
   </div>
-</div>
