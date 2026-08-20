@@ -8,8 +8,7 @@
   import { swissFormatDisplayString } from "$lib/model/Tournament";
   import { onMount } from "svelte";
   import RegistrationCard from "./RegistrationCard.svelte";
-  import DOMPurify from "isomorphic-dompurify";
-  import { marked } from "marked";
+  import Markdown from '@magidoc/plugin-svelte-marked'
   import { qr } from '@svelte-put/qr/svg';
 
   let { data }: PageProps = $props();
@@ -271,11 +270,10 @@
               {#if data.tournament.description}
                 <li class="list-group-item">
                   <h5>Description</h5>
-                  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                  <p>{@html DOMPurify.sanitize(marked(data.tournament.description, { async: false }))}</p>
+                  <Markdown source={data.tournament.description} />
                 </li>
               {/if}
-  
+
               <!-- Format and Deckbuilding -->
               <li class="list-group-item">
                 <h5>Format and Deckbuilding</h5>
@@ -290,7 +288,7 @@
                   <div>Decklists are required for this event.</div>
                 {/if}
               </li>
-  
+
               <!-- Prizes -->
               {#if data.tournament.official_prize_kit_id ?? data.tournament.additional_prizes_description}
                 {#if data.tournament.official_prize_kit_id}
@@ -302,15 +300,14 @@
                 {#if data.tournament.additional_prizes_description}
                   <li class="list-group-item">
                     <h5>Additional Prizes</h5>
-                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                    <p>{@html DOMPurify.sanitize(marked(data.tournament.additional_prizes_description, { async: false }))}</p>
+                    <Markdown source={data.tournament.additional_prizes_description} />
                   </li>
                 {/if}
               {/if}
             </ul>
           </div>
         </div>
-      </div>  
+      </div>
     </div>
   {/if}
 {/if}
