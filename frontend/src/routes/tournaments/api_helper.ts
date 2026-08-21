@@ -1,10 +1,16 @@
 import { COBRA_API_SERVER } from "$app/env/public";
+import type { Card, Deck } from "$lib/model/Deck";
 import type { IdentityNames } from "$lib/model/Identity";
 import type { Player } from "$lib/model/Player";
 import { Tournament, type FeatureFlags, type TournamentOptions } from "$lib/model/Tournament";
-import type { TournamentsResponse, TournamentsResponseSingle } from "$lib/utils/api_types";
+import type { TournamentsResponse } from "$lib/utils/api_types";
 import { ValidationError, type Errors } from "$lib/utils/errors";
 import { globalMessages } from "$lib/utils/GlobalMessageState.svelte";
+
+export interface TournamentData {
+  tournament: Tournament,
+  csrf_token: string,
+}
 
 export interface TournamentSettingsData {
   tournament: Tournament;
@@ -25,29 +31,18 @@ export interface TournamentCreateErrorResponse {
 
 export async function loadTournament(tournamentId: number, altFetch = fetch) {
   const response = await altFetch(
-    `${COBRA_API_SERVER}/api/v1/public/tournaments/${tournamentId}`,
+    `${COBRA_API_SERVER}/beta/tournaments/${tournamentId}`,
     {
       method: "GET",
       credentials: "include",
       headers: {
-        Accept: "application/vnd.api+json",
-        "Content-Type": "application/vnd.api+json",
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     },
   );
 
-  const apiTournament = (await response.json()) as TournamentsResponseSingle;
-  const tournament = apiTournament.data?.attributes;
-  if (apiTournament.data && tournament)
-  {
-    tournament.id = parseInt(apiTournament.data.id);
-  }
-  else
-  {
-    globalMessages.errors.push(`A tournament with ID ${tournamentId} was not found or does not exist.`);
-  }
-
-  return tournament;
+  return (await response.json()) as TournamentData;
 }
 
 export async function loadTournaments(url: string, altFetch = fetch): Promise<TournamentsResponse> {
@@ -146,10 +141,82 @@ export async function loadPlayerByUserId(tournamentId: number, userId: number, a
   return null;
 }
 
+export async function savePlayer(
+  csrfToken: string, tournamentId: number, player: Player, organizerView = false,
+) {
+  const route =
+    player.id === 0
+      ? `${COBRA_API_SERVER}/beta/tournaments/${tournamentId}/players`
+      : `${COBRA_API_SERVER}/beta/tournaments/${tournamentId}/player/${player.id}`;
+  const response = await fetch(route, {
+    method: player.id === 0 ? "POST" : "PATCH",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken,
+    },
+    body: JSON.stringify({
+      player: playerRequestObject(player),
+      organiser_view: organizerView,
+    }),
+  });
+
+  const result = (await response.json()) as {
+    player: Player;
+    errors?: string[];
+  };
+  globalMessages.errors = result.errors ?? [];
+
+  return result.player;
+}
+
 export async function loadIdentityNames() {
   const response = await fetch(`${COBRA_API_SERVER}/beta/identities`, {
     method: "GET",
   });
 
   return (await response.json()) as IdentityNames;
+}
+
+function playerRequestObject(player: Player) {
+  return {
+    name: player.name,
+    pronouns: player.pronouns,
+    corp_identity: player.corp_id.name,
+    runner_identity: player.runner_id.name,
+    include_in_stream: player.include_in_stream,
+    first_round_bye: player.first_round_bye,
+    manual_seed: player.manual_seed,
+    fixed_table_number: player.fixed_table_number,
+    corp_deck: player.corp_deck
+      ? deckRequestObject(player.corp_deck)
+      : undefined,
+    runner_deck: player.runner_deck
+      ? deckRequestObject(player.runner_deck)
+      : undefined,
+  };
+}
+
+function deckRequestObject(deck: Deck) {
+  const {
+    id,
+    user_id,
+    player_id,
+    player_name,
+    created_at,
+    updated_at,
+    ...details
+  } = deck.details;
+
+  return {
+    details: details,
+    cards: deck.cards.map((c) => cardRequestObject(c)),
+  };
+}
+
+function cardRequestObject(card: Card) {
+  const { id, deck_id, created_at, updated_at, ...newCard } = card;
+
+  return newCard;
 }

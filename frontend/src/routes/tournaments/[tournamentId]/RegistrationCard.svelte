@@ -8,16 +8,19 @@
   import ProgressButton from "$lib/components/ProgressButton.svelte";
   import Identity from "$lib/components/identity/Identity.svelte";
   import { onMount } from "svelte";
-  import { loadIdentityNames } from "../api_helper";
+  import { loadIdentityNames, savePlayer as savePlayerRequest } from "../api_helper";
+  import { navigateTo } from "$lib/utils/navigation";
 
   let {
     userId,
     tournament,
     player,
+    csrfToken,
   }: {
     userId: number;
     tournament: Tournament;
     player: Player;
+    csrfToken: string;
   } = $props();
 
   let identityNames: IdentityNames | undefined = $state();
@@ -31,13 +34,13 @@
     playerEdit.name = player.name;
   });
 
-  function savePlayer() {
-    // playerEdit = await savePlayerRequest(tournament.id, playerEdit);
-    // readOnly = true;
+  async function savePlayer() {
+    playerEdit = await savePlayerRequest(csrfToken, tournament.id, playerEdit);
+    readOnly = true;
 
-    // if (tournament.nrdb_deck_registration) {
-    //   window.location.href = `/beta/tournaments/${tournament.id}/registration`;
-    // }
+    if (tournament.nrdb_deck_registration) {
+      navigateTo(`/beta/tournaments/${tournament.id}/registration`);
+    }
 
     return true;
   }
