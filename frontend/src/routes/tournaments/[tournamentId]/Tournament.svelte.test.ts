@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  cleanup,
   getByLabelText,
   getByRole,
   render,
@@ -146,9 +147,12 @@ describe("Tournament", () => {
     });
   });
 
+  afterEach(() => {
+    cleanup();
+  });
+
   describe("when player is logged out", () => {
     beforeEach(() => {
-      // vi.spyOn(authStore, "checkAuth").mockImplementation(async () => Promise.resolve(null));
       vi.spyOn(authStore, "isAuthenticated", "get").mockReturnValue(false);
     });
 
@@ -294,6 +298,7 @@ describe("Tournament", () => {
       describe("when player is active", () => {
         beforeEach(() => {
           vi.spyOn(MockPlayerBob, "active", "get").mockReturnValue(true);
+
           renderTournament(MockPlayerBob);
         });
 
