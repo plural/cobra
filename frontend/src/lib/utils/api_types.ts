@@ -20,25 +20,6 @@ export interface ApiResponse<T, I = never> {
   };
 }
 
-export interface ApiResponseSingle<T, I = never> {
-  data?: T;
-  included?: I[];
-  links?: {
-    self?: string;
-    first?: string;
-    last?: string;
-    next?: string | null;
-    prev?: string | null;
-  };
-  meta?: {
-    stats?: {
-      total?: {
-        count?: number;
-      };
-    };
-  };
-}
-
 export interface TournamentInfo {
   id: string;
   type?: string;
@@ -69,7 +50,6 @@ export interface Printing {
   };
 }
 
-export type TournamentsResponseSingle = ApiResponseSingle<TournamentInfo>;
 export type TournamentsResponse = ApiResponse<TournamentInfo, TournamentTypeInfo>;
 export type TournamentTypesResponse = ApiResponse<TournamentTypeInfo>;
 export type PrintingsResponse = ApiResponse<Printing>;

@@ -10,12 +10,14 @@
 
   let tournament = $derived(data.tournamentData.tournament);
   let canEdit = $derived(tournament.user_id === authStore.user?.id);
+  // TODO: We should also enforce well-formed URLs on the tournament settings page
   let streamUrl = $derived.by(() => {
+    // Make sure that we don't present a malformed URL to the user
     try {
       const url = new URL(tournament.stream_url);
-      return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : "";
+      return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : null;
     } catch {
-      return "";
+      return null;
     }
   });
 </script>
