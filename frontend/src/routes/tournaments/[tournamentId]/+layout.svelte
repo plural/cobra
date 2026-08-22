@@ -10,6 +10,14 @@
 
   let tournament = $derived(data.tournamentData.tournament);
   let canEdit = $derived(tournament.user_id === authStore.user?.id);
+  let streamUrl = $derived.by(() => {
+    try {
+      const url = new URL(tournament.stream_url);
+      return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : "";
+    } catch {
+      return "";
+    }
+  });
 </script>
 
 <style>
@@ -23,10 +31,9 @@
   <div class="col-md">
     <h1>{tournament.name}</h1>
   </div>
-  <!-- TODO: Check if URL is valid? -->
-  {#if tournament.stream_url}
+  {#if streamUrl}
     <div class="col-auto">
-      <a href={tournament.stream_url} target="_blank" rel="external" class="stream-link">
+      <a href={streamUrl} target="_blank" rel="external" class="stream-link">
         <FontAwesomeIcon icon="video-camera" />
       </a>
     </div>
