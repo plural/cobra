@@ -10,6 +10,7 @@
   import { onMount } from "svelte";
   import { loadIdentityNames, savePlayer as savePlayerRequest } from "../api_helper";
   import { navigateTo } from "$lib/utils/navigation";
+  import { authStore } from "$lib/utils/auth.svelte";
 
   let {
     userId,
@@ -31,7 +32,9 @@
 
   onMount(async () => {
     identityNames = await loadIdentityNames();
-    playerEdit.name = player.name;
+    if (playerEdit.id === 0) {
+      playerEdit.name = authStore.user?.nrdb_username ?? "";
+    }
   });
 
   async function savePlayer() {
