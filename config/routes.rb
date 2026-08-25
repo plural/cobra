@@ -76,6 +76,7 @@ Rails.application.routes.draw do
       get :stats, on: :member
       get :id_and_faction_data, on: :member
       get :cut_conversion_rates, on: :member
+      get :current_round_timer, on: :member
     end
     resources :identities, only: [:index]
   end
