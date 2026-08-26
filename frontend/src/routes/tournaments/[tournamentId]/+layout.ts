@@ -6,9 +6,11 @@ export const load: LayoutLoad = async ({ params, fetch }) => {
   const user = await authStore.checkAuth(fetch);
   const tournamentId = parseInt(params.tournamentId);
 
+  const tournament = await loadTournament(tournamentId, fetch);
+
   return {
-    tournamentData: await loadTournament(tournamentId, fetch),
-    timer: loadCurrentRoundTimer(tournamentId),
+    tournamentData: tournament,
+    timer: await loadCurrentRoundTimer(tournamentId, tournament.csrf_token),
     player: user ? await loadPlayerByUserId(tournamentId, user.id, fetch) : null,
   };
 }

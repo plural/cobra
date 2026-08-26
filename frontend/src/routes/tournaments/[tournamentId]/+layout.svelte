@@ -5,6 +5,7 @@
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
   import { resolve } from "$app/paths";
   import { authStore } from "$lib/utils/auth.svelte";
+  import RoundTimer from "./RoundTimer.svelte";
 
   let { children, data }: { children: Snippet; data: LayoutData; } = $props();
 
@@ -40,9 +41,11 @@
       </a>
     </div>
   {/if}
-  <div class="col col-md-auto mb-md-0 mb-2">
-    <!-- TODO: Round timer -->
-  </div>
+  {#if data.timer.show}
+    <div class="col col-md-auto mb-md-0 mb-2">
+      <RoundTimer timer={data.timer} />
+    </div>
+  {/if}
 </div>
 
 <!-- Tabs -->

@@ -201,6 +201,7 @@ module Beta
       current_round = @tournament.rounds&.last
 
       render json: {
+        show: current_round&.timer&.show?,
         running: current_round&.timer&.running?,
         paused: current_round&.timer&.paused?,
         started: current_round&.timer&.started?,

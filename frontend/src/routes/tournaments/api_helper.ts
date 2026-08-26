@@ -180,10 +180,15 @@ export async function loadIdentityNames() {
   return (await response.json()) as IdentityNames;
 }
 
-export async function loadCurrentRoundTimer(tournamentId: number) {
+export async function loadCurrentRoundTimer(tournamentId: number, csrfToken?: string) {
   const response = await fetch(`${COBRA_API_SERVER}/beta/tournaments/${tournamentId}/current_round_timer`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-CSRF-Token": csrfToken ?? "",
+    },
   });
 
   return (await response.json()) as RoundTimer;
