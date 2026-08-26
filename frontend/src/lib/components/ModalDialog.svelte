@@ -2,14 +2,19 @@
   import type { Snippet } from "svelte";
   import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
 
-  interface Props {
+  let {
+    id,
+    headerText,
+    dialogClass,
+    children,
+    footer
+  }: {
     id: string;
     headerText: string;
+    dialogClass?: string;
     children?: Snippet;
     footer?: Snippet;
-  }
-
-  let { id, headerText, children, footer }: Props = $props();
+  } = $props();
 
   function portal(node: HTMLElement) {
     document.body.appendChild(node);
@@ -24,7 +29,7 @@
 </script>
 
 <div {id} class="modal fade" role="dialog" tabindex="-1" aria-hidden="true" use:portal>
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-dialog-centered {dialogClass}" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h4>{headerText}</h4>

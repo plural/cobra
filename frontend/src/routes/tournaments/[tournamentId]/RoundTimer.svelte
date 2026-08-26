@@ -1,5 +1,6 @@
 <script lang="ts">
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
+  import ModalDialog from "$lib/components/ModalDialog.svelte";
   import type { RoundTimer } from "$lib/model/Round";
   import { onMount } from "svelte";
 
@@ -47,16 +48,28 @@
       clearInterval(intervalID);
     };
   });
-
-  // TODO: Fullscreen
 </script>
 
-<div class="alert {alertClass} mb-0">
-  <button class="btn btn-link alert-link p-0" style="text-decoration: none;">
-    <FontAwesomeIcon icon="clock" />
-    {millis < 0 ? "Overtime" : "Remaining"} in round{timer.paused ? " (paused)" : ""}:
-    <span class="round_time_remaining text-left alert-link" style="width: 2.6rem; display: inline-block; text-decoration: none;">
-      {minutes.toString().padStart(2, "0")}:{seconds.toString().padStart(2, "0")}
-    </span>
-  </button>
+<div>
+  <div class="alert {alertClass} mb-0">
+    <button class="btn btn-link alert-link p-0" style="text-decoration: none;" data-toggle="modal" data-target="#timerDialog">
+      <FontAwesomeIcon icon="clock" />
+      {millis < 0 ? "Overtime" : "Remaining"} in round{timer.paused ? " (paused)" : ""}:
+      <span class="text-left alert-link" style="width: 2.6rem; display: inline-block; text-decoration: none;">
+        {minutes.toString().padStart(2, "0")}:{seconds.toString().padStart(2, "0")}
+      </span>
+    </button>
+  </div>
+  
+  <ModalDialog id="timerDialog" headerText="Round Timer" dialogClass="modal-xl">
+    <p class="text-center" style="font-size: 5vw">
+      {millis < 0 ? "Overtime" : "Remaining"} in round{timer.paused ? " (paused)" : ""}:
+    </p>
+    <div class="alert alert-primary mb-0" style="font-size: 10vw; border-radius: 2vw; padding 0.5vw 4vw;">
+      <FontAwesomeIcon icon="clock-o" />
+      <span class="text-left" style="display: inline-block;">
+        {minutes.toString().padStart(2, "0")}:{seconds.toString().padStart(2, "0")}
+      </span>
+    </div>
+  </ModalDialog>
 </div>
