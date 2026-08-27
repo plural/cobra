@@ -4,7 +4,7 @@ module Beta
   class TournamentsController < ApplicationController # rubocop:disable Metrics/ClassLength,Style/Documentation
     before_action :set_tournament, only: %i[
       show update info qr registration open_registration close_registration lock_player_registrations
-      unlock_player_registrations cut stats id_and_faction_data cut_conversion_rates
+      unlock_player_registrations cut stats id_and_faction_data cut_conversion_rates current_round_timer
     ]
     before_action :authorize_beta_testing
 
@@ -193,6 +193,20 @@ module Beta
       authorize @tournament, :show?
 
       render json: transform_cut_stats(@tournament.cut_conversion_rates_data)
+    end
+
+    def current_round_timer
+      authorize @tournament, :show?
+
+      current_round = @tournament.rounds&.last
+
+      render json: {
+        show: current_round&.timer&.show?,
+        running: current_round&.timer&.running?,
+        paused: current_round&.timer&.paused?,
+        started: current_round&.timer&.started?,
+        state: current_round.timer&.state
+      }
     end
 
     private

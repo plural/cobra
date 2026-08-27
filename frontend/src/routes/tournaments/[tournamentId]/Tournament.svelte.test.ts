@@ -115,6 +115,19 @@ describe("Tournament", () => {
         tournament: MockTournament,
         csrf_token: ""
       },
+      timer: {
+        show: false,
+        running: false,
+        paused: false,
+        started: false,
+        state: {
+          started: false,
+          paused: false,
+          finish_time: undefined,
+          remaining_seconds: undefined,
+          length_minutes: undefined
+        }
+      },
       player: player,
       ...dataPartial,
     },
