@@ -62,10 +62,10 @@
   </div>
   
   <ModalDialog id="timerDialog" headerText="Round Timer" dialogClass="modal-xl">
-    <p class="text-center" style="font-size: 5vw">
+    <p class="text-center" style="font-size: 2vw">
       {millis < 0 ? "Overtime" : "Remaining"} in round{timer.paused ? " (paused)" : ""}:
     </p>
-    <div class="alert alert-primary mb-0" style="font-size: 10vw; border-radius: 2vw; padding 0.5vw 4vw;">
+    <div class="alert alert-primary mb-0" style="font-size: 12vw; border-radius: 2vw; padding 0.5vw 4vw;">
       <FontAwesomeIcon icon="clock-o" />
       <span class="text-left" style="display: inline-block;">
         {minutes.toString().padStart(2, "0")}:{seconds.toString().padStart(2, "0")}
