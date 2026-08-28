@@ -7,6 +7,9 @@
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     // Direct all gem installations (gem install & bundle install) into the persistent .bundle volume
     "containerEnv": {
+        "LANG": "en_US.UTF-8",
+        "LANGUAGE": "en_US.UTF-8",
+        "LC_ALL": "en_US.UTF-8",
         "GEM_HOME": "/home/vscode/.bundle",
         "GEM_PATH": "/home/vscode/.bundle:/usr/local/rvm/gems/default:/usr/local/rvm/gems/default@global",
         "BUNDLE_PATH": "/home/vscode/.bundle",
@@ -29,7 +32,8 @@
             "username": "vscode",
             "uid": 1000,
             "gid": 1000,
-            "upgradePackages": true
+            "upgradePackages": true,
+            "userLocale": "en_US.UTF-8"
         }
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
