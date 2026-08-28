@@ -245,7 +245,7 @@ export interface PlayersData {
 }
 
 export class Player {
-  id: number | null = 0;
+  id = 0;
   name = "";
   pronouns = "";
   name_with_pronouns = "";

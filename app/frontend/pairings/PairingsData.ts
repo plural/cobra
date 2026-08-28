@@ -70,6 +70,19 @@ export async function loadPairings(
   const data = (await response.json()) as PairingsData;
   globalMessages.warnings = data.warnings ?? [];
 
+  for (const stage of data.stages ?? []) {
+    for (const round of stage.rounds ?? []) {
+      for (const pairing of round.pairings ?? []) {
+        if (pairing.player1 && pairing.player1.id == null) {
+          pairing.player1.id = 0;
+        }
+        if (pairing.player2 && pairing.player2.id == null) {
+          pairing.player2.id = 0;
+        }
+      }
+    }
+  }
+
   return data;
 }
 

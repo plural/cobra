@@ -39,7 +39,7 @@
   });
 
   function isBye(pairing: Pairing): boolean {
-    return pairing.player1.id === null || pairing.player2.id === null;
+    return pairing.player1.id === 0 || pairing.player2.id === 0;
   }
 
   function iWon(pairing: Pairing): boolean {
