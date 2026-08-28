@@ -164,6 +164,10 @@ class Tournament < ApplicationRecord # rubocop:disable Metrics/ClassLength,Style
     stages.find_by format: :double_elim
   end
 
+  def swiss_stage
+    stages.where(format: %i[swiss single_sided_swiss]).last
+  end
+
   def unlocked_players
     players.active.where('registration_locked IS NOT TRUE')
   end

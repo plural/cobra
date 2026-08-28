@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Stage < ApplicationRecord # rubocop:disable Style/Documentation
+class Stage < ApplicationRecord # rubocop:disable Style/Documentation,Metrics/ClassLength
   belongs_to :tournament, touch: true
   has_many :rounds, dependent: :destroy
   has_many :registrations, dependent: :destroy
@@ -8,6 +8,8 @@ class Stage < ApplicationRecord # rubocop:disable Style/Documentation
   has_many :users, through: :players
   has_many :standing_rows, dependent: :destroy
   has_many :table_ranges, dependent: :destroy
+
+  before_destroy :restore_missing_swiss_registrations, if: :elimination?
 
   delegate :top, to: :standings
 
@@ -108,5 +110,21 @@ class Stage < ApplicationRecord # rubocop:disable Style/Documentation
 
     'There are not enough tables to cover all players ' \
       "(players without byes: #{num_pairable_players}, tables: #{custom_table_numbers_count})."
+  end
+
+  private
+
+  def restore_missing_swiss_registrations
+    swiss_stage = tournament.stages.find { |s| s.any_swiss? && s != self }
+    return unless swiss_stage
+
+    existing_player_ids = swiss_stage.registrations.pluck(:player_id)
+    missing_players = tournament.players.reject { |p| existing_player_ids.include?(p.id) }
+
+    missing_players.each do |player|
+      swiss_stage.registrations.create!(player:)
+    end
+
+    swiss_stage.cache_standings! if swiss_stage.rounds.complete.exists?
   end
 end

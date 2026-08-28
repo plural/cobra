@@ -56,7 +56,7 @@ module Beta
       end
 
       player = @tournament.players.create(params.except(:corp_deck, :runner_deck))
-      @tournament.current_stage.players << player unless @tournament.current_stage.nil?
+      @tournament.swiss_stage.players << player if @tournament.swiss_stage
       @tournament.update(any_player_unlocked: true,
                          all_players_unlocked: @tournament.locked_players.none?)
 
