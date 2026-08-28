@@ -51,6 +51,42 @@ declare const Routes: {
   cut_conversion_rates_beta_tournament_path: (tournamentId: number) => string;
 };
 
+interface RawPairing {
+  player1?: { id?: number | null };
+  player2?: { id?: number | null };
+}
+
+interface RawRound {
+  pairings?: RawPairing[];
+}
+
+interface RawStage {
+  rounds?: RawRound[];
+}
+
+interface RawPairingsData {
+  stages?: RawStage[];
+}
+
+// TODO: Remove this if/when we change the JSON API to return 0 instead of null for bye player ids.
+function parsePairingsData(json: unknown): PairingsData {
+  const raw = json as RawPairingsData;
+  for (const stage of raw.stages ?? []) {
+    for (const round of stage.rounds ?? []) {
+      for (const pairing of round.pairings ?? []) {
+        if (pairing.player1 && pairing.player1.id == null) {
+          pairing.player1.id = 0;
+        }
+        if (pairing.player2 && pairing.player2.id == null) {
+          pairing.player2.id = 0;
+        }
+      }
+    }
+  }
+
+  return json as PairingsData;
+}
+
 export async function loadPairings(
   tournamentId: number,
   userId: number | null = null,
@@ -67,7 +103,7 @@ export async function loadPairings(
     method: "GET",
   });
 
-  const data = (await response.json()) as PairingsData;
+  const data = parsePairingsData(await response.json());
   globalMessages.warnings = data.warnings ?? [];
 
   return data;
