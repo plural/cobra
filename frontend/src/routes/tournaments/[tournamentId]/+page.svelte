@@ -92,7 +92,7 @@
           <li class="list-group-item">
             <div aria-label="date">
               <div class="small text-secondary">Date:</div>
-              {new Date(tournament.date).toLocaleString(navigator.languages, {
+              {new Date(tournament.date).toLocaleString(undefined, {
                 weekday: "long",
                 month: "long",
                 day: "numeric",
@@ -106,7 +106,7 @@
                 <div class="mr-4" aria-label="registration time">
                   <div class="small text-secondary">Registration:</div>
                   {new Date(tournament.registration_starts).toLocaleTimeString(
-                    navigator.languages,
+                    undefined,
                     { hour: "2-digit", minute: "2-digit" },
                   )}
                 </div>
@@ -116,7 +116,7 @@
                 <div class="mr-4" aria-label="first round time">
                   <div class="small text-secondary">First Round:</div>
                   {new Date(tournament.tournament_starts).toLocaleTimeString(
-                    navigator.languages,
+                    undefined,
                     { hour: "2-digit", minute: "2-digit" },
                   )}
                 </div>
@@ -140,7 +140,7 @@
           <li class="list-group-item" aria-label="player count">
             <div class="small text-secondary">Players:</div>
             {tournament.active_player_count}
-            {new Intl.PluralRules(navigator.languages).select(
+            {new Intl.PluralRules(undefined).select(
               tournament.active_player_count,
             ) == "one"
               ? "active player"

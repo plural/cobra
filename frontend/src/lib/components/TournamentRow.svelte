@@ -29,7 +29,7 @@
 
     <h6 class="card-subtitle mb-2 text-muted">
       {#if tournament.attributes.date}
-        {new Date(tournament.attributes.date).toLocaleString(navigator.languages, {
+        {new Date(tournament.attributes.date).toLocaleString(undefined, {
           weekday: "long",
           month: "long",
           day: "numeric",
@@ -38,7 +38,7 @@
         })} -
       {/if}
       {tournament.attributes.active_player_count}
-      {new Intl.PluralRules(navigator.languages).select(
+      {new Intl.PluralRules(undefined).select(
         tournament.attributes.active_player_count,
       ) == "one"
         ? "active player"
