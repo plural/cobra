@@ -348,7 +348,7 @@
     </div>
 
     <!-- Elimination stage controls -->
-    {#if ctx.showOrganizerView && data.stages.length > 0 && !data.stages[data.stages.length - 1].is_elimination}
+    {#if ctx.showOrganizerView && data.stages.length > 0 && data.stages[data.stages.length - 1].rounds.length > 1 && !data.stages[data.stages.length - 1].is_elimination}
       <h4>Cut to...</h4>
       <table>
         <tbody>
