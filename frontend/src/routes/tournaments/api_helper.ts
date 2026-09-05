@@ -1,6 +1,6 @@
 import { COBRA_API_SERVER } from "$app/env/public";
 import type { Card, Deck } from "$lib/model/Deck";
-import type { IdentityNames } from "$lib/model/Identity";
+import type { Identity, IdentityNames } from "$lib/model/Identity";
 import type { Player } from "$lib/model/Player";
 import type { RoundTimer } from "$lib/model/Round";
 import { Tournament, type FeatureFlags, type TournamentOptions } from "$lib/model/Tournament";
@@ -234,4 +234,73 @@ function cardRequestObject(card: Card) {
   const { id, deck_id, created_at, updated_at, ...newCard } = card;
 
   return newCard;
+}
+
+export interface StandingsData {
+  manual_seed: boolean;
+  stages: Stage[];
+}
+
+export interface Stage {
+  format: string;
+  rounds_complete: number;
+  any_decks_viewable: boolean;
+}
+
+export interface SwissStage extends Stage {
+  standings: SwissStanding[];
+}
+
+export interface CutStage extends Stage {
+  standings: CutStanding[];
+}
+
+export interface StandingsPlayer {
+  id: number;
+  active: boolean;
+  name_with_pronouns: string;
+  corp_id: Identity | null;
+  runner_id: Identity | null;
+}
+
+export interface SwissStanding {
+  player: StandingsPlayer;
+  policy: StandingPolicies;
+  position: number;
+  points: number;
+  sos: string;
+  extended_sos: string;
+  bye_points: number;
+  corp_points: number;
+  runner_points: number;
+  manual_seed: number | null;
+  side_bias: number | null;
+}
+
+export interface CutStanding {
+  player: StandingsPlayer | null;
+  policy: StandingPolicies;
+  seed: number;
+  position: number;
+}
+
+export interface StandingPolicies {
+  view_decks: boolean;
+}
+
+export async function loadStandings(tournamentId: number, altFetch = fetch): Promise<StandingsData> {
+  const response = await altFetch(
+    `${COBRA_API_SERVER}/tournaments/${tournamentId}/players/standings_data`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to load standings: ${response.statusText}`);
+  }
+  return (await response.json()) as StandingsData;
 }
