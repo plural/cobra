@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { SwissStage } from "./StandingsData";
+  import type { SwissStage } from "$lib/model/Standings";
   import Identity from "$lib/components/identity/Identity.svelte";
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
   import Tooltip from "./Tooltip.svelte";
@@ -67,7 +67,7 @@
         {#if stage.any_decks_viewable}
           <td>
             {#if standing.policy.view_decks}
-              <a href="{standing.player.id}/view_decks?back_to=standings">
+              <a href="#top" onclick={(event) => { event.preventDefault(); alert('TODO: Add view decks'); }}>
                 <FontAwesomeIcon icon="eye" />
                 View decks
               </a>

@@ -2,6 +2,7 @@
   import type { PageProps } from "./$types";
   import DoubleElimStandings from "./DoubleElimStandings.svelte";
   import SwissStandings from "./SwissStandings.svelte";
+  import type { Stage, CutStage, SwissStage } from "$lib/model/Standings";
   let { data }: PageProps = $props();
 
   function cutStage(stage: Stage): CutStage {

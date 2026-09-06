@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { CutStage } from "./StandingsData";
+  import type { CutStage } from "$lib/model/Standings";
   import Identity from "$lib/components/identity/Identity.svelte";
   import FontAwesomeIcon from "$lib/components/FontAwesomeIcon.svelte";
 
@@ -26,7 +26,13 @@
           <td>{standing.player.name_with_pronouns}</td>
           {#if standing.policy.view_decks}
             <td>
-              <a href="{standing.player.id}/view_decks?back_to=standings">
+              <a
+                href="#top"
+                onclick={(event) => {
+                  event.preventDefault();
+                  alert('TODO: Add view decks');
+                }}
+              >
                 <FontAwesomeIcon icon="eye" />
                 View decks
               </a>
