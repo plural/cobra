@@ -1,0 +1,688 @@
+{
+  "swiss_format": "single_sided",
+  "num_players": 92,
+  "num_rounds": 15,
+  "num_drops_per_round": 0,
+  "num_first_round_byes": 3,
+  "num_pairings": 692,
+  "num_bye_vs_bye_pairings": 0,
+  "rounds": {
+    "1": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.052160708",
+      "num_pairings": 48,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 4,
+        "same": 88,
+        "up_or_down": 0
+      },
+      "cumulative": {},
+      "result_generation_time_seconds": "0.108783083",
+      "standings_page_load_time_seconds": "0.08392125"
+    },
+    "2": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.062583167",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 90,
+        "up_or_down": 2
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 184
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "0": 44,
+          "1": 5,
+          "3": 43
+        },
+        "side_bias": {
+          "-1": 44,
+          "0": 4,
+          "1": 44
+        }
+      },
+      "result_generation_time_seconds": "0.104657542",
+      "standings_page_load_time_seconds": "0.006060208"
+    },
+    "3": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.064586958",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 90,
+        "up_or_down": 2
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 276
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "0": 22,
+          "1": 2,
+          "3": 43,
+          "4": 5,
+          "6": 20
+        },
+        "side_bias": {
+          "-1": 2,
+          "0": 88,
+          "1": 2
+        }
+      },
+      "result_generation_time_seconds": "0.105937833",
+      "standings_page_load_time_seconds": "0.006666375"
+    },
+    "4": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.069530458",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 70,
+        "up_or_down": 22
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 368
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "0": 11,
+          "1": 1,
+          "3": 32,
+          "4": 3,
+          "5": 2,
+          "6": 31,
+          "7": 3,
+          "9": 9
+        },
+        "side_bias": {
+          "-1": 44,
+          "0": 4,
+          "1": 44
+        }
+      },
+      "result_generation_time_seconds": "0.111304625",
+      "standings_page_load_time_seconds": "0.006613167"
+    },
+    "5": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.070750416",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 82,
+        "up_or_down": 10
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 460
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "0": 6,
+          "3": 19,
+          "4": 6,
+          "6": 31,
+          "7": 2,
+          "8": 2,
+          "9": 21,
+          "10": 1,
+          "12": 4
+        },
+        "side_bias": {
+          "-1": 2,
+          "0": 88,
+          "1": 2
+        }
+      },
+      "result_generation_time_seconds": "0.112345917",
+      "standings_page_load_time_seconds": "0.006550166"
+    },
+    "6": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.067352875",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 68,
+        "up_or_down": 24
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 552
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "0": 3,
+          "3": 12,
+          "4": 4,
+          "6": 23,
+          "7": 7,
+          "8": 1,
+          "9": 24,
+          "10": 3,
+          "11": 1,
+          "12": 11,
+          "13": 1,
+          "15": 2
+        },
+        "side_bias": {
+          "-1": 44,
+          "0": 4,
+          "1": 44
+        }
+      },
+      "result_generation_time_seconds": "0.11454925",
+      "standings_page_load_time_seconds": "0.006075292"
+    },
+    "7": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.06997375",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 78,
+        "up_or_down": 14
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 644
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "0": 1,
+          "3": 8,
+          "4": 3,
+          "6": 16,
+          "7": 7,
+          "9": 23,
+          "10": 5,
+          "11": 1,
+          "12": 17,
+          "13": 2,
+          "14": 1,
+          "15": 7,
+          "18": 1
+        },
+        "side_bias": {
+          "-1": 2,
+          "0": 88,
+          "1": 2
+        }
+      },
+      "result_generation_time_seconds": "0.116588459",
+      "standings_page_load_time_seconds": "0.020497709"
+    },
+    "8": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.072316584",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 46,
+        "up_or_down": 46
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 736
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "0": 1,
+          "3": 3,
+          "4": 3,
+          "6": 11,
+          "7": 5,
+          "9": 20,
+          "10": 7,
+          "12": 18,
+          "13": 5,
+          "14": 2,
+          "15": 12,
+          "18": 5
+        },
+        "side_bias": {
+          "-1": 44,
+          "0": 4,
+          "1": 44
+        }
+      },
+      "result_generation_time_seconds": "0.119778208",
+      "standings_page_load_time_seconds": "0.006467834"
+    },
+    "9": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.069976625",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 80,
+        "up_or_down": 12
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 824,
+          "2": 2
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "3": 3,
+          "4": 1,
+          "5": 1,
+          "6": 5,
+          "7": 6,
+          "9": 14,
+          "10": 8,
+          "12": 17,
+          "13": 6,
+          "15": 18,
+          "16": 1,
+          "17": 2,
+          "18": 7,
+          "21": 3
+        },
+        "side_bias": {
+          "-1": 2,
+          "0": 88,
+          "1": 2
+        }
+      },
+      "result_generation_time_seconds": "0.11673575",
+      "standings_page_load_time_seconds": "0.006416542"
+    },
+    "10": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.075199667",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 50,
+        "up_or_down": 42
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 916,
+          "2": 2
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "3": 2,
+          "5": 1,
+          "6": 3,
+          "7": 4,
+          "9": 10,
+          "10": 7,
+          "12": 16,
+          "13": 7,
+          "15": 16,
+          "16": 4,
+          "17": 1,
+          "18": 14,
+          "20": 1,
+          "21": 4,
+          "24": 2
+        },
+        "side_bias": {
+          "-1": 44,
+          "0": 4,
+          "1": 44
+        }
+      },
+      "result_generation_time_seconds": "0.120004417",
+      "standings_page_load_time_seconds": "0.006079417"
+    },
+    "11": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.080231584",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 68,
+        "up_or_down": 24
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 1000,
+          "2": 6
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "3": 1,
+          "5": 1,
+          "6": 2,
+          "7": 2,
+          "8": 1,
+          "9": 6,
+          "10": 6,
+          "12": 12,
+          "13": 6,
+          "14": 2,
+          "15": 15,
+          "16": 4,
+          "17": 1,
+          "18": 18,
+          "19": 4,
+          "21": 6,
+          "23": 1,
+          "24": 3,
+          "27": 1
+        },
+        "side_bias": {
+          "-1": 2,
+          "0": 88,
+          "1": 2
+        }
+      },
+      "result_generation_time_seconds": "0.120880458",
+      "standings_page_load_time_seconds": "0.006029625"
+    },
+    "12": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.079495375",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 46,
+        "up_or_down": 46
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 1092,
+          "2": 6
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "3": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 4,
+          "10": 5,
+          "12": 9,
+          "13": 6,
+          "14": 2,
+          "15": 13,
+          "16": 5,
+          "17": 1,
+          "18": 17,
+          "19": 3,
+          "21": 13,
+          "22": 3,
+          "24": 3,
+          "26": 1,
+          "27": 3
+        },
+        "side_bias": {
+          "-1": 44,
+          "0": 4,
+          "1": 44
+        }
+      },
+      "result_generation_time_seconds": "0.125395709",
+      "standings_page_load_time_seconds": "0.021708708"
+    },
+    "13": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.075619417",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 68,
+        "up_or_down": 24
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 1176,
+          "2": 10
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "6": 2,
+          "8": 1,
+          "9": 2,
+          "10": 5,
+          "12": 5,
+          "13": 5,
+          "14": 2,
+          "15": 9,
+          "16": 6,
+          "17": 2,
+          "18": 15,
+          "19": 2,
+          "20": 1,
+          "21": 18,
+          "22": 5,
+          "24": 6,
+          "26": 1,
+          "27": 3,
+          "30": 2
+        },
+        "side_bias": {
+          "-1": 2,
+          "0": 88,
+          "1": 2
+        }
+      },
+      "result_generation_time_seconds": "0.167218334",
+      "standings_page_load_time_seconds": "0.006632791"
+    },
+    "14": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.0778115",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 40,
+        "up_or_down": 52
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 1260,
+          "2": 14
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "6": 1,
+          "8": 1,
+          "9": 2,
+          "10": 2,
+          "12": 4,
+          "13": 5,
+          "14": 1,
+          "15": 6,
+          "16": 7,
+          "17": 1,
+          "18": 13,
+          "19": 3,
+          "20": 2,
+          "21": 17,
+          "22": 2,
+          "23": 3,
+          "24": 11,
+          "25": 2,
+          "27": 4,
+          "29": 1,
+          "30": 4
+        },
+        "side_bias": {
+          "-1": 44,
+          "0": 4,
+          "1": 44
+        }
+      },
+      "result_generation_time_seconds": "0.129036542",
+      "standings_page_load_time_seconds": "0.0062305"
+    },
+    "15": {
+      "active_players": 92,
+      "pairing_time_seconds": "0.084227375",
+      "num_pairings": 46,
+      "num_bye_vs_bye_pairings": 0,
+      "pairing_types": {
+        "bye": 0,
+        "same": 62,
+        "up_or_down": 30
+      },
+      "cumulative": {
+        "rounds_against_opponent_counts": {
+          "1": 1352,
+          "2": 14
+        },
+        "players_by_bye_count": {
+          "0": 88,
+          "1": 4
+        },
+        "score_counts": {
+          "8": 1,
+          "9": 2,
+          "10": 1,
+          "12": 4,
+          "13": 2,
+          "14": 1,
+          "15": 4,
+          "16": 9,
+          "18": 9,
+          "19": 3,
+          "20": 1,
+          "21": 16,
+          "22": 4,
+          "23": 3,
+          "24": 13,
+          "25": 2,
+          "26": 2,
+          "27": 7,
+          "30": 6,
+          "32": 1,
+          "33": 1
+        },
+        "side_bias": {
+          "-1": 2,
+          "0": 88,
+          "1": 2
+        }
+      },
+      "result_generation_time_seconds": "0.1321945",
+      "standings_page_load_time_seconds": "0.006052542"
+    }
+  },
+  "top_cut": {
+    "cut_format": "double",
+    "cut_size": 16,
+    "rounds": {},
+    "side_bias": {
+      "1": {
+        "0": 16
+      },
+      "2": {
+        "-1": 8,
+        "1": 8
+      },
+      "3": {
+        "-2": 2,
+        "0": 12,
+        "2": 2
+      },
+      "4": {
+        "-1": 7,
+        "0": 3,
+        "1": 5,
+        "2": 1
+      },
+      "5": {
+        "-2": 1,
+        "-1": 3,
+        "0": 8,
+        "1": 3,
+        "2": 1
+      },
+      "6": {
+        "-1": 4,
+        "0": 9,
+        "1": 2,
+        "2": 1
+      },
+      "7": {
+        "-1": 5,
+        "0": 7,
+        "1": 3,
+        "2": 1
+      },
+      "8": {
+        "-1": 5,
+        "0": 7,
+        "1": 3,
+        "2": 1
+      },
+      "9": {
+        "-1": 6,
+        "0": 5,
+        "1": 4,
+        "2": 1
+      }
+    }
+  },
+  "num_single_sided_player1_wins": 48,
+  "num_single_sided_player2_wins": 48,
+  "num_single_sided_ties": 4,
+  "tournament_setup_time_seconds": "0.476672917"
+}

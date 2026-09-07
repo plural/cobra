@@ -1,0 +1,830 @@
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/ffi-1.17.4-aarch64-linux-gnu.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti_errors-1.1.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/ostruct-0.6.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/jsonapi-serializable-0.3.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/jsonapi-renderer-0.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graph_matching-0.2.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rgl-0.5.10.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching graphiti 1.13.3
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti-1.13.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rescue_registry 1.0.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rescue_registry-1.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching graphiti-rails 0.4.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti-rails-0.4.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rspec-support 3.13.7
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-support-3.13.7.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rspec-core 3.13.6
+
+Fetching rspec-expectations 3.13.5
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-core-3.13.6.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-expectations-3.13.5.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rspec-mocks 3.13.8
+
+Fetching rspec 3.13.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-3.13.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-mocks-3.13.8.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching graphiti_spec_helpers 1.2.3
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti_spec_helpers-1.2.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching jbuilder 2.15.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/jbuilder-2.15.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti-1.13.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rescue_registry-1.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching jquery-rails 4.6.1
+
+Fetching sorbet-runtime 0.6.13425
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/jquery-rails-4.6.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sorbet-runtime-0.6.13425.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti-rails-0.4.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching js-routes 2.4.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/js-routes-2.4.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching kaminari-core 1.2.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-core-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching kaminari-actionview 1.2.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-actionview-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching kaminari-activerecord 1.2.2
+
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-activerecord-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+Fetching kaminari 1.2.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching launchy 3.1.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/launchy-3.1.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-expectations-3.13.5.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-support-3.13.7.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-core-3.13.6.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti_spec_helpers-1.2.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-mocks-3.13.8.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-3.13.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/jquery-rails-4.6.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/jbuilder-2.15.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sorbet-runtime-0.6.13425.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-core-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/js-routes-2.4.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-activerecord-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/launchy-3.1.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-actionview-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti-1.13.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti-rails-0.4.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rescue_registry-1.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-expectations-3.13.5.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-support-3.13.7.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-3.13.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-mocks-3.13.8.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/graphiti_spec_helpers-1.2.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-core-3.13.6.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/jbuilder-2.15.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/jquery-rails-4.6.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sorbet-runtime-0.6.13425.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-core-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/js-routes-2.4.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/launchy-3.1.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-activerecord-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/kaminari-actionview-1.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching lint_roller 1.1.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/lint_roller-1.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rb-fsevent 0.11.2
+
+Fetching rb-inotify 0.11.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rb-fsevent-0.11.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rb-inotify-0.11.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching listen 3.10.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/listen-3.10.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching method_source 1.1.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/method_source-1.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching mutex_m 0.3.0
+
+Fetching parallel 2.1.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/mutex_m-0.3.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/parallel-2.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching parser 3.3.12.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/parser-3.3.12.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching pg 1.6.3 (aarch64-linux)
+
+Fetching pry 0.16.0
+
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rb-fsevent-0.11.2.gem`. It is likely that you need to grant write permissions for that path.
+Fetching puma 8.0.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/pry-0.16.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/puma-8.0.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching pundit 2.5.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/pg-1.6.3-aarch64-linux.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/pundit-2.5.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rack-cors 3.0.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rack-cors-3.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rack-proxy 0.8.3
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/lint_roller-1.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rack-proxy-0.8.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rails 8.1.3.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rails-8.1.3.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching semantic_logger 5.1.0
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rb-inotify-0.11.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rails_semantic_logger 5.1.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/semantic_logger-5.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rails_semantic_logger-5.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rainbow 3.1.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rainbow-3.1.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/method_source-1.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/parallel-2.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/listen-3.10.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/mutex_m-0.3.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rack-cors-3.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/pg-1.6.3-aarch64-linux.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/parser-3.3.12.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rails_semantic_logger-5.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/pry-0.16.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rack-proxy-0.8.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rails-8.1.3.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/pundit-2.5.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/puma-8.0.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/semantic_logger-5.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rainbow-3.1.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/lint_roller-1.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rb-fsevent-0.11.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rb-inotify-0.11.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/method_source-1.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/parallel-2.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/listen-3.10.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/pg-1.6.3-aarch64-linux.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/pundit-2.5.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rails-8.1.3.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rails_semantic_logger-5.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/mutex_m-0.3.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/pry-0.16.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rack-cors-3.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/parser-3.3.12.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/puma-8.0.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/semantic_logger-5.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rack-proxy-0.8.3.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rainbow-3.1.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching redcarpet 3.6.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/redcarpet-3.6.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching responders 3.2.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/responders-3.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rqrcode_core 2.1.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rqrcode_core-2.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rqrcode 3.2.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rqrcode-3.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rspec-rails 8.0.4
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-rails-8.0.4.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rubocop-ast 1.50.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-ast-1.50.0.gem`. It is likely that you need to grant write permissions for that path.
+
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/redcarpet-3.6.1.gem`. It is likely that you need to grant write permissions for that path.
+Fetching ruby-progressbar 1.13.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/ruby-progressbar-1.13.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching unicode-emoji 4.2.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/unicode-emoji-4.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching unicode-display_width 3.2.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/unicode-display_width-3.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rubocop 1.89.0
+
+Fetching rubocop-capybara 3.0.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-capybara-3.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+
+
+Fetching rubocop-factory_bot 2.28.0
+Fetching rubocop-rails 2.36.0
+Fetching rubocop-rspec 3.10.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-factory_bot-2.28.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-1.89.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-rails-2.36.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-rspec-3.10.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching rubocop-rspec_rails 2.32.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-rspec_rails-2.32.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rqrcode_core-2.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching sassc 2.4.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sassc-2.4.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching sprockets 4.3.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sprockets-4.3.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rqrcode-3.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/responders-3.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-rails-8.0.4.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching sprockets-rails 3.5.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sprockets-rails-3.5.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-ast-1.50.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-capybara-3.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-factory_bot-2.28.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/unicode-emoji-4.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-rspec-3.10.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-rails-2.36.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/unicode-display_width-3.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/ruby-progressbar-1.13.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sassc-2.4.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-rspec_rails-2.32.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-1.89.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sprockets-4.3.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/redcarpet-3.6.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sprockets-rails-3.5.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rqrcode_core-2.1.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rspec-rails-8.0.4.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/responders-3.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rqrcode-3.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-ast-1.50.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-factory_bot-2.28.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/unicode-display_width-3.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-rails-2.36.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-capybara-3.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/unicode-emoji-4.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-rspec-3.10.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/ruby-progressbar-1.13.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-rspec_rails-2.32.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sassc-2.4.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/rubocop-1.89.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sprockets-4.3.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sprockets-rails-3.5.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching tilt 2.8.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/tilt-2.8.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching sassc-rails 2.1.2
+
+Fetching scenic 1.9.0
+
+Fetching simple_form 5.4.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sassc-rails-2.1.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/scenic-1.9.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/simple_form-5.4.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching simplecov 1.1.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/simplecov-1.1.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching simplecov-cobertura 4.0.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/simplecov-cobertura-4.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching temple 0.10.6
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/temple-0.10.6.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching slim 5.2.2
+
+Fetching slim-rails 4.0.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/slim-rails-4.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching spring 4.7.0
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/tilt-2.8.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/spring-4.7.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/slim-5.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching stackprof 0.2.28
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/stackprof-0.2.28.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching turbolinks-source 5.2.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/turbolinks-source-5.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching turbolinks 5.2.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/turbolinks-5.2.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching uglifier 4.2.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/uglifier-4.2.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/scenic-1.9.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/simple_form-5.4.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching vcr 6.4.0
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/vcr-6.4.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching vite_ruby 3.10.2
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/vite_ruby-3.10.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/simplecov-cobertura-4.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sassc-rails-2.1.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/simplecov-1.1.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Fetching vite_rails 3.11.1
+
+Retrying download gem from https://rubygems.org/ due to error (2/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/vite_rails-3.11.1.gem`. It is likely that you need to grant write permissions for that path.
+
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/spring-4.7.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/temple-0.10.6.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/turbolinks-5.2.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/stackprof-0.2.28.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/turbolinks-source-5.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/slim-rails-4.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/uglifier-4.2.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/slim-5.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/vite_ruby-3.10.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/vcr-6.4.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/tilt-2.8.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (3/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/vite_rails-3.11.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/simple_form-5.4.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/scenic-1.9.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/sassc-rails-2.1.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/simplecov-1.1.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/simplecov-cobertura-4.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/stackprof-0.2.28.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/temple-0.10.6.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/spring-4.7.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/turbolinks-source-5.2.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/turbolinks-5.2.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/vite_ruby-3.10.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/slim-5.2.2.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/vcr-6.4.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/uglifier-4.2.1.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/slim-rails-4.0.0.gem`. It is likely that you need to grant write permissions for that path.
+
+Retrying download gem from https://rubygems.org/ due to error (4/4): Bundler::PermissionError There was an error while trying to write to `/usr/local/rvm/gems/default/cache/vite_rails-3.11.1.gem`. It is likely that you need to grant write permissions for that path.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bundler::PermissionError: There was an error while trying to write to
+`/usr/local/rvm/gems/default/cache/rake-13.4.2.gem`. It is likely that you need
+to grant write permissions for that path.
+ 
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/shared_helpers.rb:110:in
+'Bundler::SharedHelpers#filesystem_access'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/rubygems_integration.rb:392:in
+'block in Bundler::RubygemsIntegration#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/retry.rb:48:in
+'Bundler::Retry#run'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/retry.rb:38:in
+'Bundler::Retry#attempt'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/rubygems_integration.rb:384:in
+'Bundler::RubygemsIntegration#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:549:in
+'block in Bundler::Source::Rubygems#download_gem'
+  /usr/local/lib/ruby/site_ruby/3.4.0/rubygems.rb:1052:in 'Gem.time'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:548:in
+'Bundler::Source::Rubygems#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:479:in
+'Bundler::Source::Rubygems#fetch_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:463:in
+'Bundler::Source::Rubygems#fetch_gem_if_possible'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:585:in
+'Bundler::Source::Rubygems#rubygems_gem_installer'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:185:in
+'Bundler::Source::Rubygems#download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/gem_installer.rb:29:in
+'Bundler::GemInstaller#download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/parallel_installer.rb:193:in
+'Bundler::ParallelInstaller#do_download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/parallel_installer.rb:177:in
+'block in Bundler::ParallelInstaller#worker_pool'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:70:in
+'Bundler::Worker#apply_func'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:65:in
+'block in Bundler::Worker#process_queue'
+  <internal:kernel>:168:in 'Kernel#loop'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:56:in
+'Bundler::Worker#process_queue'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:98:in
+'block (2 levels) in Bundler::Worker#create_threads'
+
+An error occurred while installing rake (13.4.2), and Bundler cannot
+continue.
+
+In Gemfile:
+  rails was resolved to 8.1.3.1, which depends on
+    actiontext was resolved to 8.1.3.1, which depends on
+      action_text-trix was resolved to 2.1.19, which depends on
+        railties was resolved to 8.1.3.1, which depends on
+          rake
+
+
+Bundler::PermissionError: There was an error while trying to write to
+`/usr/local/rvm/gems/default/cache/racc-1.8.1.gem`. It is likely that you need
+to grant write permissions for that path.
+ 
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/shared_helpers.rb:110:in
+'Bundler::SharedHelpers#filesystem_access'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/rubygems_integration.rb:392:in
+'block in Bundler::RubygemsIntegration#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/retry.rb:48:in
+'Bundler::Retry#run'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/retry.rb:38:in
+'Bundler::Retry#attempt'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/rubygems_integration.rb:384:in
+'Bundler::RubygemsIntegration#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:549:in
+'block in Bundler::Source::Rubygems#download_gem'
+  /usr/local/lib/ruby/site_ruby/3.4.0/rubygems.rb:1052:in 'Gem.time'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:548:in
+'Bundler::Source::Rubygems#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:479:in
+'Bundler::Source::Rubygems#fetch_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:463:in
+'Bundler::Source::Rubygems#fetch_gem_if_possible'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:585:in
+'Bundler::Source::Rubygems#rubygems_gem_installer'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:185:in
+'Bundler::Source::Rubygems#download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/gem_installer.rb:29:in
+'Bundler::GemInstaller#download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/parallel_installer.rb:193:in
+'Bundler::ParallelInstaller#do_download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/parallel_installer.rb:177:in
+'block in Bundler::ParallelInstaller#worker_pool'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:70:in
+'Bundler::Worker#apply_func'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:65:in
+'block in Bundler::Worker#process_queue'
+  <internal:kernel>:168:in 'Kernel#loop'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:56:in
+'Bundler::Worker#process_queue'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:98:in
+'block (2 levels) in Bundler::Worker#create_threads'
+
+An error occurred while installing racc (1.8.1), and Bundler cannot
+continue.
+
+In Gemfile:
+  rails was resolved to 8.1.3.1, which depends on
+    actiontext was resolved to 8.1.3.1, which depends on
+      action_text-trix was resolved to 2.1.19, which depends on
+        railties was resolved to 8.1.3.1, which depends on
+          actionpack was resolved to 8.1.3.1, which depends on
+            actionview was resolved to 8.1.3.1, which depends on
+              rails-dom-testing was resolved to 2.3.0, which depends on
+                nokogiri was resolved to 1.19.4, which depends on
+                  racc
+
+
+Bundler::PermissionError: There was an error while trying to write to
+`/usr/local/rvm/gems/default/cache/rails-dom-testing-2.3.0.gem`. It is likely
+that you need to grant write permissions for that path.
+ 
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/shared_helpers.rb:110:in
+'Bundler::SharedHelpers#filesystem_access'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/rubygems_integration.rb:392:in
+'block in Bundler::RubygemsIntegration#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/retry.rb:48:in
+'Bundler::Retry#run'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/retry.rb:38:in
+'Bundler::Retry#attempt'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/rubygems_integration.rb:384:in
+'Bundler::RubygemsIntegration#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:549:in
+'block in Bundler::Source::Rubygems#download_gem'
+  /usr/local/lib/ruby/site_ruby/3.4.0/rubygems.rb:1052:in 'Gem.time'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:548:in
+'Bundler::Source::Rubygems#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:479:in
+'Bundler::Source::Rubygems#fetch_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:463:in
+'Bundler::Source::Rubygems#fetch_gem_if_possible'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:585:in
+'Bundler::Source::Rubygems#rubygems_gem_installer'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:185:in
+'Bundler::Source::Rubygems#download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/gem_installer.rb:29:in
+'Bundler::GemInstaller#download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/parallel_installer.rb:193:in
+'Bundler::ParallelInstaller#do_download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/parallel_installer.rb:177:in
+'block in Bundler::ParallelInstaller#worker_pool'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:70:in
+'Bundler::Worker#apply_func'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:65:in
+'block in Bundler::Worker#process_queue'
+  <internal:kernel>:168:in 'Kernel#loop'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:56:in
+'Bundler::Worker#process_queue'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:98:in
+'block (2 levels) in Bundler::Worker#create_threads'
+
+An error occurred while installing rails-dom-testing (2.3.0), and
+Bundler cannot continue.
+
+In Gemfile:
+  rails was resolved to 8.1.3.1, which depends on
+    actiontext was resolved to 8.1.3.1, which depends on
+      action_text-trix was resolved to 2.1.19, which depends on
+        railties was resolved to 8.1.3.1, which depends on
+          actionpack was resolved to 8.1.3.1, which depends on
+            actionview was resolved to 8.1.3.1, which depends on
+              rails-dom-testing
+
+
+Bundler::PermissionError: There was an error while trying to write to
+`/usr/local/rvm/gems/default/cache/crass-1.0.7.gem`. It is likely that you need
+to grant write permissions for that path.
+ 
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/shared_helpers.rb:110:in
+'Bundler::SharedHelpers#filesystem_access'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/rubygems_integration.rb:392:in
+'block in Bundler::RubygemsIntegration#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/retry.rb:48:in
+'Bundler::Retry#run'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/retry.rb:38:in
+'Bundler::Retry#attempt'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/rubygems_integration.rb:384:in
+'Bundler::RubygemsIntegration#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:549:in
+'block in Bundler::Source::Rubygems#download_gem'
+  /usr/local/lib/ruby/site_ruby/3.4.0/rubygems.rb:1052:in 'Gem.time'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:548:in
+'Bundler::Source::Rubygems#download_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:479:in
+'Bundler::Source::Rubygems#fetch_gem'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:463:in
+'Bundler::Source::Rubygems#fetch_gem_if_possible'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:585:in
+'Bundler::Source::Rubygems#rubygems_gem_installer'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/source/rubygems.rb:185:in
+'Bundler::Source::Rubygems#download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/gem_installer.rb:29:in
+'Bundler::GemInstaller#download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/parallel_installer.rb:193:in
+'Bundler::ParallelInstaller#do_download'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/installer/parallel_installer.rb:177:in
+'block in Bundler::ParallelInstaller#worker_pool'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:70:in
+'Bundler::Worker#apply_func'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:65:in
+'block in Bundler::Worker#process_queue'
+  <internal:kernel>:168:in 'Kernel#loop'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:56:in
+'Bundler::Worker#process_queue'
+/usr/local/rvm/gems/default/gems/bundler-4.0.16/lib/bundler/worker.rb:98:in
+'block (2 levels) in Bundler::Worker#create_threads'
+
+An error occurred while installing crass (1.0.7), and Bundler cannot
+continue.
+
+In Gemfile:
+  rails was resolved to 8.1.3.1, which depends on
+    actiontext was resolved to 8.1.3.1, which depends on
+      action_text-trix was resolved to 2.1.19, which depends on
+        railties was resolved to 8.1.3.1, which depends on
+          actionpack was resolved to 8.1.3.1, which depends on
+            actionview was resolved to 8.1.3.1, which depends on
+              rails-html-sanitizer was resolved to 1.7.1, which depends on
+                loofah was resolved to 2.25.2, which depends on
+                  crass
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug a16a954c82714d4d832bbeec837169516f3fcd1003c7671448700f52e9a32864
+    Learn more at https://docs.docker.com/go/debug-cli/
+[122056 ms] postCreateCommand from devcontainer.json failed with exit code 5. Skipping any further user-provided commands.
+Done. Press any key to close the terminal.
